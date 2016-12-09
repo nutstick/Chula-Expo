@@ -3,9 +3,13 @@
 GET token/
 
 GET users/
+
 POST users/
+
 PUT users/
+
 DELETE users/
+
 
 GET users/:id/
 POST users/:id/
