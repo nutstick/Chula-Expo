@@ -5,3 +5,5 @@ node_modules
 tmp
 logs
 *.log
+mongodb/*
+mongodb/**/*

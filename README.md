@@ -28,13 +28,14 @@ if you aren't yet install [mongodb driver](https://www.mongodb.com/download-cent
 
 config `mongod.exe` path in `script/rundb.sh`
 
-```
+```sh
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../mongodb" && pwd )"
 # config mongodb path here
 "$your path\mongod.exe" --dbpath "$DIR"
 ```
 
 run mongodb
+
 ```
 ./script/rundb.sh
 ```

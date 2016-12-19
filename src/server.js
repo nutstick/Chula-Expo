@@ -22,13 +22,13 @@ dotenv.load({ path: '.env' });
 mongoose.Promise = global.Promise;
 mongoose.connect(process.env.MONGODB_URI || process.env.MONGOLAB_URI);
 mongoose.connection.on('error', () => {
-  console.log(chalk.red('MongoDB connection error. Please make sure MongoDB is running.')); // eslint-disable-line no-console
+  console.log('%s MongoDB connection error. Please make sure MongoDB is running.', chalk.red('✗')); // eslint-disable-line no-console
   process.exit();
 });
 
 const app = express();
 
-// Set up view engine
+// Set Express
 app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
 app.set('views engine', 'ejs');
@@ -51,8 +51,15 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Routes set up
+// app.use(favicon(path.join(__dirname, '/public/favicon.ico')));
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
 
-app.listen(app.get('port'), () => {
-  console.log('App is running at http://localhost:%d in %s mode', app.get('port'), app.get('env')); // eslint-disable-line no-console
+app.listen(app.get('port'), (err) => {
+  if (err) {
+    throw err;
+  }
+  console.log('%s App is running at http://localhost:%d in %s mode', chalk.green('✓'), app.get('port'), app.get('env')); // eslint-disable-line no-console
 });
+
+module.exports = app;

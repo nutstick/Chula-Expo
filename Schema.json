@@ -1,44 +1,51 @@
 {
 
   "User":  {
-   "name": "String",
    "email": "String",
+   "password": "String",
+   "passwordResetToken": "String",
+   "passwordResetExpires": "Date",
+
+   "facebook": "Token",
+   "google": "Token",
+   "tokens": "Token",
+
+   "name": "String",
    "gender": "String",
    "age": "Number",
+   "pictureUrl" : "String",
    "academic": {
      "year" : "Number",
      "school" : "String"
    },
-   "picture_url" : "String",
    "worker": {
      "company": "String"
    },
-   "facebook_token": "Token",
    "tag": {
       "name": "score",
       "name": "score"
    },
-   "bookmark_activity": [{
-     "activity_id": "",
+   "bookmarkActivity": [{
+     "activityId": "",
      "time" : "Datetime"
    }],
-   "reserved_activity": [{
-     "round_id": "RoundId",
+   "reservedActivity": [{
+     "roundId": "RoundId",
      "ticket": "TicketId",
-     "reserved_at": "Datetime",
-     "checked_in": "Datetime",
-     "noti_time": "Datetime"
+     "reservedAt": "Datetime",
+     "checkedIn": "Datetime",
+     "notification": "Datetime"
    }],
-   "qrcode_url": "String",
-   "game": [{
-     "total_score": "Number",
+   "qrcodeUrl": "String",
+   "game": {
+     "totalScore": "Number",
      "pending": ["GameId"],
      "passed": [{
        "id": "GameId",
        "score": "Number"
      }]
-   }],
-   "activity_log": [{
+   },
+   "activityLog": [{
      "type" : "String",
      "game": {
       "gameId": "Number",
@@ -56,12 +63,12 @@
   "activity": {
     "id": "ActivityId",
     "name": "String",
-    "thumbnials_url": "String",
-    "short_description": "String",
+    "thumbnialsUrl": "String",
+    "shortDescription": "String",
     "description": "String",
 
-    "img_url": ["String"],
-    "video_url": ["String"],
+    "imgUrl": ["String"],
+    "videoUrl": ["String"],
 
     "tags": ["String"],
     "location": {
@@ -75,35 +82,35 @@
       "round": ["RoundId"]
     },
 
-    "start_time": "Datetime",
-    "end_time": "Datetime",
+    "startTime": "Datetime",
+    "endTime": "Datetime",
   },
 
   "round": {
     "id": "ObjectId",
     "name": "String",
-    "start_time": "Datetime",
-    "end_time": "Datetime",
-    "reserved_seats": "Number",
-    "avaliable_seats": "Number",
-    "reserved_users": ["UserId"],
+    "startTime": "Datetime",
+    "endTime": "Datetime",
+    "reservedSeats": "Number",
+    "avaliableSeats": "Number",
+    "reservedUsers": ["UserId"],
   },
 
   "ticket": {
     "id": "ObjectId",
-    "userID": "ObjectId",
-    "roundID": "ObjectId",
+    "userId": "ObjectId",
+    "roundId": "ObjectId",
   },
 
   "game": {
     "id": "ObjectId",
     "problem": "String",
-    "picture_url": "String",
-    "choice_1": "String",
-    "choice_2": "String",
-    "choice_3": "String",
-    "choice_4": "String",
-    "correct_answer": "Number",
+    "pictureUrl": "String",
+    "choice1": "String",
+    "choice2": "String",
+    "choice3": "String",
+    "choice4": "String",
+    "correctAnswer": "Number",
     "score": "Number"
   },
 
@@ -116,4 +123,5 @@
     "question":  "String",
     "answer": "String"
   }
+  
 }
