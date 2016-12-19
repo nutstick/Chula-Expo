@@ -1,0 +1,50 @@
+{
+  "name": "chulaexpo",
+  "version": "0.0.0",
+  "description": "Chulalongkorn expo application",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "mocha --reporter spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nutstick/Chula-Expo.git"
+  },
+  "keywords": [
+    "Chula",
+    "Expo",
+    "NodeJS",
+    "MongoDB"
+  ],
+  "author": "Chula team",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nutstick/Chula-Expo/issues"
+  },
+  "homepage": "https://github.com/nutstick/Chula-Expo#readme",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "chalk": "^1.1.3",
+    "connect-mongo": "^1.3.2",
+    "cookie-parser": "^1.4.3",
+    "dotenv": "^2.0.0",
+    "express": "^4.14.0",
+    "express-session": "^1.14.2",
+    "helmet": "^3.1.0",
+    "mongodb": "^2.2.16",
+    "mongoose": "^4.7.3",
+    "morgan": "^1.7.0",
+    "node-sass-middleware": "^0.10.0",
+    "passport": "^0.3.2",
+    "serve-favicon": "^2.3.2"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "eslint": "^3.12.2",
+    "eslint-config-airbnb-base": "^11.0.0",
+    "eslint-plugin-import": "^2.2.0",
+    "mocha": "^3.2.0",
+    "sinon": "^1.17.6"
+  }
+}
