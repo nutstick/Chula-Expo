@@ -2,9 +2,8 @@ node_modules
 
 .DS_Store
 
-mongodb/*
 src
-mongodb/WiredTiger
+mongodb/*
 mongodb/**/*
 
 *.log
