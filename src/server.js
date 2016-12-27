@@ -57,7 +57,9 @@ app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }))
 
 app.get('/', (req, res) => {
   const menu = ['home', 'about'];
-  res.render('pages/home');
+  res.render('pages/home', {
+    menu: menu
+  });
 });
 
 app.listen(app.get('port'), (err) => {

@@ -8,6 +8,11 @@
 	</header>
 
 	<main>
+		<ul>
+			<% for(var i = 0; i < menu.length; i++) { %>
+				<li><%= menu[i] %></li>
+			<% } %>
+		</ul>
 		<div class="jumbotron">
 			<h1>This is great</h1>
 			<p>Welcome to templating using EJS</p>
