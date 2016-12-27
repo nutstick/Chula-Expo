@@ -94,7 +94,6 @@ const UserSchema = new mongoose.Schema({
   },
   activityLog: [ActivityLogSchema]
 }, { timestamps: true });
-
 /**
  * Password hash middleware.
  */
