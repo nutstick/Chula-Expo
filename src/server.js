@@ -30,8 +30,8 @@ const app = express();
 
 // Set Express
 app.set('port', process.env.PORT || 3000);
-app.set('views', path.join(__dirname, 'views'));
-app.set('views engine', 'ejs');
+app.set('views', path.join(__dirname, 'routes'));
+app.set('view engine', 'ejs');
 app.use(sass({
   src: path.join(__dirname, 'public'),
   dest: path.join(__dirname, 'public')
@@ -54,6 +54,11 @@ app.use(passport.session());
 // Routes set up
 // app.use(favicon(path.join(__dirname, '/public/favicon.ico')));
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
+
+app.get('/', (req, res) => {
+  const menu = ['home', 'about'];
+  res.render('pages/home');
+});
 
 app.listen(app.get('port'), (err) => {
   if (err) {
