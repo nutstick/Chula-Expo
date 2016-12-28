@@ -44,7 +44,6 @@ describe('API Users', () => {
             expect(res.body).to.be.a('object');
             expect(res.body).to.have.property('name');
             expect(res.body).to.have.property('email');
-            expect(res.body).to.have.property('password');
             expect(res.body).to.have.property('gender');
             expect(res.body).to.have.property('age');
             expect(res.body).to.have.property('_id').eql(user.id);
@@ -73,7 +72,6 @@ describe('API Users', () => {
           expect(res.body).to.be.a('object');
           expect(res.body.user).to.have.property('name').eql(user.name);
           expect(res.body.user).to.have.property('email').eql(user.email);
-          expect(res.body.user).to.have.property('password').be.null;
           expect(res.body.user).to.have.property('gender').eql(user.gender);
           expect(res.body.user).to.have.property('age').eql(user.age);
           done();

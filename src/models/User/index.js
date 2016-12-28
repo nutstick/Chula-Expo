@@ -59,17 +59,17 @@ const ActivityLogSchema = new mongoose.Schema({
  */
 const UserSchema = new mongoose.Schema({
   email: { type: String, unique: true },
-  password: String,
+  password: { type: String, select: false },
   passwordResetToken: String,
   passwordResetExpires: Date,
 
-  facebook: String,
-  google: String,
+  facebook: { type: String, select: false },
+  google: { type: String, select: false },
   tokens: Array,
 
   name: { type: String, required: true },
   gender: { type: String, required: true },
-  age: { type: String, required: true },
+  age: { type: Number, required: true },
   pictureUrl: String,
   academic: {
     year: Number,
