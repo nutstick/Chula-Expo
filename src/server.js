@@ -14,6 +14,9 @@ const passport = require('passport');
 const MongoStore = require('connect-mongo')(session);
 // SASS
 const sass = require('node-sass-middleware');
+// Route
+const home = require('./routes/home');
+const api = require('./routes/api');
 
 // Load envirountment variables from .env file
 dotenv.load({ path: '.env' });
@@ -52,16 +55,16 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Routes set up
+// Set favicon using serve-favicon at /public/favicon.icon
 app.use(favicon(path.join(__dirname, '/public/favicon.ico')));
+// Set '/public' as static Routes
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
 
-app.get('/', (req, res) => {
-  const menu = ['home', 'about'];
-  res.render('pages/home', {
-    menu
-  });
-});
+// Set Route
+app.use('/', home.route);
+
+// API
+app.use('/api', api);
 
 app.listen(app.get('port'), (err) => {
   if (err) {
