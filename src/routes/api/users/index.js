@@ -10,7 +10,7 @@ router.get('/:id', (req, res) => {
   User.findById(req.params.id, (err, user) => {
     if (err) {
       // Handle error from User.findById
-      res.send(err);
+      res.end(err);
     }
 
     res.json(user);
@@ -19,7 +19,7 @@ router.get('/:id', (req, res) => {
 
 // Create User
 // Access at POST http://localhost:8080/api/users
-router.post('/', (req, res) => {
+router.post('/', (req, res, next) => {
   // Create a new instance of the User model
   const user = new User();
 
@@ -31,13 +31,16 @@ router.post('/', (req, res) => {
   user.age = req.body.age;
 
   // Save User and check for error
-  user.save((err) => {
+  user.save((err, _user) => {
     if (err) {
       // Handle error from save
-      res.send(err);
+      next(err);
     }
 
-    res.json({ message: 'User created' });
+    res.status(300).json({
+      message: 'Create User successfull',
+      user: _user
+    });
   });
 });
 

@@ -67,9 +67,9 @@ const UserSchema = new mongoose.Schema({
   google: String,
   tokens: Array,
 
-  name: String,
-  gender: String,
-  age: Number,
+  name: { type: String, required: true },
+  gender: { type: String, required: true },
+  age: { type: String, required: true },
   pictureUrl: String,
   academic: {
     year: Number,

@@ -53,4 +53,31 @@ describe('API Users', () => {
       });
     });
   });
+
+  // Test POST /users
+  describe('POST /api/users', () => {
+    it('it should POST new user', (done) => {
+      const user = {
+        name: casual.name,
+        email: casual.email,
+        password: casual.password,
+        gender: 'man',
+        age: casual.integer(18, 30)
+      };
+
+      chai.request(server)
+        .post('/api/users')
+        .send(user)
+        .end((err, res) => {
+          expect(res).to.be.status(300);
+          expect(res.body).to.be.a('object');
+          expect(res.body.user).to.have.property('name').eql(user.name);
+          expect(res.body.user).to.have.property('email').eql(user.email);
+          expect(res.body.user).to.have.property('password').be.null;
+          expect(res.body.user).to.have.property('gender').eql(user.gender);
+          expect(res.body.user).to.have.property('age').eql(user.age);
+          done();
+        });
+    });
+  });
 });
