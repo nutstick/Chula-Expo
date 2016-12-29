@@ -3,8 +3,10 @@ const User = require('../../../models/User');
 
 const router = express.Router();
 
-// Get User by specific ID
-// Access at GET http://localhost:8080/api/users/:id
+/**
+ * Get User by specific ID
+ * Access at GET http://localhost:8080/api/users/:id
+ */
 router.get('/:id', (req, res) => {
   // Get User from instance User model by ID
   User.findById(req.params.id, (err, user) => {
@@ -17,8 +19,10 @@ router.get('/:id', (req, res) => {
   });
 });
 
-// Create User
-// Access at POST http://localhost:8080/api/users
+/**
+ * Create User
+ * Access at POST http://localhost:8080/api/users
+ */
 router.post('/', (req, res, next) => {
   // Create a new instance of the User model
   const user = new User();
