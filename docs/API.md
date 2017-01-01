@@ -1,6 +1,9 @@
 ##RESTFUL API
 
-GET token/
+Refreshing token
+```
+GET api/token/
+```
 
 ---
 GET users/
