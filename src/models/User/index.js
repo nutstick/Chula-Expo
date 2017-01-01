@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt-nodejs');
 const crypto = require('crypto');
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 
 const ObjectId = mongoose.Schema.Types.ObjectId;
 
@@ -58,19 +59,28 @@ const ActivityLogSchema = new mongoose.Schema({
  * User Schema
  */
 const UserSchema = new mongoose.Schema({
-  email: { type: String, unique: true },
+  email: { type: String, unique: true, required: true },
   password: { type: String, select: false },
   passwordResetToken: String,
   passwordResetExpires: Date,
 
-  facebook: { type: String, select: false },
-  google: { type: String, select: false },
+  facebook: { type: String },
+  google: { type: String },
   tokens: Array,
 
   name: { type: String, required: true },
-  gender: { type: String, required: true },
+  gender: {
+    type: String,
+    required: true,
+    enum: ['Male', 'Female']
+  },
   age: { type: Number, required: true },
   pictureUrl: String,
+  type: {
+    type: String,
+    required: true,
+    enum: ['Academic', 'Worker']
+  },
   academic: {
     year: Number,
     school: String
@@ -132,6 +142,18 @@ UserSchema.methods.gravatar = function gravatar(size) {
   const md5 = crypto.createHash('md5').update(this.email).digest('hex');
   return `https://gravatar.com/avatar/${md5}?s=${size}&d=retro`;
 };
+
+/**
+ * User generate token
+ */
+UserSchema.methods.generateToken = function generateToken() {
+  return jwt.sign({
+    id: this.id,
+  }, process.env.SESSION_SECRET, {
+    expiresIn: 8 * 60 * 60 /* expires in 8 hrs */,
+  });
+};
+
 
 const User = mongoose.model('User', UserSchema);
 
