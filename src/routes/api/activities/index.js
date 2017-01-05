@@ -2,17 +2,45 @@ const express = require('express');
 const Activity = require('../../../models/Activity');
 
 const router = express.Router();
-//Get all activities
-router.get('/',(req,res) => {
-  let query = Activity.find();
-  if (req.query.limit)
+// Get all activities
+router.get('/', (req, res) => {
+  const filter = {};
+  if (req.query.tags) {
+    filter.tags = req.query.tags;
+  }
+  // "createAt,-startDate"
+  const sort = {};
+  req.query.sort.spilt(',').forEach((sortField) => {
+    if (sortField[0] === '-') {
+      sort[sortField.substr(1)] = -1;
+    } else if (sortField[0] === '+') {
+      sort[sortField.substr(0)] = 1;
+    }
+  });
+
+  const fields = req.query.fields.replace(',', ' ');
+
+  let query = Activity.find(filter);
+
+  if (sort) {
+    query.sort(sort);
+  }
+  if (fields) {
+    query.select(fields);
+  }
+
+  if (req.query.limit) {
     query = query.limit(req.query.limit);
-  query = query.skip(1);
+  }
+  if (req.query.skip) {
+    query = query.skip(req.query.skip);
+  }
+
   const activities = query.exec();
 
   res.json({
     data: activities,
-  })
+  });
 });
 //Get activities with sorting
 router.get('')
