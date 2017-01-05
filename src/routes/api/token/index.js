@@ -1,7 +1,7 @@
 const express = require('express');
 const User = require('../../../models/User');
 const deserializeToken = require('../../../config/authenticate').deserializeToken;
-const retrieveError = require('../../../config/retrieveError');
+const retrieveError = require('../../../tools/retrieveError');
 
 const router = express.Router();
 
@@ -10,7 +10,7 @@ router.get('/', deserializeToken, (req, res) => {
     if (err) {
       return res.json({
         success: false,
-        erros: retrieveError(5, err)
+        errors: retrieveError(5, err)
       });
     }
     res.json({

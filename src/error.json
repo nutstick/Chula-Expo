@@ -18,5 +18,10 @@
     "status": "403",
     "message": "Not exist User",
     "code": "24"
+  },
+  "25": {
+    "status": "403",
+    "message": "Activity not exist",
+    "code": "25"
   }
 }

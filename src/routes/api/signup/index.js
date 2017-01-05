@@ -1,6 +1,6 @@
 const express = require('express');
 const User = require('../../../models/User');
-const retrieveError = require('../../../config/retrieveError');
+const retrieveError = require('../../../tools/retrieveError');
 
 const router = express.Router();
 

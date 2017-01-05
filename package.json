@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "description": "Chulalongkorn expo application",
   "main": "src/server.js",
+  "engines": {
+    "node": "7.4.0"
+  },
   "scripts": {
     "start": "node src/server.js",
     "dev": "./node_modules/.bin/nodemon src/server.js",

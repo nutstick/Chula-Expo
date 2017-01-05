@@ -63,6 +63,10 @@ const UserSchema = new mongoose.Schema({
   password: { type: String, select: false },
   passwordResetToken: String,
   passwordResetExpires: Date,
+  admin: {
+    type: String,
+    enum: ['Admin', 'Staff'],
+  },
 
   facebook: { type: String },
   google: { type: String },

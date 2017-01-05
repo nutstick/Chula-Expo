@@ -89,11 +89,14 @@
   "round": {
     "id": "ObjectId",
     "name": "String",
-    "startTime": "Datetime",
-    "endTime": "Datetime",
-    "reservedSeats": "Number",
-    "avaliableSeats": "Number",
-    "reservedUsers": ["UserId"],
+    "start": "Datetime",
+    "end": "Datetime",
+    "seats": {
+      "avaliable": "Number",
+      "reserved": "Number",
+      "fullCapacity": "Number"
+    },
+    "tickets": "[Ticket]"
   },
 
   "ticket": {

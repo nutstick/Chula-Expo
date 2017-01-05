@@ -11,7 +11,7 @@ const User = require('./');
 
 describe('User Model', () => {
   it('should create a new user', (done) => {
-    const UserMock = sinon.mock(new User({ email: 'test@gmail.com', password: 'root' }));
+    const UserMock = sinon.mock(new User());
     const user = UserMock.object;
 
     UserMock

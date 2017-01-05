@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const retrieveError = require('./retrieveError');
+const retrieveError = require('../tools/retrieveError');
 
 module.exports = {
   isAuthenticated: (req, res, next) => {

@@ -27,7 +27,7 @@ describe('API Token', () => {
 
   // Test GET /api/token
   describe('GET /api/token', () => {
-    it('it should refresh token', (done) => {
+    it('should refresh token', (done) => {
       const user = new User({
         email: casual.email,
         facebook: casual.card_number(),
@@ -74,7 +74,7 @@ describe('API Token', () => {
       });
     });
 
-    it('it should return error if use randon ObjectId', (done) => {
+    it('should return error if use randon ObjectId', (done) => {
       const id = ObjectId();
       const token = jwt.sign({
         id,
@@ -96,7 +96,7 @@ describe('API Token', () => {
         });
     });
 
-    it('it should return error if not provide token', (done) => {
+    it('should return error if not provide token', (done) => {
       chai.request(server)
         .get('/api/token')
         .end((err, res) => {

@@ -10,7 +10,7 @@ chai.use(chaiHttp);
 const expect = chai.expect;
 
 describe('API', () => {
-  it('it should GET a welcome message', (done) => {
+  it('should GET a welcome message', (done) => {
     chai.request(server)
       .get('/api')
       .end((err, res) => {
