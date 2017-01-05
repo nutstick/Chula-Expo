@@ -12,7 +12,7 @@ router.get('/:id', (req, res) => {
   User.findById(req.params.id, (err, user) => {
     if (err) {
       // Handle error from User.findById
-      return res.send(err);
+      res.status(400).json(err);
     }
 
     res.json(user);

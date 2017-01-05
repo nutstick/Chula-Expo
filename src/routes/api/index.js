@@ -23,6 +23,13 @@ router.use('/me', require('./me'));
 router.use('/token', require('./token'));
 
 /**
+ * Activities API
+*/
+router.use('/activities', require('./activities'));
+
+/**
+=======
+>>>>>>> upstream/master
  * Welcome Message
  * Access at GET http://localhost:8080/api
  */
