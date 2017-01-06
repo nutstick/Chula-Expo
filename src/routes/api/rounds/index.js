@@ -159,7 +159,7 @@ router.get('/', (req, res) => {
             user: req.query.userId,
           }
         });
-    })
+      });
   } else {
     // Create query from filter
     let query = Round.find(filter);
@@ -210,6 +210,9 @@ router.get('/', (req, res) => {
  * @param {Date} end - End time of round.
  * @param {number} [reservedSeats] - Number of reserved seats.
  * @param {number} fullCapacity - Number of full capacity seats.
+ *
+ * @return {boolean} success - Successful querying flag.
+ * @return {Object} round - Created Round.
  */
 router.post('/', (req, res) => {
   // Create a new instance of the User model
