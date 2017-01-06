@@ -32,7 +32,7 @@ const RoundSchema = new mongoose.Schema({
   updateAt: { type: Date, default: new Date() },
 });
 
-RoundSchema.index({ start: 1, end: 1, activityId: 1 });
+RoundSchema.index({ avaliable: -1, start: 1, end: 1, activityId: 1 });
 
 /**
  * Pre-save method

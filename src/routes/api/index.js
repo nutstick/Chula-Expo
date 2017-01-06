@@ -28,6 +28,11 @@ router.use('/token', require('./token'));
 router.use('/activities', require('./activities'));
 
 /**
+ * Rounds API
+*/
+router.use('/rounds', require('./rounds'));
+
+/**
 =======
 >>>>>>> upstream/master
  * Welcome Message

@@ -1,5 +1,5 @@
 const express = require('express');
-const { Activity, Round } = require('../../../models');
+const { Activity, Round, Ticket } = require('../../../models');
 const retrieveError = require('../../../tools/retrieveError');
 const RangeQuery = require('../../../tools/RangeQuery');
 
@@ -10,16 +10,31 @@ const router = express.Router();
  * Access at GET https://localhost:8080/api/rounds
  * @param {string} [name] - Get matched round's name.
  * @param {ObjectId} [activityId] - Get by matches activity ID.
+ * @param {ObjectId} [userId] - Get rounds own by user.
+ * @param {ObjectId} [ticketId] - Get round of ticket.
  * @param {Date | RangeQuery<Date>} [start] - Get by start time.
  * @param {Date | RangeQuery<Date>} [end] - Get by end time.
+ * @param {number | RangeQuery<number>} [avaliableSeats] - Get by avaliable seats.
  * @param {string} [sort] - Sort fields (ex. "-start,+createAt").
  * @param {string} [fields] - Fields selected (ex. "name,fullCapacity").
  * @param {number} [limit] - Number of limit per query.
- * @param {number} [skip] - Offset documents.
+ * @param {number} [skip=0] - Offset documents.
+ *
+ * Accessible fields { name, activityId, start, end, fullCapacity, avaliableSeats, reservedSeats }
+ *
+ * @return {boolean} success - Successful querying flag.
+ * @return {Round[]} results - Result rounds for the query.
+ * @return {Object} queryInfo - Metadat query information.
+ * @return {number} queryInfo.total - Total numbers of documents in collection that match the query.
+ * @return {number} queryInfo.limit - Limit that was used.
+ * @return {number} queryInfo.skip - Skip that was used.
  */
 router.get('/', (req, res) => {
   const filter = {};
-
+  let sort = {};
+  let limit;
+  let skip = 0;
+  let fields;
   // Round's name
   if (req.query.name) {
     filter.name = req.query.name;
@@ -36,43 +51,154 @@ router.get('/', (req, res) => {
   if (req.query.end) {
     filter.end = RangeQuery(JSON.parse(req.query.end), 'Date');
   }
-  // Create query from filter
-  let query = Round.find(filter);
+  // Avaliable seats range query
+  if (req.query.avaliableSeats) {
+    filter['seats.avaliable'] = RangeQuery(JSON.parse(req.query.avaliableSeats), 'number');
+  }
   // Sorting query
   if (req.query.sort) {
-    const sort = req.query.sort.split(',').reduce((res, sortQuery) => {
-      if (sortQuery[0] === '-') {
-        res[sortQuery.substr(1)] = -1;
-      } else {
-        res[sortQuery.substr(1)] = 1;
+    sort = req.query.sort.split(',').reduce((prev, sortQuery) => {
+      let sortFields = sortQuery.substr(1);
+      if (sortFields === 'fullCapacity') {
+        sortFields = 'seats.capacity';
       }
-      return res;
-    });
-    query = query.sort(sort);
-  }
-  // Fields selecting query
-  if (req.query.fields) {
-    const fields = req.query.fields.split(',').join(' ');
-    query = query.select(fields);
+      if (sortFields === 'reservedSeats') {
+        sortFields = 'seats.reserved';
+      }
+      if (sortFields === 'avaliableSeats') {
+        sortFields = 'seats.avaliable';
+      }
+
+      if (sortQuery[0] === '-') {
+        prev[sortFields] = -1;
+      } else if (sortQuery[0] === '+') {
+        prev[sortFields] = 1;
+      }
+      return prev;
+    }, {});
   }
   // Limit query
   if (req.query.limit) {
-    query = query.limit(Number.parseInt(req.query.limit, 10));
+    limit = Number.parseInt(req.query.limit, 10);
   }
   // Skip query
   if (req.query.skip) {
-    query = query.limit(Number.parseInt(req.query.skip, 10));
+    skip = Number.parseInt(req.query.skip, 10);
+  }
+  // Fields selecting query
+  if (req.query.fields) {
+    fields = req.query.fields.split(',').map((field) => {
+      if (field === 'fullCapacity') {
+        return 'seats.capacity';
+      }
+      if (field === 'reservedSeats') {
+        return 'seats.reserved';
+      }
+      if (field === 'avaliableSeats') {
+        return 'seats.avaliable';
+      }
+      return field;
+    }).join(' ');
   }
 
-  const rounds = query.exec();
+  // User ID
+  if (req.query.userId) {
+    Ticket.find({ user: req.query.userId }).count().exec((err, count) => {
+      if (err) {
+        res.json({
+          success: false,
+          errors: retrieveError(5, err),
+        });
+      }
 
-  res.json({
-    success: true,
-    rounds,
-    pageInfo: {
+      Ticket.find({ user: req.query.userId })
+        .populate('round', fields, filter, { sort, skip, limit })
+        .exec((err, results) => {
+          if (err) {
+            return res.json({
+              success: false,
+              errors: retrieveError(5, err),
+            });
+          }
 
-    }
-  })
+          res.json({
+            success: true,
+            results: results.map(res => res.round),
+            queryInfo: {
+              total: count,
+              limit,
+              skip,
+              user: req.query.userId,
+            }
+          });
+        });
+    });
+  } else if (req.query.ticketId) {
+    Ticket.findById(req.query.ticketId)
+      .populate('round', fields, filter, { sort, skip, limit })
+      .exec((err, result) => {
+        if (err) {
+          return res.json({
+            success: false,
+            errors: retrieveError(5, err),
+          });
+        } else if (!result) {
+          return res.json({
+            success: false,
+            errors: retrieveError(26),
+          });
+        }
+
+        res.json({
+          success: true,
+          results: result.round,
+          queryInfo: {
+            total: 1,
+            limit,
+            skip,
+            user: req.query.userId,
+          }
+        });
+    })
+  } else {
+    // Create query from filter
+    let query = Round.find(filter);
+    // Counting all results
+    query.count().exec((err, count) => {
+      if (err) {
+        return res.json({
+          success: false,
+          errors: retrieveError(5, err),
+        });
+      }
+
+      // Custom query by input filter, fields, sort, skip ,limit
+      query = Round.find(filter)
+        .select(fields)
+        .sort(sort)
+        .skip(skip)
+        .limit(limit);
+      // Execute query
+      query.exec((err, rounds) => {
+        if (err) {
+          return res.json({
+            success: false,
+            errors: retrieveError(5, err),
+          });
+        }
+
+        res.json({
+          success: true,
+          results: rounds,
+          queryInfo: {
+            total: count,
+            limit,
+            skip,
+          }
+        });
+      });
+    });
+  }
 });
 
 /**
@@ -82,7 +208,7 @@ router.get('/', (req, res) => {
  * @param {ObjectId} activityId - Related activity id.
  * @param {Date} start - Start time of round.
  * @param {Date} end - End time of round.
- * @param {number} [reserved] - Number of reserved seats.
+ * @param {number} [reservedSeats] - Number of reserved seats.
  * @param {number} fullCapacity - Number of full capacity seats.
  */
 router.post('/', (req, res) => {
@@ -115,8 +241,8 @@ router.post('/', (req, res) => {
       round.end = new Date(req.body.end);
       round.tickets = [];
       round.seats.fullCapacity = req.body.fullCapacity;
-      if (req.body.reserved) {
-        round.seats.reserved = req.body.reserved;
+      if (req.body.reservedSeats) {
+        round.seats.reserved = req.body.reservedSeats;
       }
 
       // Save User and check for error
@@ -128,7 +254,7 @@ router.post('/', (req, res) => {
 
         res.status(201).json({
           message: 'Create Round successfull',
-          round: _round
+          round: _round,
         });
       });
     });
@@ -138,6 +264,7 @@ router.post('/', (req, res) => {
 /**
  * Get Round by specific ID
  * Access at GET http://localhost:8080/api/rounds/:id
+ * @param {string} [fields] - Fields selected (ex. "name,fullCapacity").
  */
 router.get('/:id', (req, res) => {
   // Get round from instance round model by ID
