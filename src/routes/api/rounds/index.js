@@ -105,7 +105,7 @@ router.get('/', (req, res) => {
   if (req.query.userId) {
     Ticket.find({ user: req.query.userId }).count().exec((err, count) => {
       if (err) {
-        res.json({
+        res.status(500).json({
           success: false,
           errors: retrieveError(5, err),
         });
@@ -138,12 +138,12 @@ router.get('/', (req, res) => {
       .populate('round', fields, filter, { sort, skip, limit })
       .exec((err, result) => {
         if (err) {
-          return res.json({
+          return res.status(500).json({
             success: false,
             errors: retrieveError(5, err),
           });
         } else if (!result) {
-          return res.json({
+          return res.status(403).json({
             success: false,
             errors: retrieveError(26),
           });
@@ -166,7 +166,7 @@ router.get('/', (req, res) => {
     // Counting all results
     query.count().exec((err, count) => {
       if (err) {
-        return res.json({
+        return res.status(500).json({
           success: false,
           errors: retrieveError(5, err),
         });
@@ -181,7 +181,7 @@ router.get('/', (req, res) => {
       // Execute query
       query.exec((err, rounds) => {
         if (err) {
-          return res.json({
+          return res.status(500).json({
             success: false,
             errors: retrieveError(5, err),
           });
@@ -212,7 +212,7 @@ router.get('/', (req, res) => {
  * @param {number} fullCapacity - Number of full capacity seats.
  *
  * @return {boolean} success - Successful querying flag.
- * @return {Object} round - Created Round.
+ * @return {Round} results - Created Round.
  */
 router.post('/', (req, res) => {
   // Create a new instance of the User model
@@ -224,14 +224,14 @@ router.post('/', (req, res) => {
     Activity.findById(req.body.activityId, (err, activitiy) => {
       // Handle error from Activity.findById
       if (err) {
-        res.json({
+        return res.status(500).json({
           success: false,
           errors: retrieveError(5, err),
         });
       }
       // Related activity not found
       if (!activitiy) {
-        res.json({
+        return res.status(403).json({
           success: false,
           errors: retrieveError(25),
         });
@@ -252,14 +252,23 @@ router.post('/', (req, res) => {
       round.save((err, _round) => {
         // Handle error from save
         if (err) {
-          return res.send(err);
+          return res.status(500).json({
+            success: false,
+            errors: retrieveError(5, err),
+          });
         }
 
         res.status(201).json({
+          success: true,
           message: 'Create Round successfull',
-          round: _round,
+          results: _round,
         });
       });
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      errors: retrieveError(5, 'Missing required field.'),
     });
   }
 });
@@ -268,20 +277,109 @@ router.post('/', (req, res) => {
  * Get Round by specific ID
  * Access at GET http://localhost:8080/api/rounds/:id
  * @param {string} [fields] - Fields selected (ex. "name,fullCapacity").
+ *
+ * @return {boolean} success - Successful querying flag.
+ * @return {Round} results - The Matched Round by id.
  */
 router.get('/:id', (req, res) => {
+  let fields;
+
+  // Fields selecting query
+  if (req.query.fields) {
+    fields = req.query.fields.split(',').map((field) => {
+      if (field === 'fullCapacity') {
+        return 'seats.capacity';
+      }
+      if (field === 'reservedSeats') {
+        return 'seats.reserved';
+      }
+      if (field === 'avaliableSeats') {
+        return 'seats.avaliable';
+      }
+      return field;
+    }).join(' ');
+  }
   // Get round from instance round model by ID
-  Round.findById(req.params.id, (err, round) => {
+  Round.findById(req.params.id, fields, (err, round) => {
+    // Handle error from Round.findById
     if (err) {
-      // Handle error from Round.findById
-      return res.send(err);
+      return res.status(500).json({
+        success: false,
+        errors: retrieveError(5, err),
+      });
+    }
+    // Round isn't exist.
+    if (!round) {
+      return res.status(403).json({
+        success: false,
+        errors: retrieveError(26),
+      });
     }
 
     res.json({
       success: true,
-      data: {
-        round,
+      results: round,
+    });
+  });
+});
+
+/**
+ * PUT Edit round of specific ID
+ * Access at PUT http://localhost:8080/api/rounds/:id
+ * @param {string} [name] - Round name.
+ * @param {Date} [start] - Start time of round.
+ * @param {Date} [end] - End time of round.
+ * @param {number} [reservedSeats] - Number of reserved seats.
+ * @param {number} [fullCapacity] - Number of full capacity seats.
+ *
+ * @return {boolean} success - Successful querying flag.
+ * @return {Round} results - Updated Round.
+ */
+router.put('/:id', (req, res) => {
+  Round.findById(req.params.id, (err, round) => {
+    if (req.body.name) {
+      round.name = req.body.name;
+    }
+    if (req.body.start) {
+      round.start = new Date(req.body.start);
+    }
+    if (req.body.end) {
+      round.end = new Date(req.body.end);
+    }
+    if (req.body.fullCapacity) {
+      round.seats.fullCapacity = req.body.fullCapacity;
+    }
+
+    round.save((err, _round) => {
+      if (err) {
+        return res.status(500).json({
+          success: false,
+          errors: retrieveError(5, err),
+        });
       }
+      res.status(202).json({
+        success: true,
+        results: _round,
+      });
+    });
+  });
+});
+
+/**
+ * DELETE Remove round by specific ID
+ * Access at DELETE http://localhost:8080/api/rounds/:id
+ */
+router.delete('/:id', (req, res) => {
+  Round.findByIdAndRemove(req.params.id, (err) => {
+    if (err) {
+      return res.status(500).json({
+        success: false,
+        errors: retrieveError(5, err),
+      });
+    }
+    res.status(202).json({
+      success: true,
+      message: `Round id ${req.params.id} was removed.`,
     });
   });
 });

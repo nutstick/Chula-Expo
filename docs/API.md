@@ -2,7 +2,7 @@
 
 Refreshing token
 ```
-GET api/token/
+GET api/token
 ```
 
 ## Activity's Rounds
