@@ -1,28 +1,23 @@
 // const _ = require('lodash');
 const LocalStrategy = require('passport-local').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
 // const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
-const User = require('../models/User');
+const { User } = require('../models');
 
 module.exports = {
-  generateToken: (req, res, next) => {
-    if (!req.user) {
-      return res.redirect('/login');
-    } else if (req.token) {
-      return next();
-    }
-    req.token = 
-
-    next();
-  },
   initialize: (passport) => {
     passport.serializeUser((user, done) => {
-      done(null, user.id);
+      done(null, {
+        id: user.id,
+        admin: user.admin,
+      });
     });
 
-    passport.deserializeUser((id, done) => {
-      User.findById(id, (err, user) => {
+    passport.deserializeUser((user, done) => {
+      User.findById(user.id, (err, user) => {
         done(err, user);
       });
     });
@@ -116,6 +111,24 @@ module.exports = {
           });
         });
       }
+    }));
+
+    /**
+     * JWT Token
+     */
+    passport.use(new JwtStrategy({
+      secretOrKey: process.env.JWT_SECRET,
+      jwtFromRequest: ExtractJwt.fromAuthHeader(),
+    }, (jwtPayload, done) => {
+      User.findById(jwtPayload.sub, (err, user) => {
+        if (err) {
+          return done(err, false);
+        } else if (user) {
+          done(null, user);
+        } else {
+          done(null, false);
+        }
+      });
     }));
 
     /**

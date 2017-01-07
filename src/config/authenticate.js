@@ -10,6 +10,14 @@ module.exports = {
     res.redirect('/login');
   },
 
+  isAdmin: (req, res, next) => {
+    if (req.user && req.user.admin === 'Admin') {
+      next();
+    } else {
+      res.send(401, 'Unauthorized');
+    }
+  },
+
   deserializeToken: (req, res, next) => {
     // check header or url parameters or post parameters for token
     const token = req.body.token || req.query.token || req.headers['x-access-token'];

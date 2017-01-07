@@ -152,8 +152,8 @@ UserSchema.methods.gravatar = function gravatar(size) {
  */
 UserSchema.methods.generateToken = function generateToken() {
   return jwt.sign({
-    id: this.id,
-  }, process.env.SESSION_SECRET, {
+    sub: this.id,
+  }, process.env.JWT_SECRET, {
     expiresIn: 8 * 60 * 60 /* expires in 8 hrs */,
   });
 };

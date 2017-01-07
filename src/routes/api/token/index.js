@@ -1,11 +1,11 @@
 const express = require('express');
+const passport = require('passport');
 const User = require('../../../models/User');
-const deserializeToken = require('../../../config/authenticate').deserializeToken;
 const retrieveError = require('../../../tools/retrieveError');
 
 const router = express.Router();
 
-router.get('/', deserializeToken, (req, res) => {
+router.get('/', passport.authenticate('jwt', { session: false }), (req, res) => {
   User.findById(req.user.id, (err, user) => {
     if (err) {
       return res.json({

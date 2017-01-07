@@ -48,13 +48,14 @@ describe('API Token', () => {
       user.save((err, user) => {
         expect(err).to.be.null;
         const token = jwt.sign({
-          id: user.id,
-        }, process.env.SESSION_SECRET, {
+          sub: user.id,
+        }, process.env.JWT_SECRET, {
           expiresIn: 8 * 60 * 60 /* expires in 8 hrs */,
         });
 
         chai.request(server)
           .get('/api/token')
+          .set('Authorization', `JWT ${token}`)
           .send({ token })
           .end((err, res) => {
             expect(err).to.be.null;
@@ -65,7 +66,7 @@ describe('API Token', () => {
             expect(res.body.data).have.property('token');
             expect(res.body.data.token).to.be.a('string');
 
-            jwt.verify(res.body.data.token, process.env.SESSION_SECRET, (err, { id }) => {
+            jwt.verify(res.body.data.token, process.env.JWT_SECRET, (err, { id }) => {
               expect(err).to.be.null;
               expect(id).to.eql(user.id);
             });
@@ -74,11 +75,11 @@ describe('API Token', () => {
       });
     });
 
-    it('should return error if use randon ObjectId', (done) => {
+    it('should return error if use random ObjectId', (done) => {
       const id = ObjectId();
       const token = jwt.sign({
-        id,
-      }, process.env.SESSION_SECRET, {
+        sub: id,
+      }, process.env.JWT_SECRET, {
         expiresIn: 8 * 60 * 60 /* expires in 8 hrs */,
       });
 
@@ -88,7 +89,7 @@ describe('API Token', () => {
         .end((err, res) => {
           expect(err).to.be.not.null;
 
-          expect(res).to.have.status(403);
+          expect(res).to.have.status(401);
           expect(res.body).to.have.property('success').eq(false);
           expect(res.body).to.have.property('errors');
           expect(res.body.errors).to.have.property('code').eq('24');

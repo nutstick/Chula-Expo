@@ -332,7 +332,7 @@ router.get('/:id', (req, res) => {
  * @param {number} [reservedSeats] - Number of reserved seats.
  * @param {number} [fullCapacity] - Number of full capacity seats.
  *
- * @return {boolean} success - Successful querying flag.
+ * @return {boolean} success - Successful updating flag.
  * @return {Round} results - Updated Round.
  */
 router.put('/:id', (req, res) => {
@@ -368,6 +368,9 @@ router.put('/:id', (req, res) => {
 /**
  * DELETE Remove round by specific ID
  * Access at DELETE http://localhost:8080/api/rounds/:id
+ *
+ * @return {boolean} success - Successful removing flag.
+ * @return {string} message - Remove message.
  */
 router.delete('/:id', (req, res) => {
   Round.findByIdAndRemove(req.params.id, (err) => {
