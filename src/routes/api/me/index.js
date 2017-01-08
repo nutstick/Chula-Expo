@@ -160,13 +160,13 @@ router.get('/games', (req, res) => {
 
 /**
  * Get all bookmark activities
- * Access at GET http://localhost:8080/api/me/activities
+ * Access at GET http://localhost:8080/api/me/bookmark_activities
  */
-router.get('/activities', (req, res) => {});
+router.get('/bookmark_activities', (req, res) => {});
 
 /**
  * Get all reserved reservable activities's rounds
- * Access at GET http://localhost:8080/api/me/rounds
+ * Access at GET http://localhost:8080/api/me/reserved_rounds
  * @param {string} [name] - Get matched round's name.
  * @param {Date | RangeQuery<Date>} [start] - Get by start time.
  * @param {Date | RangeQuery<Date>} [end] - Get by end time.
@@ -184,7 +184,7 @@ router.get('/activities', (req, res) => {});
  * @return {number} queryInfo.limit - Limit that was used.
  * @return {number} queryInfo.skip - Skip that was used.
  */
-router.get('/rounds', (req, res) => {
+router.get('/reserved_rounds', (req, res) => {
   const filter = {};
   let sort = {};
   let limit;
