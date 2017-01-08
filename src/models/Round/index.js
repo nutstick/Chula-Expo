@@ -51,38 +51,41 @@ RoundSchema.pre('save', function save(next) {
 /**
  * Find and reserve method
  */
-RoundSchema.statics.findAndReserve = userId => new Promise((resolve, reject) => {
-  if (this.reservedSeats + 1 > this.avaliableSeats) {
-    return reject({
-      error: 'Can\'t reserve. Seating\'s fully booked'
-    });
-  }
-
-  User.findById(userId, (err, res) => {
+RoundSchema.method.reserve = userId => new Promise((resolve, reject) => {
+  User.findById(userId, (err, user) => {
     if (err) {
       return reject({
         error: err,
       });
-    } else if (!res) {
+    } else if (!user) {
       return reject({
         error: 'User dosen\'t exist',
       });
     }
-    this.reservedSeats = this.reservedSeats + 1;
-    this.reservedUsers.push(userId);
-
-    new Ticket({ userId, roundId: this.id, })
-      .save((err, ticket) => {
-        if (err) {
-          return reject(err);
-        }
-        this.save((err) => {
-          if (err) {
-            return reject(err);
-          }
-          resolve(ticket);
-        });
+    if (this.reservedSeats + 1 > this.avaliableSeats) {
+      return reject({
+        error: 'Can\'t reserve. Seating\'s fully booked'
       });
+    }
+
+    const ticket = new Ticket({ userId, roundId: user.id, })
+
+    this.seats.reserved++;
+    this.tickets.push(ticket);
+
+    user.reservedActivity.push({
+      roundId: this.id,
+      ticket: ticket.id,
+      reservedAt: new Date(),
+    });
+
+    Promise.all([
+      this.save(),
+      user.save(),
+      ticket.save(),
+    ]).then((results) => {
+      resolve(results[2]);
+    }).catch(reject);
   });
 });
 
