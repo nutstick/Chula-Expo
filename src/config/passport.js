@@ -3,6 +3,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
+const retrieveError = require('../tools/retrieveError');
 // const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 const { User } = require('../models');
@@ -126,7 +127,7 @@ module.exports = {
         } else if (user) {
           done(null, user);
         } else {
-          done(null, false);
+          done(false, false);
         }
       });
     }));

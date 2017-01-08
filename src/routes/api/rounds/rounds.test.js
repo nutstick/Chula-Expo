@@ -66,7 +66,7 @@ describe('API Rounds', () => {
       chai.request(server)
         .get('/api/rounds')
         .query({
-          sort: '+start',
+          sort: 'start',
           fields: '_id'
         })
         .send()
@@ -87,7 +87,7 @@ describe('API Rounds', () => {
       chai.request(server)
         .get('/api/rounds')
         .query({
-          sort: '+start',
+          sort: '-start',
           skip: 1,
           limit: 5,
           fields: 'name,start,end'
@@ -111,7 +111,7 @@ describe('API Rounds', () => {
       chai.request(server)
         .get('/api/rounds')
         .query({
-          sort: '+start',
+          sort: 'start',
           skip: 3,
           limit: 5,
           fields: 'name,start,end'
@@ -135,7 +135,7 @@ describe('API Rounds', () => {
       chai.request(server)
         .get('/api/rounds')
         .query({
-          sort: '+start,-end',
+          sort: 'start,-end',
           skip: 7,
           limit: 12,
           fields: 'name,start,end'
@@ -160,7 +160,7 @@ describe('API Rounds', () => {
       chai.request(server)
         .get('/api/rounds')
         .query({
-          sort: '+start',
+          sort: 'start',
           userId,
           skip: 0,
           fields: 'name,start,end'

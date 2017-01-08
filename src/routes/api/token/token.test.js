@@ -92,7 +92,7 @@ describe('API Token', () => {
           expect(res).to.have.status(401);
           expect(res.body).to.have.property('success').eq(false);
           expect(res.body).to.have.property('errors');
-          expect(res.body.errors).to.have.property('code').eq('24');
+          expect(res.body.errors).to.have.property('code').eq('22');
           done();
         });
     });

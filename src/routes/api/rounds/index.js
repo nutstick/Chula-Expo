@@ -58,7 +58,7 @@ router.get('/', (req, res) => {
   // Sorting query
   if (req.query.sort) {
     sort = req.query.sort.split(',').reduce((prev, sortQuery) => {
-      let sortFields = sortQuery.substr(1);
+      let sortFields = sortQuery[0] === '-' ? sortQuery.substr(1) : sortQuery;
       if (sortFields === 'fullCapacity') {
         sortFields = 'seats.capacity';
       }
@@ -71,7 +71,7 @@ router.get('/', (req, res) => {
 
       if (sortQuery[0] === '-') {
         prev[sortFields] = -1;
-      } else if (sortQuery[0] === '+') {
+      } else {
         prev[sortFields] = 1;
       }
       return prev;
@@ -248,7 +248,7 @@ router.post('/', (req, res) => {
         round.seats.reserved = req.body.reservedSeats;
       }
 
-      // Save User and check for error
+      // Save Round and check for error
       round.save((err, _round) => {
         // Handle error from save
         if (err) {
@@ -359,6 +359,7 @@ router.put('/:id', (req, res) => {
       }
       res.status(202).json({
         success: true,
+        message: 'Update round successfull',
         results: _round,
       });
     });
