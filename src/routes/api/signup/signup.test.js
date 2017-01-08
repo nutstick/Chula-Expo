@@ -51,7 +51,7 @@ describe('API Signup', () => {
           expect(res).to.have.status(200);
           expect(res.body).to.be.a('object');
           expect(res.body).to.have.property('success').eql(true);
-          expect(res.body.data.token).to.be.a('string');
+          expect(res.body.results.token).to.be.a('string');
           done();
         });
     });
@@ -84,7 +84,7 @@ describe('API Signup', () => {
           expect(res).to.have.status(200);
           expect(res.body).to.be.a('object');
           expect(res.body).to.have.property('success').eql(true);
-          expect(res.body.data.token).to.be.a('string');
+          expect(res.body.results.token).to.be.a('string');
           done();
         });
     });
