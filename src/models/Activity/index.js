@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 
-const ObjectId = mongoose.Schema.Types.ObjectId;
-
 /**
  * Activity Schema
  */
@@ -19,14 +17,22 @@ const ActivitySchema = new mongoose.Schema({
     longtitute: Number
   },
   // faculty: { type: String, required: true, index: true },
-  reservable: [{ type: ObjectId,
-    ref: 'Round' }],
+  reservable: [{
+    type: ObjectId,
+    ref: 'Round'
+  }],
   startTime: { type: Date, required: true, index: true },
   endTime: Date
 });
+
 ActivitySchema.index({
-  name: 'text', description: 'text', shortDescription: 'text' },
-  { name: 'Activities Text Indexing', weights: { name: 10, shortDescription: 4, description: 2 } });
+  name: 'text',
+  description: 'text',
+  shortDescription: 'text'
+}, {
+  name: 'Activities Text Indexing',
+  weights: { name: 10, shortDescription: 4, description: 2 }
+});
 
 const Activity = mongoose.model('Activity', ActivitySchema);
 
