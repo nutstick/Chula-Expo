@@ -1,6 +1,8 @@
 const express = require('express');
 const Activity = require('../../../models/Activity');
 const _ = require('lodash');
+const retrieveError = require('../../../tools/retrieveError');
+const RangeQuery = require('../../../tools/RangeQuery');
 
 const router = express.Router();
 // Get all activities
@@ -16,6 +18,13 @@ router.get('/', (req, res) => {
   if (req.query.sort) {
     sort = req.query.sort.split(',').reduce((prev, sortQuery) => {
       let sortFields = sortQuery[0] === '-' ? sortQuery.substr(1) : sortQuery;
+      if (sortFields === 'locationDesc') {
+        sortFields = 'location.desc';
+      } else if (sortFields === 'locationLat') {
+        sortFields = 'location.latitute';
+      } else if (sortFields === 'locationLong') {
+        sortFields = 'location.longtitute';
+      }
       if (sortQuery[0] === '-') {
         prev[sortFields] = -1;
       } else {
@@ -24,13 +33,39 @@ router.get('/', (req, res) => {
       return prev;
     }, {});
   }
+  // RangeQuery of startTime and endTime
+  // Activities's start time range query
+  if (req.query.startTime) {
+    filter.startTime = RangeQuery(JSON.parse(req.query.startTime), 'Date');
+  }
+  // Activities's end time range query
+  if (req.query.endTime) {
+    filter.endTime = RangeQuery(JSON.parse(req.query.endTime), 'Date');
+  }
+  // Name Query
+  // http://localhost:3000/?name=John
+  if (req.query.name) {
+    filter.name = req.query.name;
+  }
+  // Location description query
+  // http://localhost:3000/?location=Larngear
+  if (req.query.location) {
+    filter.location = { desc: req.query.location };
+  }
   // field selector
   // http://localhost:3000/?fields=name,faculty
   let fields;
   if (req.query.fields) {
     fields = req.query.fields.replace(',', ' ');
+    fields = fields.replace('locationDesc', 'location.desc');
+    fields = fields.replace('locationLat', 'location.latitute');
+    fields = fields.replace('locationLong', 'location.longtitute');
   }
-
+  // Text search engine
+  // http://localhost:3000/?search=searchString
+  if (req.query.search) {
+    filter.$text = { $search: req.query.search };
+  }
   let query = Activity.find(filter);
 
   if (sort) {
@@ -56,13 +91,19 @@ router.get('/', (req, res) => {
     });
   });
 });
-//Get activities with sorting
-//router.get('')
+
 // Get User by specific ID
-// Access at GET http://localhost:8080/api/activities/:id
+// Access at GET http://localhost:3000/api/activities/:id
 router.get('/:id', (req, res) => {
   // Get User from instance User model by ID
-  Activity.findById(req.params.id, (err, act) => {
+  let fields = '';
+  if (req.query.fields) {
+    fields = req.query.fields.replace(',', ' ');
+    fields = fields.replace('locationDesc', 'location.desc');
+    fields = fields.replace('locationLat', 'location.latitute');
+    fields = fields.replace('locationLong', 'location.longtitute');
+  }
+  Activity.findById(req.params.id).select(fields).exec((err, act) => {
     if (err) {
       // Handle error from User.findById
       return res.status(404).send('Error 404 Not Found!');
@@ -72,7 +113,7 @@ router.get('/:id', (req, res) => {
   });
 });
 // Create a new activity
-// Access at POST http://localhost:8080/api/activities
+// Access at POST http://localhost:3000/api/activities
 router.post('/', (req, res, next) => {
   // Create a new instance of the User model
   const activity = new Activity();
@@ -85,7 +126,9 @@ router.post('/', (req, res, next) => {
   activity.imgUrl = req.body.imgUrl;
   activity.videoUrl = req.body.videoUrl;
   activity.tags = req.body.tags;
-  activity.location = req.body.location;
+  activity.location.desc = req.body.locationDesc;
+  activity.location.latitute = req.body.locationLat;
+  activity.location.longtitute = req.body.locationLong;
   activity.faculty = req.body.faculty;
   activity.reservable = req.body.reservable;
   activity.startTime = req.body.startTime;
@@ -101,14 +144,23 @@ router.post('/', (req, res, next) => {
     res.status(300).json(_act);
   });
 });
-// Update an existing library via PUT(JSON format)
+// Update an existing activity via PUT(JSON format)
 // ex. { "name","EditName"}
-// Access at PUT http://localhost:8080/api/activities/:id
+// Access at PUT http://localhost:3000/api/activities/:id
 router.put('/:id', (req, res) => {
   const updateFields = _.pick(req.body, ['name', 'thumbnialsUrl', 'shortDescription', 'description', 'imgUrl', 'videoUrl', 'tags', 'location', 'reservable', 'startTime', 'endTime']);
+  if (updateFields.startTime) {
+    updateFields.startTime = new Date(updateFields.startTime);
+  }
+  if (updateFields.endTime) {
+    updateFields.endTime = new Date(updateFields.endTime);
+  }
   Activity.findById(req.params.id, (err, act) => {
     if (err) {
       // Handle error from User.findById
+      return res.status(404).send('Error 404 Not Found!');
+    }
+    if (!act) {
       return res.status(404).send('Error 404 Not Found!');
     }
     _.assignIn(act, updateFields);
@@ -121,4 +173,21 @@ router.put('/:id', (req, res) => {
     });
   });
 });
+// Delete an existing activity via DEL.
+// Access at DEL http://localhost:3000/api/activities/:id
+router.delete('/:id', (req, res) => {
+  Activity.findByIdAndRemove(req.params.id, (err) => {
+    if (err) {
+      return res.status(500).json({
+        success: false,
+        errors: retrieveError(5, err),
+      });
+    }
+    res.status(202).json({
+      success: true,
+      message: `An Activity with id ${req.params.id} was removed.`,
+    });
+  });
+});
+
 module.exports = router;

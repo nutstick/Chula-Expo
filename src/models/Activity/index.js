@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+const ObjectId = mongoose.Schema.Types.ObjectId;
 /**
  * Activity Schema
  */
@@ -12,7 +13,7 @@ const ActivitySchema = new mongoose.Schema({
   videoUrl: [String],
   tags: [{ type: String, index: true }],
   location: {
-    desc: String,
+    desc: { type: String, index: true },
     latitute: Number,
     longtitute: Number
   },
@@ -22,7 +23,7 @@ const ActivitySchema = new mongoose.Schema({
     ref: 'Round'
   }],
   startTime: { type: Date, required: true, index: true },
-  endTime: Date
+  endTime: { type: Date, required: true, index: true }
 });
 
 ActivitySchema.index({
