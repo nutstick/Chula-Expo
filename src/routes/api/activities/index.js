@@ -1,5 +1,6 @@
 const express = require('express');
 const Activity = require('../../../models/Activity');
+const _ = require('lodash');
 
 const router = express.Router();
 // Get all activities
@@ -100,5 +101,24 @@ router.post('/', (req, res, next) => {
     res.status(300).json(_act);
   });
 });
-
+// Update an existing library via PUT(JSON format)
+// ex. { "name","EditName"}
+// Access at PUT http://localhost:8080/api/activities/:id
+router.put('/:id', (req, res) => {
+  const updateFields = _.pick(req.body, ['name', 'thumbnialsUrl', 'shortDescription', 'description', 'imgUrl', 'videoUrl', 'tags', 'location', 'reservable', 'startTime', 'endTime']);
+  Activity.findById(req.params.id, (err, act) => {
+    if (err) {
+      // Handle error from User.findById
+      return res.status(404).send('Error 404 Not Found!');
+    }
+    _.assignIn(act, updateFields);
+    act.save((err, updatedAct) => {
+      if (err) {
+        // Handle error from save
+        res.status(400).send();
+      }
+      res.json(updatedAct);
+    });
+  });
+});
 module.exports = router;
