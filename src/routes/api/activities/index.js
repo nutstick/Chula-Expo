@@ -4,21 +4,31 @@ const Activity = require('../../../models/Activity');
 const router = express.Router();
 // Get all activities
 router.get('/', (req, res) => {
+  // filtering tag with a tags query.
+  // http://localhost:3000/?tags=prize,rewards
   const filter = {};
   if (req.query.tags) {
-    filter.tags = req.query.tags;
+    filter.tags = { $in: req.query.tags.split(',') };
   }
-  // "createAt,-startDate"
-  const sort = {};
-  req.query.sort.spilt(',').forEach((sortField) => {
-    if (sortField[0] === '-') {
-      sort[sortField.substr(1)] = -1;
-    } else if (sortField[0] === '+') {
-      sort[sortField.substr(0)] = 1;
-    }
-  });
-
-  const fields = req.query.fields.replace(',', ' ');
+  //  http://localhost:3000/?sort=createAt,-startDate
+  let sort = {};
+  if (req.query.sort) {
+    sort = req.query.sort.split(',').reduce((prev, sortQuery) => {
+      let sortFields = sortQuery[0] === '-' ? sortQuery.substr(1) : sortQuery;
+      if (sortQuery[0] === '-') {
+        prev[sortFields] = -1;
+      } else {
+        prev[sortFields] = 1;
+      }
+      return prev;
+    }, {});
+  }
+  // field selector
+  // http://localhost:3000/?fields=name,faculty
+  let fields;
+  if (req.query.fields) {
+    fields = req.query.fields.replace(',', ' ');
+  }
 
   let query = Activity.find(filter);
 
@@ -28,22 +38,25 @@ router.get('/', (req, res) => {
   if (fields) {
     query.select(fields);
   }
-
+  // limiter on each query
+  // http://localhost:3000/?limit=10
   if (req.query.limit) {
-    query = query.limit(req.query.limit);
+    query = query.limit(Number.parseInt(req.query.limit, 10));
   }
+  // Offset of a query data
+  // http://localhost:3000/?limit=10
   if (req.query.skip) {
-    query = query.skip(req.query.skip);
+    query = query.skip(Number.parseInt(req.query.skip, 10));
   }
 
-  const activities = query.exec();
-
-  res.json({
-    data: activities,
+  query.exec((err, _act) => {
+    res.json({
+      data: _act
+    });
   });
 });
 //Get activities with sorting
-router.get('')
+//router.get('')
 // Get User by specific ID
 // Access at GET http://localhost:8080/api/activities/:id
 router.get('/:id', (req, res) => {
