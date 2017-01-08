@@ -179,7 +179,7 @@ router.get('/bookmark_activities', (req, res) => {});
  *
  * @return {boolean} success - Successful querying flag.
  * @return {Round[]} results - Result rounds for the query.
- * @return {Object} queryInfo - Metadat query information.
+ * @return {Object} queryInfo - Metadata query information.
  * @return {number} queryInfo.total - Total numbers of documents in collection that match the query.
  * @return {number} queryInfo.limit - Limit that was used.
  * @return {number} queryInfo.skip - Skip that was used.

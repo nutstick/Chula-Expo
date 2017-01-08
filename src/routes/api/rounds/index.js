@@ -23,8 +23,8 @@ const router = express.Router();
  * Accessible fields { name, activityId, start, end, fullCapacity, avaliableSeats, reservedSeats }
  *
  * @return {boolean} success - Successful querying flag.
- * @return {Round[]} results - Result rounds for the query.
- * @return {Object} queryInfo - Metadat query information.
+ * @return {Round[]} results - Result rounds from the query.
+ * @return {Object} queryInfo - Metadata query information.
  * @return {number} queryInfo.total - Total numbers of documents in collection that match the query.
  * @return {number} queryInfo.limit - Limit that was used.
  * @return {number} queryInfo.skip - Skip that was used.
@@ -337,6 +337,21 @@ router.get('/:id', (req, res) => {
  */
 router.put('/:id', (req, res) => {
   Round.findById(req.params.id, (err, round) => {
+    // Handle error from Round.findById
+    if (err) {
+      return res.status(500).json({
+        success: false,
+        errors: retrieveError(5, err),
+      });
+    }
+    // Round isn't exist.
+    if (!round) {
+      return res.status(403).json({
+        success: false,
+        errors: retrieveError(26),
+      });
+    }
+
     if (req.body.name) {
       round.name = req.body.name;
     }

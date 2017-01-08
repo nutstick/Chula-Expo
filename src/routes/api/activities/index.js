@@ -2,7 +2,27 @@ const express = require('express');
 const Activity = require('../../../models/Activity');
 
 const router = express.Router();
-// Get all activities
+
+/**
+ * Get Activity list
+ * Access at GET https://localhost:8080/api/activities
+ * @param {string} [name] - Get by name.
+ * @param {string} [tags] - Get by Tags.
+ * @param {Date | RangeQuery<Date>} [start] - Get by start time.
+ * @param {Date | RangeQuery<Date>} [end] - Get by end time.
+ * @param {string} [location] - Get by Location name.
+ * @param {string} [sort] - Sort fields (ex. "-startTime,+createAt").
+ * @param {string} [fields] - Fields selected (ex. "name,location").
+ * @param {number} [limit] - Number of limit per query.
+ * @param {number} [skip=0] - Offset documents.
+ *
+ * @return {boolean} success - Successful querying flag.
+ * @return {Activities[]} results - Result activities from the query.
+ * @return {Object} queryInfo - Metadata query information.
+ * @return {number} queryInfo.total - Total numbers of documents in collection that match the query.
+ * @return {number} queryInfo.limit - Limit that was used.
+ * @return {number} queryInfo.skip - Skip that was used.
+ */
 router.get('/', (req, res) => {
   // filtering tag with a tags query.
   // http://localhost:3000/?tags=prize,rewards
@@ -55,10 +75,15 @@ router.get('/', (req, res) => {
     });
   });
 });
-//Get activities with sorting
-//router.get('')
-// Get User by specific ID
-// Access at GET http://localhost:8080/api/activities/:id
+
+/**
+ * Get Activities by Id
+ * Access at GET http://localhost:8080/api/activities/:id
+ * @param {string} [fields] - Fields selected (ex. "name,location").
+ *
+ * @return {boolean} success - Successful querying flag.
+ * @return {Round} results - The Matched Activity by id.
+ */
 router.get('/:id', (req, res) => {
   // Get User from instance User model by ID
   Activity.findById(req.params.id, (err, act) => {
@@ -70,8 +95,11 @@ router.get('/:id', (req, res) => {
     res.json(act);
   });
 });
-// Create a new activity
-// Access at POST http://localhost:8080/api/activities
+
+/**
+ * Create a new activity
+ * Access at POST http://localhost:8080/api/activities
+ */
 router.post('/', (req, res, next) => {
   // Create a new instance of the User model
   const activity = new Activity();
