@@ -1,24 +1,5 @@
 const mongoose = require('mongoose');
 
-const ObjectId = mongoose.Schema.Types.ObjectId;
-
-/**
- * Location Schema
- */
- const LocationSchema = new mongoose.Schema({
-   desc: String,
-   latitute: Number,
-   longtitute: Number
- });
-
- /**
-  * ReservableSchema Schema
-  */
-  const ReservableSchema = new mongoose.Schema({
-    type: [ObjectId]// ,
-    // ref: 'round'
-  });
-
 /**
  * Activity Schema
  */
@@ -29,12 +10,19 @@ const ActivitySchema = new mongoose.Schema({
   description: { type: String, required: true },
   imgUrl: [String],
   videoUrl: [String],
-  tags: [String],
-  location: LocationSchema,
-  faculty: { type: String, required: true },
-  reservable: ReservableSchema,
-  startTime: { type: Date, required: true },
-  endTime: { type: Date, required: true },
+  tags: [{ type: String, index: true }],
+  location: {
+    desc: String,
+    latitute: Number,
+    longtitute: Number
+  },
+  // faculty: { type: String, required: true, index: true },
+  reservable: [{
+    type: ObjectId,
+    ref: 'Round'
+  }],
+  startTime: { type: Date, required: true, index: true },
+  endTime: Date
 });
 
 ActivitySchema.index({
