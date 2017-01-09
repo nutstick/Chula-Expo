@@ -25,7 +25,7 @@ describe('API Users', () => {
 
   // Test GET /users/:id
   describe('GET /api/users/:id', () => {
-    it('it should GET a user by the given id', (done) => {
+    it('should GET a user by the given id', (done) => {
       const user = new User({
         email: casual.email,
         facebook: casual.card_number(),
@@ -63,7 +63,7 @@ describe('API Users', () => {
 
   // Test POST /users
   describe('POST /api/users', () => {
-    it('it should POST new user', (done) => {
+    it('should POST new user', (done) => {
       const user = {
         email: casual.email,
         facebook: casual.card_number(),

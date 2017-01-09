@@ -24,7 +24,7 @@ describe('API Signup', () => {
   });
 
   describe('POST /api/signup', () => {
-    it('it should create new User(1)', (done) => {
+    it('should create new User(1)', (done) => {
       const user = {
         email: casual.email,
         facebook: casual.card_number(),
@@ -51,12 +51,12 @@ describe('API Signup', () => {
           expect(res).to.have.status(200);
           expect(res.body).to.be.a('object');
           expect(res.body).to.have.property('success').eql(true);
-          expect(res.body.data.token).to.be.a('string');
+          expect(res.body.results.token).to.be.a('string');
           done();
         });
     });
 
-    it('it should create new User(2)', (done) => {
+    it('should create new User(2)', (done) => {
       const user = {
         email: casual.email,
         facebook: casual.card_number(),
@@ -84,12 +84,12 @@ describe('API Signup', () => {
           expect(res).to.have.status(200);
           expect(res.body).to.be.a('object');
           expect(res.body).to.have.property('success').eql(true);
-          expect(res.body.data.token).to.be.a('string');
+          expect(res.body.results.token).to.be.a('string');
           done();
         });
     });
 
-    it('it should fail on missing `gender` field', (done) => {
+    it('should fail on missing `gender` field', (done) => {
       const user = {
         email: casual.email,
         facebook: casual.card_number(),
@@ -120,7 +120,7 @@ describe('API Signup', () => {
         });
     });
 
-    it('it should fail on incorrect match enum on `gender`', (done) => {
+    it('should fail on incorrect match enum on `gender`', (done) => {
       const user = {
         email: casual.email,
         facebook: casual.card_number(),
@@ -154,7 +154,7 @@ describe('API Signup', () => {
         });
     });
 
-    it('it should fail on missing `type` field', (done) => {
+    it('should fail on missing `type` field', (done) => {
       const user = {
         email: casual.email,
         facebook: casual.card_number(),

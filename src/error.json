@@ -1,0 +1,37 @@
+{
+  "5": {
+    "status": "500",
+    "message": "Internal Error",
+    "code": 5
+  },
+  "22": {
+    "status": "401",
+    "message": "Unauthorize.",
+    "code": "22"
+  },
+  "23": {
+    "status": "401",
+    "message": "Sign up error",
+    "code": "23"
+  },
+  "24": {
+    "status": "403",
+    "message": "Not exist User",
+    "code": "24"
+  },
+  "25": {
+    "status": "403",
+    "message": "Activity not exist",
+    "code": "25"
+  },
+  "26": {
+    "status": "403",
+    "message": "Ticket not exist",
+    "code": "26"
+  },
+  "27": {
+    "status": "403",
+    "message": "Custom validate before saving fails",
+    "code": "27"
+  }
+}

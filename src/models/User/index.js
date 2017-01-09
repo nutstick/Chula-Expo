@@ -63,6 +63,10 @@ const UserSchema = new mongoose.Schema({
   password: { type: String, select: false },
   passwordResetToken: String,
   passwordResetExpires: Date,
+  admin: {
+    type: String,
+    enum: ['Admin', 'Staff'],
+  },
 
   facebook: { type: String },
   google: { type: String },
@@ -92,7 +96,7 @@ const UserSchema = new mongoose.Schema({
   reservedActivity: [ReservedActivitySchema],
   qrcodeUrl: String,
   game: {
-    totalScore: Number,
+    totalScore: { type: Number, default: 0 },
     pending: [{
       type: ObjectId,
       ref: 'Game'
@@ -148,8 +152,8 @@ UserSchema.methods.gravatar = function gravatar(size) {
  */
 UserSchema.methods.generateToken = function generateToken() {
   return jwt.sign({
-    id: this.id,
-  }, process.env.SESSION_SECRET, {
+    sub: this.id,
+  }, process.env.JWT_SECRET, {
     expiresIn: 8 * 60 * 60 /* expires in 8 hrs */,
   });
 };
