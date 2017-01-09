@@ -3,7 +3,6 @@ const User = require('../../../models/User');
 
 const router = express.Router();
 
-<<<<<<< Updated upstream
 /**
  * Get User by specific ID
  * Access at GET http://localhost:8080/api/users/:id
@@ -14,56 +13,77 @@ router.get('/:id', (req, res) => {
     if (err) {
       // Handle error from User.findById
       return res.send(err);
-=======
-router.get('/ss', (req,res)=>{
-  var sort = req.query.sort;
-  //var age = req.query.age;
-  var filters = req.query.filters;
-  //var gender = req.query.gender;
-  //var email = req.query.email;
-  //var name = req.query.name;
-  User.find(filters).
-  sort(req.query.sort).
-  exec(function(err,user){
-    if(error){
-      res.end(error);
->>>>>>> Stashed changes
     }
     res.json(user);
   });
-})
+});
 
-router.get('/',(req,res,next)=>{
-  var filters = {}
-  if (req.query.name){
-    filter.name = req.query.name;
+router.get('/', (req, res) => {
+  const filters = {};
+  if (req.query.name) {
+    filters.name = req.query.name;
   }
-  if (req.query.age){
-    filter.age = req.query.age;
+  if (req.query.age) {
+    filters.age = req.query.age;
   }
-  if (req.query.)
-  var _age = req.query.age;
-
-  console.log(_name + _gender);
-  // console.log(filters);
-  // filters = {name:"Pun"}
-  // console.log(filters);
-  User.find(filters,function(err,user){
-    res.json(user);
-  });
+  if (req.query.type) {
+    filters.age = req.query.age;
+  }
+  try {
+    let query = User.find(filters);
+    const sort = {};
+    if (req.query.sort) {
+      req.query.sort.split(',').forEach((sortField) => {
+        if (sortField[0] === '-') {
+          sort[sortField.substr(1)] = -1;
+        } else {
+          sort[sortField.substr(0)] = 1;
+        }
+      });
+    }
+    if (sort) {
+      query.sort(sort);
+    }
+    if (req.query.select) {
+      query.select(req.query.select);
+    }
+    if (req.query.limit) {
+      query = query.limit(parseInt(req.query.limit, 10));
+    }
+    if (req.query.skip) {
+      query = query.skip(parseInt(req.query.skip, 10));
+    }
+    query.exec((err, users) => {
+      if (err) {
+        res.status(500).send(err);
+      } else {
+        res.json(users);
+      }
+    });
+  } catch (error) {
+    res.send(error);
+  }
 });
 /**
-<<<<<<< Updated upstream
- * Create User
- * Access at POST http://localhost:8080/api/users
- */
-router.post('/', (req, res) => {
-=======
 * Create User
 * Access at POST http://localhost:8080/api/users
 */
-router.post('/', (req, res, next) => {
->>>>>>> Stashed changes
+router.delete('/remove/:id', (req, res) => {
+  User.remove({ _id: req.params.id }, (err, users) => {
+    if (err) {
+      res.status(500).send(err);
+    } else {
+      res.json(users);
+    }
+  });
+});
+// update specific user
+router.post('/update/:id', (req, res) => {
+  User.update({ _id: req.params.id }, req.body.user, { upsert: true }, (err, users) => {
+    res.json(users);
+  });
+});
+router.post('/', (req, res) => {
   // Create a new instance of the User model
   const user = new User();
 
@@ -91,7 +111,7 @@ router.post('/', (req, res, next) => {
 * Get User by specific ID
 * Access at GET http://localhost:8080/api/users/:id
 */
-router.get('/:id', (req, res,next) => {
+router.get('/:id', (req, res) => {
   // Get User from instance User model by ID
   User.findById(req.params.id, (err, user) => {
     if (err) {
