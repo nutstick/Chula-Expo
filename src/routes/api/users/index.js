@@ -25,9 +25,11 @@ router.get('/', (req, res) => {
   }
   if (req.query.age) {
     filters.age = req.query.age;
+  } else if (req.query.age_gt) {
+    filters.age = { $gt: req.query.age_gt, $lt: req.query.age_lt };
   }
   if (req.query.type) {
-    filters.age = req.query.age;
+    filters.type = req.query.type;
   }
   try {
     let query = User.find(filters);
@@ -68,7 +70,7 @@ router.get('/', (req, res) => {
 * Create User
 * Access at POST http://localhost:8080/api/users
 */
-router.delete('/remove/:id', (req, res) => {
+router.delete('/:id', (req, res) => {
   User.remove({ _id: req.params.id }, (err, users) => {
     if (err) {
       res.status(500).send(err);
@@ -78,8 +80,17 @@ router.delete('/remove/:id', (req, res) => {
   });
 });
 // update specific user
-router.post('/update/:id', (req, res) => {
-  User.update({ _id: req.params.id }, req.body.user, { upsert: true }, (err, users) => {
+router.put('/:id', (req, res) => {
+  const user = {};
+
+  user.name = req.body.name;
+  user.email = req.body.email;
+  user.password = req.body.password;
+  user.gender = req.body.gender;
+  user.age = req.body.age;
+  user.type = req.body.type;
+  // console.log(req.params.id);
+  User.update({ _id: req.params.id }, user, { upsert: true }, (err, users) => {
     res.json(users);
   });
 });
@@ -93,6 +104,7 @@ router.post('/', (req, res) => {
   user.password = req.body.password;
   user.gender = req.body.gender;
   user.age = req.body.age;
+  user.type = req.body.type;
 
   // Save User and check for error
   user.save((err, _user) => {
