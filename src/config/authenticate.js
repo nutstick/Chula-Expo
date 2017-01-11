@@ -36,4 +36,12 @@ module.exports = {
       res.send(401, 'Unauthorized');
     }
   },
+
+  isStaff: (req, res, next) => {
+    if (req.user && (req.user.admin === 'Staff' || req.user.admin === 'Admin')) {
+      next();
+    } else {
+      res.send(401, 'Unauthorized');
+    }
+  },
 };

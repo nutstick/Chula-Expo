@@ -26,12 +26,32 @@
   },
   "26": {
     "status": "403",
-    "message": "Ticket not exist",
+    "message": "Round is not exist",
     "code": "26"
   },
   "27": {
     "status": "403",
+    "message": "Ticket is not exist",
+    "code": "27"
+  },
+  "28": {
+    "status": "403",
     "message": "Custom validate before saving fails",
     "code": "27"
+  },
+  "29": {
+    "status": "400",
+    "message": "Reserve error. User already reserve this round.",
+    "code": "29"
+  },
+  "30": {
+    "status": "403",
+    "message": "Reserve error. Seat's fully booked.",
+    "code": "30"
+  },
+  "31": {
+    "status": "403",
+    "message": "Can't cancel used ticket.",
+    "code": "31"
   }
 }

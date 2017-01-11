@@ -28,6 +28,7 @@ const router = express.Router();
  * @return {number} queryInfo.total - Total numbers of documents in collection that match the query.
  * @return {number} queryInfo.limit - Limit that was used.
  * @return {number} queryInfo.skip - Skip that was used.
+ * @return {number} queryInfo.user - User's used to query.
  */
 router.get('/', (req, res) => {
   const filter = {};
@@ -242,7 +243,7 @@ router.post('/', (req, res) => {
       round.name = req.body.name;
       round.start = new Date(req.body.start);
       round.end = new Date(req.body.end);
-      round.tickets = [];
+      // round.tickets = [];
       round.seats.fullCapacity = req.body.fullCapacity;
       if (req.body.reservedSeats) {
         round.seats.reserved = req.body.reservedSeats;

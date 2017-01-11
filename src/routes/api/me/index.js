@@ -1,6 +1,6 @@
 const express = require('express');
-const { User, Ticket } = require('../../../models');
-const { retrieveError, RangeQuery } = require('../../../tools/retrieveError');
+const { User } = require('../../../models');
+const { retrieveError } = require('../../../tools/retrieveError');
 const { isAuthenticatedByToken } = require('../../../config/authenticate');
 
 const router = express.Router();
@@ -164,120 +164,6 @@ router.get('/games', (req, res) => {
  */
 router.get('/bookmark_activities', (req, res) => {});
 
-/**
- * Get all reserved reservable activities's rounds
- * Access at GET http://localhost:8080/api/me/reserved_rounds
- * @param {string} [name] - Get matched round's name.
- * @param {Date | RangeQuery<Date>} [start] - Get by start time.
- * @param {Date | RangeQuery<Date>} [end] - Get by end time.
- * @param {string} [sort] - Sort fields (ex. "-start,+createAt").
- * @param {string} [fields] - Fields selected (ex. "name,fullCapacity").
- * @param {number} [limit] - Number of limit per query.
- * @param {number} [skip=0] - Offset documents.
- *
- * Accessible fields { name, activityId, start, end, fullCapacity, avaliableSeats, reservedSeats }
- *
- * @return {boolean} success - Successful querying flag.
- * @return {Round[]} results - Result rounds for the query.
- * @return {Object} queryInfo - Metadata query information.
- * @return {number} queryInfo.total - Total numbers of documents in collection that match the query.
- * @return {number} queryInfo.limit - Limit that was used.
- * @return {number} queryInfo.skip - Skip that was used.
- */
-router.get('/reserved_rounds', (req, res) => {
-  const filter = {};
-  let sort = {};
-  let limit;
-  let skip = 0;
-  let fields;
-  // Round's name
-  if (req.query.name) {
-    filter.name = req.query.name;
-  }
-  // Round's start time range query
-  if (req.query.start) {
-    filter.start = RangeQuery(JSON.parse(req.query.start), 'Date');
-  }
-  // Round's end time range query
-  if (req.query.end) {
-    filter.end = RangeQuery(JSON.parse(req.query.end), 'Date');
-  }
-  // Sorting query
-  if (req.query.sort) {
-    sort = req.query.sort.split(',').reduce((prev, sortQuery) => {
-      let sortFields = sortQuery.substr(1);
-      if (sortFields === 'fullCapacity') {
-        sortFields = 'seats.capacity';
-      }
-      if (sortFields === 'reservedSeats') {
-        sortFields = 'seats.reserved';
-      }
-      if (sortFields === 'avaliableSeats') {
-        sortFields = 'seats.avaliable';
-      }
-
-      if (sortQuery[0] === '-') {
-        prev[sortFields] = -1;
-      } else if (sortQuery[0] === '+') {
-        prev[sortFields] = 1;
-      }
-      return prev;
-    }, {});
-  }
-  // Limit query
-  if (req.query.limit) {
-    limit = Number.parseInt(req.query.limit, 10);
-  }
-  // Skip query
-  if (req.query.skip) {
-    skip = Number.parseInt(req.query.skip, 10);
-  }
-  // Fields selecting query
-  if (req.query.fields) {
-    fields = req.query.fields.split(',').map((field) => {
-      if (field === 'fullCapacity') {
-        return 'seats.capacity';
-      }
-      if (field === 'reservedSeats') {
-        return 'seats.reserved';
-      }
-      if (field === 'avaliableSeats') {
-        return 'seats.avaliable';
-      }
-      return field;
-    }).join(' ');
-  }
-
-  Ticket.find({ user: req.query.userId }).count().exec((err, count) => {
-    if (err) {
-      res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
-    }
-
-    Ticket.find({ user: req.query.userId })
-      .populate('round', fields, filter, { sort, skip, limit })
-      .exec((err, results) => {
-        if (err) {
-          return res.json({
-            success: false,
-            errors: retrieveError(5, err),
-          });
-        }
-
-        res.json({
-          success: true,
-          results: results.map(res => res.round),
-          queryInfo: {
-            total: count,
-            limit,
-            skip,
-            user: req.query.userId,
-          }
-        });
-      });
-  });
-});
+router.use('/reserved_rounds', require('./reserved_rounds'));
 
 module.exports = router;
