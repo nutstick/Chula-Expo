@@ -4,6 +4,7 @@ const { Round } = require('../');
 
 const ObjectId = mongoose.Schema.Types.ObjectId;
 
+const ObjectId = mongoose.Schema.Types.ObjectId;
 /**
  * Activity Schema
  */
@@ -26,7 +27,7 @@ const ActivitySchema = new mongoose.Schema({
     ref: 'Round'
   }],
   startTime: { type: Date, required: true, index: true },
-  endTime: { type: Date, required: true, index: true },
+  endTime: { type: Date, required: true, index: true }
 });
 
 ActivitySchema.index({
