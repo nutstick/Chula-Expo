@@ -30,7 +30,7 @@ router.get('/:tid', (req, res) => {
         checked: ticket.checked,
       }
     });
-  }); 
+  });
 });
 
 router.delete('/:tid', (req, res) => {
@@ -53,7 +53,7 @@ router.delete('/:tid', (req, res) => {
         errors: retrieveError(5, err),
       });
     });
-})
+});
 
 router.post('/:tid/check', (req, res) => {
   Ticket.findById(req.param.tid, (err, ticket) => {

@@ -25,7 +25,7 @@ const TicketSchema = new mongoose.Schema({
 
 TicketSchema.index({ user: 1, round: 1 });
 
-TicketSchema.static.cancelReserved = (ticketId) => new Promise((resolve, reject) => {
+TicketSchema.static.cancelReserved = ticketId => new Promise((resolve, reject) => {
   TicketSchema.findbyId(ticketId, (err, ticket) => {
     if (err) {
       return reject(err);
