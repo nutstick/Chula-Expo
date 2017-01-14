@@ -5,7 +5,7 @@ const { retrieveError } = require('../../../tools');
 
 const router = express.Router();
 
-router.use(isAuthenticatedByToken(), isStaff());
+router.use(isAuthenticatedByToken, isStaff);
 
 router.get('/:tid', (req, res) => {
   Ticket.findById(req.param.tid, (err, ticket) => {

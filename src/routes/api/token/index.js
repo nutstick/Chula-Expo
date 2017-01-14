@@ -5,6 +5,8 @@ const retrieveError = require('../../../tools/retrieveError');
 
 const router = express.Router();
 
+router.use(isAuthenticatedByToken);
+
 router.get('/', isAuthenticatedByToken, (req, res) => {
   User.findById(req.user.id, (err, user) => {
     if (err) {
