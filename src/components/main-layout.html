@@ -79,7 +79,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <app-toolbar></app-toolbar>
         <!-- Navbar on mobile: side nav menu -->
         <paper-menu selected="{{selected}}" attr-for-selected="name">
-          <template is="dom-repeat" items="{{items}}">
+          <template is="dom-repeat" items="{{menuList}}">
             <paper-item name="{{item}}">{{item}}</paper-item>
           </template>
         </paper-menu>
@@ -93,7 +93,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <app-toolbar class="tabs-bar" hidden$="{{!wideLayout}}">
             <!-- Nav on desktop: tabs -->
             <paper-tabs selected="{{selected}}" attr-for-selected="name">
-              <template is="dom-repeat" items="{{items}}">
+              <template is="dom-repeat" items="{{menuList}}">
                 <paper-tab name="{{item}}">{{item}}</paper-tab>
               </template>
             </paper-tabs>
@@ -123,10 +123,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           value: false,
           observer: 'onLayoutChange',
         },
-        items: {
+        menuList: {
           type: Array,
           value: function() {
-            return ['Item One', 'Item Two', 'Item Three', 'Item Four', 'Item Five'];
+            return ['Home', 'Login', 'Sign Up'];
           }
         }
       },

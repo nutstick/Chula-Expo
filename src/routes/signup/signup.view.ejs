@@ -20,7 +20,7 @@
   <link rel="import" href="/public/lib/paper-button/paper-button.html">
   <link rel="import" href="/public/lib/paper-radio-group/paper-radio-group.html">
   <link rel="import" href="/public/lib/paper-radio-button/paper-radio-button.html">
-
+	<!-- Main Layout -->
   <link rel="import" href="/components/main-layout.html">
   <link rel="import" href="/components/signup-pages.html">
   <style>
@@ -33,7 +33,7 @@
 </head>
 <body unresolved>
   <template is="dom-bind" id="app">
-    <main-layout items='["Item One", "Item Two"]'>
+    <main-layout>
       <signup-page user="{{user}}"></signup-page>
     </main-layout>
   </template>

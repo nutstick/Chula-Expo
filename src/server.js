@@ -83,7 +83,7 @@ app.use('/api', api);
 
 
 // Home Route
-app.use('/staff', home);
+app.use('/', home);
 
 // Authenticate
 // Local login

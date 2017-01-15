@@ -18,7 +18,7 @@
   <link rel="import" href="/public/lib/iron-form/iron-form.html">
   <link rel="import" href="/public/lib/paper-input/paper-input.html">
   <link rel="import" href="/public/lib/paper-button/paper-button.html">
-
+	<!-- Main Layout -->
   <link rel="import" href="/components/main-layout.html">
   <link rel="import" href="/components/facebook-login-button.html">
   <style>
@@ -31,7 +31,7 @@
 </head>
 <body unresolved>
   <template is="dom-bind" id="app">
-    <main-layout id="main-layout" items='["Item One", "Item Two"]'>
+    <main-layout>
       <form is="iron-form" id="form" method="post" action="/login">
         <paper-input name="email" label="E-mail" required></paper-input>
         <paper-input name="password" label="Password" type="password" required auto-validate></paper-input>
@@ -76,9 +76,5 @@
       </script>
     </main-layout>
   </template>
-  <script>
-    var app = document.querySelector('#app');
-
-  </script>
 </body>
 </html>

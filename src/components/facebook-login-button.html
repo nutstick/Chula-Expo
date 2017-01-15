@@ -75,8 +75,8 @@
       handleResponse: function(request) {
         res = this.$.ajax.lastResponse;
         if (res.success === true) {
-          document.querySelector('#app').$['main-layout'].token = res.results.token;
-          window.location = '/staff';
+          document.querySelector('main-layout').token = res.results.token;
+          window.location = '/';
         } else if (res.code === 2) {
           window.location = '/signup?email=' + res.user.email
             + '&name=' + res.user.name
