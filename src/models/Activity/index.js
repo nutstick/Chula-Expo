@@ -4,7 +4,6 @@ const { Round } = require('../');
 
 const ObjectId = mongoose.Schema.Types.ObjectId;
 
-const ObjectId = mongoose.Schema.Types.ObjectId;
 /**
  * Activity Schema
  */
