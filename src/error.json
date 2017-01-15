@@ -1,8 +1,13 @@
 {
+  "1": {
+    "status": "403",
+    "message": "There is already an account using this email address. Sign in to that account and link it with Facebook manually from Account Settings.",
+    "code": "1"
+  },
   "5": {
     "status": "500",
     "message": "Internal Error",
-    "code": 5
+    "code": "5"
   },
   "22": {
     "status": "401",

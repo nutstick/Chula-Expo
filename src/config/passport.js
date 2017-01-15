@@ -97,8 +97,7 @@ module.exports = {
           User.findOne({ email: profile._json.email }, (err, existingEmailUser) => {
             if (err) { return done(err); }
             if (existingEmailUser) {
-              req.flash('errors', { msg: 'There is already an account using this email address. Sign in to that account and link it with Facebook manually from Account Settings.' });
-              done(err);
+              done(retrieveError(1));
             } else {
               const user = {};
               user.email = profile._json.email;

@@ -3,6 +3,7 @@ const favicon = require('serve-favicon');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const expressValidator = require('express-validator');
 const path = require('path');
 const dotenv = require('dotenv');
 const flash = require('express-flash');
@@ -51,6 +52,7 @@ if (process.env.NODE_ENV !== 'test') {
 // use body parser so we can get info from POST and/or URL parameters
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(expressValidator());
 app.use(cookieParser());
 app.use(session({
   resave: true,
@@ -84,18 +86,25 @@ app.use('/', home);
 // Authenticate
 // Local login
 app.use('/login', require('./routes/login'));
+// Local login
+app.use('/signup', require('./routes/signup'));
 // Login through Facebook
 app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', 'public_profile', 'user_about_me'] }));
 app.get('/auth/facebook/callback', (req, res, next) => {
   passport.authenticate('facebook', (err, user) => {
     if (err) {
-      return next(err);
+      return res.json({
+        success: false,
+        errors: err
+      });
     } else if (!user) {
       return res.redirect('/login');
     } else if (!user.id) {
       // No User Exist in Database
+      req.session.user = user;
       return res.json({
         success: false,
+        code: 2,
         message: 'First time Signup, need to provied more data',
         user,
       });
