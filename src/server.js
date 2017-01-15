@@ -7,6 +7,7 @@ const expressValidator = require('express-validator');
 const path = require('path');
 const dotenv = require('dotenv');
 const flash = require('express-flash');
+const cors = require('cors');
 // logger and utility
 const logger = require('morgan');
 const chalk = require('chalk');
@@ -50,6 +51,7 @@ if (process.env.NODE_ENV !== 'test') {
   app.use(logger('dev'));
 }
 // use body parser so we can get info from POST and/or URL parameters
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(expressValidator());
@@ -81,7 +83,7 @@ app.use('/api', api);
 
 
 // Home Route
-app.use('/', home);
+app.use('/staff', home);
 
 // Authenticate
 // Local login
@@ -98,29 +100,34 @@ app.get('/auth/facebook/callback', (req, res, next) => {
         errors: err
       });
     } else if (!user) {
-      return res.redirect('/login');
+      return res.send(`callback(${JSON.stringify({
+        success: false,
+        code: 5,
+        message: 'Internal Error',
+        user,
+      })})`);
     } else if (!user.id) {
       // No User Exist in Database
-      req.session.user = user;
-      return res.json({
+      // req.session.user = user;
+      return res.send(`callback(${JSON.stringify({
         success: false,
         code: 2,
         message: 'First time Signup, need to provied more data',
         user,
-      });
+      })})`);
     }
     // Match user in database, go login
     req.login(user, (err) => {
       if (err) {
         return next(err);
       }
-      res.json({
+      res.send(`callback(${JSON.stringify({
         success: true,
         message: 'User already exist, login success.',
-        data: {
+        results: {
           token: user.generateToken(),
         }
-      });
+      })})`);
     });
   })(req, res, next);
 });

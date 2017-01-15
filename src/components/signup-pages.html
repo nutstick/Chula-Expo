@@ -1,0 +1,120 @@
+<!-- Libery -->
+<link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Icon Component -->
+<link rel="import" href="/public/lib/iron-icons/iron-icons.html">
+<link rel="import" href="/public/lib/paper-icon-button/paper-icon-button.html">
+<!-- Web Component -->
+<link rel="import" href="/public/lib/iron-ajax/iron-ajax.html">
+<link rel="import" href="/public/lib/iron-form/iron-form.html">
+<link rel="import" href="/public/lib/paper-input/paper-input.html">
+<link rel="import" href="/public/lib/paper-button/paper-button.html">
+<link rel="import" href="/public/lib/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="/public/lib/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="/public/lib/paper-toggle-button/paper-toggle-button.html">
+
+<link rel="import" href="/components/main-layout.html">
+<link rel="import" href="/components/profile-image-uploadable.html">
+<dom-module id="signup-page">
+  <style is="custom-style">
+    paper-toggle-button.green {
+      --paper-toggle-button-checked-bar-color:  var(--paper-green-500);
+      --paper-toggle-button-checked-button-color:  var(--paper-green-500);
+      --paper-toggle-button-checked-ink-color: var(--paper-green-500);
+      --paper-toggle-button-unchecked-bar-color:  var(--paper-teal-500);
+      --paper-toggle-button-unchecked-button-color:  var(--paper-teal-500);
+      --paper-toggle-button-unchecked-ink-color: var(--paper-teal-500);
+    }
+  </style>
+  <template>
+    <!-- Polymer Iron form -->
+    <form is="iron-form" id="form" method="post" action="/api/signup" on-iron-form-presubmit="_presubmit">
+      <!-- Profile Image with uploadility -->
+      <profile-image-uploadable image="[[user.picture]]" alt="User profile" name="picture"></profile-image-uploadable>
+      <!-- Name -->
+      <paper-input name="name" label="Name" value="[[user.name]]" required></paper-input>
+      <!-- E-mail -->
+      <paper-input name="email" label="E-mail" value="[[user.email]]" required></paper-input>
+      <!-- Gender -->
+      <label id="gender">Gender:</label>
+      <paper-radio-group aria-labelledby="gender" attr-for-selected="value" selected="{{gender}}">
+        <paper-radio-button value="Male">Male</paper-radio-button>
+        <paper-radio-button value="Female">Female</paper-radio-button>
+      </paper-radio-group>
+      <!-- Age -->
+      <paper-input name="age" label="Age" value="[[user.age]]" required></paper-input>
+      <!-- Student/Worker -->
+      <label id="gender">State:</label>
+      <paper-toggle-button id="type-toggle" class="green" active="{{type}}">Student</paper-toggle-button>
+      <!-- Student -->
+      <fieldset hidden$="{{hideStudent}}">
+        <paper-input name="academic.year" label="Year"></paper-input>
+        <paper-input name="academic.school" label="School name"></paper-input>
+      </fieldset>
+      <!-- Worker -->
+      <fieldset hidden$="{{hideWorker}}">
+        <paper-input name="worker.company" label="Company name"></paper-input>
+      </fieldset>
+      <!-- Hidden Fields -->
+      <input name="accessToken" type="hidden" value="[[user.accessToken]]" required></input>
+      <input name="tokens[0].kind" type="hidden" value="[[user.kind]]" required></input>
+      <input name="tokens[0].accessToken" type="hidden" value="[[user.accessToken]]" required></input>
+      <input name="facebook" type="hidden" value="[[user.facebook]]" required></input>
+      <!-- Submit Button -->
+      <paper-button raised on-click="_delayedSubmit" id="signUpButton">
+        <paper-spinner id="spinner" hidden></paper-spinner>Submit
+      </paper-button>
+      <!-- Reset Button -->
+      <paper-button raised on-click="_reset">Reset</paper-button>
+    </form>
+  </template>
+  <script>
+    Polymer({
+      is: 'signup-page',
+      properties: {
+        user: {
+          type: Object,
+        },
+        gender: {
+          type: String,
+        },
+        type: {
+          type: Boolean,
+          observer: '_typeChanged',
+        },
+        hideStudent: {
+          type: Boolean,
+          value: false
+        },
+        hideWorker: {
+          type: Boolean,
+          value: true
+        }
+      },
+      _typeChanged: function(event) {
+        var toggle = document.querySelector('#type-toggle');
+        if (toggle)
+          Polymer.dom(toggle).innerHTML = this.type ? 'Worker' : 'Student';
+        this.hideStudent = this.type;
+        this.hideWorker = !this.type;
+      },
+      _delayedSubmit: function(event) {
+        var form = this.$.form;
+        this.$.spinner.active = true;
+        this.$.spinner.hidden = false;
+        this.$.form.disabled = true;
+        // Simulate a slow server response.
+        setTimeout(function() {
+          form.submit();
+        }, 1000);
+      },
+      _reset: function(event) {
+        this.$.form.reset();
+        this.$.form.querySelector('.output').innerHTML = '';
+      },
+      _presubmit: function(event) {
+        this.$.form.request.body.gender = this.gender;
+        this.$.form.request.body.type = this.type ? 'Worker' : 'Academic';
+      }
+    });
+  </script>
+</dom-module>

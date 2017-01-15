@@ -22,7 +22,7 @@
   <link rel="import" href="/public/lib/paper-radio-button/paper-radio-button.html">
 
   <link rel="import" href="/components/main-layout.html">
-  <link rel="import" href="/signup/signup-pages.html">
+  <link rel="import" href="/components/signup-pages.html">
   <style>
     body {
       margin: 0;
@@ -38,12 +38,30 @@
     </main-layout>
   </template>
   <script>
+    function getParameterByName(name, url) {
+      if (!url) {
+        url = window.location.href;
+      }
+      name = name.replace(/[\[\]]/g, "\\$&");
+      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+          results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+  
     var app = document.querySelector('#app');
-    app.user = <%-JSON.stringify(user || null)%>;
+    app.user = {};
+    app.user.email = getParameterByName('email');
+    app.user.name= getParameterByName('name');
+    app.user.facebook = getParameterByName('facebook');
+    app.user.tokens = JSON.parse(getParameterByName('tokens'));
+    app.user.picture = getParameterByName('picture');
     if (app.user.tokens && app.user.tokens.length > 0) {
       app.user.kind = app.user.tokens[0].kind;
       app.user.accessToken = app.user.tokens[0].accessToken;
     }
+    console.log(app.user);
   </script>
 </body>
 </html>

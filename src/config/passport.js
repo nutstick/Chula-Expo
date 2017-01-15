@@ -71,8 +71,7 @@ module.exports = {
         User.findOne({ facebook: profile.id }, (err, existingUser) => {
           if (err) { return done(err); }
           if (existingUser) {
-            req.flash('errors', { msg: 'There is already a Facebook account that belongs to you. Sign in with that account or delete it, then link it with your current account.' });
-            done(err);
+            done(null, req.user);
           } else {
             User.findById(req.user.id, (err, user) => {
               if (err) { return done(err); }

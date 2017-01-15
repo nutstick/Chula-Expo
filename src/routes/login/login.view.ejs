@@ -20,6 +20,7 @@
   <link rel="import" href="/public/lib/paper-button/paper-button.html">
 
   <link rel="import" href="/components/main-layout.html">
+  <link rel="import" href="/components/facebook-login-button.html">
   <style>
     body {
       margin: 0;
@@ -30,7 +31,7 @@
 </head>
 <body unresolved>
   <template is="dom-bind" id="app">
-    <main-layout items='["Item One", "Item Two"]'>
+    <main-layout id="main-layout" items='["Item One", "Item Two"]'>
       <form is="iron-form" id="form" method="post" action="/login">
         <paper-input name="email" label="E-mail" required></paper-input>
         <paper-input name="password" label="Password" type="password" required auto-validate></paper-input>
@@ -39,6 +40,9 @@
         <paper-button raised onclick="_reset(event)">Reset</paper-button>
         <div class="output"></div>
       </form>
+      <div>
+        <facebook-login-button />
+      </div>
         
       <script>
         form.addEventListener('change', function(event) {

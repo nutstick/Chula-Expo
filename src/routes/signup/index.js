@@ -4,9 +4,7 @@ const passport = require('passport');
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  res.render('signup/signup.view.ejs', {
-    user: req.session.user
-  });
+  res.render('signup/signup.view.ejs');
 });
 
 module.exports = router;
