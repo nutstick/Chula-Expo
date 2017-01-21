@@ -84,8 +84,14 @@ app.use('/api', api);
 
 // Home Route
 app.use('/', home);
+// Staff Route
+app.use('/staff', require('./routes/staff'));
+// Upload
+app.use('/upload', require('./routes/upload'));
 
-// Authenticate
+/**
+ * Authenticate Route
+ */
 // Local login
 app.use('/login', require('./routes/login'));
 // Local login

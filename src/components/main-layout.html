@@ -28,6 +28,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="/public/lib/paper-tabs/paper-tabs.html">
 
 <dom-module id="main-layout">
+  <link rel="import" type="css" href="/public/lib/semantic/dist/components/container.min.css">
   <template>
     <style>
       app-toolbar {
@@ -64,6 +65,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       a:active paper-button,
       a:visited paper-button {
         color: #000;
+      }
+      .ui.container {
+        padding-top: 20px;
       }
     </style>
     <!-- Local Storage -->
@@ -102,7 +106,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </app-header-layout>
 
       <!-- Content Gose Here -->
-      <content id="container"></content>
+      <div class="ui container">
+        <content></content>
+      </div>
     </app-drawer-layout>
     <iron-media-query query="min-width: 600px" query-matches="{{wideLayout}}"></iron-media-query>
   </template>

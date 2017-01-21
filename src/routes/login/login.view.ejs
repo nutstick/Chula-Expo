@@ -16,32 +16,33 @@
   <!-- Web Component -->
   <link rel="import" href="/public/lib/iron-ajax/iron-ajax.html">
   <link rel="import" href="/public/lib/iron-form/iron-form.html">
+  <link rel="import" href="/public/lib/iron-pages/iron-pages.html">
   <link rel="import" href="/public/lib/paper-input/paper-input.html">
   <link rel="import" href="/public/lib/paper-button/paper-button.html">
 	<!-- Main Layout -->
   <link rel="import" href="/components/main-layout.html">
   <link rel="import" href="/components/facebook-login-button.html">
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Roboto', 'Noto', sans-serif;
-      background-color: #fafafa;
-    }
-  </style>
+  <link rel="stylesheet" type="text/css" href="/public/css/stylesheet.css">
 </head>
 <body unresolved>
   <template is="dom-bind" id="app">
     <main-layout>
-      <form is="iron-form" id="form" method="post" action="/login">
-        <paper-input name="email" label="E-mail" required></paper-input>
-        <paper-input name="password" label="Password" type="password" required auto-validate></paper-input>
-        <paper-button raised onclick="_delayedSubmit(event)" disabled id="loginButton">
-          <paper-spinner id="spinner" hidden></paper-spinner>Submit</paper-button>
-        <paper-button raised onclick="_reset(event)">Reset</paper-button>
-        <div class="output"></div>
-      </form>
-      <div>
-        <facebook-login-button />
+      <div class="container">
+      <iron-pages selected="0">
+        <div style="max-width: 420px; margin: auto;">
+          <form is="iron-form" id="form" method="post" action="/login">
+            <paper-input name="email" label="E-mail" required></paper-input>
+            <paper-input name="password" label="Password" type="password" required auto-validate></paper-input>
+            <paper-button raised onclick="_delayedSubmit(event)" disabled id="loginButton">
+              <paper-spinner id="spinner" hidden></paper-spinner>Submit</paper-button>
+            <paper-button raised onclick="_reset(event)">Reset</paper-button>
+            <div class="output"></div>
+          </form>
+          <div>
+            <facebook-login-button />
+          </div>
+        </div>
+      </iron-pages>
       </div>
         
       <script>
