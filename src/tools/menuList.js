@@ -7,7 +7,7 @@ module.exports = (req, res, next) => {
       path: '/'
     }, {
       name: 'Activity',
-      path: '/activity'
+      path: '/activities'
     }];
     next();
   }

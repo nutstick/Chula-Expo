@@ -36,6 +36,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         background-color: var(--primary-color);
         color: var(--secondary-color);
       }
+      paper-item a {
+        color: var(--primary-color);
+        text-decoration: none;
+      }
       paper-tabs {
         --paper-tabs-selection-bar-color: white;
         height: 100%;
@@ -44,6 +48,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       paper-tab {
         --paper-tab-ink: var(--primary-color);
         text-transform: uppercase;
+      }
+      paper-tab a {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-center);
+        color: var(--secondary-color);
+        text-decoration: none;
       }
       [hidden] {
         display: none !important;
@@ -82,7 +92,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <!-- Navbar on mobile: side nav menu -->
         <paper-menu selected="{{selected}}" attr-for-selected="name">
           <template is="dom-repeat" items="{{menuList}}">
-            <paper-item name="{{item}}">{{item}}</paper-item>
+            <paper-item name="{{item.name}}"><a href="{{item.path}}">{{item.name}}</a></paper-item>
           </template>
         </paper-menu>
       </app-drawer>
@@ -90,21 +100,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <app-header-layout>
         <app-header>
           <app-toolbar>
-            <paper-icon-button icon="menu" drawer-toggle hidden$="{{!displayTab}}"></paper-icon-button>
+            <paper-icon-button icon="menu" drawer-toggle hidden$="{{displayTab}}"></paper-icon-button>
             <div main-title>Chula Expo Staff</div>
             <iron-icon icon="cloud" hidden$="[[!token]]"></iron-icon>
             <iron-icon icon="cloud-off" hidden$="[[token]]"></iron-icon>
             <paper-icon-button
                 icon="[[computeLogInIcon(token)]]"
                 disabled="[[!token]]"
-                on-tap="lock">
+            >
             </paper-icon-button>
           </app-toolbar>
           <app-toolbar class="tabs-bar" hidden$="{{!wideLayout}}">
             <!-- Nav on desktop: tabs -->
             <paper-tabs selected="{{selected}}" attr-for-selected="name">
               <template is="dom-repeat" items="{{menuList}}">
-                <paper-tab name="{{item}}">{{item}}</paper-tab>
+                <paper-tab name="{{item.name}}"><a href="{{item.path}}">{{item.name}}</a></paper-tab>
               </template>
             </paper-tabs>
           </app-toolbar>
@@ -157,6 +167,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
       initializeDefaultToken: function() {
         this.token = null;
+      },
+      changePath: function(event) {
+        console.log(event.target);
+        // window.location = event.target.getAttribute('href');
       }
     });
   </script>
