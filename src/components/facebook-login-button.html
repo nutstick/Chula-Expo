@@ -36,11 +36,12 @@
         var elem = this;
         popupTools.popup('/auth/facebook', "Facebook Connect", {}, function (err, res) {
           if (err) {
-            console.log(elem.error);
             elem.error = err.toString();
           } else {
             if (res.success === true) {
-              document.querySelector('main-layout').token = res.results.token;
+              document.getElementById('cookie').value = res.results.token;
+              document.getElementById('cookie').createCookie();
+              console.log('sadsd');
               window.location = '/';
             } else if (res.code === 2) {
               window.location = '/signup?email=' + res.user.email

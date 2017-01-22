@@ -18,7 +18,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="/public/lib/app-layout/app-header/app-header.html">
 <link rel="import" href="/public/lib/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="/public/lib/app-layout/app-toolbar/app-toolbar.html">
-<link rel="import" href="/public/lib/iron-localstorage/iron-localstorage.html">
+<link rel="import" href="/public/lib/polymer-cookie/polymer-cookie.html">
 <link rel="import" href="/public/lib/iron-media-query/iron-media-query.html">
 <link rel="import" href="/public/lib/paper-item/paper-item.html">
 <link rel="import" href="/public/lib/paper-menu/paper-menu.html">
@@ -78,11 +78,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
     <!-- Local Storage -->
-    <iron-localstorage
+    <polymer-cookie
+      id="cookie"
       name="chula-expo"
-      value="{{token}}"
-      on-iron-localstorage-load-empty="initializeDefaultToken"
-    ></iron-localstorage>
+    ></polymer-cookie>
 
     <!-- Main Layout -->
     <app-drawer-layout force-narrow>
@@ -134,7 +133,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       is: 'main-layout',
       properties: {
         token: {
-          type: String,
+          type: String
         },
         selected: {
           type: String,
@@ -164,14 +163,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
       computeLogInIcon: function(token) {
         return token ? 'account-circle' : 'lock-outline';
-      },
-      initializeDefaultToken: function() {
-        this.token = null;
-      },
-      changePath: function(event) {
-        console.log(event.target);
-        // window.location = event.target.getAttribute('href');
       }
+    });
+    
+    window.addEventListener('WebComponentsReady', function(e) {
+      document.querySelector('main-layout').token = document.getElementById('cookie').readCookie();
     });
   </script>
 </dom-module>
