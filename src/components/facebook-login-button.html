@@ -41,7 +41,6 @@
             if (res.success === true) {
               document.getElementById('cookie').value = res.results.token;
               document.getElementById('cookie').createCookie();
-              console.log('sadsd');
               window.location = '/';
             } else if (res.code === 2) {
               window.location = '/signup?email=' + res.user.email
