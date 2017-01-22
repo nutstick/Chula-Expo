@@ -100,7 +100,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <app-header-layout>
         <app-header>
           <app-toolbar>
-            <paper-icon-button icon="menu" drawer-toggle hidden$="{{displayTab}}"></paper-icon-button>
+            <paper-icon-button icon="menu" drawer-toggle hidden$="{{!displayTab}}"></paper-icon-button>
             <div main-title>Chula Expo Staff</div>
             <iron-icon icon="cloud" hidden$="[[!token]]"></iron-icon>
             <iron-icon icon="cloud-off" hidden$="[[token]]"></iron-icon>
@@ -160,7 +160,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       },
       computeDisplayTab: function(wideLayout, menuList) {
-        return menuList.length ? wideLayout : false;
+        return menuList.length ? !wideLayout : false;
       },
       computeLogInIcon: function(token) {
         return token ? 'account-circle' : 'lock-outline';
