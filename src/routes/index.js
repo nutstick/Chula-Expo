@@ -11,6 +11,7 @@ router.use('/api', require('./api'));
  * Authenticate Route
  */
 router.use('/login', require('./login'));
+router.use('/logout', require('./logout'));
 router.use('/signup', require('./signup'));
 
 router.use('/activities', require('./activities'));
