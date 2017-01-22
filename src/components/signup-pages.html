@@ -27,7 +27,7 @@
   </style>
   <template>
     <!-- Polymer Iron form -->
-    <form is="iron-form" id="form" method="post" action="/api/signup" on-iron-form-presubmit="_presubmit">
+    <form is="iron-form" id="form" method="post" action="/api/signup" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
       <!-- Profile Image with uploadility -->
       <profile-image-uploadable image="[[user.picture]]" alt="User profile" name="picture"></profile-image-uploadable>
       <!-- Name -->
@@ -106,6 +106,12 @@
         setTimeout(function() {
           form.submit();
         }, 1000);
+      },
+      _response: function(e) {
+        console.log(e.detail.response);
+        if (e.detail.response.success) {
+          window.location = '/';
+        }
       },
       _reset: function(event) {
         this.$.form.reset();
