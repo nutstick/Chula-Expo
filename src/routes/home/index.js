@@ -1,14 +1,15 @@
 const express = require('express');
+const { isAuthenticated, isStaff } = require('../../config/authenticate');
+const { menuList } = require('../../tools');
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  let menuList = ['Home', 'Login', 'Sign Up'];
-  if (req.user && req.user.admin === 'Admin') {
-    menuList = ['Home', 'Activity', 'Logout'];
-  }
+router.use(isAuthenticated, isStaff);
+
+router.get('/', menuList, (req, res) => {
   res.render('home/home.view.ejs', {
-    menuList
+    menuList: req.menuList,
+    selected: 'Home'
   });
 });
 
