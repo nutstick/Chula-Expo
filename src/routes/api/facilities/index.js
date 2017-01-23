@@ -82,8 +82,6 @@ router.get('/:id', (req, res) => {
     fields = req.query.fields.replace(',', ' ');
     fields = fields.replace('nameTH', 'name.th');
     fields = fields.replace('nameEN', 'name.en');
-    fields = fields.replace('descTH', 'desc.th');
-    fields = fields.replace('descEN', 'desc.en');
     fields = fields.replace('locationLat', 'location.latitute');
     fields = fields.replace('locationLong', 'location.longtitute');
   }
