@@ -31,6 +31,7 @@ router.get('/', (req, res) => {
 
         if (element==='nameEN') element='name.en';
         if (element==='latitute') element='location.latitute';
+        if (element==='longtute') element='location.longtitute';
         fieldwant = fieldwant + element + ' ';
 
     });

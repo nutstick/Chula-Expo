@@ -30,6 +30,9 @@ router.get('/', (req, res) => {
      req.query.fields.split(',').forEach(function(element){
 
         if(element==='nameEN') element='name.en';
+        if(element==='welcomeMessageEN') element='welcomeMessage.en';
+        if(element==='shortNameEN') element='shortName.en';
+        if(element==='descriptionEN') element='description.en';
         fieldwant = fieldwant + element + ' ';
 
     });
