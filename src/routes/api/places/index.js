@@ -29,8 +29,8 @@ router.get('/', (req, res) => {
   if (req.query.fields) {
      req.query.fields.split(',').forEach(function(element){
 
-        if(element==='nameEN') element='name.en';
-        if(element==='latitute') element='location.latitute';
+        if (element==='nameEN') element='name.en';
+        if (element==='latitute') element='location.latitute';
         fieldwant = fieldwant + element + ' ';
 
     });
@@ -43,11 +43,8 @@ router.get('/', (req, res) => {
   if (req.query.nameEN) {
         filter['name.en'] = { $regex: req.query.nameEN };
   }
-
-   //initial search
-   if (req.query.search) {
-    filter.search = req.query.search;
-  }
+    
+   
 //----------------------------------------------------------------
   // initial limit
     var limit;
@@ -75,54 +72,54 @@ router.get('/', (req, res) => {
     }, {});
   }
 //----------------------------------------------------------------
-  Place.find(filter)
-  .select(fieldwant).sort(sort).skip(skip)
-  .limit(limit)
-.exec(
-  (err, places) => {
-    if (err) {
-      return res.status(400).send({
-        message: 'Place error'
+    Place.find(filter)
+    .select(fieldwant).sort(sort).skip(skip)
+    .limit(limit)
+  .exec(
+    (err, places) => {
+      if (err) {
+        return res.status(400).send({
+          message: 'Place error'
+        });
+      }
+      res.json({
+        success: true,
+        results: places
       });
-    }
-    res.json({
-      success: true,
-      results: places
     });
   });
-});
  //----------------------------------------------------------------
 
 /**
 * Create a new Place
 * Access at POST http://localhost:8080/api/en/places
 */
-router.post('/', (req, res,next) => {
- // Create object
+  router.post('/', (req, res,next) => {
+   // Create object
 
-  const place = new Place();
- console.log(req.body);
- // Set field value (comes from the request)
-  place.name.en = req.body.nameEN;
-  place.name.th = req.body.nameTH;
-  if(req.body.code)place.code = req.body.code;
-  place.location.latitute = req.body.latitute;
-  place.location.longtitute = req.body.longtitute;
+    const place = new Place();
+
+   // Set field value (comes from the request)
+    place.name.en = req.body.nameEN;
+    place.name.th = req.body.nameTH;
+    if(req.body.code)place.code = req.body.code;
+    place.location.latitute = req.body.latitute;
+    place.location.longtitute = req.body.longtitute;
 
 
- // Save place and check for error
-  place.save((err, _place) => {
-    if (err) {
-     // Handle error from save
-     return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err)
-      });
-    }
+   // Save place and check for error
+    place.save((err, _place) => {
+      if (err) {
+       // Handle error from save
+       return res.status(500).json({
+          success: false,
+          errors: retrieveError(5, err)
+        });
+      }
 
-    res.status(300).json(_place);
+      res.status(300).json(_place);
+    });
   });
-});
 // Update an existing place via PUT(JSON format)
 // ex. { "name","EditName"}
 // Access at PUT http://localhost:3000/api/en/places/:id
@@ -145,10 +142,10 @@ router.put('/:id', (req, res) => {
     }
 
      if (req.body.nameEN)place.name.en = req.body.nameEN;
-  if(req.body.nameTH)place.name.th = req.body.nameTH;
-  if(req.body.code)place.code = req.body.code;
- if(req.body.latitute)place.location.latitute = req.body.latitute;
-  if(req.body.longtitute)place.location.longtitute = req.body.longtitute;
+     if (req.body.nameTH)place.name.th = req.body.nameTH;
+     if (req.body.code)place.code = req.body.code;
+     if (req.body.latitute)place.location.latitute = req.body.latitute;
+     if (req.body.longtitute)place.location.longtitute = req.body.longtitute;
 
 
     place.save((err, _place) => {
@@ -160,7 +157,7 @@ router.put('/:id', (req, res) => {
       }
       res.status(202).json({
         success: true,
-        message: 'Update round successfull',
+        message: 'Update place successfull',
         results: _place
       });
     });
