@@ -1,17 +1,25 @@
 const express = require('express');
 const Facility = require('../../../models/Facility');
-const _ = require('lodash');
 const retrieveError = require('../../../tools/retrieveError');
 
 const router = express.Router();
 
 router.get('/', (req, res) => {
   const filter = {};
+  if (req.query.nameEN) {
+    filter['name.en'] = { $regex: req.query.nameEN };
+  }
   //  http://localhost:3000/?sort=createAt,-startDate
   let sort = {};
   if (req.query.sort) {
     sort = req.query.sort.split(',').reduce((prev, sortQuery) => {
-      const sortFields = sortQuery[0] === '-' ? sortQuery.substr(1) : sortQuery;
+      let sortFields = sortQuery[0] === '-' ? sortQuery.substr(1) : sortQuery;
+      sortFields = sortFields.replace('nameTH', 'name.th');
+      sortFields = sortFields.replace('nameEN', 'name.en');
+      sortFields = sortFields.replace('descTH', 'desc.th');
+      sortFields = sortFields.replace('descEN', 'desc.en');
+      sortFields = sortFields.replace('locationLat', 'location.latitute');
+      sortFields = sortFields.replace('locationLong', 'location.longtitute');
       if (sortQuery[0] === '-') {
         prev[sortFields] = -1;
       } else {
@@ -20,10 +28,6 @@ router.get('/', (req, res) => {
       return prev;
     }, {});
   }
-  if (req.query.nameEN) {
-    filter.name = { en: req.query.nameEN };
-  }
-  console.log(filter);
   // field selector
   // http://localhost:3000/?fields=name,faculty
   let fields;
@@ -57,6 +61,7 @@ router.get('/', (req, res) => {
 
   query.exec((err, _fac) => {
     res.json({
+      successful: true,
       data: _fac
     });
   });
@@ -85,9 +90,15 @@ router.get('/:id', (req, res) => {
   Facility.findById(req.params.id).select(fields).exec((err, fac) => {
     if (err) {
       // Handle error from User.findById
-      return res.status(404).send('Error 404 Not Found!');
+      return res.status(404).json({
+        successful: false,
+        error: "Facility with the given ID is not found."
+      });
     }
-    res.json(fac);
+    res.json({
+      successful: true,
+      data: fac
+    });
   });
 });
 
@@ -115,47 +126,50 @@ router.post('/', (req, res, next) => {
       next(err);
     }
 
-    res.status(300).json(_act);
+    res.status(300).json({
+      successful: true,
+      data: _act
+    });
   });
 });
 // Update an existing activity via PUT(JSON format)
 // ex. { "name","EditName"}
 // Access at PUT http://localhost:3000/api/activities/:id
 router.put('/:id', (req, res) => {
-  let updateFields = _.pick(req.body, ['nameTH', 'nameEN', 'descTH', 'descEN', 'type', 'place', 'locationLat', 'locationLong']);
-  updateFields = updateFields.replace('nameTH', 'name.th');
-  updateFields = updateFields.replace('nameEN', 'name.en');
-  updateFields = updateFields.replace('descTH', 'desc.th');
-  updateFields = updateFields.replace('descEN', 'desc.en');
-  updateFields = updateFields.replace('locationLat', 'location.latitute');
-  updateFields = updateFields.replace('locationLong', 'location.longtitute');
-  if (req.body.nameTH) {
-    updateFields.name.th = req.body.nameTH;
-  }
-  if (req.body.nameEN) {
-    updateFields.name.en = req.body.nameEN;
-  }
-  if (req.body.descTH) {
-    updateFields.desc.th = req.body.descTH;
-  }
-  if (req.body.descEN) {
-    updateFields.name.en = req.body.nameEN;
-  }
-  if (req.body.place) {
-    updateFields.place = req.body.place;
-  }
-  if (req.body.locationLat) {
-    updateFields.location.latitute = req.body.locationLat;
-  }
   Facility.findById(req.params.id, (err, fac) => {
     if (err) {
       // Handle error from User.findById
-      return res.status(404).send('Error 404 Not Found!');
+      return res.status(404).json({
+        successful: false,
+        error: "Facility with the given ID is not corrected."
+      });
     }
     if (!fac) {
-      return res.status(404).send('Error 404 Not Found!');
+      return res.status(404).json({
+        successful: false,
+        error: "Facility with the given ID is not found."
+      });
+    if (req.body.nameTH) {
+      fac.name.th = req.body.nameTH;
     }
-    _.assignIn(fac, updateFields);
+    if (req.body.nameEN) {
+      fac.name.en = req.body.nameEN;
+    }
+    if (req.body.descTH) {
+      fac.desc.th = req.body.descTH;
+    }
+    if (req.body.descEN) {
+      fac.desc.en = req.body.descEN;
+    }
+    if (req.body.place) {
+      fac.place = req.body.place;
+    }
+    if (req.body.locationLat) {
+      fac.location.latitute = req.body.locationLat;
+    }
+    if (req.body.locationLong) {
+      fac.location.longtitute = req.body.locationLong;
+    }
     fac.save((err, updatedFac) => {
       if (err) {
         // Handle error from save
