@@ -22,7 +22,6 @@ const home = require('./routes/home');
 const api = require('./routes/api');
 // Passport Config
 const passportConfig = require('./config/passport');
-const popupTools = require('popup-tools');
 
 // Load envirountment variables from .env file
 dotenv.load({ path: '.env' });
@@ -79,6 +78,24 @@ app.use(express.static(__dirname, { maxAge: 31557600000 }));
 /**
  * Route
  */
+// API
+app.use('/api', api);
+
+
+// Home Route
+app.use('/', home);
+// Staff Route
+app.use('/staff', require('./routes/staff'));
+// Upload
+app.use('/upload', require('./routes/upload'));
+
+/**
+ * Authenticate Route
+ */
+// Local login
+app.use('/login', require('./routes/login'));
+// Local login
+app.use('/signup', require('./routes/signup'));
 // Login through Facebook
 app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', 'public_profile', 'user_about_me'] }));
 app.get('/auth/facebook/callback', (req, res, next) => {
@@ -89,38 +106,37 @@ app.get('/auth/facebook/callback', (req, res, next) => {
         errors: err
       });
     } else if (!user) {
-      return res.end(popupTools.popupResponse({
+      return res.send(`callback(${JSON.stringify({
         success: false,
         code: 5,
         message: 'Internal Error',
         user,
-      }));
+      })})`);
     } else if (!user.id) {
       // No User Exist in Database
       // req.session.user = user;
-      return res.send(popupTools.popupResponse({
+      return res.send(`callback(${JSON.stringify({
         success: false,
         code: 2,
         message: 'First time Signup, need to provied more data',
         user,
-      }));
+      })})`);
     }
     // Match user in database, go login
     req.login(user, (err) => {
       if (err) {
         return next(err);
       }
-      res.send(popupTools.popupResponse({
+      res.send(`callback(${JSON.stringify({
         success: true,
         message: 'User already exist, login success.',
         results: {
           token: user.generateToken(),
         }
-      }));
+      })})`);
     });
   })(req, res, next);
 });
-app.use('/', require('./routes'));
 
 /**
  * Server run on https://localhost:3000

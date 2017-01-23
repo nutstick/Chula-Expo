@@ -4,152 +4,68 @@
 <link rel="import" href="/public/lib/iron-icons/iron-icons.html">
 <link rel="import" href="/public/lib/paper-icon-button/paper-icon-button.html">
 <!-- Web Component -->
-<link rel="import" href="/public/lib/paper-card/paper-card.html">
 <link rel="import" href="/public/lib/iron-ajax/iron-ajax.html">
 <link rel="import" href="/public/lib/iron-form/iron-form.html">
-<link rel="import" href="/public/lib/iron-grid/iron-grid.html">
 <link rel="import" href="/public/lib/paper-input/paper-input.html">
 <link rel="import" href="/public/lib/paper-button/paper-button.html">
-<link rel="import" href="/public/lib/paper-button-group/paper-button-group.html">
+<link rel="import" href="/public/lib/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="/public/lib/paper-radio-button/paper-radio-button.html">
 <link rel="import" href="/public/lib/paper-toggle-button/paper-toggle-button.html">
 
 <link rel="import" href="/components/main-layout.html">
-<link rel="import" href="/components/shared-styles.html">
 <link rel="import" href="/components/profile-image-uploadable.html">
 <dom-module id="signup-page">
+  <style is="custom-style">
+    paper-toggle-button.green {
+      --paper-toggle-button-checked-bar-color:  var(--paper-green-500);
+      --paper-toggle-button-checked-button-color:  var(--paper-green-500);
+      --paper-toggle-button-checked-ink-color: var(--paper-green-500);
+      --paper-toggle-button-unchecked-bar-color:  var(--paper-teal-500);
+      --paper-toggle-button-unchecked-button-color:  var(--paper-teal-500);
+      --paper-toggle-button-unchecked-ink-color: var(--paper-teal-500);
+    }
+  </style>
   <template>
-    <style is="custom-style" include="shared-styles">
-      :host, paper-card {
-        width: 100%;
-      }
-      .header {
-        height: 140px;
-        position: relative;
-        background-color: var(--primary-color);
-        overflow: visible;
-        margin-bottom: 60px;
-      }
-      .center {
-        @apply(--layout-center-justified);
-        @apply(--layout-horizontal);
-      }
-      .offset {
-        position: absolute;
-        top: 40px;
-        width: 100%;
-      }
-      [hidden] {
-        display: none!important;
-      }
-      .item {
-        display: block;
-        padding: 8px 0;
-      }
-      .input-label {
-        width: 55px;
-        display: inline-block;
-        margin-right: 16px;
-        line-height: 46px;
-        color: #888;
-      }
-      paper-button[toggles] {
-        transition: background-color 0.3s;
-      }
-      paper-button[toggles][active] {
-        color: white;
-        background-color: var(--primary-color);
-        --paper-button-flat-focus-color: var(--secondary-color);
-      }
-      paper-button.ripple::shadow paper-ripple {
-        color: var(--primary-color);
-      }
-      paper-button.ripple paper-ripple {
-        color: var(--primary-color);
-      }
-      .field {
-        border: 1px dashed;
-        border-radius: 5px;
-        margin-top: 10px;
-      }
-      .button-holder {
-        @apply(--layout-horizontal);
-        @apply(--layout-end-justified);
-        margin-top: 10px;
-      }
-    </style>
-    <paper-card >
-      <div class="header style-scope paper-card">
-        <!-- Profile Image with uploadility -->
-        <div class="center offset">
-          <profile-image-uploadable image="[[user.picture]]" alt="User profile" name="picture"></profile-image-uploadable>
-        </div>
-      </div>
-      <!-- Polymer Iron form -->
-      <form is="iron-form" id="form" method="post" class="card-content"
-        action="/api/signup" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
-          <!-- Name -->
-          <paper-input name="name" label="ชื่อ" value="[[user.name]]" required always-float-label></paper-input>
-          <!-- E-mail -->
-          <paper-input name="email" label="อีเมลล์" value="[[user.email]]" required always-float-label></paper-input>
-          <!-- Gender -->
-          <div class="item">
-            <div class="input-label" id="gender">เพศ:</div>
-            <paper-button-group selected="male">
-              <paper-button toggles name="male" active={{male}}>ชาย</paper-button>
-              <paper-button toggles name="female" active={{female}}>หญิง</paper-button>
-            </paper-button-group>
-          </div>
-          <!-- Age -->
-          <paper-input name="age" label="อายุ" type="number" value="[[user.age]]" required always-float-label></paper-input>
-          <div class="item">
-            <!-- Student/Worker -->
-            <div class="input-label">ประเภท:</div>
-            <paper-button-group selected="student">
-              <paper-button toggles name="student" active={{student}}>นักเรียน นิสิต</paper-button>
-              <paper-button toggles name="worker" active={{worker}}>บุคคลทั่วๆ</paper-button>
-              <paper-button toggles name="staff" active={{staff}}>สตาฟ</paper-button>
-            </paper-button-group>
-            <!-- Student -->
-            <fieldset class="field" hidden$="{{!student}}">
-              <paper-input name="academic.year" label="การศึกษาปัจจุบัน" always-float-label></paper-input>
-              <paper-input name="academic.year" label="ชั้นปี" always-float-label></paper-input>
-              <paper-input name="academic.school" label="สถาบันการศึกษา" always-float-label></paper-input>
-            </fieldset>
-            <!-- Worker -->
-            <fieldset class="field" hidden$="{{!worker}}">
-              <paper-input name="worker.company" label="อาชีพ" always-float-label></paper-input>
-            </fieldset>
-            <!-- Staff -->
-            <fieldset class="field" hidden$="{{!staff}}">
-              <paper-input name="zone" label="สังกัด" always-float-label></paper-input>
-              <div class="item">
-                <div class="input-label">ประเภท:</div>
-                <paper-button-group selected="scanner">
-                  <paper-button toggles name="scanner">Scan man</paper-button>
-                  <paper-button toggles name="staff">Staff</paper-button>
-                </paper-button-group>
-              </div>
-              <paper-input name="staffcode" label="รหัส" always-float-label></paper-input>
-            </fieldset>
-          </div>
-          <!-- Hidden Fields -->
-          <input name="accessToken" type="hidden" value="[[user.accessToken]]" required></input>
-          <input name="tokens[0].kind" type="hidden" value="[[user.kind]]" required></input>
-          <input name="tokens[0].accessToken" type="hidden" value="[[user.accessToken]]" required></input>
-          <input name="facebook" type="hidden" value="[[user.facebook]]" required></input>
-        </div>
-        <!-- Submit Button -->
-        <div class="card-actions">
-          <div class="button-holder">
-            <paper-button on-click="_delayedSubmit">
-              <paper-spinner id="spinner" hidden></paper-spinner>Submit
-            </paper-button>
-            <!-- Reset Button -->
-            <paper-button on-click="_reset">Reset</paper-button>
-          </div>
-        </div>
-      </form>
-    </paper-card>
+    <!-- Polymer Iron form -->
+    <form is="iron-form" id="form" method="post" action="/api/signup" on-iron-form-presubmit="_presubmit">
+      <!-- Profile Image with uploadility -->
+      <profile-image-uploadable image="[[user.picture]]" alt="User profile" name="picture"></profile-image-uploadable>
+      <!-- Name -->
+      <paper-input name="name" label="Name" value="[[user.name]]" required></paper-input>
+      <!-- E-mail -->
+      <paper-input name="email" label="E-mail" value="[[user.email]]" required></paper-input>
+      <!-- Gender -->
+      <label id="gender">Gender:</label>
+      <paper-radio-group aria-labelledby="gender" attr-for-selected="value" selected="{{gender}}">
+        <paper-radio-button value="Male">Male</paper-radio-button>
+        <paper-radio-button value="Female">Female</paper-radio-button>
+      </paper-radio-group>
+      <!-- Age -->
+      <paper-input name="age" label="Age" value="[[user.age]]" required></paper-input>
+      <!-- Student/Worker -->
+      <label id="gender">State:</label>
+      <paper-toggle-button id="type-toggle" class="green" active="{{type}}">Student</paper-toggle-button>
+      <!-- Student -->
+      <fieldset hidden$="{{hideStudent}}">
+        <paper-input name="academic.year" label="Year"></paper-input>
+        <paper-input name="academic.school" label="School name"></paper-input>
+      </fieldset>
+      <!-- Worker -->
+      <fieldset hidden$="{{hideWorker}}">
+        <paper-input name="worker.company" label="Company name"></paper-input>
+      </fieldset>
+      <!-- Hidden Fields -->
+      <input name="accessToken" type="hidden" value="[[user.accessToken]]" required></input>
+      <input name="tokens[0].kind" type="hidden" value="[[user.kind]]" required></input>
+      <input name="tokens[0].accessToken" type="hidden" value="[[user.accessToken]]" required></input>
+      <input name="facebook" type="hidden" value="[[user.facebook]]" required></input>
+      <!-- Submit Button -->
+      <paper-button raised on-click="_delayedSubmit" id="signUpButton">
+        <paper-spinner id="spinner" hidden></paper-spinner>Submit
+      </paper-button>
+      <!-- Reset Button -->
+      <paper-button raised on-click="_reset">Reset</paper-button>
+    </form>
   </template>
   <script>
     Polymer({
@@ -165,20 +81,19 @@
           type: Boolean,
           observer: '_typeChanged',
         },
-        student: {
+        hideStudent: {
+          type: Boolean,
+          value: false
+        },
+        hideWorker: {
           type: Boolean,
           value: true
-        },
-        worker: {
-          type: Boolean,
-          value: false
-        },
-        staff: {
-          type: Boolean,
-          value: false
         }
       },
       _typeChanged: function(event) {
+        var toggle = document.querySelector('#type-toggle');
+        if (toggle)
+          Polymer.dom(toggle).innerHTML = this.type ? 'Worker' : 'Student';
         this.hideStudent = this.type;
         this.hideWorker = !this.type;
       },
@@ -192,19 +107,13 @@
           form.submit();
         }, 1000);
       },
-      _response: function(e) {
-        console.log(e.detail.response);
-        if (e.detail.response.success) {
-          window.location = '/';
-        }
-      },
       _reset: function(event) {
         this.$.form.reset();
+        this.$.form.querySelector('.output').innerHTML = '';
       },
       _presubmit: function(event) {
-        console.log(this.$.form.request.body);
-        this.$.form.request.body.gender = this.male ? 'Male' : 'Female';
-        this.$.form.request.body.type = this.student ? 'Academic' : (this.worker ? 'Worker' : 'Staff');
+        this.$.form.request.body.gender = this.gender;
+        this.$.form.request.body.type = this.type ? 'Worker' : 'Academic';
       }
     });
   </script>
