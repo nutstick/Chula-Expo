@@ -40,9 +40,16 @@ router.use('/tickets', require('./tickets'));
 /**
 	
 /**
- * Ticket API
+ * place API
 */
 router.use('/places', require('./places'));
+
+/**
+
+/**
+ * zone API
+*/
+router.use('/zones', require('./zones'));
 
 /**
 =======

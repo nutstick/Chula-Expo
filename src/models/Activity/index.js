@@ -31,7 +31,7 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
   location: {
    place : {
     type : ObjectId,
-    ref : 'Place'
+    ref : 'Place',
     required:true
 
   },

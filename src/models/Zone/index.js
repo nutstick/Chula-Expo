@@ -17,10 +17,10 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
       ref: 'Place'
     }] 
   },
-  thumbnail:{
+  thumbnailUrl:{
     type : String
   },
-  banner:{
+  bannerUrl:{
     type : String
   },
   welcomeMessage:{

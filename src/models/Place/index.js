@@ -5,20 +5,19 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
  * Place Schema
  */
  const PlaceSchema = new mongoose.Schema({
-  code: {
-   type : String ,
-   required : true
- },
- name : {
-  th : {type : String , required : true} ,
-  en : {type : String , required : true}
-}
-location :{
-  latitute : {type : Number , required : true} ,
-  longtitute : {type : Number , required : true}
-}
+ 	code: {
+ 		type : String
+ 	},
+ 	name : {
+ 		th : {type : String , required : true} ,
+ 		en : {type : String , required : true}
+ 	},
+ 	location :{
+ 		latitute : {type : Number , required : true} ,
+ 		longtitute : {type : Number , required : true}
+ 	}
 
-});
+ });
 
 
 
