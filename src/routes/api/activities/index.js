@@ -56,7 +56,6 @@ router.get('/', (req, res) => {
   // RangeQuery of startTime and endTime
   // Activities's start time range query
   if (req.query.startTime) {
-    
     filter.startTime = RangeQuery(JSON.parse(req.query.startTime), 'Date');
   }
   // Activities's end time range query

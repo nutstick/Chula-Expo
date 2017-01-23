@@ -38,6 +38,10 @@ router.use('/rounds', require('./rounds'));
 router.use('/tickets', require('./tickets'));
 
 /**
+ * Facility API
+*/
+router.use('/facilities', require('./facilities'));
+/**
 =======
 >>>>>>> upstream/master
  * Welcome Message
