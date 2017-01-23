@@ -76,12 +76,14 @@ router.get('/', (req, res) => {
  * @return {Round} results - The Matched Activity by id.
  */
 router.get('/:id', (req, res) => {
-  // Get User from instance User model by ID
+   // Get User from instance User model by ID
   let fields = '';
   if (req.query.fields) {
     fields = req.query.fields.replace(',', ' ');
     fields = fields.replace('nameTH', 'name.th');
     fields = fields.replace('nameEN', 'name.en');
+    fields = fields.replace('descTH', 'desc.th');
+    fields = fields.replace('descEN', 'desc.en');
     fields = fields.replace('locationLat', 'location.latitute');
     fields = fields.replace('locationLong', 'location.longtitute');
   }
@@ -90,7 +92,7 @@ router.get('/:id', (req, res) => {
       // Handle error from User.findById
       return res.status(404).json({
         successful: false,
-        error: "Facility with the given ID is not found."
+        error: 'Facility with the given ID is not found.'
       });
     }
     res.json({
@@ -99,16 +101,14 @@ router.get('/:id', (req, res) => {
     });
   });
 });
-
-/**
- * Create a new activity
- * Access at POST http://localhost:8080/api/activities
- */
+  /**
+  * Create a new activity
+  * Access at POST http://localhost:8080/api/activities
+  */
 router.post('/', (req, res, next) => {
-  // Create a new instance of the User model
+     // Create a new instance of the User model
   const facility = new Facility();
-
-  // Set field value (comes from the request)
+     // Set field value (comes from the request)
   facility.name.th = req.body.nameTH;
   facility.name.en = req.body.nameEN;
   facility.desc.th = req.body.descTH;
@@ -117,36 +117,36 @@ router.post('/', (req, res, next) => {
   facility.place = req.body.place;
   facility.location.latitute = req.body.locationLat;
   facility.location.longtitute = req.body.locationLong;
-  // Save User and check for error
+   // Save User and check for error
   facility.save((err, _act) => {
     if (err) {
-      // Handle error from save
+     // Handle error from save
       next(err);
     }
-
     res.status(300).json({
       successful: true,
       data: _act
     });
   });
 });
-// Update an existing activity via PUT(JSON format)
-// ex. { "name","EditName"}
-// Access at PUT http://localhost:3000/api/activities/:id
+ // Update an existing activity via PUT(JSON format)
+ // ex. { "name","EditName"}
+ // Access at PUT http://localhost:3000/api/activities/:id
 router.put('/:id', (req, res) => {
   Facility.findById(req.params.id, (err, fac) => {
     if (err) {
       // Handle error from User.findById
       return res.status(404).json({
         successful: false,
-        error: "Facility with the given ID is not corrected."
+        error: 'Facility with the given ID is not corrected.'
       });
     }
     if (!fac) {
       return res.status(404).json({
         successful: false,
-        error: "Facility with the given ID is not found."
+        error: 'Facility with the given ID is not found.'
       });
+    }
     if (req.body.nameTH) {
       fac.name.th = req.body.nameTH;
     }
@@ -170,7 +170,7 @@ router.put('/:id', (req, res) => {
     }
     fac.save((err, updatedFac) => {
       if (err) {
-        // Handle error from save
+      // Handle error from save
         res.status(400).send();
       }
       res.json(updatedFac);
@@ -178,8 +178,8 @@ router.put('/:id', (req, res) => {
   });
 });
 
-// Delete an existing activity via DEL.
-// Access at DEL http://localhost:3000/api/activities/:id
+ // Delete an existing activity via DEL.
+ // Access at DEL http://localhost:3000/api/activities/:id
 router.delete('/:id', (req, res) => {
   Facility.findByIdAndRemove(req.params.id, (err) => {
     if (err) {
@@ -194,5 +194,4 @@ router.delete('/:id', (req, res) => {
     });
   });
 });
-
 module.exports = router;
