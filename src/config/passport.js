@@ -1,6 +1,7 @@
 // const _ = require('lodash');
 const LocalStrategy = require('passport-local').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
+const FacebookTokenStrategy = require('passport-facebook-token');
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const retrieveError = require('../tools/retrieveError');
@@ -111,6 +112,55 @@ module.exports = {
         });
       }
     }));
+
+    passport.use(new FacebookTokenStrategy({
+      clientID: process.env.FACEBOOK_ID,
+      clientSecret: process.env.FACEBOOK_SECRET,
+    }, (accessToken, refreshToken, profile, done) => {
+      if (req.user) {
+        User.findOne({ facebook: profile.id }, (err, existingUser) => {
+          if (err) { return done(err); }
+          if (existingUser) {
+            done(null, req.user);
+          } else {
+            User.findById(req.user.id, (err, user) => {
+              if (err) { return done(err); }
+              user.facebook = profile.id;
+              user.tokens.push({ kind: 'facebook', accessToken });
+              user.name = user.name || `${profile.name.givenName} ${profile.name.familyName}`;
+              user.gender = user.gender || profile._json.gender;
+              user.pictureUrl = user.pictureUrl || `https://graph.facebook.com/${profile.id}/picture?type=large`;
+              user.save((err) => {
+                req.flash('info', { msg: 'Facebook account has been linked.' });
+                done(err, user);
+              });
+            });
+          }
+        });
+      } else {
+        User.findOne({ facebook: profile.id }, (err, existingUser) => {
+          if (err) { return done(err); }
+          if (existingUser) {
+            return done(null, existingUser);
+          }
+          User.findOne({ email: profile._json.email }, (err, existingEmailUser) => {
+            if (err) { return done(err); }
+            if (existingEmailUser) {
+              done(retrieveError(1));
+            } else {
+              const user = {};
+              user.email = profile._json.email;
+              user.facebook = profile.id;
+              user.tokens = [{ kind: 'facebook', accessToken }];
+              user.name = `${profile.name.givenName} ${profile.name.familyName}`;
+              user.gender = profile._json.gender;
+              user.picture = `https://graph.facebook.com/${profile.id}/picture?type=large`;
+              done(err, user);
+            }
+          });
+        });
+      }
+    ));
 
     /**
      * JWT Token

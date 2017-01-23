@@ -91,6 +91,9 @@
           <paper-input name="name" label="ชื่อ" value="[[user.name]]" required always-float-label></paper-input>
           <!-- E-mail -->
           <paper-input name="email" label="อีเมลล์" value="[[user.email]]" required always-float-label></paper-input>
+          <!-- Password -->
+          <paper-input name="password" label="พาสเวิร์ด" type="password" value="[[user.password]]" hidden=[[user.facebook]] required=[[!user.facebook]] always-float-label></paper-input>
+          <paper-input name="confirmPassword" label="คอนเฟิร์มพาสเวิร์ด" type="password" value="[[user.confirmPassword]]" hidden=[[user.facebook]] required=[[!user.facebook]] always-float-label></paper-input>
           <!-- Gender -->
           <div class="item">
             <div class="input-label" id="gender">เพศ:</div>
