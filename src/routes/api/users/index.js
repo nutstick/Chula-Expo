@@ -118,6 +118,8 @@ router.put('/:id', (req, res) => {
   user.gender = req.body.gender;
   user.age = req.body.age;
   user.type = req.body.type;
+  user.academic = req.body.academic;
+  user.worker = req.body.worker;
   // console.log(req.params.id);
   User.update({ _id: req.params.id }, user, { upsert: true }, (err, users) => {
     if (err) {
@@ -144,7 +146,8 @@ router.post('/', (req, res) => {
   user.gender = req.body.gender;
   user.age = req.body.age;
   user.type = req.body.type;
-
+  user.academic = req.body.academic;
+  user.worker = req.body.worker;
   // Save User and check for error
   user.save((err, _user) => {
     if (err) {
