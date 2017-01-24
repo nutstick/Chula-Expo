@@ -25,26 +25,23 @@ const router = express.Router();
 router.get('/', (req, res) => {
 //----------------------------------------------------------------
   // initial the fieldwant from request
-  let fieldwant = '';
+  let fields = '';
   if (req.query.fields) {
-     req.query.fields.split(',').forEach(function(element){
-
-        if (element==='nameEN') element='name.en';
-        if (element==='latitute') element='location.latitute';
-        if (element==='longtute') element='location.longtitute';
-        fieldwant = fieldwant + element + ' ';
-
-    });
+    fields = req.query.fields.replace(',', ' ');
+    fields = fields.replace('nameTH', 'name.th');
+    fields = fields.replace('nameEN', 'name.en');
+    fields = fields.replace('descTH', 'desc.th');
+    fields = fields.replace('descEN', 'desc.en');
+    fields = fields.replace('locationLat', 'location.latitute');
+    fields = fields.replace('locationLong', 'location.longtitute');
   }
 //----------------------------------------------------------------
   //initial filter : name query
   const filter = {};
 
-
   if (req.query.nameEN) {
-        filter['name.en'] = { $regex: req.query.nameEN };
-  }
-
+    filter['name.en'] = { $regex: req.query.nameEN };
+  }   
 
 //----------------------------------------------------------------
   // initial limit
@@ -53,7 +50,7 @@ router.get('/', (req, res) => {
     limit = Number.parseInt(req.query.limit, 10);
   }
   // initital skip
-   var skip;
+  var skip;
   if (req.query.skip) {
     skip = Number.parseInt(req.query.skip, 10);
   }
@@ -64,6 +61,7 @@ router.get('/', (req, res) => {
     sort = req.query.sort.split(',').reduce((prev, sortQuery) => {
       let sortFields = sortQuery[0] === '-' ? sortQuery.substr(1) : sortQuery;
       if (sortFields === 'nameEN') sortFields = 'name.en';
+
       if (sortQuery[0] === '-') {
         prev[sortFields] = -1;
       } else {
@@ -73,10 +71,10 @@ router.get('/', (req, res) => {
     }, {});
   }
 //----------------------------------------------------------------
-    Place.find(filter)
+  Place.find(filter)
     .select(fieldwant).sort(sort).skip(skip)
     .limit(limit)
-  .exec(
+    .exec(
     (err, places) => {
       if (err) {
         return res.status(400).send({
@@ -95,6 +93,7 @@ router.get('/', (req, res) => {
 * Create a new Place
 * Access at POST http://localhost:8080/api/en/places
 */
+
   router.post('/', (req, res,next) => {
    // Create object
 
@@ -104,8 +103,8 @@ router.get('/', (req, res) => {
     place.name.en = req.body.nameEN;
     place.name.th = req.body.nameTH;
     if(req.body.code)place.code = req.body.code;
-    place.location.latitute = req.body.latitute;
-    place.location.longtitute = req.body.longtitute;
+  place.location.latitude = req.body.location.latitude;
+  place.location.longtitude = req.body.location.longtitude;
 
 
    // Save place and check for error
@@ -121,13 +120,13 @@ router.get('/', (req, res) => {
       res.status(300).json(_place);
     });
   });
+
 // Update an existing place via PUT(JSON format)
 // ex. { "name","EditName"}
 // Access at PUT http://localhost:3000/api/en/places/:id
 router.put('/:id', (req, res) => {
   Place.findById(req.params.id, (err, place) => {
   // check error first
-
     if (err) {
       return res.status(500).json({
         success: false,
@@ -142,12 +141,12 @@ router.put('/:id', (req, res) => {
       });
     }
 
+
      if (req.body.nameEN)place.name.en = req.body.nameEN;
      if (req.body.nameTH)place.name.th = req.body.nameTH;
      if (req.body.code)place.code = req.body.code;
      if (req.body.latitute)place.location.latitute = req.body.latitute;
      if (req.body.longtitute)place.location.longtitute = req.body.longtitute;
-
 
     place.save((err, _place) => {
       if (err) {

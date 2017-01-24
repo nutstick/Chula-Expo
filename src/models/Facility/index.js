@@ -6,8 +6,12 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
  */
 const FacilitySchema = new mongoose.Schema({
   name: {
-    th: { type: String, required: true },
-    en: { type: String, required: true }
+    th: { type: String, required: true, index: true },
+    en: { type: String, required: true, index: true }
+  },
+  desc: {
+    th: { type: String },
+    en: { type: String }
   },
   type: {
     type: String,

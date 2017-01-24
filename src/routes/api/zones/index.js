@@ -83,6 +83,7 @@ router.get('/', (req, res) => {
       return prev;
     }, {});
   }
+
 //----------------------------------------------------------------
     Zone.find(filter)
     .select(fieldwant).sort(sort).skip(skip)
@@ -142,10 +143,12 @@ router.post('/', (req, res, next) => {
       res.status(300).json(_zone);
     });
   });
+
 // Update an existing zone via PUT(JSON format)
 // ex. { "name","EditName"}
 // Access at PUT http://localhost:3000/api/en/zones/:id
 router.put('/:id', (req, res) => {
+
   Zone.findById(req.params.id, (err, zone) => {
   // check error first
 
@@ -210,7 +213,7 @@ router.delete('/:id', (req, res) => {
     }
     res.status(202).json({
       success: true,
-      message: 'An Zone with id ${req.params.id} was removed.'
+      message: `An Zone with id ${req.params.id} was removed.`,
     });
   });
 });

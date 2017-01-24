@@ -5,27 +5,16 @@ const mongoose = require('mongoose');
  */
 const PlaceSchema = new mongoose.Schema({
   code: {
-    type: String
+    type: String,
+    required: true
   },
   name: {
-    th: {
-      type: String,
-      required: true
-    },
-    en: {
-      type: String,
-      required: true
-    }
+    th: { type: String, required: true },
+    en: { type: String, required: true }
   },
   location: {
-    latitute: {
-      type: Number,
-      required: true
-    },
-    longtitute: {
-      type: Number,
-      required: true
-    }
+    latitute: { type: Number, required: true },
+    longtitute: { type: Number, required: true }
   }
 });
 

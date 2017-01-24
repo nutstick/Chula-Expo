@@ -38,6 +38,9 @@ router.use('/rounds', require('./rounds'));
 router.use('/tickets', require('./tickets'));
 
 /**
+ * Facility API
+*/
+router.use('/facilities', require('./facilities'));
 	
 /**
  * place API
@@ -45,15 +48,11 @@ router.use('/tickets', require('./tickets'));
 router.use('/places', require('./places'));
 
 /**
-
-/**
  * zone API
 */
 router.use('/zones', require('./zones'));
 
 /**
-=======
->>>>>>> upstream/master
  * Welcome Message
  * Access at GET http://localhost:8080/api
  */

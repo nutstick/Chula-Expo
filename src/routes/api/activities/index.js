@@ -56,7 +56,6 @@ router.get('/', (req, res) => {
   // RangeQuery of startTime and endTime
   // Activities's start time range query
   if (req.query.startTime) {
-    
     filter.startTime = RangeQuery(JSON.parse(req.query.startTime), 'Date');
   }
   // Activities's end time range query
@@ -107,8 +106,15 @@ router.get('/', (req, res) => {
   }
 
   query.exec((err, _act) => {
-    res.json({
-      data: _act
+    if (err) {
+      res.status(400).json({
+        success: false,
+        error: retrieveError(5, err)
+      });
+    }
+    res.status(200).json({
+      success: true,
+      results: _act
     });
   });
 });
@@ -133,9 +139,21 @@ router.get('/:id', (req, res) => {
   Activity.findById(req.params.id).select(fields).exec((err, act) => {
     if (err) {
       // Handle error from User.findById
-      return res.status(404).send('Error 404 Not Found!');
+      return res.status(400).json({
+        success: false,
+        error: retrieveError(5, err)
+      });
     }
-    res.json(act);
+    if (!act) {
+      return res.status(400).json({
+        success: false,
+        results: retrieveError(25)
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      results: act
+    });
   });
 });
 
@@ -170,7 +188,10 @@ router.post('/', (req, res, next) => {
       next(err);
     }
 
-    res.status(300).json(_act);
+    res.status(300).json({
+      success: true,
+      results: _act
+    });
   });
 });
 // Update an existing activity via PUT(JSON format)
@@ -187,18 +208,30 @@ router.put('/:id', (req, res) => {
   Activity.findById(req.params.id, (err, act) => {
     if (err) {
       // Handle error from User.findById
-      return res.status(404).send('Error 404 Not Found!');
+      return res.status(400).json({
+        success: false,
+        error: retrieveError(5, err)
+      });
     }
     if (!act) {
-      return res.status(404).send('Error 404 Not Found!');
+      res.status(400).json({
+        success: false,
+        results: retrieveError(25)
+      });
     }
     _.assignIn(act, updateFields);
     act.save((err, updatedAct) => {
       if (err) {
         // Handle error from save
-        res.status(400).send();
+        return res.status(400).json({
+          success: false,
+          error: retrieveError(5, err)
+        });
       }
-      res.json(updatedAct);
+      res.json({
+        success: true,
+        results: updatedAct
+      });
     });
   });
 });
@@ -213,7 +246,7 @@ router.delete('/:id', (req, res) => {
         errors: retrieveError(5, err),
       });
     }
-    res.status(202).json({
+    return res.status(200).json({
       success: true,
       message: `An Activity with id ${req.params.id} was removed.`,
     });
