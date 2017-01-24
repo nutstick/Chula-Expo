@@ -24,4 +24,22 @@ router.post('/', multer({ storage, limits: { fileSize: 4000000 } }).array('pictu
   });
 });
 
+router.post('/thumbnail', multer({ storage, limits: { fileSize: 4000000 } }).single('picture'), (req, res, next) => {
+  return res.json({
+    success: true,
+    results: {
+      thumbnail: req.file.filename,
+    }
+  });
+});
+
+router.post('/banner', multer({ storage, limits: { fileSize: 4000000 } }).single('picture'), (req, res, next) => {
+  return res.json({
+    success: true,
+    results: {
+      thumbnail: req.file.filename,
+    }
+  });
+});
+
 module.exports = router;

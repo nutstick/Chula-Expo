@@ -7,9 +7,9 @@ const router = express.Router();
 router.use(isAuthenticated, isStaff);
 
 router.get('/', menuList, (req, res) => {
-  res.render('home/home.view.ejs', {
+  res.render('activities/activities.view.ejs', {
     menuList: req.menuList,
-    selected: 'Home'
+    selected: 'Activity'
   });
 });
 

@@ -10,33 +10,36 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <!-- Libery -->
 <link rel="import" href="/public/lib/polymer/polymer.html">
-<!-- Icon Component -->
+<!-- Web Component -->
 <link rel="import" href="/public/lib/iron-icons/iron-icons.html">
 <link rel="import" href="/public/lib/paper-icon-button/paper-icon-button.html">
-<!-- Web Component -->
 <link rel="import" href="/public/lib/app-layout/app-drawer-layout/app-drawer-layout.html">
 <link rel="import" href="/public/lib/app-layout/app-drawer/app-drawer.html">
-<link rel="import" href="/public/lib/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="/public/lib/app-layout/app-header/app-header.html">
 <link rel="import" href="/public/lib/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="/public/lib/app-layout/app-toolbar/app-toolbar.html">
-<link rel="import" href="/public/lib/iron-localstorage/iron-localstorage.html">
-<link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="/public/lib/polymer-cookie/polymer-cookie.html">
 <link rel="import" href="/public/lib/iron-media-query/iron-media-query.html">
 <link rel="import" href="/public/lib/paper-item/paper-item.html">
 <link rel="import" href="/public/lib/paper-menu/paper-menu.html">
 <link rel="import" href="/public/lib/paper-tabs/paper-tabs.html">
+<link rel="import" href="/components/account-page.html">
+<link rel="import" href="/components/shared-styles.html">
 
 <dom-module id="main-layout">
   <link rel="import" type="css" href="/public/lib/semantic/dist/components/container.min.css">
   <template>
-    <style>
-      app-toolbar {
-        background-color: #1E88E5;
-        color: white;
+    <style is="custome-style" include="shared-styles">
+      [full-width] {
+        height: 100vh;
       }
-      .main-header {
-        box-shadow: 0px 5px 6px -3px rgba(0, 0, 0, 0.4);
+      app-toolbar {
+        background-color: var(--primary-color);
+        color: var(--secondary-color);
+      }
+      paper-item a {
+        color: var(--primary-color);
+        text-decoration: none;
       }
       paper-tabs {
         --paper-tabs-selection-bar-color: white;
@@ -44,8 +47,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         max-width: 640px;
       }
       paper-tab {
-        --paper-tab-ink: #f6f6f6;
+        --paper-tab-ink: var(--primary-color);
         text-transform: uppercase;
+      }
+      paper-tab a {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-center);
+        color: var(--secondary-color);
+        text-decoration: none;
       }
       [hidden] {
         display: none !important;
@@ -55,7 +64,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       .container {
         @apply(--layout-horizontal);
-        max-width: 800px;
         margin: 0 auto;
       }
       .container > * {
@@ -71,34 +79,41 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
     <!-- Local Storage -->
-    <iron-localstorage
+    <polymer-cookie
+      id="cookie"
       name="chula-expo"
-      value="{{token}}"
-    ></iron-localstorage>
+    ></polymer-cookie>
 
     <!-- Main Layout -->
-    <app-drawer-layout force-narrow>
+    <app-drawer-layout full-width$="{{menuList}}" force-narrow>
       <app-drawer id="drawer">
         <!-- Toolbar -->
         <app-toolbar></app-toolbar>
         <!-- Navbar on mobile: side nav menu -->
         <paper-menu selected="{{selected}}" attr-for-selected="name">
           <template is="dom-repeat" items="{{menuList}}">
-            <paper-item name="{{item}}">{{item}}</paper-item>
+            <paper-item name="{{item.name}}"><a href="{{item.path}}">{{item.name}}</a></paper-item>
           </template>
         </paper-menu>
       </app-drawer>
       <!-- Navbar Layout on desktop -->
       <app-header-layout>
-        <app-header class="main-header">
+        <app-header>
           <app-toolbar>
-            <paper-icon-button class="menu-button" icon="menu" drawer-toggle hidden$="{{wideLayout}}"></paper-icon-button>
+            <paper-icon-button icon="menu" drawer-toggle hidden$="{{!displayTab}}"></paper-icon-button>
+            <div main-title>Chula Expo Staff</div>
+            <paper-icon-button
+              icon="[[computeLogInIcon(token)]]"
+              disabled="[[!token]]"
+              on-tap="accountTapHandler"
+            >
+            </paper-icon-button>
           </app-toolbar>
-          <app-toolbar class="tabs-bar" hidden$="{{!wideLayout}}">
+          <app-toolbar class="tabs-bar" hidden$="{{displayTab}}">
             <!-- Nav on desktop: tabs -->
             <paper-tabs selected="{{selected}}" attr-for-selected="name">
               <template is="dom-repeat" items="{{menuList}}">
-                <paper-tab name="{{item}}">{{item}}</paper-tab>
+                <paper-tab name="{{item.name}}"><a href="{{item.path}}">{{item.name}}</a></paper-tab>
               </template>
             </paper-tabs>
           </app-toolbar>
@@ -107,6 +122,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       <!-- Content Gose Here -->
       <div class="ui container">
+        <account-page hidden$=[[!displayAccount]]></account-page>
         <content></content>
       </div>
     </app-drawer-layout>
@@ -118,30 +134,50 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       is: 'main-layout',
       properties: {
         token: {
-          type: String,
+          type: String
         },
         selected: {
           type: String,
-          value: 'Item One'
-        },
-        wideLayout: {
-          type: Boolean,
-          value: false,
-          observer: 'onLayoutChange',
+          value: ''
         },
         menuList: {
           type: Array,
-          value: function() {
-            return ['Home', 'Login', 'Sign Up'];
-          }
-        }
+          value: [],
+        },
+        wideLayout: {
+          type: Boolean,
+          observer: 'onLayoutChange',
+        },
+        displayTab: {
+          type: Boolean,
+          computed: 'computeDisplayTab(wideLayout,menuList)'
+        },
+        displayAccount: {
+          type: Boolean,
+          value: false,
+        },
       },
       onLayoutChange: function(wide) {
         var drawer = this.$.drawer;
         if (wide && drawer.opened) {
           drawer.opened = false;
         }
+      },
+      computeDisplayTab: function(wideLayout, menuList) {
+        return menuList.length ? !wideLayout : false;
+      },
+      computeLogInIcon: function(token) {
+        return token ? 'account-circle' : 'lock-outline';
+      },
+      accountTapHandler: function() {
+        if (this.token) {
+          this.displayAccount = !this.displayAccount;
+        }
       }
+    });
+    
+    window.addEventListener('WebComponentsReady', function(e) {
+      document.querySelector('main-layout').token = document.getElementById('cookie').readCookie();
     });
   </script>
 </dom-module>

@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 
 const ObjectId = mongoose.Schema.Types.ObjectId;
+/**
+ * Place Schema
+ */
 const FacilitySchema = new mongoose.Schema({
   name: {
     th: { type: String, required: true, index: true },
@@ -24,6 +27,7 @@ const FacilitySchema = new mongoose.Schema({
   }
 
 });
+
 const Facility = mongoose.model('Facility', FacilitySchema);
 
 module.exports = Facility;

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+
 /**
  * Place Schema
  */
@@ -16,7 +17,6 @@ const PlaceSchema = new mongoose.Schema({
     longtitute: { type: Number, required: true }
   }
 });
-
 
 const Place = mongoose.model('Place', PlaceSchema);
 
