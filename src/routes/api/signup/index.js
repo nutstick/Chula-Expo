@@ -18,7 +18,7 @@ const router = express.Router();
  * @param {string} [school]
  * @param {number} [year]
  * @param {string} [company]
- * 
+ *
  * @return {boolean} success
  * @return {string} message.
  * @return {Token} results - Authenticated token.

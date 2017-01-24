@@ -122,7 +122,7 @@ router.get('/', (req, res) => {
             });
           }
 
-          res.json({
+          res.status(200).json({
             success: true,
             results: results.map(res => res.round),
             queryInfo: {
@@ -150,7 +150,7 @@ router.get('/', (req, res) => {
           });
         }
 
-        res.json({
+        res.status(200).json({
           success: true,
           results: result.round,
           queryInfo: {
@@ -188,7 +188,7 @@ router.get('/', (req, res) => {
           });
         }
 
-        res.json({
+        res.status(200).json({
           success: true,
           results: rounds,
           queryInfo: {
@@ -261,7 +261,7 @@ router.post('/', (req, res) => {
 
         res.status(201).json({
           success: true,
-          message: 'Create Round successfull',
+          message: 'Create Round successful',
           results: _round,
         });
       });
@@ -317,7 +317,7 @@ router.get('/:id', (req, res) => {
       });
     }
 
-    res.json({
+    res.status(200).json({
       success: true,
       results: round,
     });
@@ -375,7 +375,7 @@ router.put('/:id', (req, res) => {
       }
       res.status(202).json({
         success: true,
-        message: 'Update round successfull',
+        message: 'Update round successful',
         results: _round,
       });
     });

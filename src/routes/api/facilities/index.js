@@ -9,6 +9,7 @@ router.get('/', (req, res) => {
   if (req.query.nameEN) {
     filter['name.en'] = { $regex: req.query.nameEN };
   }
+
   //  http://localhost:3000/?sort=createAt,-startDate
   let sort = {};
   if (req.query.sort) {
@@ -28,6 +29,7 @@ router.get('/', (req, res) => {
       return prev;
     }, {});
   }
+
   // field selector
   // http://localhost:3000/?fields=name,faculty
   let fields;
@@ -60,9 +62,9 @@ router.get('/', (req, res) => {
   }
 
   query.exec((err, _fac) => {
-    res.json({
-      successful: true,
-      data: _fac
+    res.status(200).json({
+      success: true,
+      results: _fac
     });
   });
 });
@@ -87,17 +89,25 @@ router.get('/:id', (req, res) => {
     fields = fields.replace('locationLat', 'location.latitute');
     fields = fields.replace('locationLong', 'location.longtitute');
   }
+
   Facility.findById(req.params.id).select(fields).exec((err, fac) => {
     if (err) {
       // Handle error from User.findById
-      return res.status(404).json({
-        successful: false,
-        error: 'Facility with the given ID is not found.'
+      return res.status(500).json({
+        success: false,
+        errors: retrieveError(5, err)
       });
     }
-    res.json({
-      successful: true,
-      data: fac
+    // Facility isn't exist.
+    if (!fac) {
+      return res.status(403).json({
+        success: false,
+        errors: retrieveError(32),
+      });
+    }
+    res.status(200).json({
+      success: true,
+      results: fac
     });
   });
 });
@@ -106,9 +116,9 @@ router.get('/:id', (req, res) => {
   * Access at POST http://localhost:8080/api/activities
   */
 router.post('/', (req, res, next) => {
-     // Create a new instance of the User model
+   // Create a new instance of the User model
   const facility = new Facility();
-     // Set field value (comes from the request)
+   // Set field value (comes from the request)
   facility.name.th = req.body.nameTH;
   facility.name.en = req.body.nameEN;
   facility.desc.th = req.body.descTH;
@@ -123,9 +133,9 @@ router.post('/', (req, res, next) => {
      // Handle error from save
       next(err);
     }
-    res.status(300).json({
-      successful: true,
-      data: _act
+    res.status(201).json({
+      success: true,
+      results: _act
     });
   });
 });
@@ -136,15 +146,15 @@ router.put('/:id', (req, res) => {
   Facility.findById(req.params.id, (err, fac) => {
     if (err) {
       // Handle error from User.findById
-      return res.status(404).json({
-        successful: false,
-        error: 'Facility with the given ID is not corrected.'
+      return res.status(500).json({
+        success: false,
+        errors: retrieveError(5, err)
       });
     }
     if (!fac) {
-      return res.status(404).json({
-        successful: false,
-        error: 'Facility with the given ID is not found.'
+      return res.status(403).json({
+        success: false,
+        errors: retrieveError(32)
       });
     }
     if (req.body.nameTH) {
@@ -171,9 +181,15 @@ router.put('/:id', (req, res) => {
     fac.save((err, updatedFac) => {
       if (err) {
       // Handle error from save
-        res.status(400).send();
+        res.status(500).json({
+          success: false,
+          errors: retrieveError(5, err)
+        });
       }
-      res.json(updatedFac);
+      res.status(202).json({
+        success: true,
+        results: updatedFac
+      });
     });
   });
 });

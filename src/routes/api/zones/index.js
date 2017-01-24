@@ -27,7 +27,7 @@ router.get('/', (req, res) => {
   let fieldwant = '';
   if (req.query.fields) {
     req.query.fields.split(',').forEach(
-      function (element) {
+      (element) => {
         if (element === 'nameEN') {
           element = 'name.en';
         }
@@ -40,31 +40,26 @@ router.get('/', (req, res) => {
         if (element === 'descriptionEN') {
           element = 'description.en';
         }
-        fieldwant = fieldwant + element + ' ';
+        fieldwant = `${fieldwant}${element} `;
       }
     );
   }
 //----------------------------------------------------------------
-//initial filter : name query
+// initial filter : name query
   const filter = {};
-
 
   if (req.query.nameEN) {
     filter['name.en'] = { $regex: req.query.nameEN };
   }
 
-  /* //initial search
-   if (req.query.search) {
-    filter.search = req.query.search;
-  }*/
 //----------------------------------------------------------------
-  // initial limit
-  var limit;
+// initial limit
+  let limit;
   if (req.query.limit) {
     limit = Number.parseInt(req.query.limit, 10);
   }
   // initital skip
-   var skip;
+  let skip;
   if (req.query.skip) {
     skip = Number.parseInt(req.query.skip, 10);
   }
@@ -85,22 +80,23 @@ router.get('/', (req, res) => {
   }
 
 //----------------------------------------------------------------
-    Zone.find(filter)
+  Zone.find(filter)
     .select(fieldwant).sort(sort).skip(skip)
     .limit(limit)
   .exec(
     (err, zones) => {
       if (err) {
-        return res.status(400).send({
-          message: 'Zone error'
+        return res.status(500).send({
+          success: false,
+          errors: retrieveError(5, err)
         });
       }
-      res.json({
+      res.status(200).json({
         success: true,
         results: zones
       });
     });
-  });
+});
  //----------------------------------------------------------------
 
 /**
@@ -113,42 +109,39 @@ router.post('/', (req, res, next) => {
   const zone = new Zone();
 
  // Set field value (comes from the request)
-      zone.name.en = req.body.nameEN;
-      zone.name.th = req.body.nameTH;
-      zone.places = req.body.places;
-      if (req.body.thumbnailUrl)zone.thumbnailUrl = req.body.thumbnailUrl;
-      if (req.body.bannerUrl)zone.bannerUrl = req.body.bannerUrl;
-      zone.welcomeMessage.en = req.body.welcomeMessageEN;
-      zone.shortName.en = req.body.shortNameEN;
-      zone.description.en = req.body.descriptionEN;
-      zone.welcomeMessage.th = req.body.welcomeMessageTH;
-      zone.shortName.th = req.body.shortNameTH;
-      zone.description.th = req.body.descriptionTH;
-      if (req.body.websiteUrl) zone.websiteUrl = req.body.websiteUrl;
-      zone.type = req.body.type;
-      if (req.body.webpage) zone.webpage=req.body.webpage;
-
-
+  zone.name.en = req.body.nameEN;
+  zone.name.th = req.body.nameTH;
+  zone.places = req.body.places;
+  if (req.body.thumbnailUrl)zone.thumbnailUrl = req.body.thumbnailUrl;
+  if (req.body.bannerUrl)zone.bannerUrl = req.body.bannerUrl;
+  zone.welcomeMessage.en = req.body.welcomeMessageEN;
+  zone.shortName.en = req.body.shortNameEN;
+  zone.description.en = req.body.descriptionEN;
+  zone.welcomeMessage.th = req.body.welcomeMessageTH;
+  zone.shortName.th = req.body.shortNameTH;
+  zone.description.th = req.body.descriptionTH;
+  if (req.body.websiteUrl) zone.websiteUrl = req.body.websiteUrl;
+  zone.type = req.body.type;
+  if (req.body.webpage) zone.webpage = req.body.webpage;
 
  // Save zone and check for error
-    zone.save((err, _zone) => {
-      if (err) {
-       // Handle error from save
-       return res.status(500).json({
-          success: false,
-          errors: retrieveError(5, err)
-        });
-      }
-
-      res.status(300).json(_zone);
+  zone.save((err, _zone) => {
+    if (err) {
+     // Handle error from save
+      next(err);
+    }
+    res.status(201).json({
+      success: true,
+      message: 'Create Zone successful',
+      results: _zone
     });
   });
+});
 
 // Update an existing zone via PUT(JSON format)
 // ex. { "name","EditName"}
 // Access at PUT http://localhost:3000/api/en/zones/:id
 router.put('/:id', (req, res) => {
-
   Zone.findById(req.params.id, (err, zone) => {
   // check error first
 
@@ -182,7 +175,7 @@ router.put('/:id', (req, res) => {
     if (req.body.descriptionTH)zone.description.th = req.body.descriptionTH;
     if (req.body.websiteUrl) zone.websiteUrl = req.body.websiteUrl;
     if (req.body.type) zone.type = req.body.type;
-    if (req.body.webpage) zone.webpage=req.body.webpage;
+    if (req.body.webpage) zone.webpage = req.body.webpage;
 
 
     zone.save((err, _zone) => {

@@ -33,6 +33,7 @@ router.get('/', (req, res) => {
   if (req.query.tags) {
     filter.tags = { $in: req.query.tags.split(',') };
   }
+
   //  http://localhost:3000/?sort=createAt,-startDate
   let sort = {};
   if (req.query.sort) {
@@ -53,6 +54,7 @@ router.get('/', (req, res) => {
       return prev;
     }, {});
   }
+
   // RangeQuery of startTime and endTime
   // Activities's start time range query
   if (req.query.startTime) {
@@ -62,16 +64,19 @@ router.get('/', (req, res) => {
   if (req.query.endTime) {
     filter.endTime = RangeQuery(JSON.parse(req.query.endTime), 'Date');
   }
+
   // Name Query
   // http://localhost:3000/?name=John
   if (req.query.name) {
     filter.name = req.query.name;
   }
+
   // Location description query
   // http://localhost:3000/?location=Larngear
   if (req.query.location) {
     filter.location = { desc: req.query.location };
   }
+
   // field selector
   // http://localhost:3000/?fields=name,faculty
   let fields;
@@ -81,6 +86,7 @@ router.get('/', (req, res) => {
     fields = fields.replace('locationLat', 'location.latitute');
     fields = fields.replace('locationLong', 'location.longtitute');
   }
+
   // Text search engine
   // http://localhost:3000/?search=searchString
   if (req.query.search) {
@@ -100,16 +106,16 @@ router.get('/', (req, res) => {
     query = query.limit(Number.parseInt(req.query.limit, 10));
   }
   // Offset of a query data
-  // http://localhost:3000/?limit=10
+  // http://localhost:3000/?skip=10
   if (req.query.skip) {
     query = query.skip(Number.parseInt(req.query.skip, 10));
   }
 
   query.exec((err, _act) => {
     if (err) {
-      res.status(400).json({
+      res.status(500).json({
         success: false,
-        error: retrieveError(5, err)
+        errors: retrieveError(5, err)
       });
     }
     res.status(200).json({
@@ -136,16 +142,17 @@ router.get('/:id', (req, res) => {
     fields = fields.replace('locationLat', 'location.latitute');
     fields = fields.replace('locationLong', 'location.longtitute');
   }
+
   Activity.findById(req.params.id).select(fields).exec((err, act) => {
     if (err) {
       // Handle error from User.findById
-      return res.status(400).json({
+      return res.status(500).json({
         success: false,
-        error: retrieveError(5, err)
+        errors: retrieveError(5, err)
       });
     }
     if (!act) {
-      return res.status(400).json({
+      return res.status(403).json({
         success: false,
         results: retrieveError(25)
       });
@@ -168,9 +175,10 @@ router.post('/', (req, res, next) => {
   // Set field value (comes from the request)
   activity.name = req.body.name;
   activity.thumbnialsUrl = req.body.thumbnialsUrl;
+  activity.bannerUrl = req.body.bannerUrl;
   activity.shortDescription = req.body.shortDescription;
   activity.description = req.body.description;
-  activity.imgUrl = req.body.imgUrl;
+  activity.imageUrl = req.body.imgUrl;
   activity.videoUrl = req.body.videoUrl;
   activity.tags = req.body.tags;
   activity.location.desc = req.body.locationDesc;
@@ -188,7 +196,7 @@ router.post('/', (req, res, next) => {
       next(err);
     }
 
-    res.status(300).json({
+    res.status(200).json({
       success: true,
       results: _act
     });
@@ -208,13 +216,13 @@ router.put('/:id', (req, res) => {
   Activity.findById(req.params.id, (err, act) => {
     if (err) {
       // Handle error from User.findById
-      return res.status(400).json({
+      return res.status(500).json({
         success: false,
-        error: retrieveError(5, err)
+        errors: retrieveError(5, err)
       });
     }
     if (!act) {
-      res.status(400).json({
+      res.status(403).json({
         success: false,
         results: retrieveError(25)
       });
@@ -223,12 +231,12 @@ router.put('/:id', (req, res) => {
     act.save((err, updatedAct) => {
       if (err) {
         // Handle error from save
-        return res.status(400).json({
+        return res.status(500).json({
           success: false,
-          error: retrieveError(5, err)
+          errors: retrieveError(5, err)
         });
       }
-      res.json({
+      res.status(200).json({
         success: true,
         results: updatedAct
       });

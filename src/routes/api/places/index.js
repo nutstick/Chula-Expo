@@ -1,8 +1,6 @@
 const express = require('express');
 const Place = require('../../../models/Place');
-const _ = require('lodash');
 const retrieveError = require('../../../tools/retrieveError');
-const RangeQuery = require('../../../tools/RangeQuery');
 
 const router = express.Router();
 
@@ -36,21 +34,21 @@ router.get('/', (req, res) => {
     fields = fields.replace('locationLong', 'location.longtitute');
   }
 //----------------------------------------------------------------
-  //initial filter : name query
+// initial filter : name query
   const filter = {};
 
   if (req.query.nameEN) {
     filter['name.en'] = { $regex: req.query.nameEN };
-  }   
+  }
 
 //----------------------------------------------------------------
-  // initial limit
-    var limit;
+// initial limit
+  let limit;
   if (req.query.limit) {
     limit = Number.parseInt(req.query.limit, 10);
   }
   // initital skip
-  var skip;
+  let skip;
   if (req.query.skip) {
     skip = Number.parseInt(req.query.skip, 10);
   }
@@ -72,21 +70,23 @@ router.get('/', (req, res) => {
   }
 //----------------------------------------------------------------
   Place.find(filter)
-    .select(fieldwant).sort(sort).skip(skip)
+    .select(fields).sort(sort).skip(skip)
     .limit(limit)
     .exec(
     (err, places) => {
       if (err) {
-        return res.status(400).send({
-          message: 'Place error'
+        return res.status(500).send({
+          success: false,
+          errors: retrieveError(5, err)
         });
       }
-      res.json({
+
+      res.status(200).json({
         success: true,
         results: places
       });
     });
-  });
+});
  //----------------------------------------------------------------
 
 /**
@@ -94,32 +94,36 @@ router.get('/', (req, res) => {
 * Access at POST http://localhost:8080/api/en/places
 */
 
-  router.post('/', (req, res,next) => {
+router.post('/', (req, res, next) => {
    // Create object
 
-    const place = new Place();
+  const place = new Place();
 
    // Set field value (comes from the request)
-    place.name.en = req.body.nameEN;
-    place.name.th = req.body.nameTH;
-    if(req.body.code)place.code = req.body.code;
+  place.name.en = req.body.nameEN;
+  place.name.th = req.body.nameTH;
+  if (req.body.code) {
+    place.code = req.body.code;
+  }
   place.location.latitude = req.body.location.latitude;
   place.location.longtitude = req.body.location.longtitude;
 
 
    // Save place and check for error
-    place.save((err, _place) => {
-      if (err) {
-       // Handle error from save
-       return res.status(500).json({
-          success: false,
-          errors: retrieveError(5, err)
-        });
-      }
-
-      res.status(300).json(_place);
+  place.save((err, _place) => {
+    if (err) {
+      // Handle error from save
+      return res.status(500).json({
+        success: false,
+        errors: retrieveError(5, err)
+      });
+    }
+    res.status(201).json({
+      success: true,
+      results: _place
     });
   });
+});
 
 // Update an existing place via PUT(JSON format)
 // ex. { "name","EditName"}
@@ -137,16 +141,26 @@ router.put('/:id', (req, res) => {
     if (!place) {
       return res.status(403).json({
         success: false,
-        errors: retrieveError(26)
+        errors: retrieveError(33)
       });
     }
 
 
-     if (req.body.nameEN)place.name.en = req.body.nameEN;
-     if (req.body.nameTH)place.name.th = req.body.nameTH;
-     if (req.body.code)place.code = req.body.code;
-     if (req.body.latitute)place.location.latitute = req.body.latitute;
-     if (req.body.longtitute)place.location.longtitute = req.body.longtitute;
+    if (req.body.nameEN) {
+      place.name.en = req.body.nameEN;
+    }
+    if (req.body.nameTH) {
+      place.name.th = req.body.nameTH;
+    }
+    if (req.body.code) {
+      place.code = req.body.code;
+    }
+    if (req.body.latitute) {
+      place.location.latitute = req.body.latitute;
+    }
+    if (req.body.longtitute) {
+      place.location.longtitute = req.body.longtitute;
+    }
 
     place.save((err, _place) => {
       if (err) {
@@ -157,7 +171,7 @@ router.put('/:id', (req, res) => {
       }
       res.status(202).json({
         success: true,
-        message: 'Update place successfull',
+        message: 'Update place successful',
         results: _place
       });
     });
@@ -176,7 +190,7 @@ router.delete('/:id', (req, res) => {
     }
     res.status(202).json({
       success: true,
-      message: 'An Place with id ${req.params.id} was removed.'
+      message: `An Place with id ${req.params.id} was removed.`
     });
   });
 });

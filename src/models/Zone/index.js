@@ -65,10 +65,10 @@ const ZoneSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  webpage: {
-    type: String
+  location: {
+    latitute: { type: Number, required: true },
+    longtitute: { type: Number, required: true }
   }
-
 });
 
 const Zone = mongoose.model('Zone', ZoneSchema);

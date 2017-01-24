@@ -58,5 +58,15 @@
     "status": "403",
     "message": "Can't cancel used ticket.",
     "code": "31"
+  },
+  "32": {
+    "status": "403",
+    "message": "Facility is not exist",
+    "code": "32"
+  },
+  "33": {
+    "status": "403",
+    "message": "Place is not exist",
+    "code": "33"
   }
 }

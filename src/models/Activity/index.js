@@ -60,23 +60,13 @@ const ActivitySchema = new mongoose.Schema({
     latitute: Number,
     longtitute: Number
   },
-  faculty: {
-    type: ObjectId,
-    ref: 'Faculty',
-    required: true,
-    index: true
-  },
   zone: {
     type: ObjectId,
     ref: 'Zone',
+    required: true,
     index: true
   },
-  Place: {
-    type: ObjectId,
-    ref: 'Place',
-    index: true
-  },
-  reservable: [{
+  rounds: [{
     type: ObjectId,
     ref: 'Round'
   }],
@@ -128,6 +118,7 @@ ActivitySchema.index({
 ActivitySchema.static.findRoundByActivityId = (id, options) => {
   const filter = _.pick(options, ['name', 'start', 'end', 'avaliableSeats'])
   .merge({ activityId: id });
+
   return new Promise((resolve, reject) => {
     Round.find(filter).count().exec((err, count) => {
       if (err) {
