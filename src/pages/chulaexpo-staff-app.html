@@ -135,7 +135,8 @@
           selected="[[page]]"
           attr-for-selected="name"
           fallback-selection="view404"
-          role="main">
+          role="main"
+          hidden$="{{!loggedIn}}">
           <home-page name="home"></home-page>
           <signup-page name="signup"></signup-page>
           <account-page name="account"></account-page>
