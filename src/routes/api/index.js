@@ -38,13 +38,26 @@ router.use('/rounds', require('./rounds'));
 router.use('/tickets', require('./tickets'));
 
 /**
-=======
->>>>>>> upstream/master
+ * Facility API
+*/
+router.use('/facilities', require('./facilities'));
+	
+/**
+ * place API
+*/
+router.use('/places', require('./places'));
+
+/**
+ * zone API
+*/
+router.use('/zones', require('./zones'));
+
+/**
  * Welcome Message
  * Access at GET http://localhost:8080/api
  */
 router.get('/', (req, res) => {
-  res.send('Welcaome to Official Chula Expo API.');
+  res.send('Welcome to Official Chula Expo API.');
 });
 
 module.exports = router;
