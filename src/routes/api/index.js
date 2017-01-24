@@ -41,7 +41,7 @@ router.use('/tickets', require('./tickets'));
  * Facility API
 */
 router.use('/facilities', require('./facilities'));
-	
+
 /**
  * place API
 */

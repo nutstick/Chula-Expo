@@ -17,7 +17,7 @@ describe('API', () => {
         expect(err).to.be.null;
         expect(res).to.have.status(200);
         expect(res.body).to.be.string;
-        expect(res.text).to.eq('Welcaome to Official Chula Expo API.');
+        expect(res.text).to.eq('Welcome to Official Chula Expo API.');
         done();
       });
   });

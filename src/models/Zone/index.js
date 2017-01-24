@@ -16,12 +16,10 @@ const ZoneSchema = new mongoose.Schema({
       required: true
     }
   },
-  places: {
-    type: [{
-      type: ObjectId,
-      ref: 'Place'
-    }]
-  },
+  places: [{
+    type: ObjectId,
+    ref: 'Place'
+  }],
   thumbnailUrl: {
     type: String
   },

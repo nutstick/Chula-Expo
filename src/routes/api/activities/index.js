@@ -212,7 +212,6 @@ router.post('/', (req, res, next) => {
   activity.zone = req.body.zone;
   activity.startTime = req.body.startTime;
   activity.endTime = req.body.endTime;
-
   // Save User and check for error
   activity.save((err, _act) => {
     if (err) {

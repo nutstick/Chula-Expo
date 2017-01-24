@@ -41,9 +41,9 @@ router.get('/', (req, res) => {
         } else if (element === 'descriptionEN') {
           element = 'description.en';
         } else if (element === 'locationLat') {
-          element = 'location.lat';
+          element = 'location.latitute';
         } else if (element === 'locationLong') {
-          element = 'location.long';
+          element = 'location.longtitute';
         }
         fieldwant = `${fieldwant}${element} `;
       }
@@ -180,19 +180,18 @@ router.post('/', (req, res, next) => {
     zone.bannerUrl = req.body.bannerUrl;
   }
   zone.welcomeMessage.en = req.body.welcomeMessageEN;
-  zone.shortName.en = req.body.shortNameEN;
-  zone.description.en = req.body.descriptionEN;
   zone.welcomeMessage.th = req.body.welcomeMessageTH;
+  zone.shortName.en = req.body.shortNameEN;
   zone.shortName.th = req.body.shortNameTH;
+  zone.description.en = req.body.descriptionEN;
   zone.description.th = req.body.descriptionTH;
   if (req.body.websiteUrl) {
     zone.websiteUrl = req.body.websiteUrl;
   }
   zone.type = req.body.type;
-  zone.location.latitude = req.body.locationLat;
+  zone.location.latitute = req.body.locationLat;
   zone.location.longtitute = req.body.locationLong;
 
-  console.log(zone);
  // Save zone and check for error
   zone.save((err, _zone) => {
     if (err) {

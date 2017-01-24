@@ -119,6 +119,7 @@ router.post('/', (req, res, next) => {
    // Create a new instance of the User model
   const facility = new Facility();
    // Set field value (comes from the request)
+
   facility.name.th = req.body.nameTH;
   facility.name.en = req.body.nameEN;
   facility.description.th = req.body.descriptionTH;
@@ -131,8 +132,12 @@ router.post('/', (req, res, next) => {
   facility.save((err, _act) => {
     if (err) {
      // Handle error from save
-      next(err);
+      return res.status(500).json({
+        success: false,
+        results: err
+      });
     }
+
     res.status(201).json({
       success: true,
       results: _act
@@ -164,10 +169,10 @@ router.put('/:id', (req, res) => {
       fac.name.en = req.body.nameEN;
     }
     if (req.body.descriptionTH) {
-      fac.desc.th = req.body.descriptionTH;
+      fac.description.th = req.body.descriptionTH;
     }
     if (req.body.descriptionEN) {
-      fac.desc.en = req.body.descriptionEN;
+      fac.description.en = req.body.descriptionEN;
     }
     if (req.body.place) {
       fac.place = req.body.place;

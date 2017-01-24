@@ -87,6 +87,47 @@ router.get('/', (req, res) => {
       });
     });
 });
+
+/**
+ * Get Places by Id
+ */
+router.get('/:id', (req, res) => {
+ //----------------------------------------------------------------
+ // initial the fieldwant from request
+  let fields = '';
+  if (req.query.fields) {
+    fields = req.query.fields.replace(',', ' ');
+    fields = fields.replace('nameTH', 'name.th');
+    fields = fields.replace('nameEN', 'name.en');
+    fields = fields.replace('descTH', 'desc.th');
+    fields = fields.replace('descEN', 'desc.en');
+    fields = fields.replace('locationLat', 'location.latitute');
+    fields = fields.replace('locationLong', 'location.longtitute');
+  }
+
+  Place.findById(req.params.id).select(fields).exec((err, place) => {
+    if (err) {
+     // Handle error from User.findById
+      return res.status(500).json({
+        success: false,
+        errors: retrieveError(5, err)
+      });
+    }
+
+    if (!place) {
+      return res.status(403).json({
+        success: false,
+        results: retrieveError(33)
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      results: place
+    });
+  });
+});
+
  //----------------------------------------------------------------
 
 /**
@@ -105,18 +146,14 @@ router.post('/', (req, res, next) => {
   if (req.body.code) {
     place.code = req.body.code;
   }
-  place.location.latitude = req.body.locationLat;
-  place.location.longtitude = req.body.locationLong;
+  place.location.latitute = req.body.locationLat;
+  place.location.longtitute = req.body.locationLong;
 
-
-   // Save place and check for error
+  // Save place and check for error
   place.save((err, _place) => {
     if (err) {
       // Handle error from save
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err)
-      });
+      next(err);
     }
     res.status(201).json({
       success: true,
