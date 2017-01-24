@@ -1,0 +1,229 @@
+<!-- Libery -->
+<link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Route -->
+<link rel="import" href="/public/lib/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="/public/lib/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="/public/lib/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="/public/lib/app-layout/app-header/app-header.html">
+<link rel="import" href="/public/lib/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="/public/lib/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="/public/lib/app-route/app-location.html">
+<link rel="import" href="/public/lib/app-route/app-route.html">
+<link rel="import" href="/public/lib/polymer-cookie/polymer-cookie.html">
+<link rel="import" href="/public/lib/iron-pages/iron-pages.html">
+<link rel="import" href="/public/lib/iron-icons/iron-icons.html">
+<link rel="import" href="/public/lib/iron-media-query/iron-media-query.html">
+<link rel="import" href="/public/lib/paper-item/paper-item.html">
+<link rel="import" href="/public/lib/paper-menu/paper-menu.html">
+<link rel="import" href="/public/lib/paper-tabs/paper-tabs.html">
+<!-- Pages -->
+<link rel="import" href="/pages/home-page.html">
+<link rel="import" href="/pages/login-page.html">
+<link rel="import" href="/pages/signup-page.html">
+<link rel="import" href="/pages/account-page.html">
+<link rel="import" href="/pages/activity-page.html">
+
+<dom-module id="chulaexpo-staff-app">
+  <template>
+    <style is="custome-style" include="shared-styles">
+      :host, app-drawer-layout, app-drawer-layout > div {
+        height: 100%;
+        /*height: 1px;*/
+      }
+      :host {
+        display: block;
+      }
+      app-toolbar {
+        background-color: var(--primary-color);
+        color: var(--secondary-color);
+      }
+      iron-selector a {
+        color: var(--primary-color);
+        text-decoration: none;
+      }
+      paper-tabs {
+        --paper-tabs-selection-bar-color: white;
+        height: 100%;
+        max-width: 640px;
+      }
+      paper-tab {
+        --paper-tab-ink: var(--primary-color);
+        text-transform: uppercase;
+      }
+      paper-tab a {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-center);
+        color: var(--secondary-color);
+        text-decoration: none;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      section {
+        padding: 88px 16px;
+      }
+      .container {
+        @apply(--layout-horizontal);
+        margin: 0 auto;
+      }
+      .container > * {
+        @apply(--layout-flex);
+      }
+      a paper-button,
+      a:active paper-button,
+      a:visited paper-button {
+        color: #000;
+      }
+      .ui.container {
+        padding-top: 20px;
+      }
+    </style>
+    <!-- App Route -->
+    <app-location route="{{route}}"></app-location>
+    <app-route
+      route="{{route}}"
+      pattern="/:page"
+      data="{{routeData}}"
+      tail="{{subroute}}"
+    ></app-route>
+    <!-- Cookie -->
+    <polymer-cookie
+      id="cookie"
+      name="chula-expo"
+    ></polymer-cookie>
+    
+    <!-- Main Layout -->
+    <app-drawer-layout force-narrow>
+      <app-drawer id="drawer">
+        <!-- Toolbar -->
+        <app-toolbar>Menu</app-toolbar>
+        <!-- Navbar on mobile: side nav menu -->
+        <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+          <a name="home" href="/">Home</a>
+          <a name="signup" href="/signup/">Sign Up</a>
+          <a name="activity" href="/activity/">Activity</a>
+        </iron-selector>
+      </app-drawer>
+      <!-- Navbar Layout on desktop -->
+      <app-header-layout>
+        <app-header>
+          <app-toolbar>
+            <paper-icon-button icon="menu" drawer-toggle hidden$="{{displayMenu}}"></paper-icon-button>
+            <div main-title>Chula Expo Staff</div>
+            <paper-icon-button
+              icon="[[_computeLogInIcon(token)]]"
+              disabled="[[!token]]"
+              on-tap="_accountClick"
+            >
+            </paper-icon-button>
+          </app-toolbar>
+          <app-toolbar class="tabs-bar" hidden$="{{!displayTab}}">
+            <!-- Nav on desktop: tabs -->
+            <paper-tabs selected="[[page]]" attr-for-selected="name">
+              <paper-tab name="home"><a href="/" horizontal center-center layout>Home</a></paper-tab>
+              <paper-tab name="signup"><a href="/signup/" horizontal center-center layout>Sign Up</a></paper-tab>
+              <paper-tab name="activity"><a href="/activity/" horizontal center-center layout>Activity</a></paper-tab>
+            </paper-tabs>
+          </app-toolbar>
+        </app-header>
+      </app-header-layout>
+
+      <!-- Content Gose Here -->
+      <div>
+        <login-page logged-in="{{loggedIn}}" page={{page}}></login-page>
+        <iron-pages
+          selected="[[page]]"
+          attr-for-selected="name"
+          fallback-selection="view404"
+          role="main">
+          <home-page name="home"></home-page>
+          <signup-page name="signup"></signup-page>
+          <account-page name="account"></account-page>
+          <activity-page name="activity" route={{subroute}}></activity-page>
+        </iron-pages>
+      </div>
+    </app-drawer-layout>
+    <iron-media-query query="min-width: 600px" query-matches="{{wideLayout}}"></iron-media-query>
+  </template>
+  <script>
+    Polymer({
+      is: 'chulaexpo-staff-app',
+      properties: {
+        page: {
+          type: String,
+          reflectToAttribute: true,
+          observer: '_pageChanged',
+        },
+        token: {
+          type: String
+        },
+        loggedIn: {
+          type: Boolean,
+          computed: '_computeLoggedIn(token)'
+        },
+        wideLayout: {
+          type: Boolean,
+          observer: '_onLayoutChange',
+        },
+        displayMenu: {
+          type: Boolean,
+          computed: '_computeDisplayMenu(wideLayout,page)'
+        },
+        displayTab: {
+          type: Boolean,
+          computed: '_computeDisplayTab(wideLayout,page)'
+        },
+      },
+
+      observers: [
+        '_routePageChanged(routeData.page)',
+      ],
+
+      _routePageChanged: function(page) {
+        this.page = page || 'home';
+
+        if (!this.$.drawer.persistent) {
+          this.$.drawer.close();
+        }
+      },
+      _pageChanged: function(page) {
+        var resolvedPageUrl = this.resolveUrl(page + '-page.html');
+        this.importHref(resolvedPageUrl, null, this._showPage404, true);
+      },
+      _showPage404: function() {
+        this.page = '404-page'
+      },
+      _onLayoutChange: function(wide) {
+        var drawer = this.$.drawer;
+        if (wide && drawer.opened) {
+          drawer.opened = false;
+        }
+      },
+      _accountClick: function() {
+        if (this.page == 'account') {
+          this.set('route.path', this.prevPath);
+          this.set('prevPath', '');
+        } else {
+          this.set('prevPath', this.route.path);
+          this.set('route.path', '/account');
+        }
+      },
+      _computeLoggedIn: function(token) {
+        return !!token;
+      },
+      _computeDisplayMenu: function(wideLayout, page) {
+        return (page == 'login') ? false : wideLayout;
+      },
+      _computeDisplayTab: function(wideLayout, page) {
+        return (page == 'login' || page == 'account') ? false : wideLayout;
+      },
+      _computeLogInIcon: function(token) {
+        return token ? 'account-circle' : 'lock-outline';
+      }
+    });
+
+    window.addEventListener('WebComponentsReady', function(e) {
+      document.querySelector('chulaexpo-staff-app').token = document.getElementById('cookie').readCookie();
+    });
+  </script>
+</dom-module>

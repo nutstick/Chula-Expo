@@ -1,0 +1,81 @@
+<!-- Libery -->
+<link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="/public/lib/paper-card/paper-card.html">
+<link rel="import" href="/public/lib/paper-fab/paper-fab.html">
+<link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="/public/lib/paper-datatable/paper-datatable.html">
+<link rel="import" href="/public/lib/paper-datatable/paper-datatable-card.html">
+
+<link rel="import" href="/components/activity-api.html">
+<link rel="import" href="/components/shared-styles.html">
+
+<dom-module id="activity-list-page">
+  <template>
+    <style is="custom-style" include="shared-styles">
+      :host {
+        @apply(--layout-vertical);
+        @apply(--layout-center-center);
+        padding-top: 20px;
+      }
+      .fixed-bottom {
+        position: fixed;
+        bottom: 20px;
+      }
+      #add-icon {
+        position: absolute;
+        bottom: 0px;
+        right: 10px;
+      }
+      .clearfix:after {
+        clear:both;
+        display:block;
+        content: "";
+      }
+    </style>
+    <div class="container">
+      <paper-datatable-card header="Activities" id-property="id" data-source="{{dataSource}}" page="[[page]]" page-size="[[pageSize]]" progress>
+        <paper-datatable selectable multi-selection>
+          <paper-datatable-column header="ชื่อ" property="name">
+          </paper-datatable-column>
+          <paper-datatable-column header="เวลาเริ่ม" property="startTime">
+          </paper-datatable-column>
+          <paper-datatable-column header="เวลาจบ" property="endTime">
+          </paper-datatable-column>
+          <paper-datatable-column header="คำอธิบายย่อ" property="shortDescription">
+          </paper-datatable-column>
+        </paper-datatable>
+      </paper-datatable-card>
+      <activity-api data-source="{{dataSource}}" page="{{page}}" page-size="{{pageSize}}"></activity-api>
+      <div class="fixed-bottom">
+        <div class="container">
+          <paper-fab id="add-icon" icon="add" on-tap="_addClick"></paper-fab>
+          <div class="clearfix">
+        </div>
+      </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'activity-list-page',
+      properties: {
+        params: {
+          type: Object,
+          value: { fields: 'id name startTime endTime shortDescription', limit: 20, sort: 'id' }
+        },
+        error: {
+          type: String,
+        },
+        activities: {
+          type: Array,
+          value: [],
+        },
+        dataSource: {
+          type: Object,
+        }
+      },
+      _addClick: function() {
+        document.querySelector('chulaexpo-staff-app').set('route.path', '/activity/add/');
+      },
+    })
+  </script>
+</dom-module>

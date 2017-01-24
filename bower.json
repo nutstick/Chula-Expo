@@ -54,6 +54,9 @@
     "polymer-cookie": "^1.1.1",
     "neon-animation": "PolymerElements/neon-animation#^1.2.4",
     "iron-grid": "*",
-    "paper-button-group": "Protoss78/paper-button-group#^0.0.1"
+    "paper-button-group": "Protoss78/paper-button-group#^0.0.1",
+    "paper-fab": "PolymerElements/paper-fab#^1.2.1",
+    "app-route": "PolymerElements/app-route#^0.9.3",
+    "paper-datatable": "^0.9.8"
   }
 }

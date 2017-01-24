@@ -80,6 +80,45 @@ app.use(express.static(__dirname, { maxAge: 31557600000 }));
  * Route
  */
 // Login through Facebook
+app.post('/auth/facebook/token', (req, res, next) => {
+  passport.authenticate('facebook', (err, user) => {
+    if (err) {
+      return res.json({
+        success: false,
+        errors: err
+      });
+    } else if (!user) {
+      return res.end({
+        success: false,
+        code: 5,
+        message: 'Internal Error',
+        user,
+      });
+    } else if (!user.id) {
+      // No User Exist in Database
+      // req.session.user = user;
+      return res.send({
+        success: false,
+        code: 2,
+        message: 'First time Signup, need to provied more data',
+        user,
+      });
+    }
+    // Match user in database, go login
+    req.login(user, (err) => {
+      if (err) {
+        return next(err);
+      }
+      res.send({
+        success: true,
+        message: 'User already exist, login success.',
+        results: {
+          token: user.generateToken(),
+        }
+      });
+    });
+  })(req, res, next);
+});
 app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', 'public_profile', 'user_about_me'] }));
 app.get('/auth/facebook/callback', (req, res, next) => {
   passport.authenticate('facebook', (err, user) => {
