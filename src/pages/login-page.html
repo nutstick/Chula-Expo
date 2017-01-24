@@ -1,6 +1,7 @@
 <!-- Libery -->
 <link rel="import" href="/public/lib/polymer/polymer.html">
 <!-- Web Component -->
+<link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="/components/shared-styles.html">
 <link rel="import" href="/components/facebook-login-button.html">
 
@@ -17,6 +18,13 @@
         transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 1;
         color: var(--secondary-color);
+
+        @apply(--layout);
+        @apply(--layout-center-center);
+      }
+      :host([hide]) {
+        opacity: 0;
+        pointer-events: none;
       }
       .login-wrapper {
         margin-top: 40px;
@@ -43,6 +51,22 @@
     Polymer({
       is: 'login-page',
       properties: {
+        loggedIn: {
+          type: Boolean,
+          value: false
+        },
+        page: {
+          type: String,
+        },
+        hide: {
+          type: Boolean,
+          reflectToAttribute: true,
+          value: false,
+          computed: '_computeHide(loggedIn,page)'
+        }
+      },
+      _computeHide: function(loggedIn, page) {
+        return loggedIn || page == 'signin';
       },
       _delayedSubmit: function(event) {
         spinner.active = true;

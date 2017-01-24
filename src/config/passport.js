@@ -160,7 +160,7 @@ module.exports = {
           });
         });
       }
-    ));
+    }));
 
     /**
      * JWT Token

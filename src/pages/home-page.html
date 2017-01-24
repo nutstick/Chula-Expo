@@ -1,0 +1,31 @@
+<!-- Libery -->
+<link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="/public/lib/paper-card/paper-card.html">
+<link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="/components/shared-styles.html">
+
+<dom-module id="home-page">
+  <template>
+    <style is="custom-style" include="shared-styles">
+      :host {
+        @apply(--layout);
+        @apply(--layout-center-center);
+        padding-top: 20px;
+      }
+    </style>
+    <paper-card class="container">
+      <div class="card-content">
+        Test Home
+      </div>
+    </paper-card>
+  </template>
+  <script>
+    Polymer({
+      is: 'home-page',
+      properties: {
+      },
+    })
+  </script>
+</dom-module>
