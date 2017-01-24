@@ -1,8 +1,7 @@
 const express = require('express');
 const Zone = require('../../../models/Zone');
-const _ = require('lodash');
+
 const retrieveError = require('../../../tools/retrieveError');
-const RangeQuery = require('../../../tools/RangeQuery');
 
 const router = express.Router();
 
@@ -27,23 +26,31 @@ router.get('/', (req, res) => {
   // initial the fieldwant from request
   let fieldwant = '';
   if (req.query.fields) {
-     req.query.fields.split(',').forEach(function(element){
-
-        if(element==='nameEN') element='name.en';
-        if(element==='welcomeMessageEN') element='welcomeMessage.en';
-        if(element==='shortNameEN') element='shortName.en';
-        if(element==='descriptionEN') element='description.en';
+    req.query.fields.split(',').forEach(
+      function (element) {
+        if (element === 'nameEN') {
+          element = 'name.en';
+        }
+        if (element === 'welcomeMessageEN') {
+          element = 'welcomeMessage.en';
+        }
+        if (element === 'shortNameEN') {
+          element = 'shortName.en';
+        }
+        if (element === 'descriptionEN') {
+          element = 'description.en';
+        }
         fieldwant = fieldwant + element + ' ';
-
-    });
+      }
+    );
   }
 //----------------------------------------------------------------
-  //initial filter : name query
+//initial filter : name query
   const filter = {};
-   
+
 
   if (req.query.nameEN) {
-        filter['name.en'] = { $regex: req.query.nameEN };
+    filter['name.en'] = { $regex: req.query.nameEN };
   }
 
   /* //initial search
@@ -52,7 +59,7 @@ router.get('/', (req, res) => {
   }*/
 //----------------------------------------------------------------
   // initial limit
-    var limit;
+  var limit;
   if (req.query.limit) {
     limit = Number.parseInt(req.query.limit, 10);
   }
@@ -99,11 +106,11 @@ router.get('/', (req, res) => {
 * Create a new Zone
 * Access at POST http://localhost:8080/api/en/zones
 */
-router.post('/', (req, res,next) => {
+router.post('/', (req, res, next) => {
  // Create object
 
   const zone = new Zone();
- 
+
  // Set field value (comes from the request)
       zone.name.en = req.body.nameEN;
       zone.name.th = req.body.nameTH;

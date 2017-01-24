@@ -1,54 +1,76 @@
 const mongoose = require('mongoose');
-const _ = require('lodash');
 
 const ObjectId = mongoose.Schema.Types.ObjectId;
 
 /**
  * Activity Schema
  */
- const ZoneSchema = new mongoose.Schema({
-   name : {
-    th : {type : String , required : true} ,
-    en : {type : String , required : true}
+const ZoneSchema = new mongoose.Schema({
+  name: {
+    th: {
+      type: String,
+      required: true
+    },
+    en: {
+      type: String,
+      required: true
+    }
   },
-  places :{
-    type : [
-    {type:ObjectId,
+  places: {
+    type: [{
+      type: ObjectId,
       ref: 'Place'
-    }] 
+    }]
   },
-  thumbnailUrl:{
-    type : String
+  thumbnailUrl: {
+    type: String
   },
-  bannerUrl:{
-    type : String
+  bannerUrl: {
+    type: String
   },
-  welcomeMessage:{
-    th : {type : String , required : true} ,
-    en : {type : String , required : true}
+  welcomeMessage: {
+    th: {
+      type: String,
+      required: true
+    },
+    en: {
+      type: String,
+      required: true
+    }
   },
-  shortName:{
-    th : {type : String , required : true} ,
-    en : {type : String , required : true}
+  shortName: {
+    th: {
+      type: String,
+      required: true
+    },
+    en: {
+      type: String,
+      required: true
+    }
   },
-  description:{
-    th : {type : String , required : true} ,
-    en : {type : String , required : true}
+  description: {
+    th: {
+      type: String,
+      required: true
+    },
+    en: {
+      type: String,
+      required: true
+    }
   },
-  websiteUrl:{
-    type : String
+  websiteUrl: {
+    type: String
   },
-  type:{
-    type : String,
+  type: {
+    type: String,
     required: true
   },
-  webpage:{
-    type : String
+  webpage: {
+    type: String
   }
-  
-  
+
 });
 
- const Zone = mongoose.model('Zone', ZoneSchema);
+const Zone = mongoose.model('Zone', ZoneSchema);
 
- module.exports = Zone;
+module.exports = Zone;

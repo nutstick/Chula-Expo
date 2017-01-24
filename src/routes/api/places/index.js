@@ -39,13 +39,13 @@ router.get('/', (req, res) => {
 //----------------------------------------------------------------
   //initial filter : name query
   const filter = {};
-   
+
 
   if (req.query.nameEN) {
         filter['name.en'] = { $regex: req.query.nameEN };
   }
-    
-   
+
+
 //----------------------------------------------------------------
   // initial limit
     var limit;
