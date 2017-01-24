@@ -239,7 +239,6 @@ router.post('/', (req, res) => {
       }
 
       // Set field value (comes from the request)
-      console.log(req.body);
       round.activityId = req.body.activityId;
       round.name = req.body.name;
       round.startTime = new Date(req.body.startTime, (5, 5));
@@ -250,8 +249,6 @@ router.post('/', (req, res) => {
         round.seats.reserved = req.body.seatsReserved;
       }
       round.seats.avaliable = req.body.seatsAvaliable;
-
-      console.log(round);
 
       // Save Round and check for error
       round.save((err, _round) => {
