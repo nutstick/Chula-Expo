@@ -9,7 +9,7 @@ const FacilitySchema = new mongoose.Schema({
     th: { type: String, required: true, index: true },
     en: { type: String, required: true, index: true }
   },
-  desc: {
+  description: {
     th: { type: String },
     en: { type: String }
   },

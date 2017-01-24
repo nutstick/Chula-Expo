@@ -68,5 +68,10 @@
     "status": "403",
     "message": "Place is not exist",
     "code": "33"
+  },
+  "34": {
+    "status": "403",
+    "message": "Zone is not exist",
+    "code": "34"
   }
 }

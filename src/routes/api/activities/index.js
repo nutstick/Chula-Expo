@@ -191,7 +191,7 @@ router.post('/', (req, res, next) => {
   // Set field value (comes from the request)
   activity.name.en = req.body.nameEN;
   activity.name.th = req.body.nameTH;
-  activity.thumbnailsUrl = req.body.thumbnailsUrl;
+  activity.thumbnailUrl = req.body.thumbnailUrl;
   activity.bannerUrl = req.body.bannerUrl;
   activity.shortDescription.en = req.body.shortDescriptionEN;
   activity.shortDescription.th = req.body.shortDescriptionTH;
@@ -216,7 +216,7 @@ router.post('/', (req, res, next) => {
   // Save User and check for error
   activity.save((err, _act) => {
     if (err) {
-      // Handle error from save
+      // Handle error from
       next(err);
     }
 
@@ -230,7 +230,7 @@ router.post('/', (req, res, next) => {
 // ex. { "name","EditName"}
 // Access at PUT http://localhost:3000/api/activities/:id
 router.put('/:id', (req, res) => {
-  const updateFields = _.pick(req.body, ['thumbnailsUrl', 'bannerUrl', 'contact', 'imageUrl', 'videoUrl', 'pdfUrl', 'link', 'isHighlight', 'tags', 'zone', 'startTime', 'endTime']);
+  const updateFields = _.pick(req.body, ['thumbnailUrl', 'bannerUrl', 'contact', 'imageUrl', 'videoUrl', 'pdfUrl', 'link', 'isHighlight', 'tags', 'zone', 'startTime', 'endTime']);
 
   if (updateFields.startTime) {
     updateFields.startTime = new Date(updateFields.startTime);

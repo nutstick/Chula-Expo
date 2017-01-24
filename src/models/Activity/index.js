@@ -18,7 +18,7 @@ const ActivitySchema = new mongoose.Schema({
       required: true
     }
   },
-  thumbnailsUrl: String,
+  thumbnailUrl: String,
   bannerUrl: String,
   shortDescription: {
     th: {

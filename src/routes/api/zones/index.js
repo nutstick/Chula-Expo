@@ -30,15 +30,20 @@ router.get('/', (req, res) => {
       (element) => {
         if (element === 'nameEN') {
           element = 'name.en';
-        }
-        if (element === 'welcomeMessageEN') {
+        } else if (element === 'welcomeMessageEN') {
           element = 'welcomeMessage.en';
-        }
-        if (element === 'shortNameEN') {
+        } else if (element === 'shortNameEN') {
           element = 'shortName.en';
-        }
-        if (element === 'descriptionEN') {
+        } else if (element === 'descriptionEN') {
           element = 'description.en';
+        } else if (element === 'shortNameEN') {
+          element = 'shortName.en';
+        } else if (element === 'descriptionEN') {
+          element = 'description.en';
+        } else if (element === 'locationLat') {
+          element = 'location.lat';
+        } else if (element === 'locationLong') {
+          element = 'location.long';
         }
         fieldwant = `${fieldwant}${element} `;
       }
@@ -98,6 +103,62 @@ router.get('/', (req, res) => {
     });
 });
  //----------------------------------------------------------------
+ //----------------------------------------------------------------
+ /**
+  * Get Zones by Id
+  */
+router.get('/:id', (req, res) => {
+  //----------------------------------------------------------------
+    // initial the fieldwant from request
+  let fieldwant = '';
+  if (req.query.fields) {
+    req.query.fields.split(',').forEach(
+        (element) => {
+          if (element === 'nameEN') {
+            element = 'name.en';
+          }
+          if (element === 'welcomeMessageEN') {
+            element = 'welcomeMessage.en';
+          }
+          if (element === 'shortNameEN') {
+            element = 'shortName.en';
+          }
+          if (element === 'descriptionEN') {
+            element = 'description.en';
+          }
+          if (element === 'locationLat') {
+            element = 'location.latitute';
+          }
+          if (element === 'locationLong') {
+            element = 'location.longtitute';
+          }
+          fieldwant = `${fieldwant}${element} `;
+        }
+      );
+  }
+
+  Zone.findById(req.params.id).select(fieldwant).exec((err, zone) => {
+    if (err) {
+      // Handle error from User.findById
+      return res.status(500).json({
+        success: false,
+        errors: retrieveError(5, err)
+      });
+    }
+
+    if (!zone) {
+      return res.status(403).json({
+        success: false,
+        results: retrieveError(34)
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      results: zone
+    });
+  });
+});
 
 /**
 * Create a new Zone
@@ -112,18 +173,26 @@ router.post('/', (req, res, next) => {
   zone.name.en = req.body.nameEN;
   zone.name.th = req.body.nameTH;
   zone.places = req.body.places;
-  if (req.body.thumbnailUrl)zone.thumbnailUrl = req.body.thumbnailUrl;
-  if (req.body.bannerUrl)zone.bannerUrl = req.body.bannerUrl;
+  if (req.body.thumbnailUrl) {
+    zone.thumbnailUrl = req.body.thumbnailUrl;
+  }
+  if (req.body.bannerUrl) {
+    zone.bannerUrl = req.body.bannerUrl;
+  }
   zone.welcomeMessage.en = req.body.welcomeMessageEN;
   zone.shortName.en = req.body.shortNameEN;
   zone.description.en = req.body.descriptionEN;
   zone.welcomeMessage.th = req.body.welcomeMessageTH;
   zone.shortName.th = req.body.shortNameTH;
   zone.description.th = req.body.descriptionTH;
-  if (req.body.websiteUrl) zone.websiteUrl = req.body.websiteUrl;
+  if (req.body.websiteUrl) {
+    zone.websiteUrl = req.body.websiteUrl;
+  }
   zone.type = req.body.type;
-  if (req.body.webpage) zone.webpage = req.body.webpage;
+  zone.location.latitude = req.body.locationLat;
+  zone.location.longtitute = req.body.locationLong;
 
+  console.log(zone);
  // Save zone and check for error
   zone.save((err, _zone) => {
     if (err) {
@@ -159,24 +228,51 @@ router.put('/:id', (req, res) => {
       });
     }
 
-    if (req.body.nameEN)zone.name.en = req.body.nameEN;
-    if (req.body.nameTH)zone.name.th = req.body.nameTH;
-    if (req.body.places) zone.places = req.body.places;
-    if (req.body.thumbnailUrl)zone.thumbnailUrl = req.body.thumbnailUrl;
-    if (req.body.bannerUrl)zone.bannerUrl = req.body.bannerUrl;
-    if (req.body.welcomeMessage) zone.welcomeMessage = req.body.welcomeMessage;
-    if (req.body.shortName) zone.shortName = req.body.shortName;
-    if (req.body.description) zone.description = req.body.description;
-    if (req.body.welcomeMessageEN)zone.welcomeMessage.en = req.body.welcomeMessageEN;
-    if (req.body.shortNameEN)zone.shortName.en = req.body.shortNameEN;
-    if (req.body.descriptionEN)zone.description.en = req.body.descriptionEN;
-    if (req.body.welcomeMessageTH)zone.welcomeMessage.th = req.body.welcomeMessageTH;
-    if (req.body.shortNameTH)zone.shortName.th = req.body.shortNameTH;
-    if (req.body.descriptionTH)zone.description.th = req.body.descriptionTH;
-    if (req.body.websiteUrl) zone.websiteUrl = req.body.websiteUrl;
-    if (req.body.type) zone.type = req.body.type;
-    if (req.body.webpage) zone.webpage = req.body.webpage;
-
+    if (req.body.nameEN) {
+      zone.name.en = req.body.nameEN;
+    }
+    if (req.body.nameTH) {
+      zone.name.th = req.body.nameTH;
+    }
+    if (req.body.places) {
+      zone.places = req.body.places;
+    }
+    if (req.body.thumbnailUrl) {
+      zone.thumbnailUrl = req.body.thumbnailUrl;
+    }
+    if (req.body.bannerUrl) {
+      zone.bannerUrl = req.body.bannerUrl;
+    }
+    if (req.body.welcomeMessageTH) {
+      zone.welcomeMessage.th = req.body.welcomeMessageTH;
+    }
+    if (req.body.welcomeMessageEN) {
+      zone.welcomeMessage.en = req.body.welcomeMessageEN;
+    }
+    if (req.body.shortNameTH) {
+      zone.shortName.th = req.body.shortNameTH;
+    }
+    if (req.body.shortNameEN) {
+      zone.shortName.en = req.body.shortNameEN;
+    }
+    if (req.body.descriptionTH) {
+      zone.description.th = req.body.descriptionTH;
+    }
+    if (req.body.descriptionEN) {
+      zone.description.en = req.body.descriptionEN;
+    }
+    if (req.body.websiteUrl) {
+      zone.websiteUrl = req.body.websiteUrl;
+    }
+    if (req.body.type) {
+      zone.type = req.body.type;
+    }
+    if (req.body.locationLat) {
+      zone.location.latitute = req.body.locationLat;
+    }
+    if (req.body.locationLong) {
+      zone.location.longtitute = req.body.locationLong;
+    }
 
     zone.save((err, _zone) => {
       if (err) {
@@ -187,7 +283,7 @@ router.put('/:id', (req, res) => {
       }
       res.status(202).json({
         success: true,
-        message: 'Update zone successfull',
+        message: 'Update zone successful',
         results: _zone
       });
     });

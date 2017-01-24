@@ -17,8 +17,8 @@ router.get('/', (req, res) => {
       let sortFields = sortQuery[0] === '-' ? sortQuery.substr(1) : sortQuery;
       sortFields = sortFields.replace('nameTH', 'name.th');
       sortFields = sortFields.replace('nameEN', 'name.en');
-      sortFields = sortFields.replace('descTH', 'desc.th');
-      sortFields = sortFields.replace('descEN', 'desc.en');
+      sortFields = sortFields.replace('descriptionTH', 'description.th');
+      sortFields = sortFields.replace('descriptionEN', 'description.en');
       sortFields = sortFields.replace('locationLat', 'location.latitute');
       sortFields = sortFields.replace('locationLong', 'location.longtitute');
       if (sortQuery[0] === '-') {
@@ -37,8 +37,8 @@ router.get('/', (req, res) => {
     fields = req.query.fields.replace(',', ' ');
     fields = fields.replace('nameTH', 'name.th');
     fields = fields.replace('nameEN', 'name.en');
-    fields = fields.replace('descTH', 'desc.th');
-    fields = fields.replace('descEN', 'desc.en');
+    fields = fields.replace('descriptionTH', 'description.th');
+    fields = fields.replace('descriptionEN', 'description.en');
     fields = fields.replace('locationLat', 'location.latitute');
     fields = fields.replace('locationLong', 'location.longtitute');
   }
@@ -84,8 +84,8 @@ router.get('/:id', (req, res) => {
     fields = req.query.fields.replace(',', ' ');
     fields = fields.replace('nameTH', 'name.th');
     fields = fields.replace('nameEN', 'name.en');
-    fields = fields.replace('descTH', 'desc.th');
-    fields = fields.replace('descEN', 'desc.en');
+    fields = fields.replace('descriptionTH', 'description.th');
+    fields = fields.replace('descriptionEN', 'description.en');
     fields = fields.replace('locationLat', 'location.latitute');
     fields = fields.replace('locationLong', 'location.longtitute');
   }
@@ -121,8 +121,8 @@ router.post('/', (req, res, next) => {
    // Set field value (comes from the request)
   facility.name.th = req.body.nameTH;
   facility.name.en = req.body.nameEN;
-  facility.desc.th = req.body.descTH;
-  facility.desc.en = req.body.descEN;
+  facility.description.th = req.body.descriptionTH;
+  facility.description.en = req.body.descriptionEN;
   facility.type = req.body.type;
   facility.place = req.body.place;
   facility.location.latitute = req.body.locationLat;
@@ -163,11 +163,11 @@ router.put('/:id', (req, res) => {
     if (req.body.nameEN) {
       fac.name.en = req.body.nameEN;
     }
-    if (req.body.descTH) {
-      fac.desc.th = req.body.descTH;
+    if (req.body.descriptionTH) {
+      fac.desc.th = req.body.descriptionTH;
     }
-    if (req.body.descEN) {
-      fac.desc.en = req.body.descEN;
+    if (req.body.descriptionEN) {
+      fac.desc.en = req.body.descriptionEN;
     }
     if (req.body.place) {
       fac.place = req.body.place;
