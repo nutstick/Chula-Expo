@@ -71,8 +71,7 @@ module.exports = {
         User.findOne({ facebook: profile.id }, (err, existingUser) => {
           if (err) { return done(err); }
           if (existingUser) {
-            req.flash('errors', { msg: 'There is already a Facebook account that belongs to you. Sign in with that account or delete it, then link it with your current account.' });
-            done(err);
+            done(null, req.user);
           } else {
             User.findById(req.user.id, (err, user) => {
               if (err) { return done(err); }
@@ -97,8 +96,7 @@ module.exports = {
           User.findOne({ email: profile._json.email }, (err, existingEmailUser) => {
             if (err) { return done(err); }
             if (existingEmailUser) {
-              req.flash('errors', { msg: 'There is already an account using this email address. Sign in to that account and link it with Facebook manually from Account Settings.' });
-              done(err);
+              done(retrieveError(1));
             } else {
               const user = {};
               user.email = profile._json.email;

@@ -10,7 +10,7 @@ module.exports = {
   },
 
   isAuthenticatedByToken: (req, res, next) => {
-    passport.authenticate('jwt', { session: false }, (err, user) => {
+    passport.authenticate('jwt', (err, user, info) => {
       if (err) {
         return next(err);
       }
@@ -20,7 +20,7 @@ module.exports = {
           errors: retrieveError(22, err)
         });
       }
-      req.logIn(user, (err) => {
+      req.logIn(user, { session: false }, (err) => {
         if (err) {
           return next(err);
         }
@@ -31,6 +31,14 @@ module.exports = {
 
   isAdmin: (req, res, next) => {
     if (req.user && req.user.admin === 'Admin') {
+      next();
+    } else {
+      res.send(401, 'Unauthorized');
+    }
+  },
+
+  isStaff: (req, res, next) => {
+    if (req.user && (req.user.admin === 'Staff' || req.user.admin === 'Admin')) {
       next();
     } else {
       res.send(401, 'Unauthorized');

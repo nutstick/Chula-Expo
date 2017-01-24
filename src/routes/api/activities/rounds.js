@@ -1,5 +1,5 @@
 const express = require('express');
-const { Activity, Round, Ticket } = require('../../../models');
+const { Activity, Round } = require('../../../models');
 const { isAuthenticatedByToken } = require('../../../config/authenticate');
 const retrieveError = require('../../../tools/retrieveError');
 const RangeQuery = require('../../../tools/RangeQuery');
@@ -159,7 +159,7 @@ router.post('/', (req, res) => {
       round.name = req.body.name;
       round.start = new Date(req.body.start);
       round.end = new Date(req.body.end);
-      round.tickets = [];
+      // round.tickets = [];
       round.seats.fullCapacity = req.body.fullCapacity;
       if (req.body.reservedSeats) {
         round.seats.reserved = req.body.reservedSeats;

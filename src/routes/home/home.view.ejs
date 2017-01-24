@@ -1,26 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+  <title>Home</title>
+  <!-- Libery -->
+  <script src="/public/lib/webcomponentsjs/webcomponents-lite.min.js"></script>
+  <!-- Polymer -->
+  <link rel="import" href="/public/lib/polymer/polymer.html">
+	<!-- Main Layout -->
+  <link rel="import" href="/components/main-layout.html">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', 'Noto', sans-serif;
+      background-color: #fafafa;
+    }
+  </style>
 </head>
-<body class="container">
-
-	<header>
-	</header>
-
-	<main>
-		<ul>
-			<% for(var i = 0; i < menu.length; i++) { %>
-				<li><%= menu[i] %></li>
-			<% } %>
-		</ul>
-		<div class="jumbotron">
-			<h1>This is great</h1>
-			<p>Welcome to templating using EJS</p>
-		</div>
-	</main>
-
-	<footer>
-	</footer>
-	
+<body unresolved>
+  <template is="dom-bind" id="app">
+    <main-layout menu-list='<%= JSON.stringify(menuList) %>' selected='<%= selected %>'>
+    </main-layout>
 </body>
 </html>

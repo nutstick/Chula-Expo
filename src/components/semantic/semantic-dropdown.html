@@ -1,0 +1,72 @@
+<!-- Libery -->
+<link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="/public/lib/iron-icon/iron-icon.html">
+
+<dom-module id="semantic-dropdown">
+  <link rel="import" type="css" href="/public/lib/semantic/dist/components/dropdown.min.css">
+  <template>
+    <style>
+      :host .menu ::content .item {
+        position: relative;
+        cursor: pointer;
+        display: block;
+        border: none;
+        height: auto;
+        text-align: left;
+        border-top: none;
+        line-height: 1em;
+        color: rgba(0,0,0,.87);
+        padding: .78571429rem 1.14285714rem!important;
+        font-size: 1rem;
+        text-transform: none;
+        font-weight: 400;
+        box-shadow: none;
+        -webkit-touch-callout: none;
+      }
+      .ui.labeled.icon.button, .ui.labeled.icon.buttons .button {
+    position: relative;
+    padding-left: 4.07142857em!important;
+    padding-right: 1.5em!important;
+}
+    </style>
+    <div class$="{{classGenerate(button, search, icon, labeled)}}">
+      <i class="world icon"></i>
+      <span class="text">Select Language</span>
+      <div class="menu">
+        <content></content>
+      </div>
+    </div>
+  </template>
+  <!-- Polymer Module -->
+  <script>
+    Polymer({
+      is: 'semantic-dropdown',
+      properties: {
+        icon: {
+          type: String,
+          value: ''
+        },
+        title: {
+          type: String
+        },
+        button: {
+          type: Boolean,
+          value: false
+        },
+        search: {
+          type: Boolean,
+          value: false
+        },
+        labeled: {
+          type: Boolean,
+          value: false
+        }
+      },
+      classGenerate: function (button, search, icon, labeled) {
+        console.log(['ui', 'drpodown', 'floating', button ? 'button' : '', search ? 'search' : '', icon ? 'icon' : '', labeled ? 'labeldd' : ''].join(' '));
+        return ['ui', 'drpodown', 'floating', button ? 'button' : '', search ? 'search' : '', icon ? 'icon' : '', labeled ? 'labeldd' : ''].join(' ');
+      }
+    });
+  </script>
+</dom-module>

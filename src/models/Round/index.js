@@ -23,10 +23,10 @@ const RoundSchema = new mongoose.Schema({
     fullCapacity: { type: Number, required: true },
   },
 
-  tickets: [{
-    type: ObjectId,
-    ref: 'Ticket',
-  }],
+  // tickets: [{
+  //   type: ObjectId,
+  //   ref: 'Ticket',
+  // }],
 
   createAt: { type: Date, default: new Date() },
   updateAt: { type: Date, default: new Date() },
@@ -52,40 +52,78 @@ RoundSchema.pre('save', function save(next) {
  * Find and reserve method
  */
 RoundSchema.method.reserve = userId => new Promise((resolve, reject) => {
-  User.findById(userId, (err, user) => {
+  Ticket.findOne({ user: userId, round: this.id }, (err, ticket) => {
     if (err) {
-      return reject({
-        error: err,
-      });
-    } else if (!user) {
-      return reject({
-        error: 'User dosen\'t exist',
-      });
+      return reject(err);
     }
-    if (this.reservedSeats + 1 > this.avaliableSeats) {
-      return reject({
-        error: 'Can\'t reserve. Seating\'s fully booked'
-      });
+    // Ticket is already create throw Error
+    if (ticket) {
+      return reject({ code: 28 });
     }
+    User.findById(userId, (err, user) => {
+      if (err) {
+        return reject(err);
+      } else if (!user) {
+        // User isn't exist
+        return reject({ code: 24 });
+      }
+      // Fully booked seats
+      if (this.reservedSeats + 1 > this.avaliableSeats) {
+        return reject({ code: 30 });
+      }
 
-    const ticket = new Ticket({ userId, roundId: user.id, })
+      const ticket = new Ticket({ userId, roundId: user.id, });
 
-    this.seats.reserved++;
-    this.tickets.push(ticket);
+      this.seats.reserved++;
+      // this.tickets.push(ticket);
 
-    user.reservedActivity.push({
-      roundId: this.id,
-      ticket: ticket.id,
-      reservedAt: new Date(),
+      user.reservedActivity.push({
+        roundId: this.id,
+        ticket: ticket.id,
+        reservedAt: new Date(),
+      });
+
+      Promise.all([
+        this.save(),
+        user.save(),
+        ticket.save(),
+      ]).then((results) => {
+        resolve(results[2]);
+      }).catch(reject);
     });
+  });
+});
 
-    Promise.all([
-      this.save(),
-      user.save(),
-      ticket.save(),
-    ]).then((results) => {
-      resolve(results[2]);
-    }).catch(reject);
+RoundSchema.method.cancelReservedSeat = (userId, forceRemove) => new Promise((resolve, reject) => {
+  User.findById(userId, (err, user) => {
+    Ticket.findOne({ user: userId, round: this.id }, (err, ticket) => {
+      if (err) {
+        return reject(err);
+      }
+      // Ticket isn't exist
+      if (!ticket) {
+        return reject({ code: 27 });
+      }
+      // Already checked in ticket
+      if (ticket.checked && !forceRemove) {
+        return reject({ code: 31 });
+      }
+      // Number of reserved seats is incorrect
+      if (this.seats.reserved <= 0 && !forceRemove) {
+        return reject({ code: 0 });
+      }
+      // Decease reseaved seats by 1 and bound by zero
+      this.seats.reserved = Math.max(this.seats.reserved - 1, 0);
+      // Filter out User's reseved activity
+      user.reservedActivity.filter(activity => activity.ticket !== ticket.id);
+
+      Promise.all([
+        this.save(),
+        user.save(),
+        ticket.remove(),
+      ]).then(() => resolve())
+        .catch(reject);
+    });
   });
 });
 

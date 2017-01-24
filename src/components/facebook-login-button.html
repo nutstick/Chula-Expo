@@ -1,0 +1,57 @@
+<!-- Libery -->
+<script src="/public/lib/popup-tools/PopupTools.js"></script>
+<link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="/public/lib/paper-button/paper-button.html">
+<link rel="import" href="/public/lib/social-media-icons/social-media-icons.html">
+
+<dom-module id="facebook-login-button">
+  <template>
+    <style>
+      .icon-button {
+        padding-right: 10px;
+      }
+      .error-msg {
+        color: #ff5050;
+        text-align: center;
+        font-size: 1em;
+      }
+    </style>
+    <paper-button on-tap="fblogin" disabled="[[disabled]]">
+      <social-media-icons class="icon-button"icon="facebook" color="#fff"></social-media-icons>
+      <span>Sign in with Facebook</span>
+    </paper-button>
+    <div class="error-msg">{{error}}</div>
+  </template>
+  <script>
+    Polymer({
+      is: 'facebook-login-button',
+      properties: {
+        error: {
+          type: String,
+          value: ''
+        }
+      },
+      fblogin: function() {
+        var elem = this;
+        popupTools.popup('/auth/facebook', "Facebook Connect", {}, function (err, res) {
+          if (err) {
+            elem.error = err.toString();
+          } else {
+            if (res.success === true) {
+              document.getElementById('cookie').value = res.results.token;
+              document.getElementById('cookie').createCookie();
+              window.location = '/';
+            } else if (res.code === 2) {
+              window.location = '/signup?email=' + res.user.email
+                + '&name=' + res.user.name
+                + '&facebook=' + res.user.facebook
+                + '&tokens=' + JSON.stringify(res.user.tokens)
+                + '&picture=' + res.user.picture
+            }
+          }
+        });
+      }
+    })
+  </script>
+</dom-module>

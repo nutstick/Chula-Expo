@@ -1,0 +1,34 @@
+<!-- Libery -->
+<link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="/public/lib/iron-image/iron-image.html">
+
+<dom-module id="profile-image-uploadable">
+  <template>
+    <style is="custom-style">
+      .preload iron-image {
+        width: 150px;
+        height: 150px;
+        background: #ddd;
+      }
+    </style>
+    <div class="preload">
+      <iron-image sizing="contain" id="image" alt="{{alt}}" src="{{image}}" preload fade></iron-image>
+      <input name="{{name}}" type="hidden" value="{{image}}"></input>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'profile-image-uploadable',
+      properties: {
+        image: {
+          type: String,
+        },
+        alt: {
+          type: String,
+        },
+        name: String,
+      },
+    });
+  </script>
+</dom-module>

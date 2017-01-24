@@ -1,0 +1,81 @@
+<!-- Libery -->
+<link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="/public/lib/iron-icon/iron-icon.html">
+<link rel="import" href="/public/lib/iron-icons/image-icons.html">
+<link rel="import" href="/public/lib/paper-input/paper-input.html">
+<link rel="import" href="/public/lib/paper-input/paper-textarea.html">
+<link rel="import" href="/public/lib/paper-input/paper-input-container.html">
+<link rel="import" href="/public/lib/paper-button/paper-button.html">
+<link rel="import" href="/public/lib/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="/public/lib/vaadin-upload/vaadin-upload.html">
+
+<link rel="import" href="/components/semantic/semantic-dropdown-list.html">
+
+<dom-module id="activity-form">
+  <link rel="import" type="css" href="/public/lib/semantic/dist/components/container.min.css">
+  <template>
+    <form>
+      <div class="title active">
+        <iron-icon icon="language"></iron-icon>
+        <paper-dropdown-menu label="{{title}}">
+          <paper-listbox class="dropdown-content">
+            <paper-item>ไทย</paper-item>
+            <paper-item>English</paper-item>
+          </paper-listbox>
+        </paper-dropdown-menu>
+      </div>
+      <div class="content active">
+        <paper-input type="text" label="{{nameLabel}}" name="{{lang}}name" always-float-label></paper-input>
+        <paper-input type="text" label="{{shortDescriptionLabel}}" name="{{lang}}shortDescription" char-counter maxlength="80" always-float-label></paper-input>
+        <paper-textarea label="Textarea label" rows="4" always-float-label></paper-textarea>
+        <paper-input-container>
+          <label style="font-size: 12px;font-weight: 400;-webkit-font-smoothing: antialiased;white-space: nowrap;text-overflow: ellipsis;color:#8a8a8a;margin-bottom:10px;">Picture</label>
+          <vaadin-upload
+            accept="image/*"
+            target="/upload/img/activities"
+            method="POST"
+            headers="{'Authorization': 'JWT {{getToken()}}'}"
+            form-data-name="picture"
+          >
+            <div class="drop-label">
+              <iron-icon icon="image:collections"></iron-icon>
+              {{pictureUploadLabel}}
+            </div>
+          </vaadin-upload>
+        </paper-input-container>
+      </div>
+    </form>
+  </template>
+  <script>
+    Polymer({
+      is: 'activity-form',
+      properties: {
+        lang: {
+          type: String,
+          value: 'th'
+        },
+        title: {
+          type: String,
+          value: 'Please fill in the form.'
+        },
+        nameLabel: {
+          type: String,
+          value: 'Activity name'
+        },
+        shortDescriptionLabel: {
+          type: String,
+          value: 'Short Description'
+        },
+        pictureUploadLabel: {
+          type: String,
+          value: 'Drop some activity\'s picture'
+        }
+      },
+      getToken: function() {
+        // console.log(document.querySelector('app'))
+        // return document.querySelector('main-layout').token;
+      }
+    })
+  </script>
+</dom-module>

@@ -4,9 +4,6 @@ const passport = require('passport');
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  if (req.user) {
-    return res.redirect('/');
-  }
   res.render('login/login.view.ejs');
 });
 

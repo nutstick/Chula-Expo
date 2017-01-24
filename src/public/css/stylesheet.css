@@ -1,0 +1,10 @@
+body {
+  margin: 0;
+  font-family: 'Roboto', 'Noto', sans-serif;
+  background-color: #fafafa;
+}
+
+.container {
+  max-width: 960px;
+  margin: auto;
+}

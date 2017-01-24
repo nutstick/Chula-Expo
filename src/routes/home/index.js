@@ -1,11 +1,15 @@
 const express = require('express');
+const { isAuthenticated, isStaff } = require('../../config/authenticate');
+const { menuList } = require('../../tools');
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  const menu = ['home', 'about', 'login'];
+router.use(isAuthenticated, isStaff);
+
+router.get('/', menuList, (req, res) => {
   res.render('home/home.view.ejs', {
-    menu
+    menuList: req.menuList,
+    selected: 'Home'
   });
 });
 

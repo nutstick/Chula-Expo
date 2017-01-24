@@ -33,6 +33,11 @@ router.use('/activities', require('./activities'));
 router.use('/rounds', require('./rounds'));
 
 /**
+ * Ticket API
+*/
+router.use('/tickets', require('./tickets'));
+
+/**
 =======
 >>>>>>> upstream/master
  * Welcome Message

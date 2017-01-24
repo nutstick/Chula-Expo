@@ -65,7 +65,8 @@ const UserSchema = new mongoose.Schema({
   passwordResetExpires: Date,
   admin: {
     type: String,
-    enum: ['Admin', 'Staff'],
+    default: 'None',
+    enum: ['Admin', 'Staff', 'None'],
   },
 
   facebook: { type: String },
