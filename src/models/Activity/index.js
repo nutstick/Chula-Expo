@@ -3,32 +3,70 @@ const _ = require('lodash');
 const { Round } = require('../');
 
 const ObjectId = mongoose.Schema.Types.ObjectId;
+
 /**
  * Activity Schema
  */
-const ActivitySchema = new mongoose.Schema({
-  name: { type: String, required: true },
+ const ActivitySchema = new mongoose.Schema({
+  name: { 
+    th : {type : String , required : true} ,
+    en : {type : String , required : true}
+  },
   thumbnialsUrl: String,
-  shortDescription: { type: String, required: true },
-  description: { type: String, required: true },
-  imgUrl: [String],
+  bannerUrl: String,
+  shortDescription: { 
+    th : {type : String , required : true} ,
+    en : {type : String , required : true}
+  },
+  description: { 
+    th : {type : String , required : true} ,
+    en : {type : String , required : true}
+  },
+  imageUrl: [String],
   videoUrl: [String],
+  pdfUrl: [String],
+  link: [String],
+  isHighlight : Boolean,
   tags: [{ type: String, index: true }],
   location: {
-    desc: { type: String, required: true, index: true },
-    latitute: Number,
-    longtitute: Number
+   place : {
+    type : ObjectId,
+    ref : 'Place',
+    required:true
+
   },
-  // faculty: { type: String, required: true, index: true },
-  reservable: [{
-    type: ObjectId,
-    ref: 'Round'
-  }],
-  startTime: { type: Date, required: true, index: true },
-  endTime: { type: Date, required: true, index: true }
+  floor : String,
+  room : String ,
+  latitute: Number,
+  longtitute: Number
+},
+faculty : {
+  type : ObjectId,
+  ref : 'Faculty',
+  required: true,
+  index:true
+},
+zone :{
+  type:ObjectId,
+  ref: 'Zone',
+  index:true
+  
+},
+Place :{
+  type : ObjectId,
+  ref : 'Place',
+  index:true
+
+},
+reservable: [{
+  type: ObjectId,
+  ref: 'Round'
+}],
+startTime: { type: Date, required: true, index: true },
+endTime: { type: Date, required: true, index: true }
 });
 
-ActivitySchema.index({
+ ActivitySchema.index({
   name: 'text',
   description: 'text',
   shortDescription: 'text'
@@ -56,9 +94,9 @@ ActivitySchema.index({
  * @return {Result.limit} - Number of limit that used.
  * @return {Result.skip} - Number of offset that used.
  */
-ActivitySchema.static.findRoundByActivityId = (id, options) => {
+ ActivitySchema.static.findRoundByActivityId = (id, options) => {
   const filter = _.pick(options, ['name', 'start', 'end', 'avaliableSeats'])
-                  .merge({ activityId: id });
+  .merge({ activityId: id });
   return new Promise((resolve, reject) => {
     Round.find(filter).count().exec((err, count) => {
       if (err) {
@@ -91,7 +129,7 @@ ActivitySchema.static.findRoundByActivityId = (id, options) => {
  *
  * @return {Promise<Activity>} - Promise of adding rounds totarget activity
  */
-ActivitySchema.static.findAndAddRound = (id, rounds) => (
+ ActivitySchema.static.findAndAddRound = (id, rounds) => (
   new Promise((resolve, reject) => {
     this.findById(id, (err, activity) => {
       if (err) {
@@ -124,20 +162,20 @@ ActivitySchema.static.findAndAddRound = (id, rounds) => (
         }).save()]);
       }
       promise
-        .then((results) => {
-          activity.reservable = activity.reservable.concat(results.map(result => result._id));
-          activity.save((err, _activity) => {
-            if (err) {
-              return reject(err);
-            }
-            resolve(_activity);
-          });
-        })
-        .catch(err => reject(err));
+      .then((results) => {
+        activity.reservable = activity.reservable.concat(results.map(result => result._id));
+        activity.save((err, _activity) => {
+          if (err) {
+            return reject(err);
+          }
+          resolve(_activity);
+        });
+      })
+      .catch(err => reject(err));
     });
   })
-);
+  );
 
-const Activity = mongoose.model('Activity', ActivitySchema);
+ const Activity = mongoose.model('Activity', ActivitySchema);
 
-module.exports = Activity;
+ module.exports = Activity;
