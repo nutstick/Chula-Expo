@@ -4,5 +4,4 @@ node_modules
 
 *.log
 npm-debug.log.*
-src/public/lib/*
-!src/public/lib/popup-tools
+src/public/lib

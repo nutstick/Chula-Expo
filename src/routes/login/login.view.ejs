@@ -21,60 +21,59 @@
   <link rel="import" href="/public/lib/paper-button/paper-button.html">
 	<!-- Main Layout -->
   <link rel="import" href="/components/main-layout.html">
-  <link rel="import" href="/components/login-page.html">
+  <link rel="import" href="/components/facebook-login-button.html">
   <link rel="stylesheet" type="text/css" href="/public/css/stylesheet.css">
 </head>
 <body unresolved>
   <template is="dom-bind" id="app">
     <main-layout>
       <div class="container">
-        <login-page></login-page>
-        <!--iron-pages selected="0">
-          <div style="max-width: 420px; margin: auto;">
-            <form is="iron-form" id="form" method="post" action="/login">
-              <paper-input name="email" label="E-mail" required></paper-input>
-              <paper-input name="password" label="Password" type="password" required auto-validate></paper-input>
-              <paper-button raised onclick="_delayedSubmit(event)" disabled id="loginButton">
-                <paper-spinner id="spinner" hidden></paper-spinner>Submit</paper-button>
-              <paper-button raised onclick="_reset(event)">Reset</paper-button>
-              <div class="output"></div>
-            </form>
-            <div>
-              <facebook-login-button />
-            </div>
+      <iron-pages selected="0">
+        <div style="max-width: 420px; margin: auto;">
+          <form is="iron-form" id="form" method="post" action="/login">
+            <paper-input name="email" label="E-mail" required></paper-input>
+            <paper-input name="password" label="Password" type="password" required auto-validate></paper-input>
+            <paper-button raised onclick="_delayedSubmit(event)" disabled id="loginButton">
+              <paper-spinner id="spinner" hidden></paper-spinner>Submit</paper-button>
+            <paper-button raised onclick="_reset(event)">Reset</paper-button>
+            <div class="output"></div>
+          </form>
+          <div>
+            <facebook-login-button />
           </div>
-        </iron-pages-->
+        </div>
+      </iron-pages>
       </div>
         
       <script>
-        // form.addEventListener('change', function(event) {
-        //   // Validate the entire form to see if we should enable the `Submit` button.
-        //   loginButton.disabled = !form.validate();
-        // });
-        // function _delayedSubmit(event) {
-        //   spinner.active = true;
-        //   spinner.hidden = false;
-        //   form.disabled = true;
-        //   // Simulate a slow server response.
-        //   setTimeout(function() {
-        //     Polymer.dom(event).localTarget.parentElement.submit();
-        //   }, 1000);
-        // }
-        // function _reset(event) {
-        //   var form = Polymer.dom(event).localTarget.parentElement
-        //   form.reset();
-        //   form.querySelector('.output').innerHTML = '';
-        // }
+        form.addEventListener('change', function(event) {
+          // Validate the entire form to see if we should enable the `Submit` button.
+          loginButton.disabled = !form.validate();
+        });
+        function _delayedSubmit(event) {
+          spinner.active = true;
+          spinner.hidden = false;
+          form.disabled = true;
+          // Simulate a slow server response.
+          setTimeout(function() {
+            Polymer.dom(event).localTarget.parentElement.submit();
+          }, 1000);
+        }
+        function _reset(event) {
+          var form = Polymer.dom(event).localTarget.parentElement
+          form.reset();
+          form.querySelector('.output').innerHTML = '';
+        }
         // form.addEventListener('iron-form-presubmit', function(event) {});
         // form.addEventListener('iron-form-submit', function(event) {
         //   this.querySelector('.output').innerHTML = JSON.stringify(event);
         // });
-        // document.getElementById('form').addEventListener('iron-form-submit', function(event) {
-        //   spinner.active = false;
-        //   spinner.hidden = true;
-        //   loginButton.disabled = false;
-        //   this.querySelector('.output').innerHTML = JSON.stringify(event.detail);
-        // });
+        document.getElementById('form').addEventListener('iron-form-submit', function(event) {
+          spinner.active = false;
+          spinner.hidden = true;
+          loginButton.disabled = false;
+          this.querySelector('.output').innerHTML = JSON.stringify(event.detail);
+        });
       </script>
     </main-layout>
   </template>
