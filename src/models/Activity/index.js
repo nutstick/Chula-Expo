@@ -18,7 +18,7 @@ const ActivitySchema = new mongoose.Schema({
       required: true
     }
   },
-  thumbnialsUrl: String,
+  thumbnailsUrl: String,
   bannerUrl: String,
   shortDescription: {
     th: {
@@ -40,6 +40,7 @@ const ActivitySchema = new mongoose.Schema({
       required: true
     }
   },
+  contact: String,
   imageUrl: [String],
   videoUrl: [String],
   pdfUrl: [String],

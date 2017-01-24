@@ -39,13 +39,19 @@ router.get('/', (req, res) => {
   if (req.query.sort) {
     sort = req.query.sort.split(',').reduce((prev, sortQuery) => {
       let sortFields = sortQuery[0] === '-' ? sortQuery.substr(1) : sortQuery;
-      if (sortFields === 'locationDesc') {
-        sortFields = 'location.desc';
+
+      if (sortFields === 'nameEN') {
+        sortFields = 'name.en';
+      } else if (sortFields === 'shortDescriptionEN') {
+        sortFields = 'shortDescription.en';
+      } else if (sortFields === 'descriptionEN') {
+        sortFields = 'description.en';
       } else if (sortFields === 'locationLat') {
         sortFields = 'location.latitute';
       } else if (sortFields === 'locationLong') {
         sortFields = 'location.longtitute';
       }
+
       if (sortQuery[0] === '-') {
         prev[sortFields] = -1;
       } else {
@@ -67,8 +73,8 @@ router.get('/', (req, res) => {
 
   // Name Query
   // http://localhost:3000/?name=John
-  if (req.query.name) {
-    filter.name = req.query.name;
+  if (req.query.nameEN) {
+    filter['name.en'] = { $regex: req.query.nameEN };
   }
 
   // Location description query
@@ -82,7 +88,12 @@ router.get('/', (req, res) => {
   let fields;
   if (req.query.fields) {
     fields = req.query.fields.replace(',', ' ');
-    fields = fields.replace('locationDesc', 'location.desc');
+    fields = fields.replace('nameEN', 'name.en');
+    fields = fields.replace('shortDescriptionEN', 'shortDescription.en');
+    fields = fields.replace('descriptionEN', 'description.en');
+    fields = fields.replace('locationPlace', 'location.place');
+    fields = fields.replace('locationFloor', 'location.floor');
+    fields = fields.replace('locationRoom', 'location.room');
     fields = fields.replace('locationLat', 'location.latitute');
     fields = fields.replace('locationLong', 'location.longtitute');
   }
@@ -138,7 +149,12 @@ router.get('/:id', (req, res) => {
   let fields = '';
   if (req.query.fields) {
     fields = req.query.fields.replace(',', ' ');
-    fields = fields.replace('locationDesc', 'location.desc');
+    fields = fields.replace('nameEN', 'name.en');
+    fields = fields.replace('shortDescriptionEN', 'shortDescription.en');
+    fields = fields.replace('descriptionEN', 'description.en');
+    fields = fields.replace('locationPlace', 'location.place');
+    fields = fields.replace('locationFloor', 'location.floor');
+    fields = fields.replace('locationRoom', 'location.room');
     fields = fields.replace('locationLat', 'location.latitute');
     fields = fields.replace('locationLong', 'location.longtitute');
   }
@@ -173,19 +189,27 @@ router.post('/', (req, res, next) => {
   const activity = new Activity();
 
   // Set field value (comes from the request)
-  activity.name = req.body.name;
-  activity.thumbnialsUrl = req.body.thumbnialsUrl;
+  activity.name.en = req.body.nameEN;
+  activity.name.th = req.body.nameTH;
+  activity.thumbnailsUrl = req.body.thumbnailsUrl;
   activity.bannerUrl = req.body.bannerUrl;
-  activity.shortDescription = req.body.shortDescription;
-  activity.description = req.body.description;
-  activity.imageUrl = req.body.imgUrl;
+  activity.shortDescription.en = req.body.shortDescriptionEN;
+  activity.shortDescription.th = req.body.shortDescriptionTH;
+  activity.description.en = req.body.descriptionEN;
+  activity.description.th = req.body.descriptionTH;
+  activity.contact = req.body.contact;
+  activity.imageUrl = req.body.imageUrl;
   activity.videoUrl = req.body.videoUrl;
+  activity.pdfUrl = req.body.pdfUrl;
+  activity.link = req.body.link;
+  activity.isHighlight = req.body.isHighlight;
   activity.tags = req.body.tags;
-  activity.location.desc = req.body.locationDesc;
+  activity.location.place = req.body.locationPlace;
+  activity.location.floor = req.body.locationFloor;
+  activity.location.room = req.body.locationRoom;
   activity.location.latitute = req.body.locationLat;
   activity.location.longtitute = req.body.locationLong;
-  activity.faculty = req.body.faculty;
-  activity.reservable = req.body.reservable;
+  activity.zone = req.body.zone;
   activity.startTime = req.body.startTime;
   activity.endTime = req.body.endTime;
 
@@ -206,7 +230,8 @@ router.post('/', (req, res, next) => {
 // ex. { "name","EditName"}
 // Access at PUT http://localhost:3000/api/activities/:id
 router.put('/:id', (req, res) => {
-  const updateFields = _.pick(req.body, ['name', 'thumbnialsUrl', 'shortDescription', 'description', 'imgUrl', 'videoUrl', 'tags', 'location', 'reservable', 'startTime', 'endTime']);
+  const updateFields = _.pick(req.body, ['thumbnailsUrl', 'bannerUrl', 'contact', 'imageUrl', 'videoUrl', 'pdfUrl', 'link', 'isHighlight', 'tags', 'zone', 'startTime', 'endTime']);
+
   if (updateFields.startTime) {
     updateFields.startTime = new Date(updateFields.startTime);
   }
@@ -228,6 +253,18 @@ router.put('/:id', (req, res) => {
       });
     }
     _.assignIn(act, updateFields);
+    act.name.en = req.body.nameEN;
+    act.name.th = req.body.nameTH;
+    act.shortDescription.en = req.body.shortDescriptionEN;
+    act.shortDescription.th = req.body.shortDescriptionTH;
+    act.description.en = req.body.descriptionEN;
+    act.description.th = req.body.descriptionTH;
+    act.location.place = req.body.locationPlace;
+    act.location.floor = req.body.locationFloor;
+    act.location.room = req.body.locationRoom;
+    act.location.latitute = req.body.locationLat;
+    act.location.longtitute = req.body.locationLong;
+
     act.save((err, updatedAct) => {
       if (err) {
         // Handle error from save
@@ -254,7 +291,7 @@ router.delete('/:id', (req, res) => {
         errors: retrieveError(5, err),
       });
     }
-    return res.status(200).json({
+    return res.status(202).json({
       success: true,
       message: `An Activity with id ${req.params.id} was removed.`,
     });

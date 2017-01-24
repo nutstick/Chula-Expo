@@ -105,8 +105,8 @@ router.post('/', (req, res, next) => {
   if (req.body.code) {
     place.code = req.body.code;
   }
-  place.location.latitude = req.body.location.latitude;
-  place.location.longtitude = req.body.location.longtitude;
+  place.location.latitude = req.body.locationLat;
+  place.location.longtitude = req.body.locationLong;
 
 
    // Save place and check for error
