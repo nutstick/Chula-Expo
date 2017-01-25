@@ -1,13 +1,16 @@
 <!-- Libery -->
 <link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="/public/lib/iron-ajax/iron-ajax.html">
 
 <dom-module id="activity-api">
   <template>
     <iron-ajax
+      auto
       id="activityResource"
       url="/api/activities"
-      params:"{{params}}"
-      on-response="_handleActivityResourcesResponse"
+      params="{{params}}"
+      on-response="_handleResponse"
       headers='{"Authentication": "{{token}}"}'
       handle-as="json"
       debounce-duration="300"
@@ -17,41 +20,51 @@
     Polymer({
       is: 'activity-api',
       properties: {
+        params: {
+          type: Object,
+          value: {
+            fields: 'nameEN,thumbnailUrl,shortDescriptionEN',
+            limit: 0,
+            skip: 0
+          }
+        },
         page: {
           type: Number,
-          value: 0
+          value: 1
         },
         pageSize: {
           type: Number,
           value: 10
         },
-        dataSource: {
-          type: Object,
-          value: {}
-        },
         token: {
           type: String,
           value: document.querySelector('chulaexpo-staff-app').token
         },
+        activities: {
+          type: Array,
+          value: [],
+          notify: true,
+        },
+        loading: Boolean,
+        error: {
+          type: Object,
+          value: {}
+        }
       },
 
-      attached: function() {
-        this._setDataSource();
+      observers: [
+        '_updateRequest(page, pageSize)'
+      ],
+
+      _updateRequest: function(page, pageSize) {
+        this.params.limit = pageSize;
+        this.params.skip = (page - 1) * pageSize;
       },
-      _activityRequest: function(resolve) {
-        var response = this.$.activityResource;
-        response.resolve = resolve;
-        response.generateRequest();
-      },
-      _handleActivityResourcesResponse: function(event) {
-        console.log(this);
-        this.resolve(event.detail.response.data);
-      },
-      _setDataSource: function() {
-        this.dataSource.get = function(sort, page, pageSize) {
-          this.page = page;
-          this.pageSize = pageSize;
-          return new Promise((resolve, reject) => this._activityRequest(resolve));
+      _handleResponse: function(event) {
+        if (event.detail.response.success) {
+          this.activities = event.detail.response.results;
+        } else {
+          this.error = event.detail.response.errors;
         }
       }
     });
