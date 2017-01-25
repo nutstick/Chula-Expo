@@ -47,7 +47,8 @@
       is: 'account-page',
       logout: function() {
         document.getElementById('cookie').eraseCookie();
-        document.querySelector('chulaexpo-staff-app').set('route.path', '/');
+        window.location = '/';  
+        // document.querySelector('chulaexpo-staff-app').set('route.path', '/');
       }
     });
   </script>

@@ -21,6 +21,15 @@
       :host, paper-card {
         width: 100%;
       }
+      :host {
+        @apply(--layout);
+        @apply(--layout-center-center);
+      }
+      @media (min-width: 600px) { 
+        :host {
+          padding-top: 20px;
+        }
+      }
       .header {
         height: 140px;
         position: relative;
@@ -76,23 +85,23 @@
         margin-top: 10px;
       }
     </style>
-    <paper-card >
+    <paper-card class="container">
       <div class="header style-scope paper-card">
         <!-- Profile Image with uploadility -->
         <div class="center offset">
-          <profile-image-uploadable image="[[user.picture]]" alt="User profile" name="picture"></profile-image-uploadable>
+          <profile-image-uploadable image="{{queryParams.picture}}" alt="User profile" name="picture"></profile-image-uploadable>
         </div>
       </div>
       <!-- Polymer Iron form -->
       <form is="iron-form" id="form" method="post" class="card-content"
         action="/api/signup" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
           <!-- Name -->
-          <paper-input name="name" label="ชื่อ" value="[[user.name]]" required always-float-label></paper-input>
+          <paper-input name="name" label="ชื่อ" value="{{queryParams.name}}" required always-float-label></paper-input>
           <!-- E-mail -->
-          <paper-input name="email" label="อีเมลล์" value="[[user.email]]" required always-float-label></paper-input>
+          <paper-input name="email" label="อีเมลล์" value="{{queryParams.email}}" required always-float-label></paper-input>
           <!-- Password -->
-          <paper-input name="password" label="พาสเวิร์ด" type="password" value="[[user.password]]" hidden=[[user.facebook]] required=[[!user.facebook]] always-float-label></paper-input>
-          <paper-input name="confirmPassword" label="คอนเฟิร์มพาสเวิร์ด" type="password" value="[[user.confirmPassword]]" hidden=[[user.facebook]] required=[[!user.facebook]] always-float-label></paper-input>
+          <paper-input name="password" label="พาสเวิร์ด" type="password" value="{{queryParams.password}}" hidden={{queryParams.facebook}} required={{!queryParams.facebook}} always-float-label></paper-input>
+          <paper-input name="confirmPassword" label="คอนเฟิร์มพาสเวิร์ด" type="password" value="{{queryParams.confirmPassword}}" hidden={{queryParams.facebook}} required={{!queryParams.facebook}} always-float-label></paper-input>
           <!-- Gender -->
           <div class="item">
             <div class="input-label" id="gender">เพศ:</div>
@@ -102,7 +111,7 @@
             </paper-button-group>
           </div>
           <!-- Age -->
-          <paper-input name="age" label="อายุ" type="number" value="[[user.age]]" required always-float-label></paper-input>
+          <paper-input name="age" label="อายุ" type="number" value="{{queryParams.age}}" required always-float-label></paper-input>
           <div class="item">
             <!-- Student/Worker -->
             <div class="input-label">ประเภท:</div>
@@ -135,10 +144,10 @@
             </fieldset>
           </div>
           <!-- Hidden Fields -->
-          <input name="accessToken" type="hidden" value="[[user.accessToken]]" required></input>
-          <input name="tokens[0].kind" type="hidden" value="[[user.kind]]" required></input>
-          <input name="tokens[0].accessToken" type="hidden" value="[[user.accessToken]]" required></input>
-          <input name="facebook" type="hidden" value="[[user.facebook]]" required></input>
+          <input name="accessToken" type="hidden" value="{{queryParams.accessToken}}"></input>
+          <input name="tokens[0].kind" type="hidden" value="{{queryParams.kind}}"></input>
+          <input name="tokens[0].accessToken" type="hidden" value="{{queryParams.accessToken}}"></input>
+          <input name="facebook" type="hidden" value="{{queryParams.facebook}}"></input>
         </div>
         <!-- Submit Button -->
         <div class="card-actions">
@@ -157,9 +166,6 @@
     Polymer({
       is: 'signup-page',
       properties: {
-        user: {
-          type: Object,
-        },
         gender: {
           type: String,
         },
@@ -178,7 +184,18 @@
         staff: {
           type: Boolean,
           value: false
+        },
+        route: {
+          type: String,
+        },
+        queryParams: {
+          type: Object,
+          computed: "_computedQueryParams(route)"
         }
+      },
+      
+      _computedQueryParams: function(route) {
+        return route.__queryParams
       },
       _typeChanged: function(event) {
         this.hideStudent = this.type;
