@@ -83,7 +83,7 @@
 									<vaadin-upload
 										id="thumbnailUpload"
 										accept="image/*"
-										target="/upload/img/zone/thumbnail"
+										target="/upload/img/activities/thumbnail"
 										method="POST"
 										headers="{'Authorization': 'JWT {{token}}'}"
 										form-data-name="picture"
@@ -112,7 +112,7 @@
 									<vaadin-upload
 										id="bannerUpload"
 										accept="image/*"
-										target="/upload/img/zone/banner"
+										target="/upload/img/activities/banner"
 										method="POST"
 										headers="{'Authorization': 'JWT {{token}}'}"
 										form-data-name="picture"
@@ -204,7 +204,7 @@
 						<div class="button-holder">
 							<paper-button on-click="_delayedSubmit">
 								<paper-spinner id="spinner" hidden></paper-spinner>Submit
-								</paper-button>
+							</paper-button>
 							<!-- Reset Button -->
 							<paper-button on-click="_reset">Reset</paper-button>
 						</div>
@@ -231,10 +231,6 @@
         zoom: {
           type: Number,
           value: 16
-        },
-        tags_list: {
-          type: Array,
-          value: ['Chula Expo']
         }
       },
       _delayedSubmit: function(event) {

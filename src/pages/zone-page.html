@@ -48,6 +48,7 @@
         this.page = page || 'list';
       },
       _pageChanged: function(page) {
+   			console.log('zone-' + page + '-page.html');
         var resolvedPageUrl = this.resolveUrl('zone-' + page + '-page.html');
         this.importHref(resolvedPageUrl, null, this._showPage404, true);
       },

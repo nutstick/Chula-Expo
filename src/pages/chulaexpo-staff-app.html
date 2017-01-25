@@ -172,7 +172,7 @@
         },
         loggedIn: {
           type: Boolean,
-          computed: '_computeLoggedIn(token)'
+          computed: '_computeLoggedIn(page, token)'
         },
         wideLayout: {
           type: Boolean,
@@ -221,8 +221,8 @@
           this.set('route.path', '/account');
         }
       },
-      _computeLoggedIn: function(token) {
-        return !!token;
+      _computeLoggedIn: function(page, token) {
+        return !!token || page === "signup";
       },
       _computeDisplayMenu: function(wideLayout, page) {
         return (page == 'login') ? false : wideLayout;
