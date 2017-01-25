@@ -12,7 +12,7 @@
 
 <link rel="import" href="/components/shared-styles.html">
 
-<dom-module id="activity-add-page">
+<dom-module id="zone-add-page">
   <template>
     <style is="custom-style" include="shared-styles">
       :host {
@@ -73,7 +73,7 @@
     <div class="container">
       <paper-card>
 				<form is="iron-form" id="form" method="post" class="card-content"
-					action="/api/activities" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
+					action="/api/zones" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
 					<div class="card-content">
 						<!-- Thumbnail Upload -->
 						<div class="item">
@@ -130,13 +130,13 @@
 							<div>
 								<label class="label --input">Start Time</label>
 								<div class="flex" style="display: inline-block">
-									<datetime-local-input name="starttime" label="" no-label-float="true"></datetime-local-input>
+									<datetime-local-input name="startTime" label="" no-label-float="true"></datetime-local-input>
 								</div>
 							</div>
 							<div>
 								<label class="label --input">End Time</label>
 								<div class="flex" style="display: inline-block">
-									<datetime-local-input name="endtime" label="" no-label-float="true" required></datetime-local-input>
+									<datetime-local-input name="endTime" label="" no-label-float="true" required></datetime-local-input>
 								</div>
 							</div>
 						</div>
@@ -184,36 +184,19 @@
 							<div class="avatar" item-icon><img src="/public/img/th.svg" /></div>
 							<div class="flex company">ภาษาไทย</div>
 						</div>
-						<paper-input type="text" label="ชื่อกิจกรรม" name="nameTH" always-float-label></paper-input>
-						<paper-input type="text" label="รายละเอียดย่อ" name="shortDescriptionTH" char-counter maxlength="80" always-float-label></paper-input>
+						<paper-input type="text" label="ชื่อ" name="nameTH" always-float-label></paper-input>
+						<paper-input type="text" label="ชื่อย่อ" name="shortNameTH" char-counter maxlength="80" always-float-label></paper-input>
+						<paper-input type="text" label="ข้อความต้อนรับ" name="welcomeMessageTH" char-counter maxlength="80" always-float-label></paper-input>
 						<paper-textarea label="รายละเอียด" name="descriptionTH" rows="4" always-float-label></paper-textarea>
 						<!-- English Language -->
 						<div class="flex-layout center form-title">
 							<div class="avatar" item-icon><img src="/public/img/en.svg" /></div>
 							<div class="flex company">English</div>
 						</div>
-						<paper-input type="text" label="Activity name" name="nameEN" always-float-label></paper-input>
-						<paper-input type="text" label="Short description" name="shortDescriptionEN" char-counter maxlength="80" always-float-label></paper-input>
+						<paper-input type="text" label="Zone name" name="nameEN" always-float-label></paper-input>
+						<paper-input type="text" label="Short name" name="shortNameEN" char-counter maxlength="80" always-float-label></paper-input>
+						<paper-input type="text" label="Welcome message" name="welcomeMessageEN" char-counter maxlength="80" always-float-label></paper-input>
 						<paper-textarea label="Description" name="descriptionEN" rows="4" always-float-label></paper-textarea>
-					</div>
-					<div class="card-content">
-						<vaadin-upload
-							id="activityImage"
-							accept="image/*"
-							target="/upload/img/activities"
-							method="POST"
-							headers="{'Authorization': 'JWT {{token}}'}"
-							form-data-name="picture"
-						>
-							<div class="drop-label">
-								<iron-icon icon="image:collections"></iron-icon>
-								รูปประกอบกิจกกรม
-							</div>
-						</vaadin-upload>
-						<!-- Tags -->
-						<div class="item">
-							<paper-tags-input label="Tags" tags="{{tags_list}}"></paper-tags-input>
-						</div>
 					</div>
 					
 					<!-- Submit Button -->
@@ -232,7 +215,7 @@
   </template>
   <script>
     Polymer({
-      is: 'activity-add-page',
+      is: 'zone-add-page',
       properties: {
         token: {
           type: String,
@@ -248,10 +231,6 @@
         zoom: {
           type: Number,
           value: 16
-        },
-        tags_list: {
-          type: Array,
-          value: ['Chula Expo']
         }
       },
       _delayedSubmit: function(event) {
@@ -273,7 +252,7 @@
       _reset: function(event) {
         this.$.form.reset();
       },
-      _presubmit: function(event) {				
+      _presubmit: function(event) {
 					this.$.form.request.body.locationLat = this.latitude;
 					this.$.form.request.body.locationLong = this.longitude;
       }

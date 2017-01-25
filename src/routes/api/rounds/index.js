@@ -61,7 +61,7 @@ router.get('/', (req, res) => {
     sort = req.query.sort.split(',').reduce((prev, sortQuery) => {
       let sortFields = sortQuery[0] === '-' ? sortQuery.substr(1) : sortQuery;
       if (sortFields === 'fullCapacity') {
-        sortFields = 'seats.capacity';
+        sortFields = 'seats.fullCapacity';
       }
       if (sortFields === 'reservedSeats') {
         sortFields = 'seats.reserved';
@@ -122,7 +122,7 @@ router.get('/', (req, res) => {
             });
           }
 
-          res.json({
+          res.status(200).json({
             success: true,
             results: results.map(res => res.round),
             queryInfo: {
@@ -150,7 +150,7 @@ router.get('/', (req, res) => {
           });
         }
 
-        res.json({
+        res.status(200).json({
           success: true,
           results: result.round,
           queryInfo: {
@@ -188,7 +188,7 @@ router.get('/', (req, res) => {
           });
         }
 
-        res.json({
+        res.status(200).json({
           success: true,
           results: rounds,
           queryInfo: {
@@ -220,7 +220,7 @@ router.post('/', (req, res) => {
   const round = new Round();
   // Validate required field from body
   if (req.body.activityId && req.body.name &&
-    req.body.start && req.body.end && req.body.fullCapacity) {
+    req.body.startTime && req.body.endTime && req.body.seatsFullCapacity) {
     // Check exist target activity input
     Activity.findById(req.body.activityId, (err, activitiy) => {
       // Handle error from Activity.findById
@@ -241,13 +241,14 @@ router.post('/', (req, res) => {
       // Set field value (comes from the request)
       round.activityId = req.body.activityId;
       round.name = req.body.name;
-      round.start = new Date(req.body.start);
-      round.end = new Date(req.body.end);
+      round.startTime = new Date(req.body.startTime, (5, 5));
+      round.endTime = new Date(req.body.endTime);
       // round.tickets = [];
-      round.seats.fullCapacity = req.body.fullCapacity;
-      if (req.body.reservedSeats) {
-        round.seats.reserved = req.body.reservedSeats;
+      round.seats.fullCapacity = req.body.seatsFullCapacity;
+      if (req.body.seatsReserved) {
+        round.seats.reserved = req.body.seatsReserved;
       }
+      round.seats.avaliable = req.body.seatsAvaliable;
 
       // Save Round and check for error
       round.save((err, _round) => {
@@ -261,7 +262,7 @@ router.post('/', (req, res) => {
 
         res.status(201).json({
           success: true,
-          message: 'Create Round successfull',
+          message: 'Create Round successful',
           results: _round,
         });
       });
@@ -288,13 +289,13 @@ router.get('/:id', (req, res) => {
   // Fields selecting query
   if (req.query.fields) {
     fields = req.query.fields.split(',').map((field) => {
-      if (field === 'fullCapacity') {
-        return 'seats.capacity';
+      if (field === 'seatsFullCapacity') {
+        return 'seats.FullCapacity';
       }
-      if (field === 'reservedSeats') {
+      if (field === 'seatsReserved') {
         return 'seats.reserved';
       }
-      if (field === 'avaliableSeats') {
+      if (field === 'seatsAvaliable') {
         return 'seats.avaliable';
       }
       return field;
@@ -317,7 +318,7 @@ router.get('/:id', (req, res) => {
       });
     }
 
-    res.json({
+    res.status(200).json({
       success: true,
       results: round,
     });
@@ -375,7 +376,7 @@ router.put('/:id', (req, res) => {
       }
       res.status(202).json({
         success: true,
-        message: 'Update round successfull',
+        message: 'Update round successful',
         results: _round,
       });
     });

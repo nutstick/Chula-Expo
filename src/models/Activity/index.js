@@ -3,29 +3,84 @@ const _ = require('lodash');
 const { Round } = require('../');
 
 const ObjectId = mongoose.Schema.Types.ObjectId;
+
 /**
  * Activity Schema
  */
 const ActivitySchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  thumbnialsUrl: String,
-  shortDescription: { type: String, required: true },
-  description: { type: String, required: true },
-  imgUrl: [String],
+  name: {
+    th: {
+      type: String,
+      required: true
+    },
+    en: {
+      type: String,
+      required: true
+    }
+  },
+  thumbnailUrl: String,
+  bannerUrl: String,
+  shortDescription: {
+    th: {
+      type: String,
+      required: true
+    },
+    en: {
+      type: String,
+      required: true
+    }
+  },
+  description: {
+    th: {
+      type: String,
+      required: true
+    },
+    en: {
+      type: String,
+      required: true
+    }
+  },
+  contact: String,
+  imageUrl: [String],
   videoUrl: [String],
-  tags: [{ type: String, index: true }],
+  pdfUrl: [String],
+  link: [String],
+  isHighlight: Boolean,
+  tags: [{
+    type: String,
+    index: true
+  }],
   location: {
-    desc: { type: String, required: true, index: true },
+    place: {
+      type: ObjectId,
+      ref: 'Place',
+      required: true
+    },
+    floor: String,
+    room: String,
     latitute: Number,
     longtitute: Number
   },
-  // faculty: { type: String, required: true, index: true },
-  reservable: [{
+  zone: {
+    type: ObjectId,
+    ref: 'Zone',
+    required: true,
+    index: true
+  },
+  rounds: [{
     type: ObjectId,
     ref: 'Round'
   }],
-  startTime: { type: Date, required: true, index: true },
-  endTime: { type: Date, required: true, index: true }
+  startTime: {
+    type: Date,
+    required: true,
+    index: true
+  },
+  endTime: {
+    type: Date,
+    required: true,
+    index: true
+  }
 });
 
 ActivitySchema.index({
@@ -34,7 +89,11 @@ ActivitySchema.index({
   shortDescription: 'text'
 }, {
   name: 'Activities Text Indexing',
-  weights: { name: 10, shortDescription: 4, description: 2 }
+  weights: {
+    name: 10,
+    shortDescription: 4,
+    description: 2
+  }
 });
 
 /**
@@ -56,30 +115,32 @@ ActivitySchema.index({
  * @return {Result.limit} - Number of limit that used.
  * @return {Result.skip} - Number of offset that used.
  */
+
 ActivitySchema.static.findRoundByActivityId = (id, options) => {
   const filter = _.pick(options, ['name', 'start', 'end', 'avaliableSeats'])
-                  .merge({ activityId: id });
+  .merge({ activityId: id });
+
   return new Promise((resolve, reject) => {
     Round.find(filter).count().exec((err, count) => {
       if (err) {
         reject(err);
       }
       Round
-      .find(filter)
-      .select(options.fields)
-      .sort(options.sort)
-      .limit(options.limit)
-      .skip(options.skip || 0)
-      .exec()
-      .then((rounds) => {
-        resolve({
-          rounds,
-          count,
-          limit: options.limit,
-          skip: options.skip || 0,
-        });
-      })
-      .catch(reject);
+        .find(filter)
+        .select(options.fields)
+        .sort(options.sort)
+        .limit(options.limit)
+        .skip(options.skip || 0)
+        .exec()
+        .then((rounds) => {
+          resolve({
+            rounds,
+            count,
+            limit: options.limit,
+            skip: options.skip || 0,
+          });
+        })
+        .catch(reject);
     });
   });
 };

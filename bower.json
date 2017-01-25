@@ -57,6 +57,10 @@
     "paper-button-group": "Protoss78/paper-button-group#^0.0.1",
     "paper-fab": "PolymerElements/paper-fab#^1.2.1",
     "app-route": "PolymerElements/app-route#^0.9.3",
-    "paper-datatable": "^0.9.8"
+    "paper-datatable": "^0.9.8",
+    "polymer": "Polymer/polymer#^1.7.1",
+    "iron-elements": "PolymerElements/iron-elements#^1.0.10",
+    "paper-elements": "PolymerElements/paper-elements#^1.0.7",
+    "paper-datatable-api": "^0.2.7"
   }
 }

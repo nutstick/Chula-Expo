@@ -1,4 +1,5 @@
 const express = require('express');
+const _ = require('lodash');
 const { Ticket, Round } = require('../../../models');
 const { retrieveError, RangeQuery } = require('../../../tools/retrieveError');
 

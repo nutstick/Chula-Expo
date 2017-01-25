@@ -14,8 +14,8 @@ const RoundSchema = new mongoose.Schema({
     ref: 'Activity',
     required: true,
   },
-  start: { type: Date, required: true },
-  end: { type: Date, required: true },
+  startTime: { type: Date, required: true },
+  endTime: { type: Date, required: true },
 
   seats: {
     avaliable: { type: Number, default: 0 },

@@ -66,7 +66,7 @@ const UserSchema = new mongoose.Schema({
   admin: {
     type: String,
     default: 'None',
-    enum: ['Admin', 'Staff', 'None'],
+    enum: ['Admin', 'Staff', 'Scanner', 'None'],
   },
 
   facebook: { type: String },
