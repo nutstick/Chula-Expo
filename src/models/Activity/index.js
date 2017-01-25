@@ -42,8 +42,8 @@ const ActivitySchema = new mongoose.Schema({
   },
   contact: String,
   imageUrl: [String],
-  videoUrl: [String],
-  pdfUrl: [String],
+  videoUrl: String,
+  pdfUrl: String,
   link: [String],
   isHighlight: Boolean,
   tags: [{

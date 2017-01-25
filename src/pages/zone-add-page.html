@@ -6,9 +6,12 @@
 <link rel="import" href="/public/lib/paper-autocomplete/paper-autocomplete.html">
 <link rel="import" href="/public/lib/paper-tags-input/paper-tags-input.html">
 <link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="/public/lib/paper-input/paper-textarea.html">
 <link rel="import" href="/public/lib/greenyouse-datetime-local-input/datetime-local-input.html">
 <link rel="import" href="/public/lib/google-map/google-map.html">
 <link rel="import" href="/public/lib/google-map/google-map-marker.html">
+<link rel="import" href="/public/lib/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="/public/lib/paper-listbox/paper-listbox.html">
 
 <link rel="import" href="/components/shared-styles.html">
 
@@ -73,8 +76,28 @@
     <div class="container">
       <paper-card>
 				<form is="iron-form" id="form" method="post" class="card-content"
-					action="/api/zones" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
+					action="/api/zones" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">					
 					<div class="card-content">
+						<!-- type -->
+						<div class="item">
+							<label class="label --input">Type</label>
+							<div class="flex" style="display: inline-block">							
+								<paper-dropdown-menu label="" no-label-float="true">
+									<paper-listbox class="dropdown-content">
+										<paper-item value="faculty">Faculty</paper-item>
+										<paper-item value="city">City</paper-item>
+										<paper-item value="stage">Stage</paper-item>
+									</paper-listbox>
+								</paper-dropdown-menu>	
+							</div>
+						</div>
+						<!-- websiteUrl -->
+						<div class="item">
+							<label class="label --input">Website URL</label>
+							<div class="flex" style="display: inline-block">							
+								<paper-input type="text" label="" no-label-float="true" name="websiteUrl" always-float-label></paper-input>
+							</div>
+						</div>
 						<!-- Thumbnail Upload -->
 						<div class="item">
 							<div class="flex-layout">
@@ -185,8 +208,8 @@
 							<div class="flex company">ภาษาไทย</div>
 						</div>
 						<paper-input type="text" label="ชื่อ" name="nameTH" always-float-label></paper-input>
-						<paper-input type="text" label="ชื่อย่อ" name="shortNameTH" char-counter maxlength="80" always-float-label></paper-input>
-						<paper-input type="text" label="ข้อความต้อนรับ" name="welcomeMessageTH" char-counter maxlength="80" always-float-label></paper-input>
+						<paper-input type="text" label="ชื่อย่อ" name="shortNameTH" char-counter maxlength="10" always-float-label></paper-input>
+						<paper-input type="text" label="ข้อความต้อนรับ" name="welcomeMessageTH" char-counter maxlength="150" always-float-label></paper-input>
 						<paper-textarea label="รายละเอียด" name="descriptionTH" rows="4" always-float-label></paper-textarea>
 						<!-- English Language -->
 						<div class="flex-layout center form-title">
@@ -194,8 +217,8 @@
 							<div class="flex company">English</div>
 						</div>
 						<paper-input type="text" label="Zone name" name="nameEN" always-float-label></paper-input>
-						<paper-input type="text" label="Short name" name="shortNameEN" char-counter maxlength="80" always-float-label></paper-input>
-						<paper-input type="text" label="Welcome message" name="welcomeMessageEN" char-counter maxlength="80" always-float-label></paper-input>
+						<paper-input type="text" label="Short name" name="shortNameEN" char-counter maxlength="10" always-float-label></paper-input>
+						<paper-input type="text" label="Welcome message" name="welcomeMessageEN" char-counter maxlength="150" always-float-label></paper-input>
 						<paper-textarea label="Description" name="descriptionEN" rows="4" always-float-label></paper-textarea>
 					</div>
 					
@@ -213,7 +236,7 @@
       </paper-card>
     </div>
   </template>
-  <script>
+<script>
     Polymer({
       is: 'zone-add-page',
       properties: {
