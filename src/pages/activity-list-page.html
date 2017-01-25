@@ -36,13 +36,13 @@
     <div class="container">
       <paper-datatable-card header="Activities" id-property="id" data-source="{{dataSource}}" page="[[page]]" page-size="[[pageSize]]" progress>
         <paper-datatable selectable multi-selection>
-          <paper-datatable-column header="ชื่อ" property="name">
+          <paper-datatable-column header="ชื่อ" property="name.en">
           </paper-datatable-column>
           <paper-datatable-column header="เวลาเริ่ม" property="startTime">
           </paper-datatable-column>
           <paper-datatable-column header="เวลาจบ" property="endTime">
           </paper-datatable-column>
-          <paper-datatable-column header="คำอธิบายย่อ" property="shortDescription">
+          <paper-datatable-column header="คำอธิบายย่อ" property="shortDescription.en">
           </paper-datatable-column>
         </paper-datatable>
       </paper-datatable-card>

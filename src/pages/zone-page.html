@@ -1,0 +1,59 @@
+<!-- Libery -->
+<link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="/public/lib/iron-pages/iron-pages.html">
+<link rel="import" href="/public/lib/app-route/app-route.html">
+
+<link rel="import" href="/components/shared-styles.html">
+<link rel="import" href="/pages/zone-add-page.html">
+<link rel="import" href="/pages/activity-list-page.html">
+
+<dom-module id="zone-page">
+  <template>
+    <app-route
+      route="{{route}}"
+      pattern="/:page"
+      data="{{routeData}}"
+      tail="{{subroute}}"
+    ></app-route>
+    <iron-pages
+      selected="[[page]]"
+      attr-for-selected="name"
+      fallback-selection="view404"
+      role="main">
+      <activity-list-page name="list"></activity-list-page>
+      <zone-add-page name="add"></zone-add-page>
+    </iron-pages>
+  </template>
+  <script>
+    Polymer({
+      is: 'zone-page',
+      properties: {
+        route: {
+          type: String,
+        },
+        page: {
+          type: String,
+          reflectToAttribute: true,
+          observer: '_pageChanged',
+        },
+      },
+
+      observers: [
+        '_routePageChanged(routeData.page)',
+      ],
+
+      _routePageChanged: function(page) {
+        this.page = page || 'list';
+      },
+      _pageChanged: function(page) {
+        var resolvedPageUrl = this.resolveUrl('zone-' + page + '-page.html');
+        this.importHref(resolvedPageUrl, null, this._showPage404, true);
+      },
+      _showPage404: function() {
+        this.page = '404-page'
+      },
+    });
+  </script>
+</dom-module>
