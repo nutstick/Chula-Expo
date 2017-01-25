@@ -84,7 +84,7 @@ const UserSchema = new mongoose.Schema({
   type: {
     type: String,
     required: true,
-    enum: ['Academic', 'Worker']
+    enum: ['Academic', 'Worker', 'Staff']
   },
   academic: {
     year: Number,
