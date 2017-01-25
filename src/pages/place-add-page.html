@@ -3,19 +3,18 @@
 <!-- Web Component -->
 <link rel="import" href="/public/lib/vaadin-upload/vaadin-upload.html">
 <link rel="import" href="/public/lib/paper-card/paper-card.html">
+<link rel="import" href="/public/lib/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="/public/lib/paper-autocomplete/paper-autocomplete.html">
 <link rel="import" href="/public/lib/paper-tags-input/paper-tags-input.html">
-<link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="/public/lib/paper-input/paper-textarea.html">
+<link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="/public/lib/greenyouse-datetime-local-input/datetime-local-input.html">
 <link rel="import" href="/public/lib/google-map/google-map.html">
 <link rel="import" href="/public/lib/google-map/google-map-marker.html">
-<link rel="import" href="/public/lib/paper-dropdown-menu/paper-dropdown-menu.html">
-<link rel="import" href="/public/lib/paper-listbox/paper-listbox.html">
 
 <link rel="import" href="/components/shared-styles.html">
 
-<dom-module id="zone-add-page">
+<dom-module id="place-add-page">
   <template>
     <style is="custom-style" include="shared-styles">
       :host {
@@ -76,84 +75,24 @@
     <div class="container">
       <paper-card>
 				<form is="iron-form" id="form" method="post" class="card-content"
-					action="/api/zones" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">					
+					action="/api/places" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
 					<div class="card-content">
-						<!-- type -->
+
+						<!-- Code -->
 						<div class="item">
-							<label class="label --input">Type</label>
-							<div class="flex" style="display: inline-block">							
-								<paper-dropdown-menu label="" no-label-float="true" name="type">
-									<paper-listbox class="dropdown-content">
-										<paper-item value="faculty">Faculty</paper-item>
-										<paper-item value="city">City</paper-item>
-										<paper-item value="stage">Stage</paper-item>
-									</paper-listbox>
-								</paper-dropdown-menu>	
-							</div>
-						</div>
-						<!-- websiteUrl -->
-						<div class="item">
-							<label class="label --input">Website URL</label>
-							<div class="flex" style="display: inline-block">							
-								<paper-input type="text" label="" no-label-float="true" name="websiteUrl" always-float-label></paper-input>
-							</div>
-						</div>
-						<!-- Thumbnail Upload -->
-						<div class="item">
-							<div class="flex-layout">
-								<label class="label --upload">Thumbnail</label>
-								<div class="flex">
-									<vaadin-upload
-										id="thumbnailUpload"
-										accept="image/*"
-										target="/upload/img/activities/thumbnail"
-										method="POST"
-										headers="{'Authorization': 'JWT {{token}}'}"
-										form-data-name="picture"
-									>
-										<div class="drop-label">
-											<iron-icon icon="image:collections"></iron-icon>
-											รูปทัมเนล
-										</div>
-									</vaadin-upload>
-									<input id="thumbnailurl" type="hidden" name="thumbnailUrl">
-									<script>
-										var thumbnailUpload = document.querySelector('vaadin-upload#thumbnailUpload')
-										thumbnailUpload.addEventListener("upload-response", function(event) {
-											console.log(event);
-											document.querySelector('#thumbnailurl').value = event;
-										});
-									</script>
+							<div>
+								<label class="label --input">Code</label>
+								<div class="flex" style="display: inline-block">
+									<paper-input type="text" name="code" label="" no-label-float="true"></paper-input>
 								</div>
-							</div>
+							</div>						
 						</div>
-						<!-- Banner Upload -->
-						<div class="item">
-							<div class="flex-layout">
-								<label class="label --upload">Banner</label>
-								<div class="flex">
-									<vaadin-upload
-										id="bannerUpload"
-										accept="image/*"
-										target="/upload/img/activities/banner"
-										method="POST"
-										headers="{'Authorization': 'JWT {{token}}'}"
-										form-data-name="picture"
-									>
-										<div class="drop-label">
-											<iron-icon icon="image:collections"></iron-icon>
-											แบรนเนอร์
-										</div>
-									</vaadin-upload>
-								</div>
-							</div>
-						</div>
-						
+	
 						<!-- Google Map -->
 						<div class="item">
 							<google-map latitude="[[latitude]]" longitude="[[longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
 								<google-map-marker latitude="{{latitude}}" longitude="{{longitude}}" draggable="true"
-										title="Activity Location!"></google-map-marker>
+										title="place Location!"></google-map-marker>
 							</google-map>
 						</div>
 					</div>
@@ -163,19 +102,13 @@
 							<div class="avatar" item-icon><img src="/public/img/th.png" /></div>
 							<div class="flex company">ภาษาไทย</div>
 						</div>
-						<paper-input type="text" label="ชื่อ" name="nameTH" always-float-label></paper-input>
-						<paper-input type="text" label="ชื่อย่อ" name="shortNameTH" char-counter maxlength="10" always-float-label></paper-input>
-						<paper-input type="text" label="ข้อความต้อนรับ" name="welcomeMessageTH" char-counter maxlength="150" always-float-label></paper-input>
-						<paper-textarea label="รายละเอียด" name="descriptionTH" rows="4" always-float-label></paper-textarea>
+						<paper-input type="text" label="ชื่อสถานที่" name="nameTH" always-float-label></paper-input>
 						<!-- English Language -->
 						<div class="flex-layout center form-title">
 							<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
 							<div class="flex company">English</div>
 						</div>
-						<paper-input type="text" label="Zone name" name="nameEN" always-float-label></paper-input>
-						<paper-input type="text" label="Short name" name="shortNameEN" char-counter maxlength="10" always-float-label></paper-input>
-						<paper-input type="text" label="Welcome message" name="welcomeMessageEN" char-counter maxlength="150" always-float-label></paper-input>
-						<paper-textarea label="Description" name="descriptionEN" rows="4" always-float-label></paper-textarea>
+						<paper-input type="text" label="place name" name="nameEN" always-float-label></paper-input>
 					</div>
 					
 					<!-- Submit Button -->
@@ -192,9 +125,9 @@
       </paper-card>
     </div>
   </template>
-<script>
+  <script>
     Polymer({
-      is: 'zone-add-page',
+      is: 'place-add-page',
       properties: {
         token: {
           type: String,
@@ -210,6 +143,10 @@
         zoom: {
           type: Number,
           value: 16
+        },
+        tags_list: {
+          type: Array,
+          value: ['Chula Expo']
         }
       },
       _delayedSubmit: function(event) {
@@ -217,8 +154,6 @@
         this.$.spinner.active = true;
         this.$.spinner.hidden = false;
         this.$.form.disabled = true;
-				console.log(form.request.body);
-
         // Simulate a slow server response.
         setTimeout(function() {
           form.submit();
@@ -233,11 +168,9 @@
       _reset: function(event) {
         this.$.form.reset();
       },
-      _presubmit: function(event) {
+      _presubmit: function(event) {				
 					this.$.form.request.body.locationLat = this.latitude;
 					this.$.form.request.body.locationLong = this.longitude;
-					console.log("pre");
-					console.log(this.$.form.request.body);
       }
     })
   </script>

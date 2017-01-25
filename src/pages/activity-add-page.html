@@ -147,7 +147,7 @@
 							<div>
 								<label class="label --input">Contact</label>
 								<div class="flex" style="display: inline-block">
-									<paper-input type="text" name="contact" label="" no-label-float="true"></datetime-local-input>
+									<paper-input type="text" name="contact" label="" no-label-float="true"></paper-input>
 								</div>
 							</div>						
 						</div>
@@ -156,19 +156,19 @@
 							<div>
 								<label class="label --input">Video Url</label>
 								<div class="flex" style="display: inline-block">
-									<paper-input type="text" name="videoUrl" label="" no-label-float="true" required></datetime-local-input>
+									<paper-input type="text" name="videoUrl" label="" no-label-float="true" required></paper-input>
 								</div>
 							</div>
 							<div>
 								<label class="label --input">PDF Url</label>
 								<div class="flex" style="display: inline-block">
-									<paper-input type="text" name="pdfUrl" label="" no-label-float="true" required></datetime-local-input>
+									<paper-input type="text" name="pdfUrl" label="" no-label-float="true" required></paper-input>
 								</div>
 							</div>
 							<div>
 								<label class="label --input">Link</label>
 								<div class="flex" style="display: inline-block">
-									<paper-input type="text" name="pdfUrl" label="" no-label-float="true" required></datetime-local-input>
+									<paper-input type="text" name="pdfUrl" label="" no-label-float="true" required></paper-input>
 								</div>
 							</div>
 
@@ -178,13 +178,13 @@
 						<div class="item">
 							<label class="label --upload">Zone</label>
 							<div class="flex" style="display: inline-block">
-								<paper-autocomplete label="Zone" id="input-zone" no-label-float="true" remote-source="true"></paper-autocomplete>
+								<paper-autocomplete name="zone" label="Zone" id="input-zone" no-label-float="true" remote-source="true"></paper-autocomplete>
 							</div>
 							<script>
 								document.querySelector('#input-zone').addEventListener('autocomplete-change', function(event) {
 									var input = document.querySelector('#input-zone');
 									var search = event.detail.option.text;
-									var url = '/zones?nameEN=' + search;
+									var url = '/api/zones?nameEN=' + search;
 									var delay = Math.random() * (500 - 100) + 100;
 
 									setTimeout(function () {
@@ -193,8 +193,8 @@
 										req.onload = function() {
 											if (req.status === 200) {
 												var data = JSON.parse(req.response);
-												var arr = data.location.map(function(obj){
-													return { text:obj.text, value:obj.id };
+												var arr = data.results.map(function(obj){
+													return { text:obj.name.en, value:obj['_id'] };
 												});
 												input.suggestions(arr);
 											}
@@ -209,13 +209,13 @@
 						<div class="item">
 							<label class="label --input">Location</label>
 							<div class="" style="display: inline-block">
-								<paper-autocomplete label="Location" id="input-location" no-label-float="true" remote-source="true"></paper-autocomplete>
+								<paper-autocomplete name="locationPlace" label="Location" id="input-location" no-label-float="true" remote-source="true"></paper-autocomplete>
 							</div>
 							<script>
 								document.querySelector('#input-location').addEventListener('autocomplete-change', function(event) {
 									var input = document.querySelector('#input-location');
 									var search = event.detail.option.text;
-									var url = '/places?nameEN=' + search;
+									var url = '/api/places?nameEN=' + search;
 									var delay = Math.random() * (500 - 100) + 100;
 
 									setTimeout(function () {
@@ -224,8 +224,10 @@
 										req.onload = function() {
 											if (req.status === 200) {
 												var data = JSON.parse(req.response);
-												var arr = data.location.map(function(obj){
-													return { text:obj.text, value:obj.id };
+												console.log(data);
+												console.log(req);
+												var arr = data.results.map(function(obj){
+													return { text:obj.name.en, value:obj['_id'] };
 												});
 												input.suggestions(arr);
 											}
@@ -237,13 +239,13 @@
 							<div>
 								<label class="label --input">Floor</label>
 								<div class="flex" style="display: inline-block">
-									<paper-input type="text" name="locationFloor" label="" no-label-float="true"></datetime-local-input>
+									<paper-input type="text" name="locationFloor" label="" no-label-float="true"></paper-input>
 								</div>
 							</div>
 							<div>
 								<label class="label --input">Room</label>
 								<div class="flex" style="display: inline-block">
-									<paper-input type="text" name="locationRoom" label="" no-label-float="true"></datetime-local-input>
+									<paper-input type="text" name="locationRoom" label="" no-label-float="true"></paper-input>
 								</div>
 							</div>
 						</div>
@@ -252,7 +254,7 @@
 							<div>
 								<label class="label --input">HighLight</label>
 								<div class="flex" style="display: inline-block">
-									<paper-checkbox name="isHighlight" label="" no-label-float="true" required></datetime-local-input>
+									<paper-checkbox name="isHighlight" label="" no-label-float="true" required></paper-checkbox>
 								</div>
 							</div>
 						</div>
@@ -268,7 +270,7 @@
 					<div class="card-content">
 						<!-- Thai Language -->
 						<div class="flex-layout center form-title">
-							<div class="avatar" item-icon><img src="/public/img/th.svg" /></div>
+							<div class="avatar" item-icon><img src="/public/img/th.png" /></div>
 							<div class="flex company">ภาษาไทย</div>
 						</div>
 						<paper-input type="text" label="ชื่อกิจกรรม" name="nameTH" always-float-label></paper-input>
@@ -276,7 +278,7 @@
 						<paper-textarea label="รายละเอียด" name="descriptionTH" rows="4" always-float-label></paper-textarea>
 						<!-- English Language -->
 						<div class="flex-layout center form-title">
-							<div class="avatar" item-icon><img src="/public/img/en.svg" /></div>
+							<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
 							<div class="flex company">English</div>
 						</div>
 						<paper-input type="text" label="Activity name" name="nameEN" always-float-label></paper-input>
@@ -363,6 +365,7 @@
       _presubmit: function(event) {				
 					this.$.form.request.body.locationLat = this.latitude;
 					this.$.form.request.body.locationLong = this.longitude;
+					console.log(this.$.form.request.body);
       }
     })
   </script>

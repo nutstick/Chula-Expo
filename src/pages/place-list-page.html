@@ -7,10 +7,10 @@
 <link rel="import" href="/public/lib/paper-datatable/paper-datatable.html">
 <link rel="import" href="/public/lib/paper-datatable/paper-datatable-card.html">
 
-<link rel="import" href="/components/activity-api.html">
+<link rel="import" href="/components/place-api.html">
 <link rel="import" href="/components/shared-styles.html">
 
-<dom-module id="activity-list-page">
+<dom-module id="place-list-page">
   <template>
     <style is="custom-style" include="shared-styles">
       :host {
@@ -34,19 +34,13 @@
       }
     </style>
     <div class="container">
-      <paper-datatable-card header="Activities" id-property="id" data-source="{{dataSource}}" page="[[page]]" page-size="[[pageSize]]" progress>
+      <paper-datatable-card header="places" id-property="id" data-source="{{dataSource}}" page="[[page]]" page-size="[[pageSize]]" progress>
         <paper-datatable selectable multi-selection>
           <paper-datatable-column header="ชื่อ" property="name.en">
           </paper-datatable-column>
-          <paper-datatable-column header="เวลาเริ่ม" property="startTime">
-          </paper-datatable-column>
-          <paper-datatable-column header="เวลาจบ" property="endTime">
-          </paper-datatable-column>
-          <paper-datatable-column header="คำอธิบายย่อ" property="shortDescription.en">
-          </paper-datatable-column>
         </paper-datatable>
       </paper-datatable-card>
-      <activity-api data-source="{{dataSource}}" page="{{page}}" page-size="{{pageSize}}"></activity-api>
+      <place-api data-source="{{dataSource}}" page="{{page}}" page-size="{{pageSize}}"></place-api>
       <div class="fixed-bottom">
         <div class="container">
           <paper-fab id="add-icon" icon="add" on-tap="_addClick"></paper-fab>
@@ -56,16 +50,16 @@
   </template>
   <script>
     Polymer({
-      is: 'activity-list-page',
+      is: 'place-list-page',
       properties: {
         params: {
           type: Object,
-          value: { fields: 'id name startTime endTime shortDescription', limit: 20, sort: 'id' }
+          value: { fields: 'id code', limit: 20, sort: 'id' }
         },
         error: {
           type: String,
         },
-        activities: {
+        places: {
           type: Array,
           value: [],
         },
@@ -74,7 +68,7 @@
         }
       },
       _addClick: function() {
-        document.querySelector('chulaexpo-staff-app').set('route.path', '/activity/add/');
+        document.querySelector('chulaexpo-staff-app').set('route.path', '/place/add/');
       },
     })
   </script>

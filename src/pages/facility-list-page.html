@@ -7,10 +7,10 @@
 <link rel="import" href="/public/lib/paper-datatable/paper-datatable.html">
 <link rel="import" href="/public/lib/paper-datatable/paper-datatable-card.html">
 
-<link rel="import" href="/components/activity-api.html">
+<link rel="import" href="/components/facility-api.html">
 <link rel="import" href="/components/shared-styles.html">
 
-<dom-module id="activity-list-page">
+<dom-module id="facility-list-page">
   <template>
     <style is="custom-style" include="shared-styles">
       :host {
@@ -34,7 +34,7 @@
       }
     </style>
     <div class="container">
-      <paper-datatable-card header="Activities" id-property="id" data-source="{{dataSource}}" page="[[page]]" page-size="[[pageSize]]" progress>
+      <paper-datatable-card header="facilities" id-property="id" data-source="{{dataSource}}" page="[[page]]" page-size="[[pageSize]]" progress>
         <paper-datatable selectable multi-selection>
           <paper-datatable-column header="ชื่อ" property="name.en">
           </paper-datatable-column>
@@ -46,7 +46,7 @@
           </paper-datatable-column>
         </paper-datatable>
       </paper-datatable-card>
-      <activity-api data-source="{{dataSource}}" page="{{page}}" page-size="{{pageSize}}"></activity-api>
+      <facility-api data-source="{{dataSource}}" page="{{page}}" page-size="{{pageSize}}"></facility-api>
       <div class="fixed-bottom">
         <div class="container">
           <paper-fab id="add-icon" icon="add" on-tap="_addClick"></paper-fab>
@@ -56,7 +56,7 @@
   </template>
   <script>
     Polymer({
-      is: 'activity-list-page',
+      is: 'facility-list-page',
       properties: {
         params: {
           type: Object,
@@ -65,7 +65,7 @@
         error: {
           type: String,
         },
-        activities: {
+        facilities: {
           type: Array,
           value: [],
         },
@@ -74,7 +74,7 @@
         }
       },
       _addClick: function() {
-        document.querySelector('chulaexpo-staff-app').set('route.path', '/activity/add/');
+        document.querySelector('chulaexpo-staff-app').set('route.path', '/facility/add/');
       },
     })
   </script>
