@@ -60,13 +60,13 @@ router.get('/', (req, res) => {
   if (req.query.sort) {
     sort = req.query.sort.split(',').reduce((prev, sortQuery) => {
       let sortFields = sortQuery[0] === '-' ? sortQuery.substr(1) : sortQuery;
-      if (sortFields === 'fullCapacity') {
-        sortFields = 'seats.fullCapacity';
+      if (sortFields === 'seatsFullCapacity') {
+        sortFields = 'seats.FullCapacity';
       }
-      if (sortFields === 'reservedSeats') {
+      if (sortFields === 'seatsReserved') {
         sortFields = 'seats.reserved';
       }
-      if (sortFields === 'avaliableSeats') {
+      if (sortFields === 'seatsAvaliable') {
         sortFields = 'seats.avaliable';
       }
 
@@ -75,6 +75,7 @@ router.get('/', (req, res) => {
       } else {
         prev[sortFields] = 1;
       }
+
       return prev;
     }, {});
   }
@@ -89,13 +90,13 @@ router.get('/', (req, res) => {
   // Fields selecting query
   if (req.query.fields) {
     fields = req.query.fields.split(',').map((field) => {
-      if (field === 'fullCapacity') {
-        return 'seats.capacity';
+      if (field === 'seatsFullCapacity') {
+        return 'seats.FullCapacity';
       }
-      if (field === 'reservedSeats') {
+      if (field === 'seatsReserved') {
         return 'seats.reserved';
       }
-      if (field === 'avaliableSeats') {
+      if (field === 'seatsAvaliable') {
         return 'seats.avaliable';
       }
       return field;
@@ -116,7 +117,7 @@ router.get('/', (req, res) => {
         .populate('round', fields, filter, { sort, skip, limit })
         .exec((err, results) => {
           if (err) {
-            return res.json({
+            return res.status(500).json({
               success: false,
               errors: retrieveError(5, err),
             });
@@ -363,8 +364,14 @@ router.put('/:id', (req, res) => {
     if (req.body.end) {
       round.end = new Date(req.body.end);
     }
-    if (req.body.fullCapacity) {
-      round.seats.fullCapacity = req.body.fullCapacity;
+    if (req.body.seatsFullCapacity) {
+      round.seats.fullCapacity = req.body.seatsFullCapacity;
+    }
+    if (req.body.seatsReserved) {
+      round.seats.reserved = req.body.seatsReserved;
+    }
+    if (req.body.seatsAvaliable) {
+      round.seats.avaliable = req.body.seatsAvaliable;
     }
 
     round.save((err, _round) => {

@@ -216,11 +216,11 @@ router.post('/', (req, res, next) => {
   activity.save((err, _act) => {
     if (err) {
       // Handle error from
-			return res.status(500).json({
-				success: false,
-				results: retrieveError(5,err)
-			});
-		}
+      return res.status(500).json({
+        success: false,
+        results: retrieveError(5, err)
+      });
+    }
 
     res.status(200).json({
       success: true,
