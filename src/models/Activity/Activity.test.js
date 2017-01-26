@@ -39,8 +39,8 @@ describe('Activity Model', () => {
         place: ObjectId(),
         floor: casual.word,
         room: casual.word,
-        latitute: casual.double(from = -10, to = 10),
-        longtitute: casual.double(from = -10, to = 10)
+        latitude: casual.double(from = -10, to = 10),
+        longitude: casual.double(from = -10, to = 10)
       },
       contact: casual.first_name,
       image: [

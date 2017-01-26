@@ -73,8 +73,8 @@
     "tags": ["String"],
     "location": {
       "desc": "String",
-      "latitute": "Number",
-      "longtitute": "Number"
+      "latitude": "Number",
+      "longitude": "Number"
     },
     "faculty": "FacultyId",
 

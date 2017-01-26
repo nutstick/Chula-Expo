@@ -64,8 +64,8 @@ const ZoneSchema = new mongoose.Schema({
     required: true
   },
   location: {
-    latitute: { type: Number, required: true },
-    longtitute: { type: Number, required: true }
+    latitude: { type: Number, required: true },
+    longitude: { type: Number, required: true }
   }
 });
 

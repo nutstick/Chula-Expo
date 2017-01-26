@@ -58,8 +58,8 @@ const ActivitySchema = new mongoose.Schema({
     },
     floor: String,
     room: String,
-    latitute: Number,
-    longtitute: Number
+    latitude: Number,
+    longitude: Number
   },
   zone: {
     type: ObjectId,

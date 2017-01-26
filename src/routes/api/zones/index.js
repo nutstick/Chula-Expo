@@ -41,9 +41,9 @@ router.get('/', (req, res) => {
         } else if (element === 'descriptionEN') {
           element = 'description.en';
         } else if (element === 'locationLat') {
-          element = 'location.latitute';
+          element = 'location.latitude';
         } else if (element === 'locationLong') {
-          element = 'location.longtitute';
+          element = 'location.longitude';
         }
         fieldwant = `${fieldwant}${element} `;
       }
@@ -127,10 +127,10 @@ router.get('/:id', (req, res) => {
             element = 'description.en';
           }
           if (element === 'locationLat') {
-            element = 'location.latitute';
+            element = 'location.latitude';
           }
           if (element === 'locationLong') {
-            element = 'location.longtitute';
+            element = 'location.longitude';
           }
           fieldwant = `${fieldwant}${element} `;
         }
@@ -189,8 +189,8 @@ router.post('/', (req, res, next) => {
     zone.website = req.body.website;
   }
   zone.type = req.body.type;
-  zone.location.latitute = req.body.locationLat;
-  zone.location.longtitute = req.body.locationLong;
+  zone.location.latitude = req.body.locationLat;
+  zone.location.longitude = req.body.locationLong;
 
  // Save zone and check for error
   zone.save((err, _zone) => {
@@ -267,10 +267,10 @@ router.put('/:id', (req, res) => {
       zone.type = req.body.type;
     }
     if (req.body.locationLat) {
-      zone.location.latitute = req.body.locationLat;
+      zone.location.latitude = req.body.locationLat;
     }
     if (req.body.locationLong) {
-      zone.location.longtitute = req.body.locationLong;
+      zone.location.longitude = req.body.locationLong;
     }
 
     zone.save((err, _zone) => {

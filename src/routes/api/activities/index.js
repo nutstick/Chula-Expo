@@ -47,9 +47,9 @@ router.get('/', (req, res) => {
       } else if (sortFields === 'descriptionEN') {
         sortFields = 'description.en';
       } else if (sortFields === 'locationLat') {
-        sortFields = 'location.latitute';
+        sortFields = 'location.latitude';
       } else if (sortFields === 'locationLong') {
-        sortFields = 'location.longtitute';
+        sortFields = 'location.longitude';
       }
 
       if (sortQuery[0] === '-') {
@@ -94,8 +94,8 @@ router.get('/', (req, res) => {
     fields = fields.replace('locationPlace', 'location.place');
     fields = fields.replace('locationFloor', 'location.floor');
     fields = fields.replace('locationRoom', 'location.room');
-    fields = fields.replace('locationLat', 'location.latitute');
-    fields = fields.replace('locationLong', 'location.longtitute');
+    fields = fields.replace('locationLat', 'location.latitude');
+    fields = fields.replace('locationLong', 'location.longitude');
   }
 
   // Text search engine
@@ -155,8 +155,8 @@ router.get('/:id', (req, res) => {
     fields = fields.replace('locationPlace', 'location.place');
     fields = fields.replace('locationFloor', 'location.floor');
     fields = fields.replace('locationRoom', 'location.room');
-    fields = fields.replace('locationLat', 'location.latitute');
-    fields = fields.replace('locationLong', 'location.longtitute');
+    fields = fields.replace('locationLat', 'location.latitude');
+    fields = fields.replace('locationLong', 'location.longitude');
   }
 
   Activity.findById(req.params.id).select(fields).exec((err, act) => {
@@ -207,8 +207,8 @@ router.post('/', (req, res, next) => {
   activity.location.place = req.body.locationPlace;
   activity.location.floor = req.body.locationFloor;
   activity.location.room = req.body.locationRoom;
-  activity.location.latitute = req.body.locationLat;
-  activity.location.longtitute = req.body.locationLong;
+  activity.location.latitude = req.body.locationLat;
+  activity.location.longitude = req.body.locationLong;
   activity.zone = req.body.zone;
   activity.startTime = req.body.startTime;
   activity.endTime = req.body.endTime;
@@ -264,8 +264,8 @@ router.put('/:id', (req, res) => {
     act.location.place = req.body.locationPlace;
     act.location.floor = req.body.locationFloor;
     act.location.room = req.body.locationRoom;
-    act.location.latitute = req.body.locationLat;
-    act.location.longtitute = req.body.locationLong;
+    act.location.latitude = req.body.locationLat;
+    act.location.longitude = req.body.locationLong;
 
     act.save((err, updatedAct) => {
       if (err) {
