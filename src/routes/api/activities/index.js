@@ -191,16 +191,16 @@ router.post('/', (req, res, next) => {
   // Set field value (comes from the request)
   activity.name.en = req.body.nameEN;
   activity.name.th = req.body.nameTH;
-  activity.thumbnailUrl = req.body.thumbnailUrl;
-  activity.bannerUrl = req.body.bannerUrl;
+  activity.thumbnail = req.body.thumbnail;
+  activity.banner = req.body.banner;
   activity.shortDescription.en = req.body.shortDescriptionEN;
   activity.shortDescription.th = req.body.shortDescriptionTH;
   activity.description.en = req.body.descriptionEN;
   activity.description.th = req.body.descriptionTH;
   activity.contact = req.body.contact;
-  activity.imageUrl = req.body.imageUrl;
-  activity.videoUrl = req.body.videoUrl;
-  activity.pdfUrl = req.body.pdfUrl;
+  activity.image = req.body.image;
+  activity.video = req.body.video;
+  activity.pdf = req.body.pdf;
   activity.link = req.body.link;
   activity.isHighlight = req.body.isHighlight;
   activity.tags = req.body.tags;
@@ -232,7 +232,7 @@ router.post('/', (req, res, next) => {
 // ex. { "name","EditName"}
 // Access at PUT http://localhost:3000/api/activities/:id
 router.put('/:id', (req, res) => {
-  const updateFields = _.pick(req.body, ['thumbnailUrl', 'bannerUrl', 'contact', 'imageUrl', 'videoUrl', 'pdfUrl', 'link', 'isHighlight', 'tags', 'zone', 'startTime', 'endTime']);
+  const updateFields = _.pick(req.body, ['thumbnail', 'banner', 'contact', 'image', 'video', 'pdf', 'link', 'isHighlight', 'tags', 'zone', 'startTime', 'endTime']);
 
   if (updateFields.startTime) {
     updateFields.startTime = new Date(updateFields.startTime);

@@ -173,11 +173,11 @@ router.post('/', (req, res, next) => {
   zone.name.en = req.body.nameEN;
   zone.name.th = req.body.nameTH;
   zone.places = req.body.places;
-  if (req.body.thumbnailUrl) {
-    zone.thumbnailUrl = req.body.thumbnailUrl;
+  if (req.body.thumbnail) {
+    zone.thumbnail = req.body.thumbnail;
   }
-  if (req.body.bannerUrl) {
-    zone.bannerUrl = req.body.bannerUrl;
+  if (req.body.banner) {
+    zone.banner = req.body.banner;
   }
   zone.welcomeMessage.en = req.body.welcomeMessageEN;
   zone.welcomeMessage.th = req.body.welcomeMessageTH;
@@ -185,8 +185,8 @@ router.post('/', (req, res, next) => {
   zone.shortName.th = req.body.shortNameTH;
   zone.description.en = req.body.descriptionEN;
   zone.description.th = req.body.descriptionTH;
-  if (req.body.websiteUrl) {
-    zone.websiteUrl = req.body.websiteUrl;
+  if (req.body.website) {
+    zone.website = req.body.website;
   }
   zone.type = req.body.type;
   zone.location.latitute = req.body.locationLat;
@@ -236,11 +236,11 @@ router.put('/:id', (req, res) => {
     if (req.body.places) {
       zone.places = req.body.places;
     }
-    if (req.body.thumbnailUrl) {
-      zone.thumbnailUrl = req.body.thumbnailUrl;
+    if (req.body.thumbnail) {
+      zone.thumbnail = req.body.thumbnail;
     }
-    if (req.body.bannerUrl) {
-      zone.bannerUrl = req.body.bannerUrl;
+    if (req.body.banner) {
+      zone.banner = req.body.banner;
     }
     if (req.body.welcomeMessageTH) {
       zone.welcomeMessage.th = req.body.welcomeMessageTH;
@@ -260,8 +260,8 @@ router.put('/:id', (req, res) => {
     if (req.body.descriptionEN) {
       zone.description.en = req.body.descriptionEN;
     }
-    if (req.body.websiteUrl) {
-      zone.websiteUrl = req.body.websiteUrl;
+    if (req.body.website) {
+      zone.website = req.body.website;
     }
     if (req.body.type) {
       zone.type = req.body.type;

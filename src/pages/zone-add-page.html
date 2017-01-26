@@ -66,7 +66,7 @@
       google-map {
         height: 300px;
       }
-			
+
 			.button-holder {
         @apply(--layout-horizontal);
         @apply(--layout-end-justified);
@@ -76,26 +76,26 @@
     <div class="container">
       <paper-card>
 				<form is="iron-form" id="form" method="post" class="card-content"
-					action="/api/zones" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">					
+					action="/api/zones" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
 					<div class="card-content">
 						<!-- type -->
 						<div class="item">
 							<label class="label --input">Type</label>
-							<div class="flex" style="display: inline-block">							
+							<div class="flex" style="display: inline-block">
 								<paper-dropdown-menu label="" no-label-float="true" name="type">
 									<paper-listbox class="dropdown-content">
 										<paper-item value="faculty">Faculty</paper-item>
 										<paper-item value="city">City</paper-item>
 										<paper-item value="stage">Stage</paper-item>
 									</paper-listbox>
-								</paper-dropdown-menu>	
+								</paper-dropdown-menu>
 							</div>
 						</div>
 						<!-- websiteUrl -->
 						<div class="item">
 							<label class="label --input">Website URL</label>
-							<div class="flex" style="display: inline-block">							
-								<paper-input type="text" label="" no-label-float="true" name="websiteUrl" always-float-label></paper-input>
+							<div class="flex" style="display: inline-block">
+								<paper-input type="text" label="" no-label-float="true" name="website" always-float-label></paper-input>
 							</div>
 						</div>
 						<!-- Thumbnail Upload -->
@@ -116,12 +116,12 @@
 											รูปทัมเนล
 										</div>
 									</vaadin-upload>
-									<input id="thumbnailurl" type="hidden" name="thumbnailUrl">
+									<input id="thumbnail" type="hidden" name="thumbnail">
 									<script>
 										var thumbnailUpload = document.querySelector('vaadin-upload#thumbnailUpload')
 										thumbnailUpload.addEventListener("upload-response", function(event) {
 											console.log(event);
-											document.querySelector('#thumbnailurl').value = event;
+											document.querySelector('#thumbnail').value = event;
 										});
 									</script>
 								</div>
@@ -148,7 +148,7 @@
 								</div>
 							</div>
 						</div>
-						
+
 						<!-- Google Map -->
 						<div class="item">
 							<google-map latitude="[[latitude]]" longitude="[[longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
@@ -177,7 +177,7 @@
 						<paper-input type="text" label="Welcome message" name="welcomeMessageEN" char-counter maxlength="150" always-float-label></paper-input>
 						<paper-textarea label="Description" name="descriptionEN" rows="4" always-float-label></paper-textarea>
 					</div>
-					
+
 					<!-- Submit Button -->
 					<div class="card-actions">
 						<div class="button-holder">

@@ -13,7 +13,7 @@ const router = express.Router();
  * @param {string} [tokens]
  * @param {string} gender
  * @param {name} age
- * @param {string} pictureUrl
+ * @param {string} picture
  * @param {string} type
  * @param {string} [school]
  * @param {number} [year]
@@ -32,7 +32,7 @@ router.post('/', (req, res) => {
   user.tokens = req.body.tokens;
   user.gender = req.body.gender;
   user.age = req.body.age;
-  user.pictureUrl = req.body.pictureUrl;
+  user.picture = req.body.picture;
   user.type = req.body.type;
   user.academic.year = req.body.year;
   user.academic.school = req.body.school;

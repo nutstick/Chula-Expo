@@ -80,7 +80,7 @@ const UserSchema = new mongoose.Schema({
     enum: ['Male', 'Female']
   },
   age: { type: Number, required: true },
-  pictureUrl: String,
+  picture: String,
   type: {
     type: String,
     required: true,
@@ -95,7 +95,7 @@ const UserSchema = new mongoose.Schema({
   },
   bookmarkActivity: [BookmarkActivitySchema],
   reservedActivity: [ReservedActivitySchema],
-  qrcodeUrl: String,
+  qrcode: String,
   game: {
     totalScore: { type: Number, default: 0 },
     pending: [{

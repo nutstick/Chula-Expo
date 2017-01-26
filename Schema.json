@@ -13,7 +13,7 @@
    "name": "String",
    "gender": "String",
    "age": "Number",
-   "pictureUrl" : "String",
+   "picture" : "String",
    "academic": {
      "year" : "Number",
      "school" : "String"
@@ -36,7 +36,7 @@
      "checkedIn": "Datetime",
      "notification": "Datetime"
    }],
-   "qrcodeUrl": "String",
+   "qrcode": "String",
    "game": {
      "totalScore": "Number",
      "pending": ["GameId"],
@@ -63,12 +63,12 @@
   "activity": {
     "id": "ActivityId",
     "name": "String",
-    "thumbnialsUrl": "String",
+    "thumbnials": "String",
     "shortDescription": "String",
     "description": "String",
 
-    "imgUrl": ["String"],
-    "videoUrl": ["String"],
+    "img": ["String"],
+    "video": ["String"],
 
     "tags": ["String"],
     "location": {
@@ -108,7 +108,7 @@
   "game": {
     "id": "ObjectId",
     "problem": "String",
-    "pictureUrl": "String",
+    "picture": "String",
     "choice1": "String",
     "choice2": "String",
     "choice3": "String",
