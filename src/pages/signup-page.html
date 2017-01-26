@@ -100,8 +100,8 @@
           <!-- E-mail -->
           <paper-input name="email" label="อีเมลล์" value="{{queryParams.email}}" required always-float-label></paper-input>
           <!-- Password -->
-          <paper-input name="password" label="พาสเวิร์ด" type="password" value="{{queryParams.password}}" hidden={{queryParams.facebook}} required={{!queryParams.facebook}} always-float-label></paper-input>
-          <paper-input name="confirmPassword" label="คอนเฟิร์มพาสเวิร์ด" type="password" value="{{queryParams.confirmPassword}}" hidden={{queryParams.facebook}} required={{!queryParams.facebook}} always-float-label></paper-input>
+          <paper-input name="password" label="พาสเวิร์ด" type="password" hidden={{queryParams.facebook}} required={{!queryParams.facebook}} always-float-label></paper-input>
+          <paper-input name="confirmPassword" label="คอนเฟิร์มพาสเวิร์ด" type="password" hidden={{queryParams.facebook}} required={{!queryParams.facebook}} always-float-label></paper-input>
           <!-- Gender -->
           <div class="item">
             <div class="input-label" id="gender">เพศ:</div>
@@ -122,13 +122,13 @@
             </paper-button-group>
             <!-- Student -->
             <fieldset class="field" hidden$="{{!student}}">
-              <paper-input name="academic.year" label="การศึกษาปัจจุบัน" always-float-label></paper-input>
+              <paper-input name="academic.level" label="การศึกษาปัจจุบัน" always-float-label></paper-input>
               <paper-input name="academic.year" label="ชั้นปี" always-float-label></paper-input>
               <paper-input name="academic.school" label="สถาบันการศึกษา" always-float-label></paper-input>
             </fieldset>
             <!-- Worker -->
             <fieldset class="field" hidden$="{{!worker}}">
-              <paper-input name="worker.company" label="อาชีพ" always-float-label></paper-input>
+              <paper-input name="worker.job" label="อาชีพ" always-float-label></paper-input>
             </fieldset>
             <!-- Staff -->
             <fieldset class="field" hidden$="{{!staff}}">
