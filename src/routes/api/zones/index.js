@@ -41,9 +41,9 @@ router.get('/', (req, res) => {
         } else if (element === 'descriptionEN') {
           element = 'description.en';
         } else if (element === 'locationLat') {
-          element = 'location.latitute';
+          element = 'location.latitude';
         } else if (element === 'locationLong') {
-          element = 'location.longtitute';
+          element = 'location.longitude';
         }
         fieldwant = `${fieldwant}${element} `;
       }
@@ -127,10 +127,10 @@ router.get('/:id', (req, res) => {
             element = 'description.en';
           }
           if (element === 'locationLat') {
-            element = 'location.latitute';
+            element = 'location.latitude';
           }
           if (element === 'locationLong') {
-            element = 'location.longtitute';
+            element = 'location.longitude';
           }
           fieldwant = `${fieldwant}${element} `;
         }
@@ -164,7 +164,7 @@ router.get('/:id', (req, res) => {
 * Create a new Zone
 * Access at POST http://localhost:8080/api/en/zones
 */
-router.post('/', (req, res, next) => {
+router.post('/', (req, res) => {
  // Create object
 
   const zone = new Zone();
@@ -173,11 +173,11 @@ router.post('/', (req, res, next) => {
   zone.name.en = req.body.nameEN;
   zone.name.th = req.body.nameTH;
   zone.places = req.body.places;
-  if (req.body.thumbnailUrl) {
-    zone.thumbnailUrl = req.body.thumbnailUrl;
+  if (req.body.thumbnail) {
+    zone.thumbnail = req.body.thumbnail;
   }
-  if (req.body.bannerUrl) {
-    zone.bannerUrl = req.body.bannerUrl;
+  if (req.body.banner) {
+    zone.banner = req.body.banner;
   }
   zone.welcomeMessage.en = req.body.welcomeMessageEN;
   zone.welcomeMessage.th = req.body.welcomeMessageTH;
@@ -185,18 +185,21 @@ router.post('/', (req, res, next) => {
   zone.shortName.th = req.body.shortNameTH;
   zone.description.en = req.body.descriptionEN;
   zone.description.th = req.body.descriptionTH;
-  if (req.body.websiteUrl) {
-    zone.websiteUrl = req.body.websiteUrl;
+  if (req.body.website) {
+    zone.website = req.body.website;
   }
   zone.type = req.body.type;
-  zone.location.latitute = req.body.locationLat;
-  zone.location.longtitute = req.body.locationLong;
+  zone.location.latitude = req.body.locationLat;
+  zone.location.longitude = req.body.locationLong;
 
  // Save zone and check for error
   zone.save((err, _zone) => {
     if (err) {
      // Handle error from save
-      next(err);
+      return res.status(500).json({
+        success: false,
+        errors: retrieveError(5, err),
+      });
     }
     res.status(201).json({
       success: true,
@@ -236,11 +239,11 @@ router.put('/:id', (req, res) => {
     if (req.body.places) {
       zone.places = req.body.places;
     }
-    if (req.body.thumbnailUrl) {
-      zone.thumbnailUrl = req.body.thumbnailUrl;
+    if (req.body.thumbnail) {
+      zone.thumbnail = req.body.thumbnail;
     }
-    if (req.body.bannerUrl) {
-      zone.bannerUrl = req.body.bannerUrl;
+    if (req.body.banner) {
+      zone.banner = req.body.banner;
     }
     if (req.body.welcomeMessageTH) {
       zone.welcomeMessage.th = req.body.welcomeMessageTH;
@@ -260,17 +263,17 @@ router.put('/:id', (req, res) => {
     if (req.body.descriptionEN) {
       zone.description.en = req.body.descriptionEN;
     }
-    if (req.body.websiteUrl) {
-      zone.websiteUrl = req.body.websiteUrl;
+    if (req.body.website) {
+      zone.website = req.body.website;
     }
     if (req.body.type) {
       zone.type = req.body.type;
     }
     if (req.body.locationLat) {
-      zone.location.latitute = req.body.locationLat;
+      zone.location.latitude = req.body.locationLat;
     }
     if (req.body.locationLong) {
-      zone.location.longtitute = req.body.locationLong;
+      zone.location.longitude = req.body.locationLong;
     }
 
     zone.save((err, _zone) => {

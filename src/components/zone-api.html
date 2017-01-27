@@ -3,12 +3,12 @@
 <!-- Web Component -->
 <link rel="import" href="/public/lib/iron-ajax/iron-ajax.html">
 
-<dom-module id="activity-api">
+<dom-module id="zone-api">
   <template>
     <iron-ajax
       auto
-      id="activityResource"
-      url="/api/activities"
+      id="zoneResource"
+      url="/api/zones"
       params="{{params}}"
       on-response="_handleResponse"
       headers='{"Authentication": "{{token}}"}'
@@ -18,12 +18,12 @@
   </template>
   <script>
     Polymer({
-      is: 'activity-api',
+      is: 'zone-api',
       properties: {
         params: {
           type: Object,
           value: {
-            fields: 'nameEN,thumbnail,shortDescriptionEN',
+            fields: 'nameEN,thumbnail,shortNameEN,type',
             limit: 0,
             skip: 0
           }
@@ -40,7 +40,7 @@
           type: String,
           value: document.querySelector('chulaexpo-staff-app').token
         },
-        activities: {
+        zones: {
           type: Array,
           value: [],
           notify: true,
@@ -62,7 +62,7 @@
       },
       _handleResponse: function(event) {
         if (event.detail.response.success) {
-          this.activities = event.detail.response.results;
+          this.zones = event.detail.response.results;
         } else {
           this.error = event.detail.response.errors;
         }

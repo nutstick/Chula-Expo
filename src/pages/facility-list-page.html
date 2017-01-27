@@ -1,0 +1,100 @@
+<!-- Libery -->
+<link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="/public/lib/paper-card/paper-card.html">
+<link rel="import" href="/public/lib/paper-fab/paper-fab.html">
+<link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="/public/lib/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="/public/lib/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="/public/lib/paper-menu/paper-menu.html">
+<link rel="import" href="/public/lib/paper-item/paper-item.html">
+
+<link rel="import" href="/components/facility-api.html">
+<link rel="import" href="/components/paper-card-item.html">
+<link rel="import" href="/components/shared-styles.html">
+
+<dom-module id="facility-list-page">
+  <template>
+    <style is="custom-style" include="shared-styles">
+      :host {
+        @apply(--layout-vertical);
+        @apply(--layout-center-center);
+        padding-top: 20px;
+      }
+      .fixed-bottom {
+        position: fixed;
+        bottom: 20px;
+      }
+      #add-icon {
+        position: absolute;
+        bottom: 0px;
+        right: 10px;
+      }
+      .clearfix:after {
+        clear:both;
+        display:block;
+        content: "";
+      }
+      paper-card-item {
+        width: 100%;
+      }
+    </style>
+    <div class="container">
+      <template is="dom-repeat" items="{{facilities}}">
+        <paper-card-item action image="https://www.polymer-project.org/images/logos/p-logo.png">
+          <div class="card-item-header">
+            Tets
+          </div>
+          <div class="card-item-content">
+            asdasdsa
+          </div>
+          <div class="card-item-actions">
+            <div class="horizontal justified">
+              <paper-icon-button icon="icons:bookmark-border"></paper-icon-button>
+              <paper-button>5:30PM - 7:30PM</paper-button>
+              <paper-button class="cafe-reserve">Reserve</paper-button>
+            </div>
+          </div>
+          <div class="card-item-button">
+            <paper-menu-button>
+              <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+              <paper-menu class="dropdown-content">
+                <paper-item>Edit</paper-item>
+                <paper-item>Delete</paper-item>
+              </paper-menu>
+            </paper-menu-button>
+          </div>
+        </paper-card-item>
+      </template>
+      <div class="fixed-bottom">
+        <div class="container">
+          <paper-fab id="add-icon" icon="add" on-tap="_addClick"></paper-fab>
+          <div class="clearfix">
+        </div>
+      </div>
+      <facility-api facilities="{{facilities}}" error="{{error}}" page="{{page}}" page-size="{{pageSize}}"></facility-api>
+  </template>
+  <script>
+    Polymer({
+      is: 'facility-list-page',
+      properties: {
+        page: {
+          type: Number,
+        },
+        pageSize: {
+          type: Number,
+        },
+        error: {
+          type: Object,
+        },
+        facilities: {
+          type: Array,
+          value: [],
+        },
+      },
+      _addClick: function() {
+        document.querySelector('chulaexpo-staff-app').set('route.path', '/facility/add/');
+      },
+    })
+  </script>
+</dom-module>

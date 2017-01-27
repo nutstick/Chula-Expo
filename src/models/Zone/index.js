@@ -20,10 +20,10 @@ const ZoneSchema = new mongoose.Schema({
     type: ObjectId,
     ref: 'Place'
   }],
-  thumbnailUrl: {
+  thumbnail: {
     type: String
   },
-  bannerUrl: {
+  banner: {
     type: String
   },
   welcomeMessage: {
@@ -56,7 +56,7 @@ const ZoneSchema = new mongoose.Schema({
       required: true
     }
   },
-  websiteUrl: {
+  website: {
     type: String
   },
   type: {
@@ -64,8 +64,8 @@ const ZoneSchema = new mongoose.Schema({
     required: true
   },
   location: {
-    latitute: { type: Number, required: true },
-    longtitute: { type: Number, required: true }
+    latitude: { type: Number, required: true },
+    longitude: { type: Number, required: true }
   }
 });
 

@@ -3,8 +3,10 @@
 <!-- Web Component -->
 <link rel="import" href="/public/lib/vaadin-upload/vaadin-upload.html">
 <link rel="import" href="/public/lib/paper-card/paper-card.html">
+<link rel="import" href="/public/lib/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="/public/lib/paper-autocomplete/paper-autocomplete.html">
 <link rel="import" href="/public/lib/paper-tags-input/paper-tags-input.html">
+<link rel="import" href="/public/lib/paper-input/paper-textarea.html">
 <link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="/public/lib/greenyouse-datetime-local-input/datetime-local-input.html">
 <link rel="import" href="/public/lib/google-map/google-map.html">
@@ -63,7 +65,7 @@
       google-map {
         height: 300px;
       }
-			
+
 			.button-holder {
         @apply(--layout-horizontal);
         @apply(--layout-end-justified);
@@ -93,12 +95,11 @@
 											รูปทัมเนล
 										</div>
 									</vaadin-upload>
-									<input id="thumbnailurl" type="hidden" name="thumbnailUrl">
+									<input id="thumbnail" type="hidden" name="thumbnail">
 									<script>
 										var thumbnailUpload = document.querySelector('vaadin-upload#thumbnailUpload')
 										thumbnailUpload.addEventListener("upload-response", function(event) {
-											console.log(event);
-											document.querySelector('#thumbnailurl').value = event;
+											document.querySelector('#thumbnail').value = event;
 										});
 									</script>
 								</div>
@@ -130,27 +131,59 @@
 							<div>
 								<label class="label --input">Start Time</label>
 								<div class="flex" style="display: inline-block">
-									<datetime-local-input name="starttime" label="" no-label-float="true"></datetime-local-input>
+									<datetime-local-input name="startTime" label="" no-label-float="true"></datetime-local-input>
 								</div>
 							</div>
 							<div>
 								<label class="label --input">End Time</label>
 								<div class="flex" style="display: inline-block">
-									<datetime-local-input name="endtime" label="" no-label-float="true" required></datetime-local-input>
+									<datetime-local-input name="endTime" label="" no-label-float="true" required></datetime-local-input>
 								</div>
 							</div>
 						</div>
-						<!-- Location -->
+
 						<div class="item">
-							<label class="label --upload">Location</label>
+							<div>
+								<label class="label --input">Contact</label>
+								<div class="flex" style="display: inline-block">
+									<paper-input type="text" name="contact" label="" no-label-float="true"></paper-input>
+								</div>
+							</div>
+						</div>
+
+						<div class="item">
+							<div>
+								<label class="label --input">Video Url</label>
+								<div class="flex" style="display: inline-block">
+									<paper-input type="text" name="video" label="" no-label-float="true" required></paper-input>
+								</div>
+							</div>
+							<div>
+								<label class="label --input">PDF Url</label>
+								<div class="flex" style="display: inline-block">
+									<paper-input type="text" name="pdf" label="" no-label-float="true" required></paper-input>
+								</div>
+							</div>
+							<div>
+								<label class="label --input">Link</label>
+								<div class="flex" style="display: inline-block">
+									<paper-input type="text" name="pdf" label="" no-label-float="true" required></paper-input>
+								</div>
+							</div>
+
+						</div>
+
+						<!-- Zone -->
+						<div class="item">
+							<label class="label --upload">Zone</label>
 							<div class="flex" style="display: inline-block">
-								<paper-autocomplete label="Location" id="input-location" no-label-float="true" remote-source="true"></paper-autocomplete>
+								<paper-autocomplete name="zone" label="Zone" id="input-zone" no-label-float="true" remote-source="true"></paper-autocomplete>
 							</div>
 							<script>
-								document.querySelector('#input-location').addEventListener('autocomplete-change', function(event) {
-									var input = document.querySelector('#input-location');
+								document.querySelector('#input-zone').addEventListener('autocomplete-change', function(event) {
+									var input = document.querySelector('#input-zone');
 									var search = event.detail.option.text;
-									var url = '/places?q=' + search;
+									var url = '/api/zones?nameEN=' + search;
 									var delay = Math.random() * (500 - 100) + 100;
 
 									setTimeout(function () {
@@ -159,8 +192,8 @@
 										req.onload = function() {
 											if (req.status === 200) {
 												var data = JSON.parse(req.response);
-												var arr = data.location.map(function(obj){
-													return { text:obj.text, value:obj.id };
+												var arr = data.results.map(function(obj){
+													return { text:obj.name.en, value:obj['_id'] };
 												});
 												input.suggestions(arr);
 											}
@@ -170,6 +203,59 @@
 								});
 							</script>
 						</div>
+
+						<!-- Location -->
+						<div class="item">
+							<label class="label --input">Location</label>
+							<div class="" style="display: inline-block">
+								<paper-autocomplete name="locationPlace" label="Location" id="input-location" no-label-float="true" remote-source="true"></paper-autocomplete>
+							</div>
+							<script>
+								document.querySelector('#input-location').addEventListener('autocomplete-change', function(event) {
+									var input = document.querySelector('#input-location');
+									var search = event.detail.option.text;
+									var url = '/api/places?nameEN=' + search;
+									var delay = Math.random() * (500 - 100) + 100;
+
+									setTimeout(function () {
+										var req = new XMLHttpRequest();
+										req.open('GET',encodeURI(url));
+										req.onload = function() {
+											if (req.status === 200) {
+												var data = JSON.parse(req.response);
+												var arr = data.results.map(function(obj){
+													return { text:obj.name.en, value:obj['_id'] };
+												});
+												input.suggestions(arr);
+											}
+										};
+										req.send();
+									}.bind(this), delay);
+								});
+							</script>
+							<div>
+								<label class="label --input">Floor</label>
+								<div class="flex" style="display: inline-block">
+									<paper-input type="text" name="locationFloor" label="" no-label-float="true"></paper-input>
+								</div>
+							</div>
+							<div>
+								<label class="label --input">Room</label>
+								<div class="flex" style="display: inline-block">
+									<paper-input type="text" name="locationRoom" label="" no-label-float="true"></paper-input>
+								</div>
+							</div>
+						</div>
+
+						<div class="item">
+							<div>
+								<label class="label --input">HighLight</label>
+								<div class="flex" style="display: inline-block">
+									<paper-checkbox name="isHighlight" label="" no-label-float="true" required></paper-checkbox>
+								</div>
+							</div>
+						</div>
+
 						<!-- Google Map -->
 						<div class="item">
 							<google-map latitude="[[latitude]]" longitude="[[longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
@@ -181,7 +267,7 @@
 					<div class="card-content">
 						<!-- Thai Language -->
 						<div class="flex-layout center form-title">
-							<div class="avatar" item-icon><img src="/public/img/th.svg" /></div>
+							<div class="avatar" item-icon><img src="/public/img/th.png" /></div>
 							<div class="flex company">ภาษาไทย</div>
 						</div>
 						<paper-input type="text" label="ชื่อกิจกรรม" name="nameTH" always-float-label></paper-input>
@@ -189,7 +275,7 @@
 						<paper-textarea label="รายละเอียด" name="descriptionTH" rows="4" always-float-label></paper-textarea>
 						<!-- English Language -->
 						<div class="flex-layout center form-title">
-							<div class="avatar" item-icon><img src="/public/img/en.svg" /></div>
+							<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
 							<div class="flex company">English</div>
 						</div>
 						<paper-input type="text" label="Activity name" name="nameEN" always-float-label></paper-input>
@@ -215,7 +301,7 @@
 							<paper-tags-input label="Tags" tags="{{tags_list}}"></paper-tags-input>
 						</div>
 					</div>
-					
+
 					<!-- Submit Button -->
 					<div class="card-actions">
 						<div class="button-holder">
@@ -265,7 +351,6 @@
         }, 1000);
       },
       _response: function(e) {
-        console.log(e.detail.response);
         if (e.detail.response.success) {
           window.location = '/';
         }
@@ -273,9 +358,10 @@
       _reset: function(event) {
         this.$.form.reset();
       },
-      _presubmit: function(event) {				
+      _presubmit: function(event) {
 					this.$.form.request.body.locationLat = this.latitude;
 					this.$.form.request.body.locationLong = this.longitude;
+          console.log(this);
       }
     })
   </script>

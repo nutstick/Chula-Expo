@@ -7,7 +7,7 @@
 
 <link rel="import" href="/components/shared-styles.html">
 <link rel="import" href="/pages/zone-add-page.html">
-<link rel="import" href="/pages/activity-list-page.html">
+<link rel="import" href="/pages/zone-list-page.html">
 
 <dom-module id="zone-page">
   <template>
@@ -22,7 +22,7 @@
       attr-for-selected="name"
       fallback-selection="view404"
       role="main">
-      <activity-list-page name="list"></activity-list-page>
+      <zone-list-page name="list"></zone-list-page>
       <zone-add-page name="add"></zone-add-page>
     </iron-pages>
   </template>
@@ -48,8 +48,7 @@
         this.page = page || 'list';
       },
       _pageChanged: function(page) {
-   			console.log('zone-' + page + '-page.html');
-        var resolvedPageUrl = this.resolveUrl('zone-' + page + '-page.html');
+   			var resolvedPageUrl = this.resolveUrl('zone-' + page + '-page.html');
         this.importHref(resolvedPageUrl, null, this._showPage404, true);
       },
       _showPage404: function() {

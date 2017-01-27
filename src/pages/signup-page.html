@@ -25,7 +25,7 @@
         @apply(--layout);
         @apply(--layout-center-center);
       }
-      @media (min-width: 600px) { 
+      @media (min-width: 600px) {
         :host {
           padding-top: 20px;
         }
@@ -194,9 +194,14 @@
           computed: "_computedQueryParams(route)"
         }
       },
-      
+
       _computedQueryParams: function(route) {
-        return route.__queryParams
+        if(route.__queryParams.tokens) {
+          var object = JSON.parse(route.__queryParams.tokens);
+          route.__queryParams.kind = object[0].kind;
+          route.__queryParams.accessToken = object[0].accessToken;
+        }
+        return route.__queryParams;
       },
       _typeChanged: function(event) {
         this.hideStudent = this.type;

@@ -47,9 +47,9 @@ router.get('/', (req, res) => {
       } else if (sortFields === 'descriptionEN') {
         sortFields = 'description.en';
       } else if (sortFields === 'locationLat') {
-        sortFields = 'location.latitute';
+        sortFields = 'location.latitude';
       } else if (sortFields === 'locationLong') {
-        sortFields = 'location.longtitute';
+        sortFields = 'location.longitude';
       }
 
       if (sortQuery[0] === '-') {
@@ -94,8 +94,8 @@ router.get('/', (req, res) => {
     fields = fields.replace('locationPlace', 'location.place');
     fields = fields.replace('locationFloor', 'location.floor');
     fields = fields.replace('locationRoom', 'location.room');
-    fields = fields.replace('locationLat', 'location.latitute');
-    fields = fields.replace('locationLong', 'location.longtitute');
+    fields = fields.replace('locationLat', 'location.latitude');
+    fields = fields.replace('locationLong', 'location.longitude');
   }
 
   // Text search engine
@@ -155,8 +155,8 @@ router.get('/:id', (req, res) => {
     fields = fields.replace('locationPlace', 'location.place');
     fields = fields.replace('locationFloor', 'location.floor');
     fields = fields.replace('locationRoom', 'location.room');
-    fields = fields.replace('locationLat', 'location.latitute');
-    fields = fields.replace('locationLong', 'location.longtitute');
+    fields = fields.replace('locationLat', 'location.latitude');
+    fields = fields.replace('locationLong', 'location.longitude');
   }
 
   Activity.findById(req.params.id).select(fields).exec((err, act) => {
@@ -191,24 +191,24 @@ router.post('/', (req, res, next) => {
   // Set field value (comes from the request)
   activity.name.en = req.body.nameEN;
   activity.name.th = req.body.nameTH;
-  activity.thumbnailUrl = req.body.thumbnailUrl;
-  activity.bannerUrl = req.body.bannerUrl;
+  activity.thumbnail = req.body.thumbnail;
+  activity.banner = req.body.banner;
   activity.shortDescription.en = req.body.shortDescriptionEN;
   activity.shortDescription.th = req.body.shortDescriptionTH;
   activity.description.en = req.body.descriptionEN;
   activity.description.th = req.body.descriptionTH;
   activity.contact = req.body.contact;
-  activity.imageUrl = req.body.imageUrl;
-  activity.videoUrl = req.body.videoUrl;
-  activity.pdfUrl = req.body.pdfUrl;
+  activity.image = req.body.image;
+  activity.video = req.body.video;
+  activity.pdf = req.body.pdf;
   activity.link = req.body.link;
   activity.isHighlight = req.body.isHighlight;
   activity.tags = req.body.tags;
   activity.location.place = req.body.locationPlace;
   activity.location.floor = req.body.locationFloor;
   activity.location.room = req.body.locationRoom;
-  activity.location.latitute = req.body.locationLat;
-  activity.location.longtitute = req.body.locationLong;
+  activity.location.latitude = req.body.locationLat;
+  activity.location.longitude = req.body.locationLong;
   activity.zone = req.body.zone;
   activity.startTime = req.body.startTime;
   activity.endTime = req.body.endTime;
@@ -216,7 +216,10 @@ router.post('/', (req, res, next) => {
   activity.save((err, _act) => {
     if (err) {
       // Handle error from
-      next(err);
+      return res.status(500).json({
+        success: false,
+        results: retrieveError(5, err)
+      });
     }
 
     res.status(200).json({
@@ -229,7 +232,7 @@ router.post('/', (req, res, next) => {
 // ex. { "name","EditName"}
 // Access at PUT http://localhost:3000/api/activities/:id
 router.put('/:id', (req, res) => {
-  const updateFields = _.pick(req.body, ['thumbnailUrl', 'bannerUrl', 'contact', 'imageUrl', 'videoUrl', 'pdfUrl', 'link', 'isHighlight', 'tags', 'zone', 'startTime', 'endTime']);
+  const updateFields = _.pick(req.body, ['thumbnail', 'banner', 'contact', 'image', 'video', 'pdf', 'link', 'isHighlight', 'tags', 'zone', 'startTime', 'endTime']);
 
   if (updateFields.startTime) {
     updateFields.startTime = new Date(updateFields.startTime);
@@ -261,8 +264,8 @@ router.put('/:id', (req, res) => {
     act.location.place = req.body.locationPlace;
     act.location.floor = req.body.locationFloor;
     act.location.room = req.body.locationRoom;
-    act.location.latitute = req.body.locationLat;
-    act.location.longtitute = req.body.locationLong;
+    act.location.latitude = req.body.locationLat;
+    act.location.longitude = req.body.locationLong;
 
     act.save((err, updatedAct) => {
       if (err) {
