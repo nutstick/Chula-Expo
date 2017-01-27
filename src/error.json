@@ -9,6 +9,21 @@
     "message": "Internal Error",
     "code": "5"
   },
+  "11": {
+    "status": "400",
+    "message": "Invalid Registration code for `Admin`",
+    "code": "11"
+  },
+  "12": {
+    "status": "400",
+    "message": "Invalid Registration code for `Staff`",
+    "code": "12"
+  },
+  "13": {
+    "status": "400",
+    "message": "Invalid Registration code for `Scanner`",
+    "code": "13"
+  },
   "22": {
     "status": "401",
     "message": "Unauthorize.",

@@ -5,13 +5,16 @@ const { isAuthenticatedByToken } = require('../../../config/authenticate');
 
 const router = express.Router();
 
-const avaliableFields = ['name', 'email', 'age', 'gender', 'picture', 'type', 'academic', 'worker'];
+const avaliableFields = ['name', 'email', 'age', 'gender', 'profile', 'type', 'academic', 'worker', 'staff'];
 
 router.use(isAuthenticatedByToken);
+
 /**
  * Get user by token
  * Access at GET http://localhost:8080/api/me
  * @param {string} fields
+ * Accessible field 'name', 'email', 'age', 'gender', 'profile', 'type',
+ *    'academic', 'worker', 'staff'.
  *
  * @return {boolean} success - Successful querying flag.
  * @return {User} results - Token owner results.
@@ -21,7 +24,7 @@ router.get('/', (req, res) => {
   // Fields selecting query
   if (req.query.fields) {
     fields = req.query.fields.split(',')
-      .reduec((prev, field) => (avaliableFields.find(f => f === field)), []);
+      .reduce((prev, field) => (avaliableFields.find(f => f === field)), []);
   }
   if (fields.length === 0) {
     fields = avaliableFields;

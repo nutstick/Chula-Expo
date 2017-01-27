@@ -80,9 +80,8 @@ module.exports = {
               user.tokens.push({ kind: 'facebook', accessToken });
               user.name = user.name || `${profile.name.givenName} ${profile.name.familyName}`;
               user.gender = user.gender || profile._json.gender;
-              user.picture = user.picture || `https://graph.facebook.com/${profile.id}/picture?type=large`;
+              user.profile = JSON.stringify(user.profile || `https://graph.facebook.com/${profile.id}/picture?type=large`);
               user.save((err) => {
-                req.flash('info', { msg: 'Facebook account has been linked.' });
                 done(err, user);
               });
             });
@@ -105,7 +104,7 @@ module.exports = {
               user.tokens = [{ kind: 'facebook', accessToken }];
               user.name = `${profile.name.givenName} ${profile.name.familyName}`;
               user.gender = profile._json.gender;
-              user.picture = `https://graph.facebook.com/${profile.id}/picture?type=large`;
+              user.profile = JSON.stringify(user.profile || `https://graph.facebook.com/${profile.id}/picture?type=large`);
               done(err, user);
             }
           });
@@ -129,9 +128,8 @@ module.exports = {
               user.tokens.push({ kind: 'facebook', accessToken });
               user.name = user.name || `${profile.name.givenName} ${profile.name.familyName}`;
               user.gender = user.gender || profile._json.gender;
-              user.picture = user.picture || `https://graph.facebook.com/${profile.id}/picture?type=large`;
+              user.profile = JSON.stringify(user.profile || `https://graph.facebook.com/${profile.id}/picture?type=large`);
               user.save((err) => {
-                req.flash('info', { msg: 'Facebook account has been linked.' });
                 done(err, user);
               });
             });
@@ -154,7 +152,7 @@ module.exports = {
               user.tokens = [{ kind: 'facebook', accessToken }];
               user.name = `${profile.name.givenName} ${profile.name.familyName}`;
               user.gender = profile._json.gender;
-              user.picture = `https://graph.facebook.com/${profile.id}/picture?type=large`;
+              user.profile = JSON.stringify(user.profile || `https://graph.facebook.com/${profile.id}/picture?type=large`);
               done(err, user);
             }
           });

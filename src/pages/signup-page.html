@@ -89,7 +89,7 @@
       <div class="header style-scope paper-card">
         <!-- Profile Image with uploadility -->
         <div class="center offset">
-          <profile-image-uploadable image="{{queryParams.picture}}" alt="User profile" name="picture"></profile-image-uploadable>
+          <profile-image-uploadable image="{{queryParams.profile}}" alt="User profile" name="profile"></profile-image-uploadable>
         </div>
       </div>
       <!-- Polymer Iron form -->
@@ -100,8 +100,8 @@
           <!-- E-mail -->
           <paper-input name="email" label="อีเมลล์" value="{{queryParams.email}}" required always-float-label></paper-input>
           <!-- Password -->
-          <paper-input name="password" label="พาสเวิร์ด" type="password" value="" hidden={{queryParams.facebook}} required={{!queryParams.facebook}} always-float-label></paper-input>
-          <paper-input name="confirmPassword" label="คอนเฟิร์มพาสเวิร์ด" type="password" value="" hidden={{queryParams.facebook}} required={{!queryParams.facebook}} always-float-label></paper-input>
+          <paper-input name="password" label="พาสเวิร์ด" type="password" hidden={{queryParams.facebook}} required={{!queryParams.facebook}} always-float-label></paper-input>
+          <paper-input name="confirmPassword" label="คอนเฟิร์มพาสเวิร์ด" type="password" hidden={{queryParams.facebook}} required={{!queryParams.facebook}} always-float-label></paper-input>
           <!-- Gender -->
           <div class="item">
             <div class="input-label" id="gender">เพศ:</div>
@@ -116,19 +116,19 @@
             <!-- Student/Worker -->
             <div class="input-label">ประเภท:</div>
             <paper-button-group selected="student">
-              <paper-button toggles name="student" active={{student}}>นักเรียน นิสิต</paper-button>
-              <paper-button toggles name="worker" active={{worker}}>บุคคลทั่วๆ</paper-button>
-              <paper-button toggles name="staff" active={{staff}}>สตาฟ</paper-button>
+              <paper-button toggles active={{student}}>นักเรียน นิสิต</paper-button>
+              <paper-button toggles active={{worker}}>บุคคลทั่วๆ</paper-button>
+              <paper-button toggles active={{staff}}>สตาฟ</paper-button>
             </paper-button-group>
             <!-- Student -->
             <fieldset class="field" hidden$="{{!student}}">
-              <paper-input name="academic.year" label="การศึกษาปัจจุบัน" always-float-label></paper-input>
-              <paper-input name="academic.year" label="ชั้นปี" always-float-label></paper-input>
-              <paper-input name="academic.school" label="สถาบันการศึกษา" always-float-label></paper-input>
+              <paper-input name="academicLevel" label="การศึกษาปัจจุบัน" required="{{student}}" always-float-label></paper-input>
+              <paper-input name="academicYear" label="ชั้นปี" required="{{student}}" always-float-label></paper-input>
+              <paper-input name="academicSchool" label="สถาบันการศึกษา" required="{{student}}" always-float-label></paper-input>
             </fieldset>
             <!-- Worker -->
             <fieldset class="field" hidden$="{{!worker}}">
-              <paper-input name="worker.company" label="อาชีพ" always-float-label></paper-input>
+              <paper-input name="workerJob" label="อาชีพ" required="{{worker}}" always-float-label></paper-input>
             </fieldset>
             <!-- Staff -->
             <fieldset class="field" hidden$="{{!staff}}">
@@ -136,11 +136,12 @@
               <div class="item">
                 <div class="input-label">ประเภท:</div>
                 <paper-button-group selected="scanner">
-                  <paper-button toggles name="scanner">Scan man</paper-button>
-                  <paper-button toggles name="staff">Staff</paper-button>
+                  <paper-button toggles active="{{adminStaff}}">Admin</paper-button>
+                  <paper-button toggles active="{{scannerStaff}}">Scan man</paper-button>
+                  <paper-button toggles active="{{staffStaff}}">Staff</paper-button>
                 </paper-button-group>
               </div>
-              <paper-input name="staffcode" label="รหัส" always-float-label></paper-input>
+              <paper-input name="registrationCode" label="รหัส" required="{{staff}}" always-float-label></paper-input>
             </fieldset>
           </div>
           <!-- Hidden Fields -->
@@ -197,11 +198,9 @@
       _computedQueryParams: function(route) {
         if(route.__queryParams.tokens) {
           var object = JSON.parse(route.__queryParams.tokens);
-          console.log(object);
           route.__queryParams.kind = object[0].kind;
           route.__queryParams.accessToken = object[0].accessToken;
         }
-        console.log(route.__queryParams);
         return route.__queryParams;
       },
       _typeChanged: function(event) {
@@ -228,9 +227,9 @@
         this.$.form.reset();
       },
       _presubmit: function(event) {
-        console.log(this.$.form.request.body);
         this.$.form.request.body.gender = this.male ? 'Male' : 'Female';
         this.$.form.request.body.type = this.student ? 'Academic' : (this.worker ? 'Worker' : 'Staff');
+        this.$.form.reqeust.body.staff = this.adminStaff ? (this.scannerStaff ? 'Staff' : 'Scanner');
       }
     });
   </script>

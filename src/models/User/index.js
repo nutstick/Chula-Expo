@@ -63,11 +63,6 @@ const UserSchema = new mongoose.Schema({
   password: { type: String, select: false },
   passwordResetToken: String,
   passwordResetExpires: Date,
-  admin: {
-    type: String,
-    default: 'None',
-    enum: ['Admin', 'Staff', 'Scanner', 'None'],
-  },
 
   facebook: { type: String },
   google: { type: String },
@@ -80,18 +75,29 @@ const UserSchema = new mongoose.Schema({
     enum: ['Male', 'Female']
   },
   age: { type: Number, required: true },
-  picture: String,
+  profile: String,
   type: {
     type: String,
     required: true,
     enum: ['Academic', 'Worker', 'Staff']
   },
   academic: {
-    year: Number,
+    level: String,
+    year: String,
     school: String
   },
   worker: {
-    company: String
+    job: String
+  },
+  staff: {
+    staffType: {
+      type: String,
+      enum: ['Staff', 'Scanner', 'Admin']
+    },
+    zone: {
+      type: ObjectId,
+      ref: 'Zone'
+    }
   },
   bookmarkActivity: [BookmarkActivitySchema],
   reservedActivity: [ReservedActivitySchema],
@@ -107,8 +113,41 @@ const UserSchema = new mongoose.Schema({
       ref: 'Game'
     }]
   },
-  activityLog: [ActivityLogSchema]
+  activityLog: [ActivityLogSchema],
+
+  createAt: { type: Date, default: new Date() },
+  updateAt: { type: Date, default: new Date() },
 }, { timestamps: true });
+
+/**
+ * Validate
+ */
+console.log(UserSchema.path('academic'));
+UserSchema.path('type').validate((value) => {
+  if (this.academic) {
+    return value === 'Academic';
+  } else if (this.worker) {
+    return value === 'Worker';
+  } else if (this.staff) {
+    return value === 'Staff';
+  }
+  return false;
+}, 'No data provide along with Type');
+
+UserSchema.path('academic').validate(value => value.level && value.year && value.school, 'Invalid Academic Information');
+
+UserSchema.path('worker').validate(value => value.job, 'Invalid Worker Information');
+
+UserSchema.path('staff').validate((value) => {
+  if (value.staffType) {
+    if (value.staffType === 'Staff' || value.staffType === 'Scanner') {
+      return !!value.zone;
+    }
+    return true;
+  }
+  return false;
+}, 'Invalid Staff Information');
+
 /**
  * Password hash middleware.
  */
