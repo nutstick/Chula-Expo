@@ -119,7 +119,11 @@ const UserSchema = new mongoose.Schema({
   updateAt: { type: Date, default: new Date() },
 }, { timestamps: true });
 
-UserSchema.schema.path('type').validate((value) => {
+/**
+ * Validate
+ */
+console.log(UserSchema.path('academic'));
+UserSchema.path('type').validate((value) => {
   if (this.academic) {
     return value === 'Academic';
   } else if (this.worker) {
@@ -130,11 +134,11 @@ UserSchema.schema.path('type').validate((value) => {
   return false;
 }, 'No data provide along with Type');
 
-UserSchema.schema.path('accademic').validate(value => value.level && value.year && value.school, 'Invalid Academic Information');
+UserSchema.path('academic').validate(value => value.level && value.year && value.school, 'Invalid Academic Information');
 
-UserSchema.schema.path('worker').validate(value => value.job, 'Invalid Worker Information');
+UserSchema.path('worker').validate(value => value.job, 'Invalid Worker Information');
 
-UserSchema.schema.path('staff').validate((value) => {
+UserSchema.path('staff').validate((value) => {
   if (value.staffType) {
     if (value.staffType === 'Staff' || value.staffType === 'Scanner') {
       return !!value.zone;
