@@ -4,6 +4,11 @@
     "message": "There is already an account using this email address. Sign in to that account and link it with Facebook manually from Account Settings.",
     "code": "1"
   },
+  "2": {
+    "status": "450",
+    "message": "Email or Passowrd missing",
+    "code": "2"
+  },
   "5": {
     "status": "500",
     "message": "Internal Error",

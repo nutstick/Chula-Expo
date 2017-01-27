@@ -32,21 +32,21 @@ const router = express.Router();
  */
 router.post('/', (req, res) => {
   // Reject `admin` field if not correct registration code
-  if (req.body.staff === 'Admin' && req.body.regisationCode !== process.env.ADMIN_REGISTRATION_CODE) {
+  if (req.body.staff === 'Admin' && req.body.registrationCode !== process.env.ADMIN_REGISTRATION_CODE) {
     // Handle error from save
     return res.status(400).json({
       success: false,
       errors: retrieveError(11),
     });
   }
-  if (req.body.staff === 'Staff' && req.body.regisationCode !== process.env.STAFF_REGISTRATION_CODE) {
+  if (req.body.staff === 'Staff' && req.body.registrationCode !== process.env.STAFF_REGISTRATION_CODE) {
     // Handle error from save
     return res.status(400).json({
       success: false,
       errors: retrieveError(12),
     });
   }
-  if (req.body.staff === 'Scannerr' && req.body.regisationCode !== process.env.SCANNER_REGISTRATION_CODE) {
+  if (req.body.staff === 'Scannerr' && req.body.registrationCode !== process.env.SCANNER_REGISTRATION_CODE) {
     // Handle error from save
     return res.status(400).json({
       success: false,
@@ -81,7 +81,7 @@ router.post('/', (req, res) => {
       job: req.body.workerJob
     };
   }
-  if (req.body.type === 'Staff' && req.body.staffT) {
+  if (req.body.type === 'Staff' && req.body.staff) {
     if (req.body.staff !== 'Admin' && req.body.zone) {
       user.staff = {
         staffType: req.body.staff,

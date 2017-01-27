@@ -3,10 +3,6 @@ const passport = require('passport');
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  res.render('login/login.view.ejs');
-});
-
 router.post('/', (req, res, next) => {
   req.assert('email', 'Email is not valid').isEmail();
   req.assert('password', 'Password cannot be blank').notEmpty();
