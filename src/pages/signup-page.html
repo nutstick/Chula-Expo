@@ -25,7 +25,7 @@
         @apply(--layout);
         @apply(--layout-center-center);
       }
-      @media (min-width: 600px) { 
+      @media (min-width: 600px) {
         :host {
           padding-top: 20px;
         }
@@ -100,8 +100,8 @@
           <!-- E-mail -->
           <paper-input name="email" label="อีเมลล์" value="{{queryParams.email}}" required always-float-label></paper-input>
           <!-- Password -->
-          <paper-input name="password" label="พาสเวิร์ด" type="password" value="{{queryParams.password}}" hidden={{queryParams.facebook}} required={{!queryParams.facebook}} always-float-label></paper-input>
-          <paper-input name="confirmPassword" label="คอนเฟิร์มพาสเวิร์ด" type="password" value="{{queryParams.confirmPassword}}" hidden={{queryParams.facebook}} required={{!queryParams.facebook}} always-float-label></paper-input>
+          <paper-input name="password" label="พาสเวิร์ด" type="password" value="" hidden={{queryParams.facebook}} required={{!queryParams.facebook}} always-float-label></paper-input>
+          <paper-input name="confirmPassword" label="คอนเฟิร์มพาสเวิร์ด" type="password" value="" hidden={{queryParams.facebook}} required={{!queryParams.facebook}} always-float-label></paper-input>
           <!-- Gender -->
           <div class="item">
             <div class="input-label" id="gender">เพศ:</div>
@@ -193,9 +193,16 @@
           computed: "_computedQueryParams(route)"
         }
       },
-      
+
       _computedQueryParams: function(route) {
-        return route.__queryParams
+        if(route.__queryParams.tokens) {
+          var object = JSON.parse(route.__queryParams.tokens);
+          console.log(object);
+          route.__queryParams.kind = object[0].kind;
+          route.__queryParams.accessToken = object[0].accessToken;
+        }
+        console.log(route.__queryParams);
+        return route.__queryParams;
       },
       _typeChanged: function(event) {
         this.hideStudent = this.type;

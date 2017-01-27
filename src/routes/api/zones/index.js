@@ -164,7 +164,7 @@ router.get('/:id', (req, res) => {
 * Create a new Zone
 * Access at POST http://localhost:8080/api/en/zones
 */
-router.post('/', (req, res, next) => {
+router.post('/', (req, res) => {
  // Create object
 
   const zone = new Zone();
@@ -196,7 +196,10 @@ router.post('/', (req, res, next) => {
   zone.save((err, _zone) => {
     if (err) {
      // Handle error from save
-      next(err);
+      return res.status(500).json({
+        success: false,
+        errors: retrieveError(5, err),
+      });
     }
     res.status(201).json({
       success: true,

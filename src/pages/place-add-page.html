@@ -65,7 +65,7 @@
       google-map {
         height: 300px;
       }
-			
+
 			.button-holder {
         @apply(--layout-horizontal);
         @apply(--layout-end-justified);
@@ -85,9 +85,9 @@
 								<div class="flex" style="display: inline-block">
 									<paper-input type="text" name="code" label="" no-label-float="true"></paper-input>
 								</div>
-							</div>						
+							</div>
 						</div>
-	
+
 						<!-- Google Map -->
 						<div class="item">
 							<google-map latitude="[[latitude]]" longitude="[[longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
@@ -110,7 +110,7 @@
 						</div>
 						<paper-input type="text" label="place name" name="nameEN" always-float-label></paper-input>
 					</div>
-					
+
 					<!-- Submit Button -->
 					<div class="card-actions">
 						<div class="button-holder">
@@ -160,7 +160,6 @@
         }, 1000);
       },
       _response: function(e) {
-        console.log(e.detail.response);
         if (e.detail.response.success) {
           window.location = '/';
         }
@@ -168,7 +167,7 @@
       _reset: function(event) {
         this.$.form.reset();
       },
-      _presubmit: function(event) {				
+      _presubmit: function(event) {
 					this.$.form.request.body.locationLat = this.latitude;
 					this.$.form.request.body.locationLong = this.longitude;
       }

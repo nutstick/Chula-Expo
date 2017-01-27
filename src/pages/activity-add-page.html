@@ -99,7 +99,6 @@
 									<script>
 										var thumbnailUpload = document.querySelector('vaadin-upload#thumbnailUpload')
 										thumbnailUpload.addEventListener("upload-response", function(event) {
-											console.log(event);
 											document.querySelector('#thumbnail').value = event;
 										});
 									</script>
@@ -224,8 +223,6 @@
 										req.onload = function() {
 											if (req.status === 200) {
 												var data = JSON.parse(req.response);
-												console.log(data);
-												console.log(req);
 												var arr = data.results.map(function(obj){
 													return { text:obj.name.en, value:obj['_id'] };
 												});
@@ -354,7 +351,6 @@
         }, 1000);
       },
       _response: function(e) {
-        console.log(e.detail.response);
         if (e.detail.response.success) {
           window.location = '/';
         }
@@ -365,7 +361,7 @@
       _presubmit: function(event) {
 					this.$.form.request.body.locationLat = this.latitude;
 					this.$.form.request.body.locationLong = this.longitude;
-					console.log(this.$.form.request.body);
+          console.log(this);
       }
     })
   </script>

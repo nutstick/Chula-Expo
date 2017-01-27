@@ -66,7 +66,7 @@
       google-map {
         height: 300px;
       }
-			
+
 			.button-holder {
         @apply(--layout-horizontal);
         @apply(--layout-end-justified);
@@ -82,7 +82,7 @@
 						<!-- type -->
 						<div class="item">
 							<label class="label --input">Type</label>
-							<div class="flex" style="display: inline-block">							
+							<div class="flex" style="display: inline-block">
 								<paper-dropdown-menu label="" no-label-float="true" name="type">
 									<paper-listbox class="dropdown-content">
 										<paper-item value="toilet">Toilet</paper-item>
@@ -90,10 +90,10 @@
 										<paper-item value="carpark">Car park</paper-item>
 										<paper-item value="prayer">Prayer</paper-item>
 									</paper-listbox>
-								</paper-dropdown-menu>	
+								</paper-dropdown-menu>
 							</div>
 						</div>
-					
+
 						<!-- Location -->
 						<div class="item">
 							<label class="label --input">Place</label>
@@ -113,8 +113,6 @@
 										req.onload = function() {
 											if (req.status === 200) {
 												var data = JSON.parse(req.response);
-												console.log(data);
-												console.log(req);
 												var arr = data.results.map(function(obj){
 													return { text:obj.name.en, value:obj['_id'] };
 												});
@@ -126,7 +124,7 @@
 								});
 							</script>
 						</div>
-						
+
 						<!-- Google Map -->
 						<div class="item">
 							<google-map latitude="[[latitude]]" longitude="[[longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
@@ -201,7 +199,6 @@
         }, 1000);
       },
       _response: function(e) {
-        console.log(e.detail.response);
         if (e.detail.response.success) {
           window.location = '/';
         }
@@ -209,10 +206,9 @@
       _reset: function(event) {
         this.$.form.reset();
       },
-      _presubmit: function(event) {				
+      _presubmit: function(event) {
 					this.$.form.request.body.locationLat = this.latitude;
 					this.$.form.request.body.locationLong = this.longitude;
-					console.log(this.$.form.request.body);
       }
     })
   </script>

@@ -153,7 +153,10 @@ router.post('/', (req, res, next) => {
   place.save((err, _place) => {
     if (err) {
       // Handle error from save
-      next(err);
+      return res.status(500).json({
+        success: false,
+        errors: retrieveError(5, err),
+      });
     }
     res.status(201).json({
       success: true,

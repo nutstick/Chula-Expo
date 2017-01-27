@@ -106,7 +106,7 @@
 									<vaadin-upload
 										id="thumbnailUpload"
 										accept="image/*"
-										target="/upload/img/activities/thumbnail"
+										target="/upload/img/zones/thumbnail"
 										method="POST"
 										headers="{'Authorization': 'JWT {{token}}'}"
 										form-data-name="picture"
@@ -135,7 +135,7 @@
 									<vaadin-upload
 										id="bannerUpload"
 										accept="image/*"
-										target="/upload/img/activities/banner"
+										target="/upload/img/zones/banner"
 										method="POST"
 										headers="{'Authorization': 'JWT {{token}}'}"
 										form-data-name="picture"
@@ -153,7 +153,7 @@
 						<div class="item">
 							<google-map latitude="[[latitude]]" longitude="[[longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
 								<google-map-marker latitude="{{latitude}}" longitude="{{longitude}}" draggable="true"
-										title="Activity Location!"></google-map-marker>
+										title="Zone Location!"></google-map-marker>
 							</google-map>
 						</div>
 					</div>
@@ -217,15 +217,12 @@
         this.$.spinner.active = true;
         this.$.spinner.hidden = false;
         this.$.form.disabled = true;
-				console.log(form.request.body);
-
         // Simulate a slow server response.
         setTimeout(function() {
           form.submit();
         }, 1000);
       },
       _response: function(e) {
-        console.log(e.detail.response);
         if (e.detail.response.success) {
           window.location = '/';
         }
@@ -236,8 +233,7 @@
       _presubmit: function(event) {
 					this.$.form.request.body.locationLat = this.latitude;
 					this.$.form.request.body.locationLong = this.longitude;
-					console.log("pre");
-					console.log(this.$.form.request.body);
+          console.log(this);
       }
     })
   </script>
