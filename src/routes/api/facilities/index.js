@@ -19,8 +19,8 @@ router.get('/', (req, res) => {
       sortFields = sortFields.replace('nameEN', 'name.en');
       sortFields = sortFields.replace('descriptionTH', 'description.th');
       sortFields = sortFields.replace('descriptionEN', 'description.en');
-      sortFields = sortFields.replace('locationLat', 'location.latitute');
-      sortFields = sortFields.replace('locationLong', 'location.longtitute');
+      sortFields = sortFields.replace('locationLat', 'location.latitude');
+      sortFields = sortFields.replace('locationLong', 'location.longitude');
       if (sortQuery[0] === '-') {
         prev[sortFields] = -1;
       } else {
@@ -39,8 +39,8 @@ router.get('/', (req, res) => {
     fields = fields.replace('nameEN', 'name.en');
     fields = fields.replace('descriptionTH', 'description.th');
     fields = fields.replace('descriptionEN', 'description.en');
-    fields = fields.replace('locationLat', 'location.latitute');
-    fields = fields.replace('locationLong', 'location.longtitute');
+    fields = fields.replace('locationLat', 'location.latitude');
+    fields = fields.replace('locationLong', 'location.longitude');
   }
   let query = Facility.find(filter);
 
@@ -86,8 +86,8 @@ router.get('/:id', (req, res) => {
     fields = fields.replace('nameEN', 'name.en');
     fields = fields.replace('descriptionTH', 'description.th');
     fields = fields.replace('descriptionEN', 'description.en');
-    fields = fields.replace('locationLat', 'location.latitute');
-    fields = fields.replace('locationLong', 'location.longtitute');
+    fields = fields.replace('locationLat', 'location.latitude');
+    fields = fields.replace('locationLong', 'location.longitude');
   }
 
   Facility.findById(req.params.id).select(fields).exec((err, fac) => {
@@ -126,8 +126,8 @@ router.post('/', (req, res, next) => {
   facility.description.en = req.body.descriptionEN;
   facility.type = req.body.type;
   facility.place = req.body.place;
-  facility.location.latitute = req.body.locationLat;
-  facility.location.longtitute = req.body.locationLong;
+  facility.location.latitude = req.body.locationLat;
+  facility.location.longitude = req.body.locationLong;
    // Save User and check for error
   facility.save((err, _act) => {
     if (err) {
@@ -178,10 +178,10 @@ router.put('/:id', (req, res) => {
       fac.place = req.body.place;
     }
     if (req.body.locationLat) {
-      fac.location.latitute = req.body.locationLat;
+      fac.location.latitude = req.body.locationLat;
     }
     if (req.body.locationLong) {
-      fac.location.longtitute = req.body.locationLong;
+      fac.location.longitude = req.body.locationLong;
     }
     fac.save((err, updatedFac) => {
       if (err) {

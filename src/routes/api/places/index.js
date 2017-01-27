@@ -30,8 +30,8 @@ router.get('/', (req, res) => {
     fields = fields.replace('nameEN', 'name.en');
     fields = fields.replace('descTH', 'desc.th');
     fields = fields.replace('descEN', 'desc.en');
-    fields = fields.replace('locationLat', 'location.latitute');
-    fields = fields.replace('locationLong', 'location.longtitute');
+    fields = fields.replace('locationLat', 'location.latitude');
+    fields = fields.replace('locationLong', 'location.longitude');
   }
 //----------------------------------------------------------------
 // initial filter : name query
@@ -101,8 +101,8 @@ router.get('/:id', (req, res) => {
     fields = fields.replace('nameEN', 'name.en');
     fields = fields.replace('descTH', 'desc.th');
     fields = fields.replace('descEN', 'desc.en');
-    fields = fields.replace('locationLat', 'location.latitute');
-    fields = fields.replace('locationLong', 'location.longtitute');
+    fields = fields.replace('locationLat', 'location.latitude');
+    fields = fields.replace('locationLong', 'location.longitude');
   }
 
   Place.findById(req.params.id).select(fields).exec((err, place) => {
@@ -146,14 +146,17 @@ router.post('/', (req, res, next) => {
   if (req.body.code) {
     place.code = req.body.code;
   }
-  place.location.latitute = req.body.locationLat;
-  place.location.longtitute = req.body.locationLong;
+  place.location.latitude = req.body.locationLat;
+  place.location.longitude = req.body.locationLong;
 
   // Save place and check for error
   place.save((err, _place) => {
     if (err) {
       // Handle error from save
-      next(err);
+      return res.status(500).json({
+        success: false,
+        errors: retrieveError(5, err),
+      });
     }
     res.status(201).json({
       success: true,
@@ -192,11 +195,11 @@ router.put('/:id', (req, res) => {
     if (req.body.code) {
       place.code = req.body.code;
     }
-    if (req.body.latitute) {
-      place.location.latitute = req.body.latitute;
+    if (req.body.latitude) {
+      place.location.latitude = req.body.latitude;
     }
-    if (req.body.longtitute) {
-      place.location.longtitute = req.body.longtitute;
+    if (req.body.longitude) {
+      place.location.longitude = req.body.longitude;
     }
 
     place.save((err, _place) => {

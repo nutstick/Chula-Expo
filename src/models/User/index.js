@@ -108,7 +108,7 @@ const UserSchema = new mongoose.Schema({
   },
   bookmarkActivity: [BookmarkActivitySchema],
   reservedActivity: [ReservedActivitySchema],
-  qrcodeUrl: String,
+  qrcode: String,
   game: {
     totalScore: { type: Number, default: 0 },
     pending: [{

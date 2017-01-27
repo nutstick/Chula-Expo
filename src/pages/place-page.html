@@ -6,8 +6,8 @@
 <link rel="import" href="/public/lib/app-route/app-route.html">
 
 <link rel="import" href="/components/shared-styles.html">
-<link rel="import" href="/pages/activity-add-page.html">
-<link rel="import" href="/pages/activity-list-page.html">
+<link rel="import" href="/pages/place-add-page.html">
+<link rel="import" href="/pages/place-list-page.html">
 
 <dom-module id="place-page">
   <template>
@@ -22,8 +22,8 @@
       attr-for-selected="name"
       fallback-selection="view404"
       role="main">
-      <activity-list-page name="list"></activity-list-page>
-      <activity-add-page name="add"></activity-add-page>
+      <place-list-page name="list"></place-list-page>
+      <place-add-page name="add"></place-add-page>
     </iron-pages>
   </template>
   <script>
@@ -48,7 +48,7 @@
         this.page = page || 'list';
       },
       _pageChanged: function(page) {
-        var resolvedPageUrl = this.resolveUrl('activity-' + page + '-page.html');
+        var resolvedPageUrl = this.resolveUrl('place-' + page + '-page.html');
         this.importHref(resolvedPageUrl, null, this._showPage404, true);
       },
       _showPage404: function() {

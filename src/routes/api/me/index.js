@@ -53,7 +53,7 @@ router.get('/', (req, res) => {
  * @param {string} [email]
  * @param {number} [age]
  * @param {string} [gender]
- * @param {string} [pictureUrl]
+ * @param {string} [picture]
  * @param {string} [type]
  * @param {number} [ัyear]
  * @param {string} [ัschool]
@@ -76,8 +76,8 @@ router.put('/', (req, res) => {
   if (req.body.gender) {
     req.user.gender = req.body.gender;
   }
-  if (req.body.pictureUrl) {
-    req.user.pictureUrl = req.body.pictureUrl;
+  if (req.body.picture) {
+    req.user.picture = req.body.picture;
   }
   if (req.body.type) {
     req.user.type = req.body.type;
