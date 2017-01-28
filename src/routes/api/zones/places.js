@@ -21,7 +21,7 @@ const router = express.Router();
  * @return {number} queryInfo.limit - Limit that was used.
  * @return {number} queryInfo.skip - Skip that was used.
  */
- router.get('/', (req, res) => {
+ router.get('/:id/place/', (req, res) => {
 //----------------------------------------------------------------
   // initial the fieldwant from request
   let fields = '';
@@ -41,7 +41,9 @@ const filter = {};
 if (req.query.nameEN) {
   filter['name.en'] = { $regex: req.query.nameEN };
 }
-if(req.params.zoneid)filter['zone'] = req.params.zoneid;
+
+filter['zone'] = req.params.zoneid;
+
 //----------------------------------------------------------------
 // initial limit
 let limit;
@@ -89,45 +91,7 @@ Place.find(filter)
   });
 });
 
-/**
- * Get Places by Id
- */
- router.get('/:id', (req, res) => {
- //----------------------------------------------------------------
- // initial the fieldwant from request
- let fields = '';
- if (req.query.fields) {
-  fields = req.query.fields.replace(',', ' ');
-  fields = fields.replace('nameTH', 'name.th');
-  fields = fields.replace('nameEN', 'name.en');
-  fields = fields.replace('descTH', 'desc.th');
-  fields = fields.replace('descEN', 'desc.en');
-  fields = fields.replace('locationLat', 'location.latitute');
-  fields = fields.replace('locationLong', 'location.longtitute');
-}
 
-Place.findById(req.params.id).select(fields).exec((err, place) => {
-  if (err) {
-     // Handle error from User.findById
-     return res.status(500).json({
-      success: false,
-      errors: retrieveError(5, err)
-    });
-   }
-
-   if (!place) {
-    return res.status(403).json({
-      success: false,
-      results: retrieveError(33)
-    });
-  }
-
-  return res.status(200).json({
-    success: true,
-    results: place
-  });
-});
-});
 
  //----------------------------------------------------------------
 
@@ -136,7 +100,7 @@ Place.findById(req.params.id).select(fields).exec((err, place) => {
 * Access at POST http://localhost:8080/api/en/places
 */
 
-router.post('/', (req, res, next) => {
+router.post('/:id/place/', (req, res, next) => {
    // Create object
 
    const place = new Place();
@@ -145,8 +109,7 @@ router.post('/', (req, res, next) => {
    place.name.en = req.body.nameEN;
    place.name.th = req.body.nameTH;
 
-    if(req.params.zoneid)place.zone  = req.params.zoneid;
-    else place.zone = req.body.zone
+   place.zone  = req.params.id;
 
    if (req.body.code) {
     place.code = req.body.code;
@@ -183,65 +146,8 @@ router.post('/', (req, res, next) => {
   });
 });
 
-// Update an existing place via PUT(JSON format)
-// ex. { "name","EditName"}
-// Access at PUT http://localhost:3000/api/en/places/:id
-router.put('/:id', (req, res) => {
-  Place.findById(req.params.id, (err, place) => {
-  // check error first
-  if (err) {
-    return res.status(500).json({
-      success: false,
-      errors: retrieveError(5, err)
-    });
-  }
-  // check place
-  if (!place) {
-    return res.status(403).json({
-      success: false,
-      errors: retrieveError(33)
-    });
-  }
-
-
-  if (req.body.nameEN) {
-    place.name.en = req.body.nameEN;
-  }
-  if (req.body.nameTH) {
-    place.name.th = req.body.nameTH;
-  }
-  if (req.body.code) {
-    place.code = req.body.code;
-  }
-  if (req.body.latitute) {
-    place.location.latitute = req.body.latitute;
-  }
-  if (req.body.longtitute) {
-    place.location.longtitute = req.body.longtitute;
-  }
-
-  place.save((err, _place) => {
-    if (err) {
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err)
-      });
-    }
-    res.status(202).json({
-      success: true,
-      message: 'Update place successful',
-      results: _place
-    });
-  });
-});
-});
-
-// Delete an existing place via DEL.
-// Access at DEL http://localhost:3000/api/en/places/:id
-router.delete('/:id', (req, res) => {
-  
-     
-  Place.findByIdAndRemove(req.params.id, (err) => {
+router.delete('/:id/place/', (req, res) => {
+  Place.remove( {zone : req.params.id}, (err) => {
     if (err) {
       return res.status(500).json({
         success: false,
@@ -251,39 +157,8 @@ router.delete('/:id', (req, res) => {
     res.status(202).json({
       success: true,
       message: `An Place with id ${req.params.id} was removed.`
-    });/*
-    var placezoneid;
-
-    Place.findById(req.params.id).exec(
-  (err, _place) => {
-    if (err) {
-      return res.status(500).send({
-        success: false,
-        errors: retrieveError(5, err)
-      });
-    }
-    placezoneid = _place.zone;
-    res.status(200).json({
-      success: true,
-      results: _place
     });
   });
-
-    Zone.update(
-        { placezoneid.equals(_id) },
-        { $pull: { 'places': req.params.id } }
-      );
-
-
-
-*/
-  });
-
-    
-  
-
 });
-
-
 
 module.exports = router;

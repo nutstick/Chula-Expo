@@ -46,7 +46,7 @@ router.use('/facilities', require('./facilities'));
  * place API
 */
 router.use('/places', require('./places'));
-
+router.use('/zones/:zoneid/places', require('./places'));
 /**
  * zone API
 */
