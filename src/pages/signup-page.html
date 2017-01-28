@@ -266,12 +266,13 @@
       },
       _response: function(e) {
         if (e.detail.response.success) {
-          document.getElementById('cookie').value = e.detail.response.results.token;
-          document.getElementById('cookie').createCookie();
+
+          document.querySelector('chulaexpo-staff-app').token = e.detail.response.results.token;
+          document.getElementById('storage').save();
           
-          window.location = '/';
-          // window.history.pushState({}, null, '/');
-          // window.dispatchEvent(new CustomEvent('location-changed'));
+          // window.location = '/';
+          window.history.pushState({}, null, '/');
+          window.dispatchEvent(new CustomEvent('location-changed'));
         }
       }
     });

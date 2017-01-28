@@ -39,9 +39,12 @@
             elem.error = err.toString();
           } else {
             if (res.success) {
-              document.getElementById('cookie').value = res.results.token;
-              document.getElementById('cookie').createCookie();
-              document.querySelector('chulaexpo-staff-app').set('route.path', '/');
+              document.querySelector('chulaexpo-staff-app').token = res.results.token;;
+              document.getElementById('storage').save();
+              
+              window.location = '/';
+              // window.history.pushState({}, null, '/');
+              // window.dispatchEvent(new CustomEvent('location-changed'));
             } else if (res.code === 2) {
               window.history.pushState({}, null, '/signup?email=' + res.user.email
                 + '&name=' + res.user.name
@@ -53,6 +56,7 @@
               document.querySelector('chulaexpo-staff-app').set('route.__queryParams.profile', JSON.parse(res.user.profile));
             }
           }
+          return;
         });
       }
     })
