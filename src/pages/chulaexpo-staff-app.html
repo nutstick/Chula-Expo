@@ -9,7 +9,7 @@
 <link rel="import" href="/public/lib/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="/public/lib/app-route/app-location.html">
 <link rel="import" href="/public/lib/app-route/app-route.html">
-<link rel="import" href="/public/lib/polymer-cookie/polymer-cookie.html">
+<link rel="import" href="/public/lib/iron-localstorage/iron-localstorage.html">
 <link rel="import" href="/public/lib/iron-pages/iron-pages.html">
 <link rel="import" href="/public/lib/iron-icons/iron-icons.html">
 <link rel="import" href="/public/lib/iron-media-query/iron-media-query.html">
@@ -82,11 +82,12 @@
       data="{{routeData}}"
       tail="{{subroute}}"
     ></app-route>
-    <!-- Cookie -->
-    <polymer-cookie
-      id="cookie"
+    <iron-localstorage
+      id="storage"
       name="chula-expo"
-    ></polymer-cookie>
+      value="{{token}}"
+      autoSaveDisabled
+    ></iron-localstorage>
     
     <!-- Main Layout -->
     <app-drawer-layout force-narrow>
@@ -111,7 +112,7 @@
             <div main-title>Chula Expo Staff</div>
             <paper-icon-button
               icon="{{_computeLogInIcon(token)}}"
-              disabled="{{!token}}"
+              disabled="[[!token]]"
               on-tap="_accountClick"
             >
             </paper-icon-button>
@@ -161,7 +162,8 @@
           observer: '_pageChanged',
         },
         token: {
-          type: String
+          type: String,
+          value: null
         },
         loggedIn: {
           type: Boolean,
@@ -226,10 +228,6 @@
       _computeLogInIcon: function(token) {
         return token ? 'account-circle' : 'lock-outline';
       }
-    });
-
-    window.addEventListener('WebComponentsReady', function(e) {
-      document.querySelector('chulaexpo-staff-app').token = document.getElementById('cookie').readCookie();
     });
   </script>
 </dom-module>

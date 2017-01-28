@@ -46,9 +46,12 @@
     Polymer({
       is: 'account-page',
       logout: function() {
-        document.getElementById('cookie').eraseCookie();
-        window.location = '/';  
-        // document.querySelector('chulaexpo-staff-app').set('route.path', '/');
+        document.querySelector('chulaexpo-staff-app').token = null;
+        document.getElementById('storage').save();
+
+        // window.history.pushState({}, null, '/');
+        document.querySelector('chulaexpo-staff-app').set('route.path', '/');
+        window.dispatchEvent(new CustomEvent('location-changed'));
       }
     });
   </script>

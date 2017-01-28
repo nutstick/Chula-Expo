@@ -17,6 +17,6 @@ router.use('/api', require('./api'));
 // router.use('/activities', require('./activities'));
 router.use('/upload', require('./upload'));
 
-router.use(require('./home'));
+router.get('*', require('./home'));
 
 module.exports = router;
