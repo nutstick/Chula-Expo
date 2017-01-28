@@ -46,7 +46,7 @@ router.post('/', (req, res) => {
       errors: retrieveError(12),
     });
   }
-  if (req.body.staff === 'Scannerr' && req.body.regisationCode !== process.env.SCANNER_REGISTRATION_CODE) {
+  if (req.body.staff === 'Scanner' && req.body.regisationCode !== process.env.SCANNER_REGISTRATION_CODE) {
     // Handle error from save
     return res.status(400).json({
       success: false,

@@ -72,7 +72,7 @@ const UserSchema = new mongoose.Schema({
   gender: {
     type: String,
     required: true,
-    enum: ['Male', 'Female']
+    enum: ['Male', 'Female', 'Etc']
   },
   age: { type: Number, required: true },
   profile: String,
@@ -87,7 +87,8 @@ const UserSchema = new mongoose.Schema({
     school: String
   },
   worker: {
-    job: String
+    job: String,
+    company: String
   },
   staff: {
     staffType: {
@@ -114,7 +115,14 @@ const UserSchema = new mongoose.Schema({
     }]
   },
   activityLog: [ActivityLogSchema],
-
+  loveTags: [{
+    type: ObjectId,
+    ref: 'Tag'
+  }],
+  loveFaculties: [{
+    type: ObjectId,
+    ref: 'Zone'
+  }],
   createAt: { type: Date, default: new Date() },
   updateAt: { type: Date, default: new Date() },
 }, { timestamps: true });
@@ -122,7 +130,6 @@ const UserSchema = new mongoose.Schema({
 /**
  * Validate
  */
-console.log(UserSchema.path('academic'));
 UserSchema.path('type').validate((value) => {
   if (this.academic) {
     return value === 'Academic';
