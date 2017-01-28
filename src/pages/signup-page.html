@@ -4,6 +4,7 @@
 <link rel="import" href="/public/lib/iron-icons/iron-icons.html">
 <link rel="import" href="/public/lib/paper-icon-button/paper-icon-button.html">
 <!-- Web Component -->
+<link rel="import" href="/public/lib/vaadin-combo-box/vaadin-combo-box.html">
 <link rel="import" href="/public/lib/paper-card/paper-card.html">
 <link rel="import" href="/public/lib/iron-ajax/iron-ajax.html">
 <link rel="import" href="/public/lib/iron-form/iron-form.html">
@@ -85,6 +86,15 @@
         margin-top: 10px;
       }
     </style>
+    <iron-ajax
+      auto
+      id="zoneResource"
+      url="/api/zones"
+      params="{{zoneParams}}"
+      on-response="_handleResponse"
+      headers="{{headerToken}}"
+      handle-as="json"
+    ></iron-ajax>
     <paper-card class="container">
       <div class="header style-scope paper-card">
         <!-- Profile Image with uploadility -->
@@ -100,8 +110,8 @@
           <!-- E-mail -->
           <paper-input name="email" label="อีเมลล์" value="{{queryParams.email}}" required always-float-label></paper-input>
           <!-- Password -->
-          <paper-input name="password" label="พาสเวิร์ด" type="password" hidden={{queryParams.facebook}} required={{!queryParams.facebook}} always-float-label></paper-input>
-          <paper-input name="confirmPassword" label="คอนเฟิร์มพาสเวิร์ด" type="password" hidden={{queryParams.facebook}} required={{!queryParams.facebook}} always-float-label></paper-input>
+          <paper-input name="password" label="พาสเวิร์ด" type="password" value="{{password}}" hidden$={{queryParams.facebook}} required={{!queryParams.facebook}} always-float-label></paper-input>
+          <paper-input name="confirmPassword" label="คอนเฟิร์มพาสเวิร์ด" value="{{confirmPassword}}" type="password" hidden$={{queryParams.facebook}} required={{!queryParams.facebook}} always-float-label></paper-input>
           <!-- Gender -->
           <div class="item">
             <div class="input-label" id="gender">เพศ:</div>
@@ -116,9 +126,9 @@
             <!-- Student/Worker -->
             <div class="input-label">ประเภท:</div>
             <paper-button-group selected="student">
-              <paper-button toggles active={{student}}>นักเรียน นิสิต</paper-button>
-              <paper-button toggles active={{worker}}>บุคคลทั่วๆ</paper-button>
-              <paper-button toggles active={{staff}}>สตาฟ</paper-button>
+              <paper-button toggles name="student" active={{student}}>นักเรียน นิสิต</paper-button>
+              <paper-button toggles name="worker" active={{worker}}>บุคคลทั่วๆ</paper-button>
+              <paper-button toggles name="staff" active={{staff}}>สตาฟ</paper-button>
             </paper-button-group>
             <!-- Student -->
             <fieldset class="field" hidden$="{{!student}}">
@@ -132,16 +142,16 @@
             </fieldset>
             <!-- Staff -->
             <fieldset class="field" hidden$="{{!staff}}">
-              <paper-input name="zone" label="สังกัด" always-float-label></paper-input>
               <div class="item">
                 <div class="input-label">ประเภท:</div>
-                <paper-button-group selected="scanner">
-                  <paper-button toggles active="{{adminStaff}}">Admin</paper-button>
-                  <paper-button toggles active="{{scannerStaff}}">Scan man</paper-button>
-                  <paper-button toggles active="{{staffStaff}}">Staff</paper-button>
+                <paper-button-group selected="scannerStaff">
+                  <paper-button toggles name="adminStaff" active="{{adminStaff}}">Admin</paper-button>
+                  <paper-button toggles name="scannerStaff" active="{{scannerStaff}}">Scan man</paper-button>
+                  <paper-button toggles name="staffStaff" active="{{staffStaff}}">Staff</paper-button>
                 </paper-button-group>
               </div>
               <paper-input name="registrationCode" label="รหัส" required="{{staff}}" always-float-label></paper-input>
+              <vaadin-combo-box name="zone" label="สังกัด" item-label-path="name" items="{{zones}}" hidden$="{{adminStaff}}" require="{{!adminStaff}}"></vaadin-combo-box>
             </fieldset>
           </div>
           <!-- Hidden Fields -->
@@ -153,11 +163,11 @@
         <!-- Submit Button -->
         <div class="card-actions">
           <div class="button-holder">
-            <paper-button on-click="_delayedSubmit">
+            <paper-button on-tap="_delayedSubmit">
               <paper-spinner id="spinner" hidden></paper-spinner>Submit
             </paper-button>
             <!-- Reset Button -->
-            <paper-button on-click="_reset">Reset</paper-button>
+            <paper-button on-tap="_reset">Reset</paper-button>
           </div>
         </div>
       </form>
@@ -167,6 +177,9 @@
     Polymer({
       is: 'signup-page',
       properties: {
+        zones: {
+          type: Array,
+        },
         gender: {
           type: String,
         },
@@ -192,9 +205,26 @@
         queryParams: {
           type: Object,
           computed: "_computedQueryParams(route)"
+        },
+        headerToken: {
+          type: String,
+          computed: "_computedHeaderToken(token)"
+        },
+        zoneParams: {
+          type: Object,
+          value: {
+            fields: 'id,name'
+          }
         }
       },
-
+      
+      _handleResponse: function(event) {
+        if (event.detail.response.success) {
+          this.zones = event.detail.response.zones;
+        } else {
+          this.error = event.detail.response.errors;
+        }
+      },
       _computedQueryParams: function(route) {
         if(route.__queryParams.tokens) {
           var object = JSON.parse(route.__queryParams.tokens);
@@ -202,6 +232,11 @@
           route.__queryParams.accessToken = object[0].accessToken;
         }
         return route.__queryParams;
+      },
+      _computedHeaderToken: function(token) {
+        return JSON.stringify({
+          Authentication: token
+        });
       },
       _typeChanged: function(event) {
         this.hideStudent = this.type;
@@ -213,23 +248,31 @@
         this.$.spinner.hidden = false;
         this.$.form.disabled = true;
         // Simulate a slow server response.
-        setTimeout(function() {
-          form.submit();
-        }, 1000);
-      },
-      _response: function(e) {
-        console.log(e.detail.response);
-        if (e.detail.response.success) {
-          window.location = '/';
-        }
+        form.submit();
       },
       _reset: function(event) {
-        this.$.form.reset();
+        var form = this.$.form;
+        form.reset();
       },
       _presubmit: function(event) {
+        for (field in this.$.form.request.body) {
+          if (!this.$.form.request.body[field]) {
+            delete this.$.form.request.body[field];
+          }
+        }
         this.$.form.request.body.gender = this.male ? 'Male' : 'Female';
         this.$.form.request.body.type = this.student ? 'Academic' : (this.worker ? 'Worker' : 'Staff');
-        this.$.form.reqeust.body.staff = this.adminStaff ? (this.scannerStaff ? 'Staff' : 'Scanner');
+        this.$.form.request.body.staff = this.adminStaff ? 'Admin' : (this.scannerStaff ? 'Staff' : 'Scanner');
+      },
+      _response: function(e) {
+        if (e.detail.response.success) {
+          document.getElementById('cookie').value = e.detail.response.results.token;
+          document.getElementById('cookie').createCookie();
+          
+          window.location = '/';
+          // window.history.pushState({}, null, '/');
+          // window.dispatchEvent(new CustomEvent('location-changed'));
+        }
       }
     });
   </script>

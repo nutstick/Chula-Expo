@@ -2,6 +2,7 @@
 <link rel="import" href="/public/lib/polymer/polymer.html">
 <!-- Web Component -->
 <link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="/public/lib/iron-form/iron-form.html">
 <link rel="import" href="/public/lib/paper-input/paper-input.html">
 <link rel="import" href="/components/shared-styles.html">
 <link rel="import" href="/components/facebook-login-button.html">
@@ -35,14 +36,25 @@
       .login-wrapper > *:not(:first-child) {
         margin-top: 50px;
       }
+      paper-input {
+        --paper-input-container-input-color: var(--secondary-color);
+      }
+      #loginButton {
+        background-color: var(--secondary-color);
+        color: var(--primary-color);
+      }
+      #loginButton[disabled] {
+        color: #a8a8a8;
+      }
     </style>
     <div class="login-wrapper">
-      <form is="iron-form" id="form" method="post" action="/login">
-        <paper-input name="email" label="E-mail" required></paper-input>
-        <paper-input name="password" label="Password" type="password" required auto-validate></paper-input>
-        <paper-button raised onclick="_delayedSubmit(event)" disabled id="loginButton">
-          <paper-spinner id="spinner" hidden></paper-spinner>Submit</paper-button>
-        <paper-button raised onclick="_reset(event)">Reset</paper-button>
+      <form is="iron-form" id="form" method="post" action="/api/login" on-iron-form-response="_response">
+        <paper-input name="email" value="{{email}}" label="E-mail" required></paper-input>
+        <paper-input name="password" value="{{password}}" label="Password" type="password" required auto-validate></paper-input>
+        <paper-button raised on-tap="_delayedSubmit" disabled id="loginButton">
+          <paper-spinner id="spinner" hidden></paper-spinner>Submit
+        </paper-button>
+        <paper-button raised on-tap="_gotoSingup">Sign Up</paper-button>
         <div class="output"></div>
       </form>
       <facebook-login-button></facebook-login-button>
@@ -64,24 +76,44 @@
           reflectToAttribute: true,
           value: false,
           computed: '_computeHide(loggedIn,page)'
+        },
+        email: {
+          type: String
+        },
+        password: {
+          type: String
         }
+      },
+
+      observers: [
+        '_submitDisable(email,password)',
+      ],
+
+      _submitDisable: function(email, password) {
+        this.$.loginButton.disabled = !email || !password;
       },
       _computeHide: function(loggedIn, page) {
         return loggedIn || page == 'signin';
       },
       _delayedSubmit: function(event) {
-        spinner.active = true;
-        spinner.hidden = false;
-        form.disabled = true;
+        var form = this.$.form;
+        this.$.spinner.active = true;
+        this.$.spinner.hidden = false;
+        this.$.form.disabled = true;
         // Simulate a slow server response.
-        setTimeout(function() {
-          Polymer.dom(event).localTarget.parentElement.submit();
-        }, 1000);
+        form.submit();
       },
-      _reset: function(event) {
-        var form = Polymer.dom(event).localTarget.parentElement
-        form.reset();
-        form.querySelector('.output').innerHTML = '';
+      _gotoSignup: function(event) {
+        window.history.pushState({}, null, '/signup');
+        window.dispatchEvent(new CustomEvent('location-changed'));
+      },
+      _response: function(e) {
+        if (e.detail.response.success) {
+          document.getElementById('cookie').value = e.detail.response.results.token;
+          document.getElementById('cookie').createCookie();
+          
+          window.location = '/';
+        }
       }
     });
   </script>

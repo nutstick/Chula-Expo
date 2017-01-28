@@ -13,6 +13,11 @@ router.use('/users', require('./users'));
 router.use('/signup', require('./signup'));
 
 /**
+ * Login API
+ */
+router.use('/login', require('./login'));
+
+/**
  * Me API
  */
 router.use('/me', require('./me'));

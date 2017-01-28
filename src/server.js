@@ -159,6 +159,10 @@ app.get('/auth/facebook/callback', (req, res, next) => {
     });
   })(req, res, next);
 });
+
+/**
+ * Route
+ */
 app.use('/', require('./routes'));
 
 /**

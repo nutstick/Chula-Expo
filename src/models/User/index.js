@@ -60,7 +60,7 @@ const ActivityLogSchema = new mongoose.Schema({
  */
 const UserSchema = new mongoose.Schema({
   email: { type: String, unique: true, required: true },
-  password: { type: String, select: false },
+  password: { type: String },
   passwordResetToken: String,
   passwordResetExpires: Date,
 
@@ -82,9 +82,15 @@ const UserSchema = new mongoose.Schema({
     enum: ['Academic', 'Worker', 'Staff']
   },
   academic: {
-    level: String,
-    year: String,
-    school: String
+    level: {
+      type: String
+    },
+    year: {
+      type: String
+    },
+    school: {
+      type: String
+    },
   },
   worker: {
     job: String,
@@ -93,7 +99,6 @@ const UserSchema = new mongoose.Schema({
   staff: {
     staffType: {
       type: String,
-      enum: ['Staff', 'Scanner', 'Admin']
     },
     zone: {
       type: ObjectId,
@@ -127,33 +132,6 @@ const UserSchema = new mongoose.Schema({
   updateAt: { type: Date, default: new Date() },
 }, { timestamps: true });
 
-/**
- * Validate
- */
-UserSchema.path('type').validate((value) => {
-  if (this.academic) {
-    return value === 'Academic';
-  } else if (this.worker) {
-    return value === 'Worker';
-  } else if (this.staff) {
-    return value === 'Staff';
-  }
-  return false;
-}, 'No data provide along with Type');
-
-UserSchema.path('academic').validate(value => value.level && value.year && value.school, 'Invalid Academic Information');
-
-UserSchema.path('worker').validate(value => value.job, 'Invalid Worker Information');
-
-UserSchema.path('staff').validate((value) => {
-  if (value.staffType) {
-    if (value.staffType === 'Staff' || value.staffType === 'Scanner') {
-      return !!value.zone;
-    }
-    return true;
-  }
-  return false;
-}, 'Invalid Staff Information');
 
 /**
  * Password hash middleware.
@@ -175,6 +153,7 @@ UserSchema.pre('save', function save(next) {
  * Helper method for validating user's password.
  */
 UserSchema.methods.comparePassword = function comparePassword(candidatePassword, cb) {
+  console.log(candidatePassword, this.password);
   bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
     cb(err, isMatch);
   });
