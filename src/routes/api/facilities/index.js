@@ -115,7 +115,7 @@ router.get('/:id', (req, res) => {
   * Create a new activity
   * Access at POST http://localhost:8080/api/activities
   */
-router.post('/', (req, res, next) => {
+router.post('/', (req, res) => {
    // Create a new instance of the User model
   const facility = new Facility();
    // Set field value (comes from the request)

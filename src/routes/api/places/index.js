@@ -1,5 +1,6 @@
 const express = require('express');
 const Place = require('../../../models/Place');
+const Zone = require('../../../models/Zone');
 const retrieveError = require('../../../tools/retrieveError');
 
 const router = express.Router();
@@ -38,7 +39,9 @@ router.get('/', (req, res) => {
   if (req.query.nameEN) {
     filter['name.en'] = { $regex: req.query.nameEN };
   }
-
+  if (req.params.zoneid) {
+    filter.zone = req.params.zoneid;
+  }
 //----------------------------------------------------------------
 // initial limit
   let limit;
@@ -103,7 +106,7 @@ router.get('/:id', (req, res) => {
 
   Place.findById(req.params.id).select(fields).exec((err, place) => {
     if (err) {
-     // Handle error from User.findById
+       // Handle error from User.findById
       return res.status(500).json({
         success: false,
         errors: retrieveError(5, err)
@@ -131,7 +134,7 @@ router.get('/:id', (req, res) => {
 * Access at POST http://localhost:8080/api/en/places
 */
 
-router.post('/', (req, res, next) => {
+router.post('/', (req, res) => {
    // Create object
 
   const place = new Place();
@@ -139,6 +142,13 @@ router.post('/', (req, res, next) => {
    // Set field value (comes from the request)
   place.name.en = req.body.nameEN;
   place.name.th = req.body.nameTH;
+
+  if (req.params.zoneid) {
+    place.zone = req.params.zoneid;
+  } else {
+    place.zone = req.body.zone;
+  }
+
   if (req.body.code) {
     place.code = req.body.code;
   }
@@ -158,6 +168,18 @@ router.post('/', (req, res, next) => {
       success: true,
       results: _place
     });
+    Zone.findOneAndUpdate({
+      _id: req.body.zone
+    }, {
+      $addToSet: { places: _place._id }
+    }, (err) => {
+      if (err) {
+        return res.status(400).send({
+          success: false,
+          errors: retrieveError(5, err),
+        });
+      }
+    });
   });
 });
 
@@ -166,14 +188,14 @@ router.post('/', (req, res, next) => {
 // Access at PUT http://localhost:3000/api/en/places/:id
 router.put('/:id', (req, res) => {
   Place.findById(req.params.id, (err, place) => {
-  // check error first
+    // check error first
     if (err) {
       return res.status(500).json({
         success: false,
         errors: retrieveError(5, err)
       });
     }
-  // check place
+    // check place
     if (!place) {
       return res.status(403).json({
         success: false,
@@ -191,24 +213,57 @@ router.put('/:id', (req, res) => {
     if (req.body.code) {
       place.code = req.body.code;
     }
-    if (req.body.latitude) {
-      place.location.latitude = req.body.latitude;
+    if (req.body.latitute) {
+      place.location.latitute = req.body.latitute;
     }
-    if (req.body.longitude) {
-      place.location.longitude = req.body.longitude;
+    if (req.body.longtitute) {
+      place.location.longtitute = req.body.longtitute;
     }
 
-    place.save((err, _place) => {
+    place.save((err) => {
       if (err) {
         return res.status(500).json({
           success: false,
           errors: retrieveError(5, err)
         });
       }
-      res.status(202).json({
-        success: true,
-        message: 'Update place successful',
-        results: _place
+      // check place
+      if (!place) {
+        return res.status(403).json({
+          success: false,
+          errors: retrieveError(33)
+        });
+      }
+
+
+      if (req.body.nameEN) {
+        place.name.en = req.body.nameEN;
+      }
+      if (req.body.nameTH) {
+        place.name.th = req.body.nameTH;
+      }
+      if (req.body.code) {
+        place.code = req.body.code;
+      }
+      if (req.body.latitude) {
+        place.location.latitude = req.body.latitude;
+      }
+      if (req.body.longitude) {
+        place.location.longitude = req.body.longitude;
+      }
+
+      place.save((err, _place) => {
+        if (err) {
+          return res.status(500).json({
+            success: false,
+            errors: retrieveError(5, err)
+          });
+        }
+        res.status(202).json({
+          success: true,
+          message: 'Update place successful',
+          results: _place
+        });
       });
     });
   });
@@ -227,7 +282,29 @@ router.delete('/:id', (req, res) => {
     res.status(202).json({
       success: true,
       message: `An Place with id ${req.params.id} was removed.`
+    });/*
+    var placezoneid;
+
+    Place.findById(req.params.id).exec(
+  (err, _place) => {
+    if (err) {
+      return res.status(500).send({
+        success: false,
+        errors: retrieveError(5, err)
+      });
+    }
+    placezoneid = _place.zone;
+    res.status(200).json({
+      success: true,
+      results: _place
     });
+  });
+
+    Zone.update(
+        { placezoneid.equals(_id) },
+        { $pull: { 'places': req.params.id } }
+      );
+*/
   });
 });
 
