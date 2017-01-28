@@ -32,7 +32,7 @@
         right: -20px;
         @apply(--shadow-elevation-8dp);
       }
-      @media (max-width: 600px) { 
+      @media (max-width: 600px) {
         .fixed-bottom {
           right: 20px;
         }
@@ -54,18 +54,15 @@
     </style>
     <div class="container">
       <template is="dom-repeat" items="{{activities}}">
-        <paper-card-item action image="https://www.polymer-project.org/images/logos/p-logo.png">
+        <paper-card-item action image="{{item.thumbnail}}">
           <div class="card-item-header">
-            Tets
+            {{item.name.en}}
           </div>
           <div class="card-item-content">
-            asdasdsa
+            {{item.shortDescription.en}}
           </div>
           <div class="card-item-actions">
             <div class="horizontal justified">
-              <paper-icon-button icon="icons:bookmark-border"></paper-icon-button>
-              <paper-button>5:30PM - 7:30PM</paper-button>
-              <paper-button class="cafe-reserve">Reserve</paper-button>
             </div>
           </div>
           <!--<div class="card-item-button">
@@ -86,6 +83,7 @@
         </div>
       </div>
       <activity-api activities="{{activities}}" error="{{error}}" page="{{page}}" page-size="{{pageSize}}"></activity-api>
+    </div>
   </template>
   <script>
     Polymer({

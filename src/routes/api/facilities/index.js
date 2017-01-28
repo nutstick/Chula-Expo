@@ -15,12 +15,12 @@ router.get('/', (req, res) => {
   if (req.query.sort) {
     sort = req.query.sort.split(',').reduce((prev, sortQuery) => {
       let sortFields = sortQuery[0] === '-' ? sortQuery.substr(1) : sortQuery;
-      sortFields = sortFields.replace('nameTH', 'name.th');
-      sortFields = sortFields.replace('nameEN', 'name.en');
-      sortFields = sortFields.replace('descriptionTH', 'description.th');
-      sortFields = sortFields.replace('descriptionEN', 'description.en');
-      sortFields = sortFields.replace('locationLat', 'location.latitude');
-      sortFields = sortFields.replace('locationLong', 'location.longitude');
+      sortFields = sortFields.replace(/nameTH/g, 'name.th');
+      sortFields = sortFields.replace(/nameEN/g, 'name.en');
+      sortFields = sortFields.replace(/descriptionTH/g, 'description.th');
+      sortFields = sortFields.replace(/descriptionEN/g, 'description.en');
+      sortFields = sortFields.replace(/locationLat/g, 'location.latitude');
+      sortFields = sortFields.replace(/locationLong/g, 'location.longitude');
       if (sortQuery[0] === '-') {
         prev[sortFields] = -1;
       } else {
@@ -34,13 +34,13 @@ router.get('/', (req, res) => {
   // http://localhost:3000/?fields=name,faculty
   let fields;
   if (req.query.fields) {
-    fields = req.query.fields.replace(',', ' ');
-    fields = fields.replace('nameTH', 'name.th');
-    fields = fields.replace('nameEN', 'name.en');
-    fields = fields.replace('descriptionTH', 'description.th');
-    fields = fields.replace('descriptionEN', 'description.en');
-    fields = fields.replace('locationLat', 'location.latitude');
-    fields = fields.replace('locationLong', 'location.longitude');
+    fields = req.query.fields.replace(/,/g, ' ');
+    fields = fields.replace(/nameTH/g, 'name.th');
+    fields = fields.replace(/nameEN/g, 'name.en');
+    fields = fields.replace(/descriptionTH/g, 'description.th');
+    fields = fields.replace(/descriptionEN/g, 'description.en');
+    fields = fields.replace(/locationLat/g, 'location.latitude');
+    fields = fields.replace(/locationLong/g, 'location.longitude');
   }
   let query = Facility.find(filter);
 
@@ -81,13 +81,13 @@ router.get('/:id', (req, res) => {
    // Get User from instance User model by ID
   let fields = '';
   if (req.query.fields) {
-    fields = req.query.fields.replace(',', ' ');
-    fields = fields.replace('nameTH', 'name.th');
-    fields = fields.replace('nameEN', 'name.en');
-    fields = fields.replace('descriptionTH', 'description.th');
-    fields = fields.replace('descriptionEN', 'description.en');
-    fields = fields.replace('locationLat', 'location.latitude');
-    fields = fields.replace('locationLong', 'location.longitude');
+    fields = req.query.fields.replace(/,/g, ' ');
+    fields = fields.replace(/nameTH/g, 'name.th');
+    fields = fields.replace(/nameEN/g, 'name.en');
+    fields = fields.replace(/descriptionTH/g, 'description.th');
+    fields = fields.replace(/descriptionEN/g, 'description.en');
+    fields = fields.replace(/locationLat/g, 'location.latitude');
+    fields = fields.replace(/locationLong/g, 'location.longitude');
   }
 
   Facility.findById(req.params.id).select(fields).exec((err, fac) => {

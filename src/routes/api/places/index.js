@@ -25,13 +25,11 @@ router.get('/', (req, res) => {
   // initial the fieldwant from request
   let fields = '';
   if (req.query.fields) {
-    fields = req.query.fields.replace(',', ' ');
-    fields = fields.replace('nameTH', 'name.th');
-    fields = fields.replace('nameEN', 'name.en');
-    fields = fields.replace('descTH', 'desc.th');
-    fields = fields.replace('descEN', 'desc.en');
-    fields = fields.replace('locationLat', 'location.latitude');
-    fields = fields.replace('locationLong', 'location.longitude');
+    fields = req.query.fields.replace(/,/g, ' ');
+    fields = fields.replace(/nameTH/g, 'name.th');
+    fields = fields.replace(/nameEN/g, 'name.en');
+    fields = fields.replace(/locationLat/g, 'location.latitude');
+    fields = fields.replace(/locationLong/g, 'location.longitude');
   }
 //----------------------------------------------------------------
 // initial filter : name query
@@ -96,13 +94,11 @@ router.get('/:id', (req, res) => {
  // initial the fieldwant from request
   let fields = '';
   if (req.query.fields) {
-    fields = req.query.fields.replace(',', ' ');
-    fields = fields.replace('nameTH', 'name.th');
-    fields = fields.replace('nameEN', 'name.en');
-    fields = fields.replace('descTH', 'desc.th');
-    fields = fields.replace('descEN', 'desc.en');
-    fields = fields.replace('locationLat', 'location.latitude');
-    fields = fields.replace('locationLong', 'location.longitude');
+    fields = req.query.fields.replace(/,/g, ' ');
+    fields = fields.replace(/nameTH/g, 'name.th');
+    fields = fields.replace(/nameEN/g, 'name.en');
+    fields = fields.replace(/locationLat/g, 'location.latitude');
+    fields = fields.replace(/locationLong/g, 'location.longitude');
   }
 
   Place.findById(req.params.id).select(fields).exec((err, place) => {
