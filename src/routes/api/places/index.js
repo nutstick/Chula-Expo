@@ -1,5 +1,6 @@
 const express = require('express');
 const Place = require('../../../models/Place');
+const Zone = require('../../../models/Zone');
 const retrieveError = require('../../../tools/retrieveError');
 
 const router = express.Router();
@@ -20,7 +21,7 @@ const router = express.Router();
  * @return {number} queryInfo.limit - Limit that was used.
  * @return {number} queryInfo.skip - Skip that was used.
  */
-router.get('/', (req, res) => {
+ router.get('/', (req, res) => {
 //----------------------------------------------------------------
   // initial the fieldwant from request
   let fields = '';
@@ -35,18 +36,18 @@ router.get('/', (req, res) => {
   }
 //----------------------------------------------------------------
 // initial filter : name query
-  const filter = {};
+const filter = {};
 
-  if (req.query.nameEN) {
-    filter['name.en'] = { $regex: req.query.nameEN };
-  }
-
+if (req.query.nameEN) {
+  filter['name.en'] = { $regex: req.query.nameEN };
+}
+if(req.params.zoneid)filter['zone'] = req.params.zoneid;
 //----------------------------------------------------------------
 // initial limit
-  let limit;
-  if (req.query.limit) {
-    limit = Number.parseInt(req.query.limit, 10);
-  }
+let limit;
+if (req.query.limit) {
+  limit = Number.parseInt(req.query.limit, 10);
+}
   // initital skip
   let skip;
   if (req.query.skip) {
@@ -69,63 +70,63 @@ router.get('/', (req, res) => {
     }, {});
   }
 //----------------------------------------------------------------
-  Place.find(filter)
-    .select(fields).sort(sort).skip(skip)
-    .limit(limit)
-    .exec(
-    (err, places) => {
-      if (err) {
-        return res.status(500).send({
-          success: false,
-          errors: retrieveError(5, err)
-        });
-      }
-
-      res.status(200).json({
-        success: true,
-        results: places
-      });
-    });
-});
-
-/**
- * Get Places by Id
- */
-router.get('/:id', (req, res) => {
- //----------------------------------------------------------------
- // initial the fieldwant from request
-  let fields = '';
-  if (req.query.fields) {
-    fields = req.query.fields.replace(',', ' ');
-    fields = fields.replace('nameTH', 'name.th');
-    fields = fields.replace('nameEN', 'name.en');
-    fields = fields.replace('descTH', 'desc.th');
-    fields = fields.replace('descEN', 'desc.en');
-    fields = fields.replace('locationLat', 'location.latitude');
-    fields = fields.replace('locationLong', 'location.longitude');
-  }
-
-  Place.findById(req.params.id).select(fields).exec((err, place) => {
+Place.find(filter)
+.select(fields).sort(sort).skip(skip)
+.limit(limit)
+.exec(
+  (err, places) => {
     if (err) {
-     // Handle error from User.findById
-      return res.status(500).json({
+      return res.status(500).send({
         success: false,
         errors: retrieveError(5, err)
       });
     }
 
-    if (!place) {
-      return res.status(403).json({
-        success: false,
-        results: retrieveError(33)
-      });
-    }
-
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
-      results: place
+      results: places
     });
   });
+});
+
+/**
+ * Get Places by Id
+ */
+ router.get('/:id', (req, res) => {
+ //----------------------------------------------------------------
+ // initial the fieldwant from request
+ let fields = '';
+ if (req.query.fields) {
+  fields = req.query.fields.replace(',', ' ');
+  fields = fields.replace('nameTH', 'name.th');
+  fields = fields.replace('nameEN', 'name.en');
+  fields = fields.replace('descTH', 'desc.th');
+  fields = fields.replace('descEN', 'desc.en');
+  fields = fields.replace('locationLat', 'location.latitute');
+  fields = fields.replace('locationLong', 'location.longtitute');
+}
+
+Place.findById(req.params.id).select(fields).exec((err, place) => {
+  if (err) {
+     // Handle error from User.findById
+     return res.status(500).json({
+      success: false,
+      errors: retrieveError(5, err)
+    });
+   }
+
+   if (!place) {
+    return res.status(403).json({
+      success: false,
+      results: retrieveError(33)
+    });
+  }
+
+  return res.status(200).json({
+    success: true,
+    results: place
+  });
+});
 });
 
  //----------------------------------------------------------------
@@ -138,12 +139,16 @@ router.get('/:id', (req, res) => {
 router.post('/', (req, res, next) => {
    // Create object
 
-  const place = new Place();
+   const place = new Place();
 
    // Set field value (comes from the request)
-  place.name.en = req.body.nameEN;
-  place.name.th = req.body.nameTH;
-  if (req.body.code) {
+   place.name.en = req.body.nameEN;
+   place.name.th = req.body.nameTH;
+
+    if(req.params.zoneid)place.zone  = req.params.zoneid;
+    else place.zone = req.body.zone
+
+   if (req.body.code) {
     place.code = req.body.code;
   }
   place.location.latitude = req.body.locationLat;
@@ -162,6 +167,22 @@ router.post('/', (req, res, next) => {
       success: true,
       results: _place
     });
+    Zone.findOneAndUpdate(
+    {
+      _id:req.body.zone
+    },{
+      $addToSet:{places:_place._id}
+    },function(err,places){
+                        if(err){
+                            return res.status(400).send({
+                                message:"Error add  place to zone"
+                            });
+                        } else{
+                             
+                            }
+                     });
+
+
   });
 });
 
@@ -170,14 +191,14 @@ router.post('/', (req, res, next) => {
 // Access at PUT http://localhost:3000/api/en/places/:id
 router.put('/:id', (req, res) => {
   Place.findById(req.params.id, (err, place) => {
-  // check error first
+    // check error first
     if (err) {
       return res.status(500).json({
         success: false,
         errors: retrieveError(5, err)
       });
     }
-  // check place
+    // check place
     if (!place) {
       return res.status(403).json({
         success: false,
@@ -195,11 +216,11 @@ router.put('/:id', (req, res) => {
     if (req.body.code) {
       place.code = req.body.code;
     }
-    if (req.body.latitude) {
-      place.location.latitude = req.body.latitude;
+    if (req.body.latitute) {
+      place.location.latitute = req.body.latitute;
     }
-    if (req.body.longitude) {
-      place.location.longitude = req.body.longitude;
+    if (req.body.longtitute) {
+      place.location.longtitute = req.body.longtitute;
     }
 
     place.save((err, _place) => {
@@ -209,10 +230,43 @@ router.put('/:id', (req, res) => {
           errors: retrieveError(5, err)
         });
       }
-      res.status(202).json({
-        success: true,
-        message: 'Update place successful',
-        results: _place
+      // check place
+      if (!place) {
+        return res.status(403).json({
+          success: false,
+          errors: retrieveError(33)
+        });
+      }
+
+
+      if (req.body.nameEN) {
+        place.name.en = req.body.nameEN;
+      }
+      if (req.body.nameTH) {
+        place.name.th = req.body.nameTH;
+      }
+      if (req.body.code) {
+        place.code = req.body.code;
+      }
+      if (req.body.latitude) {
+        place.location.latitude = req.body.latitude;
+      }
+      if (req.body.longitude) {
+        place.location.longitude = req.body.longitude;
+      }
+
+      place.save((err, _place) => {
+        if (err) {
+          return res.status(500).json({
+            success: false,
+            errors: retrieveError(5, err)
+          });
+        }
+        res.status(202).json({
+          success: true,
+          message: 'Update place successful',
+          results: _place
+        });
       });
     });
   });
@@ -221,6 +275,8 @@ router.put('/:id', (req, res) => {
 // Delete an existing place via DEL.
 // Access at DEL http://localhost:3000/api/en/places/:id
 router.delete('/:id', (req, res) => {
+  
+     
   Place.findByIdAndRemove(req.params.id, (err) => {
     if (err) {
       return res.status(500).json({
@@ -231,8 +287,39 @@ router.delete('/:id', (req, res) => {
     res.status(202).json({
       success: true,
       message: `An Place with id ${req.params.id} was removed.`
+    });/*
+    var placezoneid;
+
+    Place.findById(req.params.id).exec(
+  (err, _place) => {
+    if (err) {
+      return res.status(500).send({
+        success: false,
+        errors: retrieveError(5, err)
+      });
+    }
+    placezoneid = _place.zone;
+    res.status(200).json({
+      success: true,
+      results: _place
     });
   });
+
+    Zone.update(
+        { placezoneid.equals(_id) },
+        { $pull: { 'places': req.params.id } }
+      );
+
+
+
+*/
+  });
+
+    
+  
+
 });
+
+
 
 module.exports = router;

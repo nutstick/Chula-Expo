@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const ObjectId = mongoose.Schema.Types.ObjectId;
 
 /**
  * Place Schema
@@ -13,8 +14,12 @@ const PlaceSchema = new mongoose.Schema({
     en: { type: String, required: true }
   },
   location: {
-    latitude: { type: Number, required: true },
-    longitude: { type: Number, required: true }
+    latitute: { type: Number, required: true },
+    longtitute: { type: Number, required: true }
+  },
+  zone:{
+    type: ObjectId,
+    ref: 'Zone'
   }
 });
 
