@@ -61,6 +61,7 @@
     "polymer": "Polymer/polymer#^1.7.1",
     "iron-elements": "PolymerElements/iron-elements#^1.0.10",
     "paper-elements": "PolymerElements/paper-elements#^1.0.7",
-    "paper-datatable-api": "^0.2.7"
+    "paper-datatable-api": "^0.2.7",
+    "vaadin-combo-box": "^1.2.0"
   }
 }

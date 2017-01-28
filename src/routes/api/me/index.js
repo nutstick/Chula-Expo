@@ -5,13 +5,16 @@ const { isAuthenticatedByToken } = require('../../../config/authenticate');
 
 const router = express.Router();
 
-const avaliableFields = ['name', 'email', 'age', 'gender', 'pictureUrl', 'type', 'academic', 'worker'];
+const avaliableFields = ['name', 'email', 'age', 'gender', 'profile', 'type', 'academic', 'worker', 'staff'];
 
 router.use(isAuthenticatedByToken);
+
 /**
  * Get user by token
  * Access at GET http://localhost:8080/api/me
  * @param {string} fields
+ * Accessible field 'name', 'email', 'age', 'gender', 'profile', 'type',
+ *    'academic', 'worker', 'staff'.
  *
  * @return {boolean} success - Successful querying flag.
  * @return {User} results - Token owner results.
@@ -21,7 +24,7 @@ router.get('/', (req, res) => {
   // Fields selecting query
   if (req.query.fields) {
     fields = req.query.fields.split(',')
-      .reduec((prev, field) => (avaliableFields.find(f => f === field)), []);
+      .reduce((prev, field) => (avaliableFields.find(f => f === field)), []);
   }
   if (fields.length === 0) {
     fields = avaliableFields;
@@ -50,7 +53,7 @@ router.get('/', (req, res) => {
  * @param {string} [email]
  * @param {number} [age]
  * @param {string} [gender]
- * @param {string} [pictureUrl]
+ * @param {string} [picture]
  * @param {string} [type]
  * @param {number} [ัyear]
  * @param {string} [ัschool]
@@ -73,8 +76,8 @@ router.put('/', (req, res) => {
   if (req.body.gender) {
     req.user.gender = req.body.gender;
   }
-  if (req.body.pictureUrl) {
-    req.user.pictureUrl = req.body.pictureUrl;
+  if (req.body.picture) {
+    req.user.picture = req.body.picture;
   }
   if (req.body.type) {
     req.user.type = req.body.type;

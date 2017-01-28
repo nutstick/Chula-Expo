@@ -17,14 +17,7 @@
 <link rel="import" href="/public/lib/paper-menu/paper-menu.html">
 <link rel="import" href="/public/lib/paper-tabs/paper-tabs.html">
 <!-- Pages -->
-<link rel="import" href="/pages/home-page.html">
 <link rel="import" href="/pages/login-page.html">
-<link rel="import" href="/pages/signup-page.html">
-<link rel="import" href="/pages/account-page.html">
-<link rel="import" href="/pages/activity-page.html">
-<link rel="import" href="/pages/facility-page.html">
-<link rel="import" href="/pages/place-page.html">
-<link rel="import" href="/pages/zone-page.html">
 
 <dom-module id="chulaexpo-staff-app">
   <template>
@@ -117,8 +110,8 @@
             <paper-icon-button icon="menu" drawer-toggle hidden$="{{displayMenu}}"></paper-icon-button>
             <div main-title>Chula Expo Staff</div>
             <paper-icon-button
-              icon="[[_computeLogInIcon(token)]]"
-              disabled="[[!token]]"
+              icon="{{_computeLogInIcon(token)}}"
+              disabled="{{!token}}"
               on-tap="_accountClick"
             >
             </paper-icon-button>
@@ -147,7 +140,7 @@
           role="main"
           hidden$="{{!loggedIn}}">
           <home-page name="home"></home-page>
-          <signup-page name="signup"></signup-page>
+          <signup-page name="signup" route={{subroute}}></signup-page>
           <account-page name="account"></account-page>
           <activity-page name="activity" route={{subroute}}></activity-page>
           <facility-page name="facility" route={{subroute}}></facility-page>

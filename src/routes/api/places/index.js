@@ -31,8 +31,8 @@ const router = express.Router();
     fields = fields.replace('nameEN', 'name.en');
     fields = fields.replace('descTH', 'desc.th');
     fields = fields.replace('descEN', 'desc.en');
-    fields = fields.replace('locationLat', 'location.latitute');
-    fields = fields.replace('locationLong', 'location.longtitute');
+    fields = fields.replace('locationLat', 'location.latitude');
+    fields = fields.replace('locationLong', 'location.longitude');
   }
 //----------------------------------------------------------------
 // initial filter : name query
@@ -151,14 +151,17 @@ router.post('/', (req, res, next) => {
    if (req.body.code) {
     place.code = req.body.code;
   }
-  place.location.latitute = req.body.locationLat;
-  place.location.longtitute = req.body.locationLong;
+  place.location.latitude = req.body.locationLat;
+  place.location.longitude = req.body.locationLong;
 
   // Save place and check for error
   place.save((err, _place) => {
     if (err) {
       // Handle error from save
-      next(err);
+      return res.status(500).json({
+        success: false,
+        errors: retrieveError(5, err),
+      });
     }
     res.status(201).json({
       success: true,
@@ -188,52 +191,85 @@ router.post('/', (req, res, next) => {
 // Access at PUT http://localhost:3000/api/en/places/:id
 router.put('/:id', (req, res) => {
   Place.findById(req.params.id, (err, place) => {
-  // check error first
-  if (err) {
-    return res.status(500).json({
-      success: false,
-      errors: retrieveError(5, err)
-    });
-  }
-  // check place
-  if (!place) {
-    return res.status(403).json({
-      success: false,
-      errors: retrieveError(33)
-    });
-  }
-
-
-  if (req.body.nameEN) {
-    place.name.en = req.body.nameEN;
-  }
-  if (req.body.nameTH) {
-    place.name.th = req.body.nameTH;
-  }
-  if (req.body.code) {
-    place.code = req.body.code;
-  }
-  if (req.body.latitute) {
-    place.location.latitute = req.body.latitute;
-  }
-  if (req.body.longtitute) {
-    place.location.longtitute = req.body.longtitute;
-  }
-
-  place.save((err, _place) => {
+    // check error first
     if (err) {
       return res.status(500).json({
         success: false,
         errors: retrieveError(5, err)
       });
     }
-    res.status(202).json({
-      success: true,
-      message: 'Update place successful',
-      results: _place
+    // check place
+    if (!place) {
+      return res.status(403).json({
+        success: false,
+        errors: retrieveError(33)
+      });
+    }
+
+
+    if (req.body.nameEN) {
+      place.name.en = req.body.nameEN;
+    }
+    if (req.body.nameTH) {
+      place.name.th = req.body.nameTH;
+    }
+    if (req.body.code) {
+      place.code = req.body.code;
+    }
+    if (req.body.latitute) {
+      place.location.latitute = req.body.latitute;
+    }
+    if (req.body.longtitute) {
+      place.location.longtitute = req.body.longtitute;
+    }
+
+    place.save((err, _place) => {
+      if (err) {
+        return res.status(500).json({
+          success: false,
+          errors: retrieveError(5, err)
+        });
+      }
+      // check place
+      if (!place) {
+        return res.status(403).json({
+          success: false,
+          errors: retrieveError(33)
+        });
+      }
+
+
+      if (req.body.nameEN) {
+        place.name.en = req.body.nameEN;
+      }
+      if (req.body.nameTH) {
+        place.name.th = req.body.nameTH;
+      }
+      if (req.body.code) {
+        place.code = req.body.code;
+      }
+      if (req.body.latitude) {
+        place.location.latitude = req.body.latitude;
+      }
+      if (req.body.longitude) {
+        place.location.longitude = req.body.longitude;
+      }
+
+      place.save((err, _place) => {
+        if (err) {
+          return res.status(500).json({
+            success: false,
+            errors: retrieveError(5, err)
+          });
+        }
+        res.status(202).json({
+          success: true,
+          message: 'Update place successful',
+          results: _place
+        });
+      });
     });
   });
-});
 });
 
 // Delete an existing place via DEL.

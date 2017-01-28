@@ -4,6 +4,7 @@
 <link rel="import" href="/public/lib/iron-icons/iron-icons.html">
 <link rel="import" href="/public/lib/paper-icon-button/paper-icon-button.html">
 <!-- Web Component -->
+<link rel="import" href="/public/lib/vaadin-combo-box/vaadin-combo-box.html">
 <link rel="import" href="/public/lib/paper-card/paper-card.html">
 <link rel="import" href="/public/lib/iron-ajax/iron-ajax.html">
 <link rel="import" href="/public/lib/iron-form/iron-form.html">
@@ -20,6 +21,15 @@
     <style is="custom-style" include="shared-styles">
       :host, paper-card {
         width: 100%;
+      }
+      :host {
+        @apply(--layout);
+        @apply(--layout-center-center);
+      }
+      @media (min-width: 600px) {
+        :host {
+          padding-top: 20px;
+        }
       }
       .header {
         height: 140px;
@@ -76,23 +86,32 @@
         margin-top: 10px;
       }
     </style>
-    <paper-card >
+    <iron-ajax
+      auto
+      id="zoneResource"
+      url="/api/zones"
+      params="{{zoneParams}}"
+      on-response="_handleResponse"
+      headers="{{headerToken}}"
+      handle-as="json"
+    ></iron-ajax>
+    <paper-card class="container">
       <div class="header style-scope paper-card">
         <!-- Profile Image with uploadility -->
         <div class="center offset">
-          <profile-image-uploadable image="[[user.picture]]" alt="User profile" name="picture"></profile-image-uploadable>
+          <profile-image-uploadable image="{{queryParams.profile}}" alt="User profile" name="profile"></profile-image-uploadable>
         </div>
       </div>
       <!-- Polymer Iron form -->
       <form is="iron-form" id="form" method="post" class="card-content"
         action="/api/signup" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
           <!-- Name -->
-          <paper-input name="name" label="ชื่อ" value="[[user.name]]" required always-float-label></paper-input>
+          <paper-input name="name" label="ชื่อ" value="{{queryParams.name}}" required always-float-label></paper-input>
           <!-- E-mail -->
-          <paper-input name="email" label="อีเมลล์" value="[[user.email]]" required always-float-label></paper-input>
+          <paper-input name="email" label="อีเมลล์" value="{{queryParams.email}}" required always-float-label></paper-input>
           <!-- Password -->
-          <paper-input name="password" label="พาสเวิร์ด" type="password" value="[[user.password]]" hidden=[[user.facebook]] required=[[!user.facebook]] always-float-label></paper-input>
-          <paper-input name="confirmPassword" label="คอนเฟิร์มพาสเวิร์ด" type="password" value="[[user.confirmPassword]]" hidden=[[user.facebook]] required=[[!user.facebook]] always-float-label></paper-input>
+          <paper-input name="password" label="พาสเวิร์ด" type="password" value="{{password}}" hidden$={{queryParams.facebook}} required={{!queryParams.facebook}} always-float-label></paper-input>
+          <paper-input name="confirmPassword" label="คอนเฟิร์มพาสเวิร์ด" value="{{confirmPassword}}" type="password" hidden$={{queryParams.facebook}} required={{!queryParams.facebook}} always-float-label></paper-input>
           <!-- Gender -->
           <div class="item">
             <div class="input-label" id="gender">เพศ:</div>
@@ -102,7 +121,7 @@
             </paper-button-group>
           </div>
           <!-- Age -->
-          <paper-input name="age" label="อายุ" type="number" value="[[user.age]]" required always-float-label></paper-input>
+          <paper-input name="age" label="อายุ" type="number" value="{{queryParams.age}}" required always-float-label></paper-input>
           <div class="item">
             <!-- Student/Worker -->
             <div class="input-label">ประเภท:</div>
@@ -113,41 +132,42 @@
             </paper-button-group>
             <!-- Student -->
             <fieldset class="field" hidden$="{{!student}}">
-              <paper-input name="academic.year" label="การศึกษาปัจจุบัน" always-float-label></paper-input>
-              <paper-input name="academic.year" label="ชั้นปี" always-float-label></paper-input>
-              <paper-input name="academic.school" label="สถาบันการศึกษา" always-float-label></paper-input>
+              <paper-input name="academicLevel" label="การศึกษาปัจจุบัน" required="{{student}}" always-float-label></paper-input>
+              <paper-input name="academicYear" label="ชั้นปี" required="{{student}}" always-float-label></paper-input>
+              <paper-input name="academicSchool" label="สถาบันการศึกษา" required="{{student}}" always-float-label></paper-input>
             </fieldset>
             <!-- Worker -->
             <fieldset class="field" hidden$="{{!worker}}">
-              <paper-input name="worker.company" label="อาชีพ" always-float-label></paper-input>
+              <paper-input name="workerJob" label="อาชีพ" required="{{worker}}" always-float-label></paper-input>
             </fieldset>
             <!-- Staff -->
             <fieldset class="field" hidden$="{{!staff}}">
-              <paper-input name="zone" label="สังกัด" always-float-label></paper-input>
               <div class="item">
                 <div class="input-label">ประเภท:</div>
-                <paper-button-group selected="scanner">
-                  <paper-button toggles name="scanner">Scan man</paper-button>
-                  <paper-button toggles name="staff">Staff</paper-button>
+                <paper-button-group selected="scannerStaff">
+                  <paper-button toggles name="adminStaff" active="{{adminStaff}}">Admin</paper-button>
+                  <paper-button toggles name="scannerStaff" active="{{scannerStaff}}">Scan man</paper-button>
+                  <paper-button toggles name="staffStaff" active="{{staffStaff}}">Staff</paper-button>
                 </paper-button-group>
               </div>
-              <paper-input name="staffcode" label="รหัส" always-float-label></paper-input>
+              <paper-input name="registrationCode" label="รหัส" required="{{staff}}" always-float-label></paper-input>
+              <vaadin-combo-box name="zone" label="สังกัด" item-label-path="name" items="{{zones}}" hidden$="{{adminStaff}}" require="{{!adminStaff}}"></vaadin-combo-box>
             </fieldset>
           </div>
           <!-- Hidden Fields -->
-          <input name="accessToken" type="hidden" value="[[user.accessToken]]" required></input>
-          <input name="tokens[0].kind" type="hidden" value="[[user.kind]]" required></input>
-          <input name="tokens[0].accessToken" type="hidden" value="[[user.accessToken]]" required></input>
-          <input name="facebook" type="hidden" value="[[user.facebook]]" required></input>
+          <input name="accessToken" type="hidden" value="{{queryParams.accessToken}}"></input>
+          <input name="tokens[0].kind" type="hidden" value="{{queryParams.kind}}"></input>
+          <input name="tokens[0].accessToken" type="hidden" value="{{queryParams.accessToken}}"></input>
+          <input name="facebook" type="hidden" value="{{queryParams.facebook}}"></input>
         </div>
         <!-- Submit Button -->
         <div class="card-actions">
           <div class="button-holder">
-            <paper-button on-click="_delayedSubmit">
+            <paper-button on-tap="_delayedSubmit">
               <paper-spinner id="spinner" hidden></paper-spinner>Submit
             </paper-button>
             <!-- Reset Button -->
-            <paper-button on-click="_reset">Reset</paper-button>
+            <paper-button on-tap="_reset">Reset</paper-button>
           </div>
         </div>
       </form>
@@ -157,8 +177,8 @@
     Polymer({
       is: 'signup-page',
       properties: {
-        user: {
-          type: Object,
+        zones: {
+          type: Array,
         },
         gender: {
           type: String,
@@ -178,7 +198,45 @@
         staff: {
           type: Boolean,
           value: false
+        },
+        route: {
+          type: String,
+        },
+        queryParams: {
+          type: Object,
+          computed: "_computedQueryParams(route)"
+        },
+        headerToken: {
+          type: String,
+          computed: "_computedHeaderToken(token)"
+        },
+        zoneParams: {
+          type: Object,
+          value: {
+            fields: 'id,name'
+          }
         }
+      },
+      
+      _handleResponse: function(event) {
+        if (event.detail.response.success) {
+          this.zones = event.detail.response.zones;
+        } else {
+          this.error = event.detail.response.errors;
+        }
+      },
+      _computedQueryParams: function(route) {
+        if(route.__queryParams.tokens) {
+          var object = JSON.parse(route.__queryParams.tokens);
+          route.__queryParams.kind = object[0].kind;
+          route.__queryParams.accessToken = object[0].accessToken;
+        }
+        return route.__queryParams;
+      },
+      _computedHeaderToken: function(token) {
+        return JSON.stringify({
+          Authentication: token
+        });
       },
       _typeChanged: function(event) {
         this.hideStudent = this.type;
@@ -190,23 +248,31 @@
         this.$.spinner.hidden = false;
         this.$.form.disabled = true;
         // Simulate a slow server response.
-        setTimeout(function() {
-          form.submit();
-        }, 1000);
-      },
-      _response: function(e) {
-        console.log(e.detail.response);
-        if (e.detail.response.success) {
-          window.location = '/';
-        }
+        form.submit();
       },
       _reset: function(event) {
-        this.$.form.reset();
+        var form = this.$.form;
+        form.reset();
       },
       _presubmit: function(event) {
-        console.log(this.$.form.request.body);
+        for (field in this.$.form.request.body) {
+          if (!this.$.form.request.body[field]) {
+            delete this.$.form.request.body[field];
+          }
+        }
         this.$.form.request.body.gender = this.male ? 'Male' : 'Female';
         this.$.form.request.body.type = this.student ? 'Academic' : (this.worker ? 'Worker' : 'Staff');
+        this.$.form.request.body.staff = this.adminStaff ? 'Admin' : (this.scannerStaff ? 'Staff' : 'Scanner');
+      },
+      _response: function(e) {
+        if (e.detail.response.success) {
+          document.getElementById('cookie').value = e.detail.response.results.token;
+          document.getElementById('cookie').createCookie();
+          
+          window.location = '/';
+          // window.history.pushState({}, null, '/');
+          // window.dispatchEvent(new CustomEvent('location-changed'));
+        }
       }
     });
   </script>

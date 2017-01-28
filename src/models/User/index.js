@@ -60,14 +60,9 @@ const ActivityLogSchema = new mongoose.Schema({
  */
 const UserSchema = new mongoose.Schema({
   email: { type: String, unique: true, required: true },
-  password: { type: String, select: false },
+  password: { type: String },
   passwordResetToken: String,
   passwordResetExpires: Date,
-  admin: {
-    type: String,
-    default: 'None',
-    enum: ['Admin', 'Staff', 'Scanner', 'None'],
-  },
 
   facebook: { type: String },
   google: { type: String },
@@ -77,25 +72,42 @@ const UserSchema = new mongoose.Schema({
   gender: {
     type: String,
     required: true,
-    enum: ['Male', 'Female']
+    enum: ['Male', 'Female', 'Etc']
   },
   age: { type: Number, required: true },
-  pictureUrl: String,
+  profile: String,
   type: {
     type: String,
     required: true,
-    enum: ['Academic', 'Worker']
+    enum: ['Academic', 'Worker', 'Staff']
   },
   academic: {
-    year: Number,
-    school: String
+    level: {
+      type: String
+    },
+    year: {
+      type: String
+    },
+    school: {
+      type: String
+    },
   },
   worker: {
+    job: String,
     company: String
+  },
+  staff: {
+    staffType: {
+      type: String,
+    },
+    zone: {
+      type: ObjectId,
+      ref: 'Zone'
+    }
   },
   bookmarkActivity: [BookmarkActivitySchema],
   reservedActivity: [ReservedActivitySchema],
-  qrcodeUrl: String,
+  qrcode: String,
   game: {
     totalScore: { type: Number, default: 0 },
     pending: [{
@@ -107,8 +119,20 @@ const UserSchema = new mongoose.Schema({
       ref: 'Game'
     }]
   },
-  activityLog: [ActivityLogSchema]
+  activityLog: [ActivityLogSchema],
+  loveTags: [{
+    type: ObjectId,
+    ref: 'Tag'
+  }],
+  loveFaculties: [{
+    type: ObjectId,
+    ref: 'Zone'
+  }],
+  createAt: { type: Date, default: new Date() },
+  updateAt: { type: Date, default: new Date() },
 }, { timestamps: true });
+
+
 /**
  * Password hash middleware.
  */
@@ -129,6 +153,7 @@ UserSchema.pre('save', function save(next) {
  * Helper method for validating user's password.
  */
 UserSchema.methods.comparePassword = function comparePassword(candidatePassword, cb) {
+  console.log(candidatePassword, this.password);
   bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
     cb(err, isMatch);
   });

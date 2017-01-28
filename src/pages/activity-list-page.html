@@ -4,10 +4,14 @@
 <link rel="import" href="/public/lib/paper-card/paper-card.html">
 <link rel="import" href="/public/lib/paper-fab/paper-fab.html">
 <link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="/public/lib/paper-datatable/paper-datatable.html">
-<link rel="import" href="/public/lib/paper-datatable/paper-datatable-card.html">
+<link rel="import" href="/public/lib/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="/public/lib/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="/public/lib/paper-menu/paper-menu.html">
+<link rel="import" href="/public/lib/paper-item/paper-item.html">
+<link rel="import" href="/public/lib/paper-styles/shadow.html">
 
 <link rel="import" href="/components/activity-api.html">
+<link rel="import" href="/components/paper-card-item.html">
 <link rel="import" href="/components/shared-styles.html">
 
 <dom-module id="activity-list-page">
@@ -25,53 +29,81 @@
       #add-icon {
         position: absolute;
         bottom: 0px;
-        right: 10px;
+        right: -20px;
+        @apply(--shadow-elevation-8dp);
+      }
+      @media (max-width: 600px) { 
+        .fixed-bottom {
+          right: 20px;
+        }
+        #add-icon {
+          right: 0px;
+        }
       }
       .clearfix:after {
         clear:both;
         display:block;
         content: "";
       }
+      paper-card-item {
+        width: 100%;
+      }
+      paper-button {
+        font-size: 12px;
+      }
     </style>
     <div class="container">
-      <paper-datatable-card header="Activities" id-property="id" data-source="{{dataSource}}" page="[[page]]" page-size="[[pageSize]]" progress>
-        <paper-datatable selectable multi-selection>
-          <paper-datatable-column header="ชื่อ" property="name.en">
-          </paper-datatable-column>
-          <paper-datatable-column header="เวลาเริ่ม" property="startTime">
-          </paper-datatable-column>
-          <paper-datatable-column header="เวลาจบ" property="endTime">
-          </paper-datatable-column>
-          <paper-datatable-column header="คำอธิบายย่อ" property="shortDescription.en">
-          </paper-datatable-column>
-        </paper-datatable>
-      </paper-datatable-card>
-      <activity-api data-source="{{dataSource}}" page="{{page}}" page-size="{{pageSize}}"></activity-api>
+      <template is="dom-repeat" items="{{activities}}">
+        <paper-card-item action image="https://www.polymer-project.org/images/logos/p-logo.png">
+          <div class="card-item-header">
+            Tets
+          </div>
+          <div class="card-item-content">
+            asdasdsa
+          </div>
+          <div class="card-item-actions">
+            <div class="horizontal justified">
+              <paper-icon-button icon="icons:bookmark-border"></paper-icon-button>
+              <paper-button>5:30PM - 7:30PM</paper-button>
+              <paper-button class="cafe-reserve">Reserve</paper-button>
+            </div>
+          </div>
+          <!--<div class="card-item-button">
+            <paper-menu-button>
+              <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+              <paper-menu class="dropdown-content">
+                <paper-item>Edit</paper-item>
+                <paper-item>Delete</paper-item>
+              </paper-menu>
+            </paper-menu-button>
+          </div>-->
+        </paper-card-item>
+      </template>
       <div class="fixed-bottom">
         <div class="container">
           <paper-fab id="add-icon" icon="add" on-tap="_addClick"></paper-fab>
-          <div class="clearfix">
+          <div class="clearfix"></div>
         </div>
       </div>
+      <activity-api activities="{{activities}}" error="{{error}}" page="{{page}}" page-size="{{pageSize}}"></activity-api>
   </template>
   <script>
     Polymer({
       is: 'activity-list-page',
       properties: {
-        params: {
-          type: Object,
-          value: { fields: 'id name startTime endTime shortDescription', limit: 20, sort: 'id' }
+        page: {
+          type: Number,
+        },
+        pageSize: {
+          type: Number,
         },
         error: {
-          type: String,
+          type: Object,
         },
         activities: {
           type: Array,
           value: [],
         },
-        dataSource: {
-          type: Object,
-        }
       },
       _addClick: function() {
         document.querySelector('chulaexpo-staff-app').set('route.path', '/activity/add/');

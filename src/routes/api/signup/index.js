@@ -7,43 +7,98 @@ const router = express.Router();
 /**
  * Sign Up
  * Access at POST https://localhost:8080/api/signup
- * @param {string} name
- * @param {string} email
- * @param {string} [facebook]
- * @param {string} [tokens]
- * @param {string} gender
- * @param {name} age
- * @param {string} pictureUrl
- * @param {string} type
- * @param {string} [school]
- * @param {number} [year]
- * @param {string} [company]
+ * @param {email} email - Email.
+ * @param {password} [password] - Password.
+ * @param {string} [facebook] - Facebook ID.
+ * @param {string} [google] - Google ID.
+ * @param {[Object]} [token] - Array of token from provider
+ * @param {string} name - Name.
+ * @param {string} gender - Gender, only allow [Male, Female].
+ * @param {number} age - Age.
+ * @param {string} profile - Prfile picture url.
+ * @param {string} type - User type, only allow [Academic, Worker Staff].
+ * @param {string} [academicLevel] - Academic Level (required with `academic` type).
+ * @param {string} [academicYear] - Year of yor education (required with `academic` type).
+ * @param {string} [academicSchool] - School name (required with `academic` type).
+ * @param {string} [workerJob] - Job (required with `worker` type).
+ * @param {string} [staff] - Staff Type, only allow [Staff, Scanner, Admin]
+ *    (required with `staff` type).
+ * @param {string} [registationCode] - Registation Code (needed when need grant user permission).
+ * @param {ObjectId} [zone] - Staff's Zone (required with `staff` type and `Scanner` or `Staff`).
  *
- * @return {boolean} success
- * @return {string} message.
- * @return {Token} results - Authenticated token.
+ * @return {boolean} success - Successful querying flag.
+ * @return {User} results - Created User.
+ * @return {Token} results.token - Generated token.
  */
 router.post('/', (req, res) => {
+  // Reject `admin` field if not correct registration code
+  if (req.body.staff === 'Admin' && req.body.registrationCode !== process.env.ADMIN_REGISTRATION_CODE) {
+    // Handle error from save
+    return res.status(400).json({
+      success: false,
+      errors: retrieveError(11),
+    });
+  }
+  if (req.body.staff === 'Staff' && req.body.registrationCode !== process.env.STAFF_REGISTRATION_CODE) {
+    // Handle error from save
+    return res.status(400).json({
+      success: false,
+      errors: retrieveError(12),
+    });
+  }
+  if (req.body.staff === 'Scanner' && req.body.regisationCode !== process.env.SCANNER_REGISTRATION_CODE) {
+    // Handle error from save
+    return res.status(400).json({
+      success: false,
+      errors: retrieveError(13),
+    });
+  }
+
+  // Create a new instance of the User model
   const user = new User();
 
-  user.name = req.body.name;
+  // Set field value (comes from the request)
   user.email = req.body.email;
+  user.password = req.body.password;
   user.facebook = req.body.facebook;
+  user.google = req.body.google;
   user.tokens = req.body.tokens;
+
+  user.name = req.body.name;
   user.gender = req.body.gender;
   user.age = req.body.age;
-  user.pictureUrl = req.body.pictureUrl;
+  user.profile = req.body.profile;
   user.type = req.body.type;
-  user.academic.year = req.body.year;
-  user.academic.school = req.body.school;
-  user.worker.company = req.body.company;
+  if (req.body.type === 'Academic' && req.body.academicLevel && req.body.academicYear && req.body.academicSchool) {
+    user.academic = {
+      level: req.body.academicLevel,
+      year: req.body.academicYear,
+      school: req.body.academicSchool
+    };
+  }
+  if (req.body.type === 'Worker' && req.body.workerJob) {
+    user.worker = {
+      job: req.body.workerJob
+    };
+  }
+  if (req.body.type === 'Staff' && req.body.staff) {
+    if (req.body.staff !== 'Admin' && req.body.zone) {
+      user.staff = {
+        staffType: req.body.staff,
+        zone: req.body.zone
+      };
+    } else {
+      user.staff = {
+        staffType: req.body.staff
+      };
+    }
+  }
 
   user.save((err, user) => {
     if (err) {
-      res.status(400);
-      return res.json({
+      return res.status(500).json({
         success: false,
-        errors: retrieveError(23, err),
+        errors: retrieveError(5, err),
       });
     }
     res.json({

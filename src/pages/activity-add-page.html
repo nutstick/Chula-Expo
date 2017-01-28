@@ -65,7 +65,7 @@
       google-map {
         height: 300px;
       }
-			
+
 			.button-holder {
         @apply(--layout-horizontal);
         @apply(--layout-end-justified);
@@ -95,12 +95,11 @@
 											รูปทัมเนล
 										</div>
 									</vaadin-upload>
-									<input id="thumbnailurl" type="hidden" name="thumbnailUrl">
+									<input id="thumbnail" type="hidden" name="thumbnail">
 									<script>
 										var thumbnailUpload = document.querySelector('vaadin-upload#thumbnailUpload')
 										thumbnailUpload.addEventListener("upload-response", function(event) {
-											console.log(event);
-											document.querySelector('#thumbnailurl').value = event;
+											document.querySelector('#thumbnail').value = event;
 										});
 									</script>
 								</div>
@@ -142,33 +141,33 @@
 								</div>
 							</div>
 						</div>
-						
+
 						<div class="item">
 							<div>
 								<label class="label --input">Contact</label>
 								<div class="flex" style="display: inline-block">
 									<paper-input type="text" name="contact" label="" no-label-float="true"></paper-input>
 								</div>
-							</div>						
+							</div>
 						</div>
-						
+
 						<div class="item">
 							<div>
 								<label class="label --input">Video Url</label>
 								<div class="flex" style="display: inline-block">
-									<paper-input type="text" name="videoUrl" label="" no-label-float="true" required></paper-input>
+									<paper-input type="text" name="video" label="" no-label-float="true" required></paper-input>
 								</div>
 							</div>
 							<div>
 								<label class="label --input">PDF Url</label>
 								<div class="flex" style="display: inline-block">
-									<paper-input type="text" name="pdfUrl" label="" no-label-float="true" required></paper-input>
+									<paper-input type="text" name="pdf" label="" no-label-float="true" required></paper-input>
 								</div>
 							</div>
 							<div>
 								<label class="label --input">Link</label>
 								<div class="flex" style="display: inline-block">
-									<paper-input type="text" name="pdfUrl" label="" no-label-float="true" required></paper-input>
+									<paper-input type="text" name="pdf" label="" no-label-float="true" required></paper-input>
 								</div>
 							</div>
 
@@ -204,7 +203,7 @@
 								});
 							</script>
 						</div>
-						
+
 						<!-- Location -->
 						<div class="item">
 							<label class="label --input">Location</label>
@@ -224,8 +223,6 @@
 										req.onload = function() {
 											if (req.status === 200) {
 												var data = JSON.parse(req.response);
-												console.log(data);
-												console.log(req);
 												var arr = data.results.map(function(obj){
 													return { text:obj.name.en, value:obj['_id'] };
 												});
@@ -249,7 +246,7 @@
 								</div>
 							</div>
 						</div>
-						
+
 						<div class="item">
 							<div>
 								<label class="label --input">HighLight</label>
@@ -258,7 +255,7 @@
 								</div>
 							</div>
 						</div>
-						
+
 						<!-- Google Map -->
 						<div class="item">
 							<google-map latitude="[[latitude]]" longitude="[[longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
@@ -304,7 +301,7 @@
 							<paper-tags-input label="Tags" tags="{{tags_list}}"></paper-tags-input>
 						</div>
 					</div>
-					
+
 					<!-- Submit Button -->
 					<div class="card-actions">
 						<div class="button-holder">
@@ -354,7 +351,6 @@
         }, 1000);
       },
       _response: function(e) {
-        console.log(e.detail.response);
         if (e.detail.response.success) {
           window.location = '/';
         }
@@ -362,10 +358,10 @@
       _reset: function(event) {
         this.$.form.reset();
       },
-      _presubmit: function(event) {				
+      _presubmit: function(event) {
 					this.$.form.request.body.locationLat = this.latitude;
 					this.$.form.request.body.locationLong = this.longitude;
-					console.log(this.$.form.request.body);
+          console.log(this);
       }
     })
   </script>

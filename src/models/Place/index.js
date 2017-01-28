@@ -20,7 +20,6 @@ const PlaceSchema = new mongoose.Schema({
   zone:{
     type: ObjectId,
     ref: 'Zone'
-
   }
 });
 
