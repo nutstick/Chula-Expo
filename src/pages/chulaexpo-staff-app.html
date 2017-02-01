@@ -88,7 +88,7 @@
       value="{{token}}"
       autoSaveDisabled
     ></iron-localstorage>
-    
+
     <!-- Main Layout -->
     <app-drawer-layout force-narrow>
       <app-drawer id="drawer">
@@ -197,6 +197,10 @@
       _pageChanged: function(page) {
         var resolvedPageUrl = this.resolveUrl(page + '-page.html');
         this.importHref(resolvedPageUrl, null, this._showPage404, true);
+
+        var api = document.querySelector(`#${page}API`);
+        if(!!api)
+          api.generateRequest();
       },
       _showPage404: function() {
         this.page = '404-page'
@@ -217,6 +221,7 @@
         }
       },
       _computeLoggedIn: function(page, token) {
+        return true;
         return !!token || page === "signup";
       },
       _computeDisplayMenu: function(wideLayout, page) {

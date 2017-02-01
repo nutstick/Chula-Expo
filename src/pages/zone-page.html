@@ -8,6 +8,8 @@
 <link rel="import" href="/components/shared-styles.html">
 <link rel="import" href="/pages/zone-add-page.html">
 <link rel="import" href="/pages/zone-list-page.html">
+<link rel="import" href="/pages/zone-show-page.html">
+<link rel="import" href="/pages/zone-edit-page.html">
 
 <dom-module id="zone-page">
   <template>
@@ -24,6 +26,8 @@
       role="main">
       <zone-list-page name="list"></zone-list-page>
       <zone-add-page name="add"></zone-add-page>
+      <zone-edit-page route="{{subroute}}" name="edit"></zone-edit-page>
+      <zone-show-page route="{{subroute}}" name="show"></zone-show-page>
     </iron-pages>
   </template>
   <script>

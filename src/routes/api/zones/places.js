@@ -21,7 +21,7 @@ const router = express.Router();
  * @return {number} queryInfo.limit - Limit that was used.
  * @return {number} queryInfo.skip - Skip that was used.
  */
- router.get('/:id/place/', (req, res) => {
+router.get('/:id/place/', (req, res) => {
 //----------------------------------------------------------------
   // initial the fieldwant from request
   let fields = '';
@@ -36,20 +36,20 @@ const router = express.Router();
   }
 //----------------------------------------------------------------
 // initial filter : name query
-const filter = {};
+  const filter = {};
 
-if (req.query.nameEN) {
-  filter['name.en'] = { $regex: req.query.nameEN };
-}
+  if (req.query.nameEN) {
+    filter['name.en'] = { $regex: req.query.nameEN };
+  }
 
-filter['zone'] = req.params.zoneid;
+  filter.zone = req.params.zoneid;
 
 //----------------------------------------------------------------
 // initial limit
-let limit;
-if (req.query.limit) {
-  limit = Number.parseInt(req.query.limit, 10);
-}
+  let limit;
+  if (req.query.limit) {
+    limit = Number.parseInt(req.query.limit, 10);
+  }
   // initital skip
   let skip;
   if (req.query.skip) {
@@ -72,10 +72,10 @@ if (req.query.limit) {
     }, {});
   }
 //----------------------------------------------------------------
-Place.find(filter)
-.select(fields).sort(sort).skip(skip)
-.limit(limit)
-.exec(
+  Place.find(filter)
+  .select(fields).sort(sort).skip(skip)
+  .limit(limit)
+  .exec(
   (err, places) => {
     if (err) {
       return res.status(500).send({
@@ -91,8 +91,6 @@ Place.find(filter)
   });
 });
 
-
-
  //----------------------------------------------------------------
 
 /**
@@ -103,15 +101,15 @@ Place.find(filter)
 router.post('/:id/place/', (req, res, next) => {
    // Create object
 
-   const place = new Place();
+  const place = new Place();
 
    // Set field value (comes from the request)
-   place.name.en = req.body.nameEN;
-   place.name.th = req.body.nameTH;
+  place.name.en = req.body.nameEN;
+  place.name.th = req.body.nameTH;
 
-   place.zone  = req.params.id;
+  place.zone = req.params.id;
 
-   if (req.body.code) {
+  if (req.body.code) {
     place.code = req.body.code;
   }
   place.location.latitute = req.body.locationLat;
@@ -127,27 +125,24 @@ router.post('/:id/place/', (req, res, next) => {
       success: true,
       results: _place
     });
-    Zone.findOneAndUpdate(
-    {
-      _id:req.body.zone
-    },{
-      $addToSet:{places:_place._id}
-    },function(err,places){
-                        if(err){
-                            return res.status(400).send({
-                                message:"Error add  place to zone"
-                            });
-                        } else{
-                             
-                            }
-                     });
+    Zone.findOneAndUpdate({
+      _id: req.body.zone
+    }, {
+      $addToSet: { places: _place._id }
+    }, (err, places) => {
+      if (err) {
+        return res.status(400).send({
+          message: 'Error add  place to zone'
+        });
+      } else {
 
-
+      }
+    });
   });
 });
 
 router.delete('/:id/place/', (req, res) => {
-  Place.remove( {zone : req.params.id}, (err) => {
+  Place.remove({ zone: req.params.id }, (err) => {
     if (err) {
       return res.status(500).json({
         success: false,

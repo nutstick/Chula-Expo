@@ -7,6 +7,8 @@
 
 <link rel="import" href="/components/shared-styles.html">
 <link rel="import" href="/pages/facility-add-page.html">
+<link rel="import" href="/pages/facility-show-page.html">
+<link rel="import" href="/pages/facility-edit-page.html">
 <link rel="import" href="/pages/facility-list-page.html">
 
 <dom-module id="facility-page">
@@ -17,6 +19,7 @@
       data="{{routeData}}"
       tail="{{subroute}}"
     ></app-route>
+
     <iron-pages
       selected="[[page]]"
       attr-for-selected="name"
@@ -24,6 +27,8 @@
       role="main">
       <facility-list-page name="list"></facility-list-page>
       <facility-add-page name="add"></facility-add-page>
+      <facility-edit-page route="{{subroute}}" name="edit"></facility-edit-page>
+      <facility-show-page route="{{subroute}}" name="show"></facility-show-page>
     </iron-pages>
   </template>
   <script>

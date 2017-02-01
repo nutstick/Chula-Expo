@@ -1,6 +1,7 @@
 <!-- Libery -->
 <link rel="import" href="/public/lib/polymer/polymer.html">
 <!-- Web Component -->
+<link rel="import" href="/public/lib/app-route/app-route.html">
 <link rel="import" href="/public/lib/vaadin-upload/vaadin-upload.html">
 <link rel="import" href="/public/lib/paper-card/paper-card.html">
 <link rel="import" href="/public/lib/paper-checkbox/paper-checkbox.html">
@@ -10,15 +11,16 @@
 <link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="/public/lib/greenyouse-datetime-local-input/datetime-local-input.html">
 <link rel="import" href="/public/lib/google-map/google-map.html">
+<link rel="import" href="/public/lib/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="/public/lib/google-map/google-map-marker.html">
+<link rel="import" href="/public/lib/paper-menu/paper-menu.html">
 <link rel="import" href="/public/lib/paper-dropdown-menu/paper-dropdown-menu.html">
-<link rel="import" href="/public/lib/paper-listbox/paper-listbox.html">
-<link rel="import" href="/public/lib/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="/public/lib/iron-pages/iron-pages.html">
 
 <link rel="import" href="/components/shared-styles.html">
 
-<dom-module id="facility-add-page">
-    <template>
+<dom-module id="facility-edit-page">
+  <template>
     <style is="custom-style" include="shared-styles">
       :host {
         @apply(--layout-vertical);
@@ -69,16 +71,29 @@
         height: 300px;
       }
 
-			.button-holder {
+      .button-holder {
         @apply(--layout-horizontal);
         @apply(--layout-end-justified);
         margin-top: 10px;
       }
     </style>
+    <app-route
+      route="{{route}}"
+      pattern="/:facilityId"
+      data="{{routeData}}"
+      tail="{{subroute}}"
+    ></app-route>
+    <iron-ajax
+      id="facilityGetId"
+      url="{{urlId}}"
+      on-response="_handleResponse"
+      headers='{"Authentication": "{{token}}"}'
+      handle-as="json"
+    ></iron-ajax>
     <div class="container">
       <paper-card>
 				<form is="iron-form" id="form" method="post" class="card-content"
-					action="/api/facilities" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
+					action="{{urlId}}" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
 					<div class="card-content">
 
 						<!-- type -->
@@ -86,12 +101,12 @@
 							<label class="label --input">Type</label>
 							<div class="flex" style="display: inline-block">
 								<paper-dropdown-menu label="" no-label-float="true" name="type">
-									<paper-listbox class="dropdown-content">
+									<paper-menu class="dropdown-content" selected="{{facility.type}}" attr-for-selected="value">
 										<paper-item value="toilet">Toilet</paper-item>
-										<paper-item value="city">Canteen</paper-item>
+										<paper-item value="canteen">Canteen</paper-item>
 										<paper-item value="carpark">Car park</paper-item>
 										<paper-item value="prayer">Prayer</paper-item>
-									</paper-listbox>
+									</paper-menu>
 								</paper-dropdown-menu>
 							</div>
 						</div>
@@ -100,10 +115,10 @@
 						<div class="item">
 							<label class="label --input">Place</label>
 							<div class="" style="display: inline-block">
-								<paper-autocomplete name="place" label="place" id="input-place" no-label-float="true" remote-source="true"></paper-autocomplete>
+								<paper-autocomplete name="place" label="place" id="input-place" no-label-float="true" remote-source="true" value="{{facility.place.id}}" text="{{facility.place.name.en}}"></paper-autocomplete>
 							</div>
 							<script>
-								document.querySelector('facility-add-page').querySelector('#input-place').addEventListener('autocomplete-change', function(event) {
+								document.querySelector('facility-edit-page').querySelector('#input-place').addEventListener('autocomplete-change', function(event) {
 									var input = this;
 									var search = event.detail.option.text;
 									var url = '/api/places?nameEN=' + search;
@@ -129,8 +144,8 @@
 
 						<!-- Google Map -->
 						<div class="item">
-							<google-map latitude="[[latitude]]" longitude="[[longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
-								<google-map-marker latitude="{{latitude}}" longitude="{{longitude}}" draggable="true"
+							<google-map latitude="[[facility.location.latitude]]" longitude="[[facility.location.longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
+								<google-map-marker latitude="{{facility.location.latitude}}" longitude="{{facility.location.longitude}}" draggable="true"
 										title="facility Location!"></google-map-marker>
 							</google-map>
 						</div>
@@ -141,79 +156,87 @@
 							<div class="avatar" item-icon><img src="/public/img/th.png" /></div>
 							<div class="flex company">ภาษาไทย</div>
 						</div>
-						<paper-input type="text" label="ชื่อ" name="nameTH" always-float-label></paper-input>
-						<paper-textarea label="รายละเอียด" name="descriptionTH" rows="4" always-float-label></paper-textarea>
+						<paper-input type="text" value="[[facility.name.th]]" label="ชื่อ" name="nameTH" always-float-label></paper-input>
+						<paper-textarea label="รายละเอียด" value="[[facility.description.th]]" name="descriptionTH" rows="4" always-float-label></paper-textarea>
 						<!-- English Language -->
 						<div class="flex-layout center form-title">
 							<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
 							<div class="flex company">English</div>
 						</div>
-						<paper-input type="text" label="name" name="nameEN" always-float-label></paper-input>
-						<paper-textarea label="Description" name="descriptionEN" rows="4" always-float-label></paper-textarea>
+						<paper-input type="text" label="name" value="[[facility.name.en]]" name="nameEN" always-float-label></paper-input>
+						<paper-textarea label="Description" value="[[facility.description.en]]" name="descriptionEN" rows="4" always-float-label></paper-textarea>
 					</div>
 
 					<!-- Submit Button -->
 					<div class="card-actions">
 						<div class="button-holder">
 							<paper-button on-click="_delayedSubmit">
-								<paper-spinner id="spinner" hidden></paper-spinner>Submit
+								<paper-spinner id="spinner" hidden></paper-spinner>Edit
 							</paper-button>
-							<!-- Reset Button -->
-							<paper-button on-click="_reset">Reset</paper-button>
 						</div>
 					</div>
 				</form>
       </paper-card>
     </div>
   </template>
-    <script>
-        Polymer({
-            is: 'facility-add-page',
-            properties: {
-                token: {
-                    type: String,
-                },
-                latitude: {
-                    type: Number,
-                    value: 13.7383777
-                },
-                longitude: {
-                    type: Number,
-                    value: 100.53205279999997
-                },
-                zoom: {
-                    type: Number,
-                    value: 16
-                },
-                tags_list: {
-                    type: Array,
-                    value: ['Chula Expo']
-                }
-            },
-            _delayedSubmit: function(event) {
-                var form = this.$.form;
-                this.$.spinner.active = true;
-                this.$.spinner.hidden = false;
-                this.$.form.disabled = true;
-                // Simulate a slow server response.
-                setTimeout(function() {
-                    form.submit();
-                }, 1000);
-            },
-            _response: function(e) {
-                if (e.detail.response.success) {
-                   window.location = '/facility';
-                }
-            },
-            _reset: function(event) {
-                this.$.form.reset();
-            },
-            _presubmit: function(event) {
-                console.log(this.$.form.request.body);
-
-                this.$.form.request.body.locationLat = this.latitude;
-                this.$.form.request.body.locationLong = this.longitude;
-            }
-        })
-    </script>
+  <script>
+    Polymer({
+      is: 'facility-edit-page',
+      properties: {
+        urlId: {
+          type: Object,
+          value: ''
+        },
+        token: {
+          type: String,
+        },
+        zoom: {
+          type: Number,
+          value: 16
+        },
+        route: {
+          type: String,
+        },
+        facility: {
+          type: Object,
+        }
+      },
+      observers: [
+        '_routeIdChanged(routeData.facilityId)',
+      ],
+      _routeIdChanged: function(facilityId) {
+        if(!!facilityId){
+          this.urlId = `/api/facilities/${facilityId}`;
+          this.$.facilityGetId.generateRequest();
+        }
+      },
+      _delayedSubmit: function(event) {
+        var form = this.$.form;
+        this.$.spinner.active = true;
+        this.$.spinner.hidden = false;
+        this.$.form.disabled = true;
+        // Simulate a slow server response.
+        setTimeout(function() {
+          form.submit();
+        }, 1000);
+      },
+      _response: function(e) {
+        if (e.detail.response.success) {
+          window.location = '/facility/show/' + this.routeData.facilityId;
+        }
+      },
+      _presubmit: function(event) {
+        this.$.form.request.method = 'put';
+      	this.$.form.request.body.locationLat = this.facility.location.latitude;
+				this.$.form.request.body.locationLong = this.facility.location.longitude;
+      },
+      _handleResponse: function(event) {
+        if (event.detail.response.success) {
+          this.facility = event.detail.response.results;
+        } else {
+          this.error = event.detail.response.errors;
+        }
+      }
+    })
+  </script>
 </dom-module>

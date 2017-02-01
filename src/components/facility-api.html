@@ -60,6 +60,9 @@
         this.params.limit = pageSize;
         this.params.skip = (page - 1) * pageSize;
       },
+      generateRequest: function() {
+         this.$.facilityResource.generateRequest();
+      },
       _handleResponse: function(event) {
         if (event.detail.response.success) {
           this.facilities = event.detail.response.results;

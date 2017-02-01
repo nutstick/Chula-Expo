@@ -50,6 +50,11 @@
       paper-button {
         font-size: 12px;
       }
+			paper-button > a {
+        color: #000;
+        text-decoration: none;
+        width: 100%;
+      }
     </style>
     <div class="container">
       <template is="dom-repeat" items="{{places}}">
@@ -62,16 +67,10 @@
           </div>
           <div class="card-item-actions">
             <div class="horizontal justified">
+              <paper-button><a href="{{_computePathShow(item._id)}}">Show</a></paper-button>
+              <paper-button><a href="{{_computePathEdit(item._id)}}">Edit</a></paper-button>
+              <paper-button on-tap="_deleteClick">Delete</paper-button>
             </div>
-          </div>
-          <div class="card-item-button">
-            <paper-menu-button>
-              <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
-              <paper-menu class="dropdown-content">
-                <paper-item>Edit</paper-item>
-                <paper-item>Delete</paper-item>
-              </paper-menu>
-            </paper-menu-button>
           </div>
         </paper-card-item>
       </template>
@@ -101,9 +100,31 @@
           value: [],
         },
       },
+      _computePathShow: function(id) {
+					return '/place/show/' + id;
+			},
+      _computePathEdit: function(id) {
+					return '/place/edit/' + id;
+			},
       _addClick: function() {
         document.querySelector('chulaexpo-staff-app').set('route.path', '/place/add/');
       },
+      _deleteClick: function(event) {
+        var id = event.model.item['_id'];
+        var url = '/api/places/' + id;
+
+        var dom = this;
+        setTimeout(function () {
+          var req = new XMLHttpRequest();
+          req.open('DELETE',encodeURI(url));
+          req.onload = function() {
+            if (req.status === 202) {
+              dom.$.facilityAPI.generateRequest();
+            }
+          };
+          req.send();
+        }.bind(this), 300);
+      }
     })
   </script>
 </dom-module>

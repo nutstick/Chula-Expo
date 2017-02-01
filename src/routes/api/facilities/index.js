@@ -1,5 +1,6 @@
 const express = require('express');
 const Facility = require('../../../models/Facility');
+const Place = require('../../../models/Place');
 const retrieveError = require('../../../tools/retrieveError');
 
 const router = express.Router();
@@ -105,10 +106,30 @@ router.get('/:id', (req, res) => {
         errors: retrieveError(32),
       });
     }
-    res.status(200).json({
-      success: true,
-      results: fac
-    });
+    if (fac.place) {
+      Place.findById(fac.place).select('name').exec((err, place) => {
+        if (err) {
+          // Handle error from User.findById
+          return res.status(500).json({
+            success: false,
+            errors: retrieveError(5, err)
+          });
+        }
+        if (!place) {
+          fac.place = '';
+        }
+        fac.place = place;
+        res.status(200).json({
+          success: true,
+          results: fac
+        });
+      });
+    } else {
+      res.status(200).json({
+        success: true,
+        results: fac
+      });
+    }
   });
 });
   /**
