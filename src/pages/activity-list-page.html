@@ -12,6 +12,8 @@
 
 <link rel="import" href="/components/activity-api.html">
 <link rel="import" href="/components/paper-card-item.html">
+<link rel="import" href="/components/paper-card-item-header.html">
+<link rel="import" href="/components/paper-card-item-pagination.html">
 <link rel="import" href="/components/shared-styles.html">
 
 <dom-module id="activity-list-page">
@@ -58,6 +60,7 @@
       }
     </style>
     <div class="container">
+      <paper-card-item-header start={{start}} end={{end}}></paper-card-item-header>
       <template is="dom-repeat" items="{{activities}}">
         <paper-card-item action image="https://www.polymer-project.org/images/logos/p-logo.png">
           <div class="card-item-header">
@@ -76,23 +79,26 @@
 				</div>
         </paper-card-item>
       </template>
+      <paper-card-item-pagination page="{{page}}" page-size="{{pageSize}}" totalPages="[[totalPages]]"></paper-card-item-pagination>
       <div class="fixed-bottom">
         <div class="container">
           <paper-fab id="add-icon" icon="add" on-tap="_addClick"></paper-fab>
           <div class="clearfix"></div>
         </div>
       </div>
-      <activity-api activities="{{activities}}" error="{{error}}" page="{{page}}" page-size="{{pageSize}}"></activity-api>
-    </div>
+      <activity-api activities="{{activities}}" error="{{error}}" start={{start}} end={end} page="[[page]]" page-size="[[pageSize]]" totalPages="{{totalPages}}"></activity-api>
   </template>
   <script>
     Polymer({
       is: 'activity-list-page',
       properties: {
         page: {
-          type: Number,
+          type: Number
         },
         pageSize: {
+          type: Number
+        },
+        totalPages: {
           type: Number,
         },
         error: {

@@ -1,0 +1,111 @@
+<!-- Libery -->
+<link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="/public/lib/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="/public/lib/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="/public/lib/paper-item/paper-item.html">
+<link rel="import" href="/public/lib/paper-listbox/paper-listbox.html">
+
+<link rel="import" href="/components/paper-card-item.html">
+
+<dom-module id="paper-card-item-pagination">
+  <template>
+    <style>
+      paper-card-item div.card-item-content {
+        @apply(--layout);
+        @apply(--layout-horizontal);
+        @apply(--layout-end-justified);
+        margin-bottom: 5px;
+      }
+      paper-dropdown-menu.page-size-control {
+        width: 68px;
+      }
+    </style>
+    <paper-card-item action>
+      <div class="card-item-content">
+        <div>
+          <span>Item per page:</span>
+          <paper-dropdown-menu class="page-size-control" no-label-float on-iron-select="_itemSelected">
+            <paper-listbox class="dropdown-content" selected="1">
+              <paper-item value="5">5</paper-item>
+              <paper-item value="10">10</paper-item>
+              <paper-item value="50">50</paper-item>
+              <paper-item value="100">100</paper-item>
+            </paper-listbox>
+          </paper-dropdown-menu>
+        </div>
+        <paper-icon-button on-tap="_firstPageTap" disabled="{{isFirstPage}}" icon="icons:first-page"></paper-icon-button>
+        <paper-icon-button on-tap="_prevPageTap" disabled="{{isFirstPage}}" icon="icons:chevron-left"></paper-icon-button>
+        <paper-icon-button on-tap="_nextPageTap" disabled="{{hasNextPage}}" icon="icons:chevron-right"></paper-icon-button>
+        <paper-icon-button on-tap="_lastPageTap" disabled="{{isLastPage}}" icon="icons:last-page"></paper-icon-button>
+      </div>
+    </paper-card-item>
+  </template>
+  <script>
+    Polymer({
+      is: 'paper-card-item-pagination',
+      properties: {
+        page: {
+          type: Number,
+          value: 1,
+          notify: true
+        },
+        pageSize: {
+          type: Number,
+          value: 10,
+          notify: true
+        },
+        totalPages: {
+          type: Number,
+          value: 0
+        },
+        isFirstPage: {
+          type: Boolean,
+          computed: '_computedIsFirstPage(page)'
+        },
+        hasNextPage: {
+          type: Boolean,
+          computed: '_computedHasNextPage(page, totalPages)'
+        },
+        isLastPage: {
+          type: Boolean,
+          computed: '_computedIsLastPage(page, totalPages)'
+        }
+      },
+
+      _computedIsFirstPage: function(page) {
+        return page === 1;
+      },
+      _computedHasNextPage: function(page, totalPages) {
+        return !!totalPages && page === totalPages;
+      },
+      _computedIsLastPage: function(page, totalPages) {
+        return !totalPages || page === totalPages;
+      },
+      _itemSelected : function(e) {
+        var selectedItem = e.target.selectedItem;
+        if (selectedItem) {
+          this.pageSize = parseInt(e.target.selectedItem.getAttribute('value'))
+        }
+      },
+      _nextPageTap: function() {
+        if (this.totalPages) {
+          this.page = Math.min(this.page+1, this.totalPages);
+        }
+        this.page = this.page+1;
+      },
+      _prevPageTap: function() {
+        this.page = Math.max(this.page-1, 1);
+      },
+      _firstPageTap: function() {
+        this.page = 1;
+      },
+      _lastPageTap: function() {
+        if (this.totalPages) {
+          this.page = this.totalPages;
+        }
+      }
+    })
+  </script>
+</dom-module>

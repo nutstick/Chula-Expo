@@ -29,12 +29,10 @@
           }
         },
         page: {
-          type: Number,
-          value: 1
+          type: Number
         },
         pageSize: {
-          type: Number,
-          value: 10
+          type: Number
         },
         token: {
           type: String,
@@ -56,9 +54,11 @@
         '_updateRequest(page, pageSize)'
       ],
 
-      _updateRequest: function(page, pageSize) {
-        this.params.limit = pageSize;
-        this.params.skip = (page - 1) * pageSize;
+      _updateRequest: function(page, pageSize, start, end) {
+        this.set('params.limit', pageSize);
+        this.set('params.skip', (page - 1) * pageSize);
+        this.set('params.start', start);
+        this.set('params.end', end);
       },
       _handleResponse: function(event) {
         if (event.detail.response.success) {

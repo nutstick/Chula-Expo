@@ -62,6 +62,7 @@
     "iron-elements": "PolymerElements/iron-elements#^1.0.10",
     "paper-elements": "PolymerElements/paper-elements#^1.0.7",
     "paper-datatable-api": "^0.2.7",
-    "vaadin-combo-box": "^1.2.0"
+    "vaadin-combo-box": "^1.2.0",
+    "mn-paper-datetime-picker": "^1.1.4"
   }
 }
