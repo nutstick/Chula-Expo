@@ -1,0 +1,83 @@
+<!-- Libery -->
+<link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="/public/lib/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="/public/lib/iron-ajax/iron-ajax.html">
+<link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="/public/lib/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="/public/lib/datetime-local-input/datetime-local-input.html">
+<!--<link rel="import" href="/public/lib/mn-paper-datetime-picker/mn-paper-datetime-picker.html">-->
+
+<link rel="import" href="/components/paper-card-item.html">
+
+<dom-module id="paper-card-item-header">
+  <template>
+    <style>
+      paper-card-item div.card-item-content {
+        margin-bottom: 5px;
+      }
+      
+      paper-card-item div.left {
+        display: inline-block;
+      }
+      paper-card-item div.left > * {
+        display: inline-block;
+      }
+      paper-card-item div.right {
+        display: inline-block;
+        float: right
+      }
+      paper-card-item div.right > * {
+        display: inline-block;
+      }
+    </style>
+    <iron-ajax
+      auto
+      id="zoneResource"
+      url="/api/zones"
+      params="{{zoneParams}}"
+      on-response="_handleResponse"
+      headers="{{headerToken}}"
+      handle-as="json"
+    ></iron-ajax>
+    <paper-card-item action>
+      <div class="card-item-content">
+        <div class="left">
+          <vaadin-combo-box label="สังกัด" item-label-path="name" items="{{zones}}" always-float-label></vaadin-combo-box>
+        </div>
+        <div class="right">
+          <datetime-local-input label="เวลาเริ่ม" name="start" value="{{start}}" always-float-label></datetime-local-input>
+          <datetime-local-input label="เวลาจบ" name="end" value="{{end}}" always-float-label></datetime-local-input>
+        </div>
+      </div>
+    </paper-card-item>
+  </template>
+  <script>
+    Polymer({
+      is: 'paper-card-item-header',
+      properties: {
+        start: {
+          type: String,
+          value: '',
+          notify: true
+        },
+        end: {
+          type: String,
+          value: '',
+          notify: true
+        },
+        zone: {
+          type: String,
+          notify: true
+        }
+      },
+      _handleResponse: function(event) {
+        if (event.detail.response.success) {
+          this.zones = event.detail.response.zones;
+        } else {
+          this.error = event.detail.response.errors;
+        }
+      },
+    })
+  </script>
+</dom-module>
