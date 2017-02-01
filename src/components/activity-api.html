@@ -60,6 +60,9 @@
         this.set('params.start', start);
         this.set('params.end', end);
       },
+      generateRequest: function() {
+         this.$.activityResource.generateRequest();
+      },
       _handleResponse: function(event) {
         if (event.detail.response.success) {
           this.activities = event.detail.response.results;

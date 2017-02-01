@@ -86,7 +86,7 @@
           <div class="clearfix"></div>
         </div>
       </div>
-      <activity-api activities="{{activities}}" error="{{error}}" start={{start}} end={end} page="[[page]]" page-size="[[pageSize]]" totalPages="{{totalPages}}"></activity-api>
+      <activity-api id="activityAPI" activities="{{activities}}" error="{{error}}" start={{start}} end={end} page="[[page]]" page-size="[[pageSize]]" totalPages="{{totalPages}}"></activity-api>
   </template>
   <script>
     Polymer({
@@ -128,7 +128,7 @@
           req.open('DELETE',encodeURI(url));
           req.onload = function() {
             if (req.status === 202) {
-              dom.$.facilityAPI.generateRequest();
+              dom.$.activityAPI.generateRequest();
             }
           };
           req.send();
