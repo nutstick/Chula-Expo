@@ -1,7 +1,7 @@
 const express = require('express');
 const User = require('../../../models/User');
 const { isAuthenticatedByToken, isStaff } = require('../../../config/authenticate');
-const { retrieveError } = require('../../../tools');
+const { retrieveError } = require('../../../tools/retrieveError');
 
 const router = express.Router();
 

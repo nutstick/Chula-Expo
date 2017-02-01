@@ -9,6 +9,7 @@
 <link rel="import" href="/public/lib/paper-menu/paper-menu.html">
 <link rel="import" href="/public/lib/paper-item/paper-item.html">
 
+
 <link rel="import" href="/components/zone-api.html">
 <link rel="import" href="/components/paper-card-item.html">
 <link rel="import" href="/components/shared-styles.html">
@@ -28,7 +29,16 @@
       #add-icon {
         position: absolute;
         bottom: 0px;
-        right: 10px;
+        right: -20px;
+        @apply(--shadow-elevation-8dp);
+      }
+      @media (max-width: 600px) {
+        .fixed-bottom {
+          right: 20px;
+        }
+        #add-icon {
+          right: 0px;
+        }
       }
       .clearfix:after {
         clear:both;
@@ -38,31 +48,30 @@
       paper-card-item {
         width: 100%;
       }
+      paper-button {
+        font-size: 12px;
+      }
+			paper-button > a {
+        color: #000;
+        text-decoration: none;
+        width: 100%;
+      }
     </style>
     <div class="container">
       <template is="dom-repeat" items="{{zones}}">
         <paper-card-item action image="https://www.polymer-project.org/images/logos/p-logo.png">
           <div class="card-item-header">
-            Tets
+            {{item.name.en}}
           </div>
           <div class="card-item-content">
-            asdasdsa
+            {{item.shortName.en}}
           </div>
           <div class="card-item-actions">
             <div class="horizontal justified">
-              <paper-icon-button icon="icons:bookmark-border"></paper-icon-button>
-              <paper-button>5:30PM - 7:30PM</paper-button>
-              <paper-button class="cafe-reserve">Reserve</paper-button>
+              <paper-button><a href="{{_computePathShow(item._id)}}">Show</a></paper-button>
+              <paper-button><a href="{{_computePathEdit(item._id)}}">Edit</a></paper-button>
+              <paper-button on-tap="_deleteClick">Delete</paper-button>
             </div>
-          </div>
-          <div class="card-item-button">
-            <paper-menu-button>
-              <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
-              <paper-menu class="dropdown-content">
-                <paper-item>Edit</paper-item>
-                <paper-item>Delete</paper-item>
-              </paper-menu>
-            </paper-menu-button>
           </div>
         </paper-card-item>
       </template>
@@ -90,11 +99,33 @@
         zones: {
           type: Array,
           value: [],
-        },
+        }
       },
+      _computePathShow: function(id) {
+					return '/zone/show/' + id;
+			},
+      _computePathEdit: function(id) {
+					return '/zone/edit/' + id;
+			},
       _addClick: function() {
         document.querySelector('chulaexpo-staff-app').set('route.path', '/zone/add/');
       },
+      _deleteClick: function(event) {
+        var id = event.model.item['_id'];
+        var url = '/api/zones/' + id;
+
+        var dom = this;
+        setTimeout(function () {
+          var req = new XMLHttpRequest();
+          req.open('DELETE',encodeURI(url));
+          req.onload = function() {
+            if (req.status === 202) {
+              dom.$.facilityAPI.generateRequest();
+            }
+          };
+          req.send();
+        }.bind(this), 300);
+      }
     })
   </script>
 </dom-module>

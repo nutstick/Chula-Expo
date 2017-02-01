@@ -1,5 +1,6 @@
 const express = require('express');
 const Facility = require('../../../models/Facility');
+const Place = require('../../../models/Place');
 const retrieveError = require('../../../tools/retrieveError');
 
 const router = express.Router();
@@ -15,12 +16,12 @@ router.get('/', (req, res) => {
   if (req.query.sort) {
     sort = req.query.sort.split(',').reduce((prev, sortQuery) => {
       let sortFields = sortQuery[0] === '-' ? sortQuery.substr(1) : sortQuery;
-      sortFields = sortFields.replace('nameTH', 'name.th');
-      sortFields = sortFields.replace('nameEN', 'name.en');
-      sortFields = sortFields.replace('descriptionTH', 'description.th');
-      sortFields = sortFields.replace('descriptionEN', 'description.en');
-      sortFields = sortFields.replace('locationLat', 'location.latitude');
-      sortFields = sortFields.replace('locationLong', 'location.longitude');
+      sortFields = sortFields.replace(/nameTH/g, 'name.th');
+      sortFields = sortFields.replace(/nameEN/g, 'name.en');
+      sortFields = sortFields.replace(/descriptionTH/g, 'description.th');
+      sortFields = sortFields.replace(/descriptionEN/g, 'description.en');
+      sortFields = sortFields.replace(/locationLat/g, 'location.latitude');
+      sortFields = sortFields.replace(/locationLong/g, 'location.longitude');
       if (sortQuery[0] === '-') {
         prev[sortFields] = -1;
       } else {
@@ -34,13 +35,13 @@ router.get('/', (req, res) => {
   // http://localhost:3000/?fields=name,faculty
   let fields;
   if (req.query.fields) {
-    fields = req.query.fields.replace(',', ' ');
-    fields = fields.replace('nameTH', 'name.th');
-    fields = fields.replace('nameEN', 'name.en');
-    fields = fields.replace('descriptionTH', 'description.th');
-    fields = fields.replace('descriptionEN', 'description.en');
-    fields = fields.replace('locationLat', 'location.latitude');
-    fields = fields.replace('locationLong', 'location.longitude');
+    fields = req.query.fields.replace(/,/g, ' ');
+    fields = fields.replace(/nameTH/g, 'name.th');
+    fields = fields.replace(/nameEN/g, 'name.en');
+    fields = fields.replace(/descriptionTH/g, 'description.th');
+    fields = fields.replace(/descriptionEN/g, 'description.en');
+    fields = fields.replace(/locationLat/g, 'location.latitude');
+    fields = fields.replace(/locationLong/g, 'location.longitude');
   }
   let query = Facility.find(filter);
 
@@ -81,13 +82,13 @@ router.get('/:id', (req, res) => {
    // Get User from instance User model by ID
   let fields = '';
   if (req.query.fields) {
-    fields = req.query.fields.replace(',', ' ');
-    fields = fields.replace('nameTH', 'name.th');
-    fields = fields.replace('nameEN', 'name.en');
-    fields = fields.replace('descriptionTH', 'description.th');
-    fields = fields.replace('descriptionEN', 'description.en');
-    fields = fields.replace('locationLat', 'location.latitude');
-    fields = fields.replace('locationLong', 'location.longitude');
+    fields = req.query.fields.replace(/,/g, ' ');
+    fields = fields.replace(/nameTH/g, 'name.th');
+    fields = fields.replace(/nameEN/g, 'name.en');
+    fields = fields.replace(/descriptionTH/g, 'description.th');
+    fields = fields.replace(/descriptionEN/g, 'description.en');
+    fields = fields.replace(/locationLat/g, 'location.latitude');
+    fields = fields.replace(/locationLong/g, 'location.longitude');
   }
 
   Facility.findById(req.params.id).select(fields).exec((err, fac) => {
@@ -105,17 +106,37 @@ router.get('/:id', (req, res) => {
         errors: retrieveError(32),
       });
     }
-    res.status(200).json({
-      success: true,
-      results: fac
-    });
+    if (fac.place) {
+      Place.findById(fac.place).select('name').exec((err, place) => {
+        if (err) {
+          // Handle error from User.findById
+          return res.status(500).json({
+            success: false,
+            errors: retrieveError(5, err)
+          });
+        }
+        if (!place) {
+          fac.place = '';
+        }
+        fac.place = place;
+        res.status(200).json({
+          success: true,
+          results: fac
+        });
+      });
+    } else {
+      res.status(200).json({
+        success: true,
+        results: fac
+      });
+    }
   });
 });
   /**
   * Create a new activity
   * Access at POST http://localhost:8080/api/activities
   */
-router.post('/', (req, res, next) => {
+router.post('/', (req, res) => {
    // Create a new instance of the User model
   const facility = new Facility();
    // Set field value (comes from the request)

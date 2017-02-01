@@ -87,15 +87,15 @@ router.get('/', (req, res) => {
   // http://localhost:3000/?fields=name,faculty
   let fields;
   if (req.query.fields) {
-    fields = req.query.fields.replace(',', ' ');
-    fields = fields.replace('nameEN', 'name.en');
-    fields = fields.replace('shortDescriptionEN', 'shortDescription.en');
-    fields = fields.replace('descriptionEN', 'description.en');
-    fields = fields.replace('locationPlace', 'location.place');
-    fields = fields.replace('locationFloor', 'location.floor');
-    fields = fields.replace('locationRoom', 'location.room');
-    fields = fields.replace('locationLat', 'location.latitude');
-    fields = fields.replace('locationLong', 'location.longitude');
+    fields = req.query.fields.replace(/,/g, ' ');
+    fields = fields.replace(/nameEN/g, 'name.en');
+    fields = fields.replace(/shortDescriptionEN/g, 'shortDescription.en');
+    fields = fields.replace(/descriptionEN/g, 'description.en');
+    fields = fields.replace(/locationPlace/g, 'location.place');
+    fields = fields.replace(/locationFloor/g, 'location.floor');
+    fields = fields.replace(/locationRoom/g, 'location.room');
+    fields = fields.replace(/locationLat/g, 'location.latitude');
+    fields = fields.replace(/locationLong/g, 'location.longitude');
   }
 
   // Text search engine
@@ -148,15 +148,15 @@ router.get('/:id', (req, res) => {
   // Get User from instance User model by ID
   let fields = '';
   if (req.query.fields) {
-    fields = req.query.fields.replace(',', ' ');
-    fields = fields.replace('nameEN', 'name.en');
-    fields = fields.replace('shortDescriptionEN', 'shortDescription.en');
-    fields = fields.replace('descriptionEN', 'description.en');
-    fields = fields.replace('locationPlace', 'location.place');
-    fields = fields.replace('locationFloor', 'location.floor');
-    fields = fields.replace('locationRoom', 'location.room');
-    fields = fields.replace('locationLat', 'location.latitude');
-    fields = fields.replace('locationLong', 'location.longitude');
+    fields = req.query.fields.replace(/,/g, ' ');
+    fields = fields.replace(/nameEN/g, 'name.en');
+    fields = fields.replace(/shortDescriptionEN/g, 'shortDescription.en');
+    fields = fields.replace(/descriptionEN/g, 'description.en');
+    fields = fields.replace(/locationPlace/g, 'location.place');
+    fields = fields.replace(/locationFloor/g, 'location.floor');
+    fields = fields.replace(/locationRoom/g, 'location.room');
+    fields = fields.replace(/locationLat/g, 'location.latitude');
+    fields = fields.replace(/locationLong/g, 'location.longitude');
   }
 
   Activity.findById(req.params.id).select(fields).exec((err, act) => {

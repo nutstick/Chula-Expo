@@ -1,5 +1,6 @@
 const express = require('express');
 const Place = require('../../../models/Place');
+const Zone = require('../../../models/Zone');
 const retrieveError = require('../../../tools/retrieveError');
 
 const router = express.Router();
@@ -25,13 +26,11 @@ router.get('/', (req, res) => {
   // initial the fieldwant from request
   let fields = '';
   if (req.query.fields) {
-    fields = req.query.fields.replace(',', ' ');
-    fields = fields.replace('nameTH', 'name.th');
-    fields = fields.replace('nameEN', 'name.en');
-    fields = fields.replace('descTH', 'desc.th');
-    fields = fields.replace('descEN', 'desc.en');
-    fields = fields.replace('locationLat', 'location.latitude');
-    fields = fields.replace('locationLong', 'location.longitude');
+    fields = req.query.fields.replace(/,/g, ' ');
+    fields = fields.replace(/nameTH/g, 'name.th');
+    fields = fields.replace(/nameEN/g, 'name.en');
+    fields = fields.replace(/locationLat/g, 'location.latitude');
+    fields = fields.replace(/locationLong/g, 'location.longitude');
   }
 //----------------------------------------------------------------
 // initial filter : name query
@@ -40,7 +39,6 @@ router.get('/', (req, res) => {
   if (req.query.nameEN) {
     filter['name.en'] = { $regex: req.query.nameEN };
   }
-
 //----------------------------------------------------------------
 // initial limit
   let limit;
@@ -96,18 +94,16 @@ router.get('/:id', (req, res) => {
  // initial the fieldwant from request
   let fields = '';
   if (req.query.fields) {
-    fields = req.query.fields.replace(',', ' ');
-    fields = fields.replace('nameTH', 'name.th');
-    fields = fields.replace('nameEN', 'name.en');
-    fields = fields.replace('descTH', 'desc.th');
-    fields = fields.replace('descEN', 'desc.en');
-    fields = fields.replace('locationLat', 'location.latitude');
-    fields = fields.replace('locationLong', 'location.longitude');
+    fields = req.query.fields.replace(/,/g, ' ');
+    fields = fields.replace(/nameTH/g, 'name.th');
+    fields = fields.replace(/nameEN/g, 'name.en');
+    fields = fields.replace(/locationLat/g, 'location.latitude');
+    fields = fields.replace(/locationLong/g, 'location.longitude');
   }
 
   Place.findById(req.params.id).select(fields).exec((err, place) => {
     if (err) {
-     // Handle error from User.findById
+       // Handle error from User.findById
       return res.status(500).json({
         success: false,
         errors: retrieveError(5, err)
@@ -135,7 +131,7 @@ router.get('/:id', (req, res) => {
 * Access at POST http://localhost:8080/api/en/places
 */
 
-router.post('/', (req, res, next) => {
+router.post('/', (req, res) => {
    // Create object
 
   const place = new Place();
@@ -143,6 +139,7 @@ router.post('/', (req, res, next) => {
    // Set field value (comes from the request)
   place.name.en = req.body.nameEN;
   place.name.th = req.body.nameTH;
+
   if (req.body.code) {
     place.code = req.body.code;
   }
@@ -170,14 +167,14 @@ router.post('/', (req, res, next) => {
 // Access at PUT http://localhost:3000/api/en/places/:id
 router.put('/:id', (req, res) => {
   Place.findById(req.params.id, (err, place) => {
-  // check error first
+    // check error first
     if (err) {
       return res.status(500).json({
         success: false,
         errors: retrieveError(5, err)
       });
     }
-  // check place
+    // check place
     if (!place) {
       return res.status(403).json({
         success: false,
@@ -195,24 +192,57 @@ router.put('/:id', (req, res) => {
     if (req.body.code) {
       place.code = req.body.code;
     }
-    if (req.body.latitude) {
-      place.location.latitude = req.body.latitude;
+    if (req.body.locationLat) {
+      place.location.latitude = req.body.locationLat;
     }
-    if (req.body.longitude) {
-      place.location.longitude = req.body.longitude;
+    if (req.body.locationLong) {
+      place.location.longitude = req.body.locationLong;
     }
 
-    place.save((err, _place) => {
+    place.save((err) => {
       if (err) {
         return res.status(500).json({
           success: false,
           errors: retrieveError(5, err)
         });
       }
-      res.status(202).json({
-        success: true,
-        message: 'Update place successful',
-        results: _place
+      // check place
+      if (!place) {
+        return res.status(403).json({
+          success: false,
+          errors: retrieveError(33)
+        });
+      }
+
+
+      if (req.body.nameEN) {
+        place.name.en = req.body.nameEN;
+      }
+      if (req.body.nameTH) {
+        place.name.th = req.body.nameTH;
+      }
+      if (req.body.code) {
+        place.code = req.body.code;
+      }
+      if (req.body.latitude) {
+        place.location.latitude = req.body.latitude;
+      }
+      if (req.body.longitude) {
+        place.location.longitude = req.body.longitude;
+      }
+
+      place.save((err, _place) => {
+        if (err) {
+          return res.status(500).json({
+            success: false,
+            errors: retrieveError(5, err)
+          });
+        }
+        res.status(202).json({
+          success: true,
+          message: 'Update place successful',
+          results: _place
+        });
       });
     });
   });
