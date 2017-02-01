@@ -8,9 +8,11 @@
 <link rel="import" href="/public/lib/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="/public/lib/paper-menu/paper-menu.html">
 <link rel="import" href="/public/lib/paper-item/paper-item.html">
+<link rel="import" href="/public/lib/paper-styles/shadow.html">
 
 <link rel="import" href="/components/place-api.html">
 <link rel="import" href="/components/paper-card-item.html">
+<link rel="import" href="/components/paper-card-item-pagination.html">
 <link rel="import" href="/components/shared-styles.html">
 
 <dom-module id="place-list-page">
@@ -74,13 +76,14 @@
           </div>
         </paper-card-item>
       </template>
+			<paper-card-item-pagination page="{{page}}" page-size="{{pageSize}}" totalPages="[[totalPages]]"></paper-card-item-pagination>
       <div class="fixed-bottom">
         <div class="container">
           <paper-fab id="add-icon" icon="add" on-tap="_addClick"></paper-fab>
           <div class="clearfix">
         </div>
       </div>
-      <place-api places="{{places}}" error="{{error}}" page="{{page}}" page-size="{{pageSize}}"></place-api>
+      <place-api id="placeAPI" places="{{places}}" error="{{error}}" page="{{page}}" page-size="{{pageSize}}" totalPages="{{totalPages}}"></place-api>
   </template>
   <script>
     Polymer({
@@ -90,6 +93,9 @@
           type: Number,
         },
         pageSize: {
+          type: Number,
+        },
+        totalPages: {
           type: Number,
         },
         error: {
@@ -119,7 +125,7 @@
           req.open('DELETE',encodeURI(url));
           req.onload = function() {
             if (req.status === 202) {
-              dom.$.facilityAPI.generateRequest();
+              dom.$.placeAPI.generateRequest();
             }
           };
           req.send();

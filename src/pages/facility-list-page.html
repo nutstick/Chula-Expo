@@ -8,9 +8,12 @@
 <link rel="import" href="/public/lib/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="/public/lib/paper-menu/paper-menu.html">
 <link rel="import" href="/public/lib/paper-item/paper-item.html">
+<link rel="import" href="/public/lib/paper-styles/shadow.html">
+
 
 <link rel="import" href="/components/facility-api.html">
 <link rel="import" href="/components/paper-card-item.html">
+<link rel="import" href="/components/paper-card-item-pagination.html">
 <link rel="import" href="/components/shared-styles.html">
 
 <dom-module id="facility-list-page">
@@ -74,13 +77,14 @@
           </div>
         </paper-card-item>
       </template>
+			<paper-card-item-pagination page="{{page}}" page-size="{{pageSize}}" totalPages="[[totalPages]]"></paper-card-item-pagination>
       <div class="fixed-bottom">
         <div class="container">
           <paper-fab id="add-icon" icon="add" on-tap="_addClick"></paper-fab>
           <div class="clearfix"></div>
         </div>
       </div>
-      <facility-api id="facilityAPI" facilities="{{facilities}}" error="{{error}}" page="{{page}}" page-size="{{pageSize}}"></facility-api>
+      <facility-api id="facilityAPI" facilities="{{facilities}}" error="{{error}}" page="{{page}}" page-size="{{pageSize}}" totalPages="{{totalPages}}"></facility-api>
     </div>
   </template>
   <script>
@@ -91,6 +95,9 @@
           type: Number,
         },
         pageSize: {
+          type: Number,
+        },
+        totalPages: {
           type: Number,
         },
         error: {

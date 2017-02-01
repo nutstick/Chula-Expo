@@ -8,10 +8,11 @@
 <link rel="import" href="/public/lib/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="/public/lib/paper-menu/paper-menu.html">
 <link rel="import" href="/public/lib/paper-item/paper-item.html">
-
+<link rel="import" href="/public/lib/paper-styles/shadow.html">
 
 <link rel="import" href="/components/zone-api.html">
 <link rel="import" href="/components/paper-card-item.html">
+<link rel="import" href="/components/paper-card-item-pagination.html">
 <link rel="import" href="/components/shared-styles.html">
 
 <dom-module id="zone-list-page">
@@ -56,7 +57,7 @@
         text-decoration: none;
         width: 100%;
       }
-    </style>
+			</style>
     <div class="container">
       <template is="dom-repeat" items="{{zones}}">
         <paper-card-item action image="https://www.polymer-project.org/images/logos/p-logo.png">
@@ -75,13 +76,14 @@
           </div>
         </paper-card-item>
       </template>
+			<paper-card-item-pagination page="{{page}}" page-size="{{pageSize}}" totalPages="[[totalPages]]"></paper-card-item-pagination>
       <div class="fixed-bottom">
         <div class="container">
           <paper-fab id="add-icon" icon="add" on-tap="_addClick"></paper-fab>
           <div class="clearfix">
         </div>
       </div>
-      <zone-api zones="{{zones}}" error="{{error}}" page="{{page}}" page-size="{{pageSize}}"></zone-api>
+      <zone-api id="zoneAPI" zones="{{zones}}" error="{{error}}" page="{{page}}" page-size="{{pageSize}}" totalPages="[[totalPages]]"></zone-api>
   </template>
   <script>
     Polymer({
@@ -91,6 +93,9 @@
           type: Number,
         },
         pageSize: {
+          type: Number,
+        },
+        totalPages: {
           type: Number,
         },
         error: {
@@ -120,7 +125,7 @@
           req.open('DELETE',encodeURI(url));
           req.onload = function() {
             if (req.status === 202) {
-              dom.$.facilityAPI.generateRequest();
+              dom.$.zoneAPI.generateRequest();
             }
           };
           req.send();
