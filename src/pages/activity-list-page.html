@@ -10,6 +10,7 @@
 <link rel="import" href="/public/lib/paper-item/paper-item.html">
 <link rel="import" href="/public/lib/paper-styles/shadow.html">
 
+<link rel="import" href="/pages/activity-view-page.html">
 <link rel="import" href="/components/activity-api.html">
 <link rel="import" href="/components/paper-card-item.html">
 <link rel="import" href="/components/paper-card-item-header.html">
@@ -60,6 +61,27 @@
       }
     </style>
     <div class="container">
+      <iron-ajax
+        auto
+        id="zoneResource"
+        url="/api/zones"
+        params="{{zoneParams}}"
+        on-response="_handleResponse"
+        headers="{{headerToken}}"
+        handle-as="json"
+      ></iron-ajax>
+      <acitivty-view-page></acitivty-view-page>
+      <paper-card-item action>
+        <div class="card-item-content">
+          <div class="left">
+            <vaadin-combo-box label="สังกัด" item-label-path="name" items="{{zones}}" always-float-label></vaadin-combo-box>
+          </div>
+          <div class="right">
+            <datetime-local-input label="เวลาเริ่ม" name="start" value="{{start}}" always-float-label></datetime-local-input>
+            <datetime-local-input label="เวลาจบ" name="end" value="{{end}}" always-float-label></datetime-local-input>
+          </div>
+        </div>
+      </paper-card-item>
       <paper-card-item-header start={{start}} end={{end}}></paper-card-item-header>
       <template is="dom-repeat" items="{{activities}}">
         <paper-card-item action image="https://www.polymer-project.org/images/logos/p-logo.png">
