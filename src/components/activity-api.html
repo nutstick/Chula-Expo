@@ -11,7 +11,7 @@
       url="/api/activities"
       params="{{params}}"
       on-response="_handleResponse"
-      headers='{"Authentication": "{{token}}"}'
+      headers="{{headers}}"
       handle-as="json"
       debounce-duration="300"
     ></iron-ajax>
@@ -28,15 +28,17 @@
             skip: 0
           }
         },
+        headers: {
+          type: Object,
+          value: {
+            Authentication: document.querySelector('chulaexpo-staff-app').token
+          }
+        },
         page: {
           type: Number
         },
         pageSize: {
           type: Number
-        },
-        token: {
-          type: String,
-          value: document.querySelector('chulaexpo-staff-app').token
         },
         activities: {
           type: Array,
