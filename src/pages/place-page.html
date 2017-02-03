@@ -8,6 +8,8 @@
 <link rel="import" href="/components/shared-styles.html">
 <link rel="import" href="/pages/place-add-page.html">
 <link rel="import" href="/pages/place-list-page.html">
+<link rel="import" href="/pages/place-edit-page.html">
+<link rel="import" href="/pages/place-show-page.html">
 
 <dom-module id="place-page">
   <template>
@@ -24,6 +26,8 @@
       role="main">
       <place-list-page name="list"></place-list-page>
       <place-add-page name="add"></place-add-page>
+			<place-edit-page route="{{subroute}}" name="edit"></place-edit-page>
+      <place-show-page route="{{subroute}}" name="show"></place-show-page>
     </iron-pages>
   </template>
   <script>

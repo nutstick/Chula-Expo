@@ -8,6 +8,8 @@
 <link rel="import" href="/components/shared-styles.html">
 <link rel="import" href="/pages/activity-add-page.html">
 <link rel="import" href="/pages/activity-list-page.html">
+<link rel="import" href="/pages/activity-show-page.html">
+<link rel="import" href="/pages/activity-edit-page.html">
 
 <dom-module id="activity-page">
   <template>
@@ -24,6 +26,8 @@
       role="main">
       <activity-list-page name="list"></activity-list-page>
       <activity-add-page name="add"></activity-add-page>
+			<activity-edit-page route="{{subroute}}" name="edit"></activity-edit-page>
+      <activity-show-page route="{{subroute}}" name="show"></activity-show-page>
     </iron-pages>
   </template>
   <script>

@@ -217,7 +217,7 @@
           }
         }
       },
-      
+
       _handleResponse: function(event) {
         if (event.detail.response.success) {
           this.zones = event.detail.response.zones;
@@ -269,7 +269,7 @@
 
           document.querySelector('chulaexpo-staff-app').token = e.detail.response.results.token;
           document.getElementById('storage').save();
-          
+
           // window.location = '/';
           window.history.pushState({}, null, '/');
           window.dispatchEvent(new CustomEvent('location-changed'));
