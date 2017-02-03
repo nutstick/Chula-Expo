@@ -106,6 +106,7 @@
 										accept="image/*"
 										target="/upload/img/zones/thumbnail"
 										method="POST"
+                    max-files="1"
 										headers="{'Authorization': 'JWT {{token}}'}"
 										form-data-name="picture"
 									>
@@ -114,13 +115,18 @@
 											รูปทัมเนล
 										</div>
 									</vaadin-upload>
-									<input id="thumbnail" type="hidden" name="thumbnail">
+									<input id="thumbnail" type="hidden" name="thumbnail" value="">
 									<script>
 										var thumbnailUpload = document.querySelector('zone-add-page').querySelector('vaadin-upload#thumbnailUpload')
 										thumbnailUpload.addEventListener("upload-response", function(event) {
-											console.log(event);
-											document.querySelector('zone-add-page').querySelector('#thumbnail').value = event;
+											if(event.detail.file.xhr.status == 200){
+                        var name = JSON.parse(event.detail.xhr.responseText);
+                        document.querySelector('zone-add-page').querySelector('#thumbnail').value = name.results.thumbnail;
+                      }
 										});
+                    thumbnailUpload.addEventListener("upload-abort", function(event) {
+                      document.querySelector('zone-add-page').querySelector('#thumbnail').value = '';
+                    });
 									</script>
 								</div>
 							</div>
@@ -135,6 +141,7 @@
 										accept="image/*"
 										target="/upload/img/zones/banner"
 										method="POST"
+                    max-files="1"
 										headers="{'Authorization': 'JWT {{token}}'}"
 										form-data-name="picture"
 									>
@@ -143,6 +150,20 @@
 											แบรนเนอร์
 										</div>
 									</vaadin-upload>
+                  <input id="banner" type="hidden" name="banner" value="">
+                  <script>
+                    var thumbnailUpload = document.querySelector('zone-add-page').querySelector('vaadin-upload#bannerUpload')
+                    thumbnailUpload.addEventListener("upload-response", function(event) {
+                      if(event.detail.file.xhr.status == 200){
+                        var name = JSON.parse(event.detail.xhr.responseText);
+                        document.querySelector('zone-add-page').querySelector('#banner').value = name.results.thumbnail;
+                      }
+                    });
+                    thumbnailUpload.addEventListener("upload-abort", function(event) {
+                      document.querySelector('zone-add-page').querySelector('#banner').value = '';
+                    });
+                  </script>
+
 								</div>
 							</div>
 						</div>
@@ -222,15 +243,16 @@
       },
       _response: function(e) {
         if (e.detail.response.success) {
-          window.location = '/';
+        //window.location = '/zone';
         }
       },
       _reset: function(event) {
         this.$.form.reset();
       },
       _presubmit: function(event) {
-					this.$.form.request.body.locationLat = this.latitude;
-					this.$.form.request.body.locationLong = this.longitude;
+				this.$.form.request.body.locationLat = this.latitude;
+        this.$.form.request.body.locationLong = this.longitude;
+        console.log(this.$.form.request.body);
       }
     })
   </script>

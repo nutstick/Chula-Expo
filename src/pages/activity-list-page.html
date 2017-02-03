@@ -76,7 +76,6 @@
               <paper-button on-tap="_deleteClick">Delete</paper-button>
             </div>
           </div>
-				</div>
         </paper-card-item>
       </template>
       <paper-card-item-pagination page="{{page}}" page-size="{{pageSize}}" totalPages="[[totalPages]]"></paper-card-item-pagination>
@@ -87,6 +86,7 @@
         </div>
       </div>
       <activity-api id="activityAPI" activities="{{activities}}" error="{{error}}" start={{start}} end={end} page="[[page]]" page-size="[[pageSize]]" totalPages="{{totalPages}}"></activity-api>
+    </div>
   </template>
   <script>
     Polymer({

@@ -17,14 +17,14 @@
 
 <dom-module id="activity-show-page">
   <template>
-		<style is="custom-style" include="shared-styles">
+    <style is="custom-style" include="shared-styles">
       :host {
         @apply(--layout-vertical);
         @apply(--layout-center-center);
         padding-top: 20px;
       }
 
-			paper-card {
+      paper-card {
         width: 100%;
       }
 
@@ -72,54 +72,6 @@
         @apply(--layout-end-justified);
         margin-top: 10px;
       }
-
-			#main {
-        min-height: 800px;
-        margin: 0px;
-        padding: 0px;
-        display: flex;
-        flex-flow: row;
-			}
-
-			#main > #left {
-					margin: 4px;
-					flex: 3 1 70%;
-          min-width: 70%;
-					order: 1;
-			}
-
-			#main > #right {
-					margin: 4px;
-					flex: 3 1 30%;
-          min-width: 30%;
-					order: 2;
-			}
-
-			/* Too narrow to support three columns */
-			@media all and (max-width: 800px) {
-					#main {
-							flex-direction: column;
-					}
-
-					#main > #left, #main > #right {
-					/* Return them to document order */
-							order: 0;
-					}
-
-					#main > #left, #main > #right {
-							min-height: 50px;
-					}
-			}
-
-      paper-button > a {
-        color: #000;
-        text-decoration: none;
-        width: 100%;
-      }
-
-      .block {
-        border-top: 1px solid rgba(15,70,100,.12);
-      }
     </style>
 		<app-route
       route="{{route}}"
@@ -134,9 +86,9 @@
       headers='{"Authentication": "{{token}}"}'
       handle-as="json"
     ></iron-ajax>
-		<div id="main" class="container">
-			<paper-card id="left">
-        <div class="card-content">
+    <div class="container">
+      <paper-card>
+				<div class="card-content">
 					<!-- Thumbnail Upload -->
 					<div class="item">
 						<div class="flex-layout">
@@ -400,30 +352,8 @@
 						</div>
 					</div>
 				</div>
-			</paper-card>
-			<div id="right">
-				<h3>Round</h3>
-        <template is="dom-repeat" items="{{activities}}">
-          <div class="block">
-            <!--  action image="https://www.polymer-project.org/images/logos/p-logo.png" -->
-            <div class="card-item-header">
-              {{item.name.en}}
-            </div>
-            <div class="card-item-content">
-              {{item.shortDescription.en}}
-            </div>
-            <div class="card-item-actions">
-              <div class="horizontal justified">
-                <paper-button><a href="{{_computePathShow(item._id)}}">Show</a></paper-button>
-                <paper-button><a href="{{_computePathEdit(item._id)}}">Edit</a></paper-button>
-                <paper-button on-tap="_deleteClick">Delete</paper-button>
-              </div>
-            </div>
-          </div>
-        </template>
-        <activity-api id="activityAPI" activities="{{activities}}" error="{{error}}" page="1" page-size="100" totalPages="1"></activity-api>
-			</div>
-		</div>
+      </paper-card>
+    </div>
   </template>
   <script>
     Polymer({
@@ -445,33 +375,11 @@
         },
         activity: {
           type: Object,
-        },
-        page: {
-          type: Number
-        },
-        pageSize: {
-          type: Number
-        },
-        totalPages: {
-          type: Number,
-        },
-        error: {
-          type: Object,
-        },
-        activities: {
-          type: Array,
-          value: [],
-        },
+        }
       },
       observers: [
         '_routeIdChanged(routeData.activityId)',
       ],
-      _computePathShow: function(id) {
-					return '/activity/show/' + id;
-			},
-      _computePathEdit: function(id) {
-					return '/activity/edit/' + id;
-			},
       _routeIdChanged: function(activityId) {
         if(!!activityId){
           this.urlId = `/api/activities/${activityId}`;

@@ -97,9 +97,9 @@
 									</vaadin-upload>
 									<input id="thumbnail" type="hidden" name="thumbnail">
 									<script>
-										var thumbnailUpload = document.querySelector('vaadin-upload#thumbnailUpload')
+										var thumbnailUpload = document.querySelector('activity-add-page').querySelector('vaadin-upload#thumbnailUpload')
 										thumbnailUpload.addEventListener("upload-response", function(event) {
-											document.querySelector('#thumbnail').value = event;
+											document.querySelector('activity-add-page').querySelector('#thumbnail').value = event;
 										});
 									</script>
 								</div>
