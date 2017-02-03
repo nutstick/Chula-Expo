@@ -75,6 +75,8 @@ app.use(favicon(path.join(__dirname, '/public/favicon.ico')));
 // Set '/public' as static Routes
 // app.use('/public', express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
 app.use(express.static(__dirname, { maxAge: 31557600000 }));
+// Error Foramt send
+app.use(require('./tools/sendError'));
 
 /**
  * Route

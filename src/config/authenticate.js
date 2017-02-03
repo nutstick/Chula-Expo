@@ -1,5 +1,4 @@
 const passport = require('passport');
-const retrieveError = require('../tools/retrieveError');
 
 module.exports = {
   isAuthenticated: (req, res, next) => {
@@ -10,15 +9,12 @@ module.exports = {
   },
 
   isAuthenticatedByToken: (req, res, next) => {
-    passport.authenticate('jwt', (err, user, info) => {
+    passport.authenticate('jwt', (err, user) => {
       if (err) {
-        return next(err);
+        return res.sendError(5, err);
       }
       if (!user) {
-        return res.status(401).json({
-          success: false,
-          errors: retrieveError(22, err)
-        });
+        return res.sendError(4);
       }
       req.logIn(user, { session: false }, (err) => {
         if (err) {
@@ -30,18 +26,18 @@ module.exports = {
   },
 
   isAdmin: (req, res, next) => {
-    if (req.user && req.user.admin === 'Admin') {
+    if (req.user && req.user.type === 'Staff' && req.user.staff.staffType === 'Admin') {
       next();
     } else {
-      res.send(401, 'Unauthorized');
+      res.sendError(4);
     }
   },
 
   isStaff: (req, res, next) => {
-    if (req.user && (req.user.admin === 'Staff' || req.user.admin === 'Admin')) {
+    if (req.user && req.user.type === 'Staff' && req.user.staff.staffType === 'Staff') {
       next();
     } else {
-      res.send(401, 'Unauthorized');
+      res.sendError(4);
     }
   },
 };

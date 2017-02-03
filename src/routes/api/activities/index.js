@@ -1,7 +1,6 @@
 const express = require('express');
 const Activity = require('../../../models/Activity');
 const _ = require('lodash');
-const retrieveError = require('../../../tools/retrieveError');
 const RangeQuery = require('../../../tools/RangeQuery');
 
 const router = express.Router();
@@ -124,10 +123,7 @@ router.get('/', (req, res) => {
 
   query.exec((err, _act) => {
     if (err) {
-      res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err)
-      });
+      res.sendError(5, err);
     }
     res.status(200).json({
       success: true,
@@ -162,16 +158,10 @@ router.get('/:id', (req, res) => {
   Activity.findById(req.params.id).select(fields).exec((err, act) => {
     if (err) {
       // Handle error from User.findById
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err)
-      });
+      return res.sendError(5, err);
     }
     if (!act) {
-      return res.status(403).json({
-        success: false,
-        results: retrieveError(25)
-      });
+      return res.sendError(25);
     }
     return res.status(200).json({
       success: true,
@@ -184,7 +174,7 @@ router.get('/:id', (req, res) => {
  * Create a new activity
  * Access at POST http://localhost:8080/api/activities
  */
-router.post('/', (req, res, next) => {
+router.post('/', (req, res) => {
   // Create a new instance of the User model
   const activity = new Activity();
 
@@ -216,10 +206,7 @@ router.post('/', (req, res, next) => {
   activity.save((err, _act) => {
     if (err) {
       // Handle error from
-      return res.status(500).json({
-        success: false,
-        results: retrieveError(5, err)
-      });
+      return res.sendError(5, err);
     }
 
     res.status(200).json({
@@ -243,16 +230,10 @@ router.put('/:id', (req, res) => {
   Activity.findById(req.params.id, (err, act) => {
     if (err) {
       // Handle error from User.findById
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err)
-      });
+      return res.sendError(5, err);
     }
     if (!act) {
-      res.status(403).json({
-        success: false,
-        results: retrieveError(25)
-      });
+      res.sendError(25);
     }
     _.assignIn(act, updateFields);
     act.name.en = req.body.nameEN;
@@ -270,10 +251,7 @@ router.put('/:id', (req, res) => {
     act.save((err, updatedAct) => {
       if (err) {
         // Handle error from save
-        return res.status(500).json({
-          success: false,
-          errors: retrieveError(5, err)
-        });
+        return res.sendError(5, err);
       }
       res.status(200).json({
         success: true,
@@ -288,10 +266,7 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
   Activity.findByIdAndRemove(req.params.id, (err) => {
     if (err) {
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
     return res.status(202).json({
       success: true,
