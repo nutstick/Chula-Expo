@@ -9,6 +9,7 @@
       auto
       id="activityResource"
       url="/api/activities"
+      headers="{{headers}}"
       params="{{params}}"
       on-response="_handleResponse"
       handle-as="json"
@@ -30,7 +31,7 @@
         headers: {
           type: Object,
           value: {
-            Authentication: document.querySelector('chulaexpo-staff-app').token
+            'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
           }
         },
         page: {
@@ -52,14 +53,20 @@
       },
 
       observers: [
-        '_updateRequest(page, pageSize)'
+        '_updateRequest(page, pageSize, start, end, zone)'
       ],
 
-      _updateRequest: function(page, pageSize, start, end) {
-        this.set('params.limit', pageSize);
-        this.set('params.skip', (page - 1) * pageSize);
-        //this.set('params.start', start);
-        //this.set('params.end', end);
+      _updateRequest: function(page, pageSize, start, end, zone) {
+        if (pageSize === 0) {
+          this.set('params.limit', null);
+          this.set('params.skip', page);
+        } else {
+          this.set('params.limit', pageSize);
+          this.set('params.skip', (page - 1) * pageSize);
+        }
+        this.set('params.start', start);
+        this.set('params.end', end);
+        this.set('params.zone', zone);
       },
       generateRequest: function() {
          this.$.activityResource.generateRequest();

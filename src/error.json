@@ -9,6 +9,11 @@
     "message": "Email or Passowrd missing",
     "code": "2"
   },
+  "4": {
+    "status": "401",
+    "message": "Unauthorize.",
+    "code": "4"
+  },
   "5": {
     "status": "500",
     "message": "Internal Error",
@@ -28,11 +33,6 @@
     "status": "400",
     "message": "Invalid Registration code for `Scanner`",
     "code": "13"
-  },
-  "22": {
-    "status": "401",
-    "message": "Unauthorize.",
-    "code": "22"
   },
   "23": {
     "status": "401",

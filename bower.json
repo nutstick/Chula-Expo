@@ -64,6 +64,7 @@
     "paper-datatable-api": "^0.2.7",
     "vaadin-combo-box": "^1.2.0",
     "mn-paper-datetime-picker": "^1.1.4",
-    "paper-dialog": "^1.1.0"
+    "paper-dialog": "^1.1.0",
+    "paper-date-picker-item": "^1.2.1"
   }
 }

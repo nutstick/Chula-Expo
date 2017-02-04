@@ -4,21 +4,22 @@
 <link rel="import" href="/public/lib/paper-card/paper-card.html">
 <link rel="import" href="/public/lib/paper-fab/paper-fab.html">
 <link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="/public/lib/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="/public/lib/paper-date-picker-item/paper-datetime-picker-item.html">
 <link rel="import" href="/public/lib/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="/public/lib/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="/public/lib/paper-menu/paper-menu.html">
 <link rel="import" href="/public/lib/paper-item/paper-item.html">
 <link rel="import" href="/public/lib/paper-styles/shadow.html">
 <link rel="import" href="/public/lib/paper-dialog/paper-dialog.html">
+<link rel="import" href="/public/lib/vaadin-combo-box/vaadin-combo-box.html">
 
-
-<link rel="import" href="/pages/activity-view-page.html">
 <link rel="import" href="/components/activity-api.html">
+<link rel="import" href="/components/zone-api.html">
 <link rel="import" href="/components/paper-card-item.html">
-<link rel="import" href="/components/paper-card-item-header.html">
 <link rel="import" href="/components/paper-card-item-pagination.html">
 <link rel="import" href="/components/shared-styles.html">
 
+<script src="/public/lib/moment/locale/th.js"></script>
 <dom-module id="activity-list-page">
   <template>
     <style is="custom-style" include="shared-styles">
@@ -61,9 +62,57 @@
         text-decoration: none;
         width: 100%;
       }
+      #card-item-header {
+        @apply(--layout-horizontal);
+        @apply(--layout-justified);
+      }
+      #card-item-header > .right,
+      #card-item-header > .left {
+        @apply(--layout-horizontal);
+      }
+      .text-between {
+        margin: 0 6px;
+        line-height: 48px;
+      }
     </style>
     <div class="container">
-      <paper-card-item-header start={{start}} end={{end}}></paper-card-item-header>
+      <activity-api
+        activities="{{activities}}"
+        error="{{error}}"
+        zone="{{zone}}"
+        start="{{start}}"
+        end="{{end}}"
+        page="[[page]]"
+        page-size="[[pageSize]]"
+        totalPages="{{totalPages}}"
+      ></activity-api>
+      <zone-api
+        zones="{{zones}}"
+        error="{{error}}"
+        loading="{{zoneLoading}}"
+        page="0"
+        page-size="0"
+        fields="_id,nameEN"
+      ></zone-api>
+      <paper-card-item action>
+        <div id="card-item-header" class="card-item-content">
+          <div class="left">
+            <vaadin-combo-box
+              label="สังกัด"
+              items="{{zones}}"
+              item-value-path="_id"
+              item-label-path="name.en"
+              value="{{zone}}"
+              always-float-label
+            ></vaadin-combo-box>
+          </div>
+          <div class="right">
+            <paper-datetime-picker-item locale="[[locale]]" placeholder="เวลาเริ่ม" date={{start}} defaultTime="08:00"></paper-datetime-picker-item>
+            <div class="text-between">-</div>
+            <paper-datetime-picker-item locale="[[locale]]" placeholder="เวลาจบ" date={{end}} defaultTime="08:00"></paper-datetime-picker-item>
+          </div>
+        </div>
+      </paper-card-item>
       <template is="dom-repeat" items="{{activities}}">
         <paper-card-item action image="https://www.polymer-project.org/images/logos/p-logo.png">
           <div class="card-item-header">
@@ -88,7 +137,6 @@
           <div class="clearfix"></div>
         </div>
       </div>
-      <activity-api id="activityAPI" activities="{{activities}}" error="{{error}}" start="{{start}}" end="{{end}}" page="[[page]]" page-size="[[pageSize]]" totalPages="{{totalPages}}"></activity-api>
     </div>
     <paper-dialog id="dialog" on-iron-overlay-closed="_delete">
       <h2>Are you sure?</h2>
@@ -118,6 +166,10 @@
           type: Array,
           value: [],
         },
+        locale: {
+          type: String,
+          value: moment.locale('th')
+        }
       },
       _showClick: function(id) {
         var id = event.model.item['_id'];

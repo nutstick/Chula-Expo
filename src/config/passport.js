@@ -115,7 +115,8 @@ module.exports = {
     passport.use(new FacebookTokenStrategy({
       clientID: process.env.FACEBOOK_ID,
       clientSecret: process.env.FACEBOOK_SECRET,
-    }, (accessToken, refreshToken, profile, done) => {
+      passReqToCallback: true
+    }, (req, accessToken, refreshToken, profile, done) => {
       if (req.user) {
         User.findOne({ facebook: profile.id }, (err, existingUser) => {
           if (err) { return done(err); }

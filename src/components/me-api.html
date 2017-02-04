@@ -3,12 +3,11 @@
 <!-- Web Component -->
 <link rel="import" href="/public/lib/iron-ajax/iron-ajax.html">
 
-<dom-module id="zone-api">
+<dom-module id="me-api">
   <template>
     <iron-ajax
-      auto
-      id="zoneResource"
-      url="/api/zones"
+      auto="{{auto}}"
+      url="/api/me"
       params="{{params}}"
       on-response="_handleResponse"
       headers="{{headers}}"
@@ -18,39 +17,33 @@
   </template>
   <script>
     Polymer({
-      is: 'zone-api',
+      is: 'me-api',
       properties: {
         params: {
           type: Object,
           value: {
-            fields: 'nameEN,thumbnail,shortNameEN,type',
+            fields: 'name,profile,type,staff',
             limit: 0,
             skip: 0
           }
         },
         headers: {
           type: Object,
-          value: {
-            Authorization: document.querySelector('chulaexpo-staff-app').token
-          }
+          value: {}
         },
-        page: {
-          type: Number
-        },
-        pageSize: {
-          type: Number
+        auto: {
+          type: Boolean,
+          value: false,
         },
         token: {
           type: String,
-          value: document.querySelector('chulaexpo-staff-app').token
-        },
-        zones: {
-          type: Array,
-          value: [],
-          notify: true,
         },
         fields: {
           type: String,
+        },
+        me: {
+          type: Object,
+          notify: true,
         },
         loading: Boolean,
         error: {
@@ -60,20 +53,23 @@
       },
 
       observers: [
-        '_updateRequest(page, pageSize, fields)'
+        '_updateToken(token)',
+        '_updateRequest(fields)'
       ],
 
-      _updateRequest: function(page, pageSize, fields) {
-        this.set('params.limit', pageSize);
-        this.set('params.skip', (page - 1) * pageSize);
-        this.set('params.fields', fields)
+      _updateToken: function(token) {
+        this.set('auto', !!token);
+        if (!token) return;
+        this.headers = {
+          'Authorization': 'JWT ' + token
+        };
       },
-      generateRequest: function() {
-         this.$.zoneResource.generateRequest();
+      _updateRequest: function(fields) {
+        this.set('params.fields', fields);
       },
       _handleResponse: function(event) {
         if (event.detail.response.success) {
-          this.zones = event.detail.response.results;
+          this.me = event.detail.response.results;
         } else {
           this.error = event.detail.response.errors;
         }

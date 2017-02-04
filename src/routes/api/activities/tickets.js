@@ -1,7 +1,6 @@
 const express = require('express');
 const { Ticket } = require('../../../models');
 const { isAuthenticatedByToken, isStaff } = require('../../../config/authenticate');
-const { retrieveError } = require('../../../tools');
 
 const router = express.Router();
 
@@ -10,10 +9,7 @@ router.use(isAuthenticatedByToken, isStaff);
 router.get('/', (req, res) => {
   Ticket.find({ round: req.params.rid }, (err, tickets) => {
     if (err) {
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
     res.json({
       success: true,
@@ -25,16 +21,10 @@ router.get('/', (req, res) => {
 router.get('/:tid', (req, res) => {
   Ticket.findById(req.param.tid, (err, ticket) => {
     if (err) {
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
     if (!ticket) {
-      return res.status(403).json({
-        success: false,
-        error: retrieveError(27),
-      });
+      return res.sendError(27);
     }
     res.json({
       success: true,
@@ -58,14 +48,8 @@ router.delete('/:tid', (req, res) => {
     })
     .catch((err) => {
       if (err.code) {
-        return res.status(retrieveError(err.code).status).json({
-          success: false,
-          errors: retrieveError(err.code),
-        });
+        return res.sendError(err.code);
       }
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     });
 });
