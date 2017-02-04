@@ -29,9 +29,6 @@
       .item {
         margin-bottom: 10px;
       }
-      .form-title {
-        margin-bottom: 20px;
-      }
 
       .avatar {
         display: inline-block;
@@ -71,7 +68,7 @@
         margin-top: 10px;
       }
     </style>
-		<app-route
+    <app-route
       route="{{route}}"
       pattern="/:zoneId"
       data="{{routeData}}"
@@ -106,27 +103,8 @@
 					<div class="item">
 						<div class="flex-layout">
 							<label class="label --upload">Thumbnail</label>
-							<div class="flex">
-								<vaadin-upload
-									id="thumbnailUpload"
-									accept="image/*"
-									target="/upload/img/zones/thumbnail"
-									method="POST"
-									headers="{'Authorization': 'JWT {{token}}'}"
-									form-data-name="picture"
-								>
-									<div class="drop-label">
-										<iron-icon icon="image:collections"></iron-icon>
-										รูปทัมเนล
-									</div>
-								</vaadin-upload>
-								<input id="thumbnail" type="hidden" name="thumbnail">
-								<script>
-									var thumbnailUpload = document.querySelector('zone-show-page').querySelector('vaadin-upload#thumbnailUpload');
-									thumbnailUpload.addEventListener("upload-response", function(event) {
-										document.querySelector('zone-show-page').querySelector('#thumbnail').value = event;
-									});
-								</script>
+							<div class="flex" style="display: inline-block">
+                <iron-image style="width:140px; height:80px;" sizing="cover" preload fade src="{{zone.thumbnail}}"></iron-image>
 							</div>
 						</div>
 					</div>
@@ -134,20 +112,8 @@
 					<div class="item">
 						<div class="flex-layout">
 							<label class="label --upload">Banner</label>
-							<div class="flex">
-								<vaadin-upload
-									id="bannerUpload"
-									accept="image/*"
-									target="/upload/img/zones/banner"
-									method="POST"
-									headers="{'Authorization': 'JWT {{token}}'}"
-									form-data-name="picture"
-								>
-									<div class="drop-label">
-										<iron-icon icon="image:collections"></iron-icon>
-										แบรนเนอร์
-									</div>
-								</vaadin-upload>
+              <div class="flex" style="display: inline-block">
+                <iron-image style="width:200px; height:150px;" sizing="cover" preload fade src="{{zone.banner}}"></iron-image>
 							</div>
 						</div>
 					</div>
@@ -162,11 +128,11 @@
 				</div>
 				<div class="card-content">
 					<!-- Thai Language -->
-					<div class="flex-layout center form-title">
+					<div class="flex-layout center">
 						<div class="avatar" item-icon><img src="/public/img/th.png" /></div>
 						<div class="flex company">ภาษาไทย</div>
 					</div>
-					
+
 					<div class="item">
             <label class="label --input">ชื่อ</label>
             <div class="flex" style="display: inline-block">
@@ -194,7 +160,7 @@
 				</div>
 				<div class="card-content">
 					<!-- English Language -->
-					<div class="flex-layout center form-title">
+					<div class="flex-layout center">
 						<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
 						<div class="flex company">English</div>
 					</div>
@@ -232,7 +198,7 @@
       is: 'zone-show-page',
       properties: {
 				urlId: {
-          type: Object,
+          type: String,
           value: ''
         },
         token: {
@@ -242,9 +208,6 @@
           type: Number,
           value: 16
         },
-        route: {
-          type: String,
-        },
 				zone: {
 					type: Object
 				}
@@ -252,11 +215,14 @@
       observers: [
         '_routeIdChanged(routeData.zoneId)',
       ],
-      _routeIdChanged: function(zoneId) {
-        if(!!zoneId){
-          this.urlId = `/api/zones/${zoneId}`;
-          this.$.zoneGetId.generateRequest();
+      _routeIdChanged: function(id) {
+        if(!!id) {
+          this.urlId = `/api/zones/${id}`;
+          this.generateRequest();
         }
+      },
+      generateRequest: function(){
+        this.$.zoneGetId.generateRequest();
       },
       _delayedSubmit: function(event) {
         var form = this.$.form;
@@ -271,7 +237,7 @@
       _response: function(e) {
 				if (e.detail.response.success) {
           window.location = '/zone/show/' + this.routeData.zoneId;
-        }      
+        }
 			},
       _presubmit: function(event) {
 				this.$.form.request.method = 'put';

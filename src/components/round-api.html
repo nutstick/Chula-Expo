@@ -1,0 +1,64 @@
+<!-- Libery -->
+<link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="/public/lib/iron-ajax/iron-ajax.html">
+
+<dom-module id="round-api">
+  <template>
+    <iron-ajax
+      auto
+      id="roundResource"
+      url="{{url}}"
+      params="{{params}}"
+      on-response="_handleResponse"
+      handle-as="json"
+      debounce-duration="300"
+    ></iron-ajax>
+  </template>
+  <script>
+    Polymer({
+      is: 'round-api',
+      properties: {
+        url: {
+          type: String,
+        },
+        params: {
+          type: Object,
+          value: {
+            fields: 'nameEN,start,end,seatsReserved,seatsFullCapacity',
+            limit: 0,
+            skip: 0
+          }
+        },
+        headers: {
+          type: Object,
+          value: {
+            Authentication: document.querySelector('chulaexpo-staff-app').token
+          }
+        },
+        rounds: {
+          type: Array,
+          value: [],
+          notify: true,
+        },
+        loading: Boolean,
+        error: {
+          type: Object,
+          value: {}
+        }
+      },
+      generateRequest: function() {
+         this.$.roundResource.generateRequest();
+      },
+      _handleResponse: function(event) {
+        if(!!event.detail.response) {
+          if (event.detail.response.success) {
+            this.rounds = event.detail.response.results;
+          } else {
+            this.error = event.detail.response.errors;
+          }
+        }
+      }
+    });
+  </script>
+</dom-module>

@@ -4,7 +4,7 @@ const { isAuthenticatedByToken } = require('../../../config/authenticate');
 const retrieveError = require('../../../tools/retrieveError');
 const RangeQuery = require('../../../tools/RangeQuery');
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 /**
  * Get Rounds list of specific activity
@@ -12,13 +12,13 @@ const router = express.Router();
  * @param {string} [name] - Get by name.
  * @param {Date | RangeQuery<Date>} [start] - Get by start time.
  * @param {Date | RangeQuery<Date>} [end] - Get by end time.
- * @param {number | RangeQuery<number>} [avaliableSeats] - Get by avaliable seats.
+ * @param {number | RangeQuery<number>} [seatsAvaliable] - Get by avaliable seats.
  * @param {string} [sort] - Sort fields (ex. "-start,+createAt").
  * @param {string} [fields] - Fields selected (ex. "name,fullCapacity").
  * @param {number} [limit] - Number of limit per query.
  * @param {number} [skip=0] - Offset documents.
  *
- * Accessible fields { name, activityId, start, end, fullCapacity, avaliableSeats, reservedSeats }
+ * Accessible fields { name, activityId, start, end, fullCapacity, seatsAvaliable, reservedSeats }
  *
  * @return {boolean} success - Successful querying flag.
  * @return {Round[]} results - Result rounds for the query.
@@ -30,33 +30,24 @@ const router = express.Router();
  */
 router.get('/', (req, res) => {
   const filter = {};
-  // Round's start time range query
-  if (req.query.name) {
-    filter.name = req.query.name;
-  }
-  // Round's start time range query
-  if (req.query.start) {
-    filter.start = RangeQuery(JSON.parse(req.query.start), 'Date');
-  }
-  // Round's end time range query
-  if (req.query.end) {
-    filter.end = RangeQuery(JSON.parse(req.query.end), 'Date');
-  }
-  // Avaliable seats range query
-  if (req.query.avaliableSeats) {
-    filter['seats.avaliable'] = RangeQuery(JSON.parse(req.query.avaliableSeats), 'number');
-  }
+
   // Sorting query
   if (req.query.sort) {
     filter.sort = req.query.sort.split(',').reduce((prev, sortQuery) => {
       let sortFields = sortQuery.substr(1);
-      if (sortFields === 'fullCapacity') {
-        sortFields = 'seats.capacity';
+      if (sortFields === 'nameEN') {
+        sortFields = 'name.en';
       }
-      if (sortFields === 'reservedSeats') {
+      if (sortFields === 'nameTH') {
+        sortFields = 'name.th';
+      }
+      if (sortFields === 'seatsFullCapacity') {
+        sortFields = 'seats.fullCapacity';
+      }
+      if (sortFields === 'seatsReserved') {
         sortFields = 'seats.reserved';
       }
-      if (sortFields === 'avaliableSeats') {
+      if (sortFields === 'seatsAvaliable') {
         sortFields = 'seats.avaliable';
       }
 
@@ -68,55 +59,44 @@ router.get('/', (req, res) => {
       return prev;
     }, {});
   }
-  // Limit query
-  if (req.query.limit) {
-    filter.limit = Number.parseInt(req.query.limit, 10);
-  }
-  // Skip query
-  if (req.query.skip) {
-    filter.skip = Number.parseInt(req.query.skip, 10);
-  }
+
   // Fields selecting query
   if (req.query.fields) {
     filter.fields = req.query.fields.split(',').map((field) => {
-      if (field === 'fullCapacity') {
-        return 'seats.capacity';
+      if (field === 'nameTH') {
+        return 'name.th';
       }
-      if (field === 'reservedSeats') {
+      if (field === 'nameEN') {
+        return 'name.en';
+      }
+      if (field === 'seatsFullCapacity') {
+        return 'seats.fullCapacity';
+      }
+      if (field === 'seatsReserved') {
         return 'seats.reserved';
       }
-      if (field === 'avaliableSeats') {
+      if (field === 'seatsAvaliable') {
         return 'seats.avaliable';
       }
       return field;
     }).join(' ');
   }
-  Activity
-    .findRoundByActivityId(req.params.id, filter)
-    .then((results) => {
-      res.json({
-        success: true,
-        results: results.rounds,
-        queryInfo: {
-          total: results.count,
-          limit: results.limit,
-          skip: results.skip,
-          activity: req.params.id,
-        }
-      });
-    })
-    .catch((err) => {
-      if (err.code) {
-        return res.status(retrieveError(err.code).status).json({
-          success: false,
-          errors: retrieveError(err.code),
-        });
-      }
+
+  filter.find = {};
+  filter.find.activityId = req.params.id;
+  Round.find(filter.find).select(filter.fields).exec((err, rounds) => {
+    if (err) {
+      // Handle error from User.findById
       return res.status(500).json({
         success: false,
-        errors: retrieveError(5, err),
+        errors: retrieveError(5, err)
       });
+    }
+    return res.status(200).json({
+      success: true,
+      results: rounds
     });
+  });
 });
 
 /**
@@ -135,10 +115,10 @@ router.post('/', (req, res) => {
   // Create a new instance of the User model
   const round = new Round();
   // Validate required field from body
-  if (req.body.name &&
-    req.body.start && req.body.end && req.body.fullCapacity) {
+  if (req.body.nameEN &&
+    req.body.start && req.body.end && req.body.seatsFullCapacity) {
     // Check exist target activity input
-    Activity.findById(req.param.id, (err, activitiy) => {
+    Activity.findById(req.params.id, (err, activitiy) => {
       // Handle error from Activity.findById
       if (err) {
         return res.status(500).json({
@@ -155,14 +135,15 @@ router.post('/', (req, res) => {
       }
 
       // Set field value (comes from the request)
-      round.activityId = req.param.id;
-      round.name = req.body.name;
+      round.activityId = req.params.id;
+      round.name.th = req.body.nameTH;
+      round.name.en = req.body.nameEN;
       round.start = new Date(req.body.start);
       round.end = new Date(req.body.end);
       // round.tickets = [];
-      round.seats.fullCapacity = req.body.fullCapacity;
-      if (req.body.reservedSeats) {
-        round.seats.reserved = req.body.reservedSeats;
+      round.seats.fullCapacity = req.body.seatsFullCapacity;
+      if (req.body.seatsReserved) {
+        round.seats.reserved = req.body.seatsReserved;
       }
 
       // Save Round and check for error
@@ -203,13 +184,13 @@ router.get('/:rid', (req, res) => {
   // Fields selecting query
   if (req.query.fields) {
     fields = req.query.fields.split(',').map((field) => {
-      if (field === 'fullCapacity') {
+      if (field === 'seatsFullCapacity') {
         return 'seats.capacity';
       }
       if (field === 'reservedSeats') {
         return 'seats.reserved';
       }
-      if (field === 'avaliableSeats') {
+      if (field === 'seatsAvaliable') {
         return 'seats.avaliable';
       }
       return field;

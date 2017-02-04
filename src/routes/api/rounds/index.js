@@ -14,13 +14,13 @@ const router = express.Router();
  * @param {ObjectId} [ticketId] - Get round of ticket.
  * @param {Date | RangeQuery<Date>} [start] - Get by start time.
  * @param {Date | RangeQuery<Date>} [end] - Get by end time.
- * @param {number | RangeQuery<number>} [avaliableSeats] - Get by avaliable seats.
+ * @param {number | RangeQuery<number>} [seatsAvaliable] - Get by avaliable seats.
  * @param {string} [sort] - Sort fields (ex. "-start,+createAt").
  * @param {string} [fields] - Fields selected (ex. "name,fullCapacity").
  * @param {number} [limit] - Number of limit per query.
  * @param {number} [skip=0] - Offset documents.
  *
- * Accessible fields { name, activityId, start, end, fullCapacity, avaliableSeats, reservedSeats }
+ * Accessible fields { name, activityId, start, end, fullCapacity, seatsAvaliable, seatsReserved }
  *
  * @return {boolean} success - Successful querying flag.
  * @return {Round[]} results - Result rounds from the query.
@@ -53,8 +53,8 @@ router.get('/', (req, res) => {
     filter.end = RangeQuery(JSON.parse(req.query.end), 'Date');
   }
   // Avaliable seats range query
-  if (req.query.avaliableSeats) {
-    filter['seats.avaliable'] = RangeQuery(JSON.parse(req.query.avaliableSeats), 'number');
+  if (req.query.seatsAvaliable) {
+    filter['seats.avaliable'] = RangeQuery(JSON.parse(req.query.seatsAvaliable), 'number');
   }
   // Sorting query
   if (req.query.sort) {
@@ -210,7 +210,7 @@ router.get('/', (req, res) => {
  * @param {ObjectId} activityId - Related activity id.
  * @param {Date} start - Start time of round.
  * @param {Date} end - End time of round.
- * @param {number} [reservedSeats] - Number of reserved seats.
+ * @param {number} [seatsReserved] - Number of reserved seats.
  * @param {number} fullCapacity - Number of full capacity seats.
  *
  * @return {boolean} success - Successful querying flag.
@@ -220,8 +220,8 @@ router.post('/', (req, res) => {
   // Create a new instance of the User model
   const round = new Round();
   // Validate required field from body
-  if (req.body.activityId && req.body.name &&
-    req.body.startTime && req.body.endTime && req.body.seatsFullCapacity) {
+  if (req.body.activityId && req.body.nameTH &&
+    req.body.start && req.body.end && req.body.seatsFullCapacity) {
     // Check exist target activity input
     Activity.findById(req.body.activityId, (err, activitiy) => {
       // Handle error from Activity.findById
@@ -241,15 +241,17 @@ router.post('/', (req, res) => {
 
       // Set field value (comes from the request)
       round.activityId = req.body.activityId;
-      round.name = req.body.name;
-      round.startTime = new Date(req.body.startTime, (5, 5));
-      round.endTime = new Date(req.body.endTime);
+      round.name.th = req.body.nameTH;
+      round.name.en = req.body.nameEN;
+      round.start = new Date(req.body.start, (5, 5));
+      round.end = new Date(req.body.end);
       // round.tickets = [];
       round.seats.fullCapacity = req.body.seatsFullCapacity;
       if (req.body.seatsReserved) {
         round.seats.reserved = req.body.seatsReserved;
       }
       round.seats.avaliable = req.body.seatsAvaliable;
+
 
       // Save Round and check for error
       round.save((err, _round) => {
@@ -332,7 +334,7 @@ router.get('/:id', (req, res) => {
  * @param {string} [name] - Round name.
  * @param {Date} [start] - Start time of round.
  * @param {Date} [end] - End time of round.
- * @param {number} [reservedSeats] - Number of reserved seats.
+ * @param {number} [seatsReserved] - Number of reserved seats.
  * @param {number} [fullCapacity] - Number of full capacity seats.
  *
  * @return {boolean} success - Successful updating flag.

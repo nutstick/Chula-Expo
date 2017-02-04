@@ -31,9 +31,6 @@
       .item {
         margin-bottom: 10px;
       }
-      .form-title {
-        margin-bottom: 20px;
-      }
 
       .avatar {
         display: inline-block;
@@ -73,7 +70,7 @@
         margin-top: 10px;
       }
     </style>
-		<app-route
+    <app-route
       route="{{route}}"
       pattern="/:activityId"
       data="{{routeData}}"
@@ -96,11 +93,13 @@
 							<div class="flex-layout">
 								<label class="label --upload">Thumbnail</label>
 								<div class="flex">
+									<iron-image style="width:140px; height:80px;" sizing="cover" preload fade src="{{activity.thumbnail}}"></iron-image>
 									<vaadin-upload
 										id="thumbnailUpload"
 										accept="image/*"
 										target="/upload/img/activities/thumbnail"
 										method="POST"
+                    max-files="1"
 										headers="{'Authorization': 'JWT {{token}}'}"
 										form-data-name="picture"
 									>
@@ -109,12 +108,18 @@
 											รูปทัมเนล
 										</div>
 									</vaadin-upload>
-									<input id="thumbnail" type="hidden" name="thumbnail">
+                  <input id="thumbnail" type="hidden" name="thumbnail" value="">
 									<script>
-										var thumbnailUpload = document.querySelector('activity-edit-page').querySelector('vaadin-upload#thumbnailUpload');
+										var thumbnailUpload = document.querySelector('activity-edit-page').querySelector('vaadin-upload#thumbnailUpload')
 										thumbnailUpload.addEventListener("upload-response", function(event) {
-											document.querySelector('activity-edit-page').querySelector('#thumbnail').value = event;
+											if(event.detail.file.xhr.status == 200){
+                        var name = JSON.parse(event.detail.xhr.responseText);
+                        document.querySelector('activity-edit-page').querySelector('#thumbnail').value = name.results.thumbnail;
+                      }
 										});
+                    thumbnailUpload.addEventListener("upload-abort", function(event) {
+                      document.querySelector('activity-edit-page').querySelector('#thumbnail').value = '';
+                    });
 									</script>
 								</div>
 							</div>
@@ -124,9 +129,11 @@
 							<div class="flex-layout">
 								<label class="label --upload">Banner</label>
 								<div class="flex">
+                  <iron-image style="width:200px; height:150px;" sizing="cover" preload fade src="{{activity.banner}}"></iron-image>
 									<vaadin-upload
 										id="bannerUpload"
 										accept="image/*"
+                    max-files="1"
 										target="/upload/img/activities/banner"
 										method="POST"
 										headers="{'Authorization': 'JWT {{token}}'}"
@@ -137,6 +144,19 @@
 											แบรนเนอร์
 										</div>
 									</vaadin-upload>
+                  <input id="banner" type="hidden" name="banner" value="">
+                  <script>
+                    var bannerUpload = document.querySelector('activity-edit-page').querySelector('vaadin-upload#bannerUpload')
+                    bannerUpload.addEventListener("upload-response", function(event) {
+                      if(event.detail.file.xhr.status == 200){
+                        var name = JSON.parse(event.detail.xhr.responseText);
+                        document.querySelector('activity-edit-page').querySelector('#banner').value = name.results.thumbnail;
+                      }
+                    });
+                    bannerUpload.addEventListener("upload-abort", function(event) {
+                      document.querySelector('activity-edit-page').querySelector('#banner').value = '';
+                    });
+                  </script>
 								</div>
 							</div>
 						</div>
@@ -145,13 +165,13 @@
 							<div>
 								<label class="label --input">Start Time</label>
 								<div class="flex" style="display: inline-block">
-									<datetime-local-input name="startTime" label="" no-label-float="true"></datetime-local-input>
+									<datetime-local-input name="start" label="" no-label-float="true"></datetime-local-input>
 								</div>
 							</div>
 							<div>
 								<label class="label --input">End Time</label>
 								<div class="flex" style="display: inline-block">
-									<datetime-local-input name="endTime" label="" no-label-float="true" required></datetime-local-input>
+									<datetime-local-input name="end" label="" no-label-float="true" required></datetime-local-input>
 								</div>
 							</div>
 						</div>
@@ -169,19 +189,19 @@
 							<div>
 								<label class="label --input">Video Url</label>
 								<div class="flex" style="display: inline-block">
-									<paper-input type="text" value="{{activity.video}}" name="video" label="" no-label-float="true" required></paper-input>
+									<paper-input type="text" value="{{activity.video}}" name="video" label="" no-label-float="true"></paper-input>
 								</div>
 							</div>
 							<div>
 								<label class="label --input">PDF Url</label>
 								<div class="flex" style="display: inline-block">
-									<paper-input type="text" value="{{activity.pdf}}" name="pdf" label="" no-label-float="true" required></paper-input>
+									<paper-input type="text" value="{{activity.pdf}}" name="pdf" label="" no-label-float="true"></paper-input>
 								</div>
 							</div>
 							<div>
 								<label class="label --input">Link</label>
 								<div class="flex" style="display: inline-block">
-									<paper-input type="text" value="{{activity.link}}" name="link" label="" no-label-float="true" required></paper-input>
+									<paper-input type="text" value="{{activity.link}}" name="link" label="" no-label-float="true"></paper-input>
 								</div>
 							</div>
 
@@ -191,74 +211,86 @@
 						<div class="item">
 							<label class="label --upload">Zone</label>
 							<div class="flex" style="display: inline-block">
-								<paper-autocomplete name="zone" label="Zone" id="input-zone" no-label-float="true" remote-source="true"></paper-autocomplete>
+                <vaadin-combo-box name="zone" id="input-zone" class="elements-box" no-label-float="true" item-label-path="name" item-value-path="value" value="{{activity.zone}}" required></vaadin-combo-box>
 							</div>
-							<script>
-								document.querySelector('activity-edit-page').querySelector('#input-zone').addEventListener('autocomplete-change', function(event) {
-									var input = this;
-									var search = event.detail.option.text;
-									var url = '/api/zones?nameEN=' + search;
-									var delay = Math.random() * (500 - 100) + 100;
+              <script>
+                HTMLImports.whenReady(function() {
+                  var comboboxZone = document.querySelector('activity-edit-page').querySelector('#input-zone');
 
-									setTimeout(function () {
-										var req = new XMLHttpRequest();
-										req.open('GET',encodeURI(url));
-										req.onload = function() {
-											if (req.status === 200) {
-												var data = JSON.parse(req.response);
-												var arr = data.results.map(function(obj){
-													return { text:obj.name.en, value:obj['_id'] };
-												});
-												input.suggestions(arr);
-											}
-										};
-										req.send();
-									}.bind(this), delay);
-								});
-							</script>
+                  var url = '/api/zones';
+                  setTimeout(function () {
+                    var req = new XMLHttpRequest();
+                    req.open('GET',encodeURI(url));
+                    req.onload = function() {
+                      if (req.status === 200) {
+                        var data = JSON.parse(req.response);
+                        var arr = data.results.map(function(obj){
+                          return { name:obj.name.en, value:obj['_id'] };
+                        });
+                        comboboxZone.items = arr;
+                      }
+                    };
+                    req.send();
+                  }.bind(this), 500);
+                });
+              </script>
 						</div>
 
 						<!-- Location -->
 						<div class="item">
-							<label class="label --input">Location</label>
+							<label class="label --input">Place</label>
 							<div class="" style="display: inline-block">
-								<paper-autocomplete name="locationPlace" label="Location" id="input-location" no-label-float="true" remote-source="true"></paper-autocomplete>
-							</div>
-							<script>
-								document.querySelector('activity-edit-page').querySelector('#input-location').addEventListener('autocomplete-change', function(event) {
-									var input = this;
-									var search = event.detail.option.text;
-									var url = '/api/places?nameEN=' + search;
-									var delay = Math.random() * (500 - 100) + 100;
+                <vaadin-combo-box name="locationPlace" id="input-place" class="elements-box" no-label-float="true" item-label-path="name" item-value-path="value" value="{{activity.location.place}}" required></vaadin-combo-box>
+              </div>
+              <script>
+                HTMLImports.whenReady(function() {
+                  var comboboxPlace = document.querySelector('activity-edit-page').querySelector('#input-place');
 
-									setTimeout(function () {
-										var req = new XMLHttpRequest();
-										req.open('GET',encodeURI(url));
-										req.onload = function() {
-											if (req.status === 200) {
-												var data = JSON.parse(req.response);
-												var arr = data.results.map(function(obj){
-													return { text:obj.name.en, value:obj['_id'] };
-												});
-												input.suggestions(arr);
-											}
-										};
-										req.send();
-									}.bind(this), delay);
-								});
-							</script>
-							<div>
-								<label class="label --input">Floor</label>
-								<div class="flex" style="display: inline-block">
-									<paper-input type="text" value="{{activity.location.floor}}" name="locationFloor" label="" no-label-float="true"></paper-input>
-								</div>
-							</div>
+                  var url = '/api/places';
+                  setTimeout(function () {
+                    var req = new XMLHttpRequest();
+                    req.open('GET',encodeURI(url));
+                    req.onload = function() {
+                      if (req.status === 200) {
+                        var data = JSON.parse(req.response);
+                        var arr = data.results.map(function(obj){
+                          return { name:obj.name.en, value:obj['_id'] };
+                        });
+                        comboboxPlace.items = arr;
+                      }
+                    };
+                    req.send();
+                  }.bind(this), 500);
+                });
+              </script>
+
 							<div>
 								<label class="label --input">Room</label>
 								<div class="flex" style="display: inline-block">
-									<paper-input type="text" value="{{activity.location.room}}" name="locationRoom" label="" no-label-float="true"></paper-input>
+                  <vaadin-combo-box name="locationRoom" id="input-room" class="elements-box" no-label-float="true" item-label-path="name" item-value-path="value" value="{{activity.location.room}}"></vaadin-combo-box>
 								</div>
 							</div>
+              <script>
+                HTMLImports.whenReady(function() {
+                  var comboboxRoom = document.querySelector('activity-edit-page').querySelector('#input-room');
+
+                  var url = '/api/rooms';
+  								setTimeout(function () {
+  									var req = new XMLHttpRequest();
+  									req.open('GET',encodeURI(url));
+  									req.onload = function() {
+  										if (req.status === 200) {
+//  											var data = JSON.parse(req.response);
+  //											var arr = data.results.map(function(obj){
+  	//											return { name:obj.name.en, value:obj['_id'] };
+  		//									});
+        //                comboboxRoom.items = arr;
+  										}
+  									};
+  									req.send();
+  								}.bind(this), 500);
+                });
+              </script>
 						</div>
 
 						<div class="item">
@@ -280,27 +312,30 @@
 					</div>
 					<div class="card-content">
 						<!-- Thai Language -->
-						<div class="flex-layout center form-title">
+						<div class="flex-layout center">
 							<div class="avatar" item-icon><img src="/public/img/th.png" /></div>
 							<div class="flex company">ภาษาไทย</div>
 						</div>
-						<paper-input type="text" label="ชื่อกิจกรรม" value="{{activity.name.th}}" name="nameTH" always-float-label></paper-input>
-						<paper-input type="text" label="รายละเอียดย่อ" value="{{activity.shortDescription.th}}" name="shortDescriptionTH" char-counter maxlength="80" always-float-label></paper-input>
-						<paper-textarea label="รายละเอียด" value="{{activity.description.th}}" name="descriptionTH" rows="4" always-float-label></paper-textarea>
+						<paper-input type="text" label="ชื่อกิจกรรม" value="{{activity.name.th}}" name="nameTH" always-float-label required></paper-input>
+						<paper-input type="text" label="รายละเอียดย่อ" value="{{activity.shortDescription.th}}" name="shortDescriptionTH" char-counter maxlength="80" always-float-label required></paper-input>
+						<paper-textarea label="รายละเอียด" value="{{activity.description.th}}" name="descriptionTH" rows="4" always-float-label required></paper-textarea>
+          </div>
+
+					<div class="card-content">
 						<!-- English Language -->
-						<div class="flex-layout center form-title">
+						<div class="flex-layout center">
 							<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
 							<div class="flex company">English</div>
 						</div>
-						<paper-input type="text" label="Activity name" value="{{activity.name.en}}" name="nameEN" always-float-label></paper-input>
-						<paper-input type="text" label="Short description" value="{{activity.shortDescription.en}}" name="shortDescriptionEN" char-counter maxlength="80" always-float-label></paper-input>
-						<paper-textarea label="Description" value="{{activity.description.en}}" name="descriptionEN" rows="4" always-float-label></paper-textarea>
+						<paper-input type="text" label="Activity name" value="{{activity.name.en}}" name="nameEN" always-float-label required></paper-input>
+						<paper-input type="text" label="Short description" value="{{activity.shortDescription.en}}" name="shortDescriptionEN" char-counter maxlength="80" always-float-label required></paper-input>
+						<paper-textarea label="Description" value="{{activity.description.en}}" name="descriptionEN" rows="4" always-float-label required></paper-textarea>
 					</div>
 					<div class="card-content">
 						<vaadin-upload
-							id="activityImage"
+							id="pictureUpload"
 							accept="image/*"
-							target="/upload/img/activities"
+							target="/upload/img/activities/picture"
 							method="POST"
 							headers="{'Authorization': 'JWT {{token}}'}"
 							form-data-name="picture"
@@ -310,6 +345,20 @@
 								รูปประกอบกิจกกรม
 							</div>
 						</vaadin-upload>
+            <script>
+              var pictureUpload = document.querySelector('activity-edit-page').querySelector('vaadin-upload#pictureUpload')
+              pictureUpload.addEventListener("upload-response", function(event) {
+                if(event.detail.file.xhr.status == 200){
+                  var name = JSON.parse(event.detail.xhr.responseText);
+                  document.querySelector('activity-edit-page').pictures.add(name.results.thumbnail);
+                }
+              });
+              pictureUpload.addEventListener("upload-abort", function(event) {
+                var name = JSON.parse(event.detail.xhr.responseText);
+                document.querySelector('activity-edit-page').pictures.delete(name.results.thumbnail);
+              });
+            </script>
+
 						<!-- Tags -->
 						<div class="item">
 							<paper-tags-input label="Tags" tags="{{tags_list}}"></paper-tags-input>
@@ -343,21 +392,25 @@
           type: Number,
           value: 16
         },
-        route: {
-          type: String,
-        },
         activity: {
           type: Object,
+        },
+        pictures: {
+          type: Set,
+          value: new Set()
         }
       },
       observers: [
         '_routeIdChanged(routeData.activityId)',
       ],
-      _routeIdChanged: function(activityId) {
-        if(!!activityId){
-          this.urlId = `/api/activities/${activityId}`;
-          this.$.activityGetId.generateRequest();
+      _routeIdChanged: function(id) {
+        if(!!id) {
+          this.urlId = `/api/activities/${id}`;
+          this.generateRequest();
         }
+      },
+      generateRequest: function(){
+        this.$.activityGetId.generateRequest();
       },
       _delayedSubmit: function(event) {
         var form = this.$.form;
@@ -371,13 +424,24 @@
       },
       _response: function(e) {
         if (e.detail.response.success) {
-          window.location = '/activity/show/' + this.routeData.activityId;
+          this.$.form.reset();
+          window.location = '/activity';
         }
       },
       _presubmit: function(event) {
         this.$.form.request.method = 'put';
       	this.$.form.request.body.locationLat = this.activity.location.latitude;
 				this.$.form.request.body.locationLong = this.activity.location.longitude;
+				this.$.form.request.body.pictures = [];
+          var dom = this;
+          this.pictures.forEach(function(key,value, Set) {
+            dom.$.form.request.body.pictures.push(key);
+          });
+        if(this.$.form.request.body.thumbnail == '')
+          this.$.form.request.body.thumbnail = this.activity.thumbnail;
+        if(this.$.form.request.body.banner == '')
+          this.$.form.request.body.banner = this.activity.banner;
+				console.log(this.$.form.request.body);
       },
       _handleResponse: function(event) {
         if (event.detail.response.success) {

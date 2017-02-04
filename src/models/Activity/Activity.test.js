@@ -23,8 +23,8 @@ describe('Activity Model', () => {
         en: casual.title
       },
       zone: ObjectId(),
-      startTime: new Date(casual.unix_time),
-      endTime: new Date(casual.unix_time),
+      start: new Date(casual.unix_time),
+      end: new Date(casual.unix_time),
       thumbnail: casual.string,
       banner: casual.string,
       description: {

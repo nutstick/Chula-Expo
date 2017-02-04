@@ -24,8 +24,8 @@
 <dom-module id="facility-show-page">
   <template>
     <style is="custom-style" include="shared-styles">
-      :host {
         @apply(--layout-vertical);
+        :host {
         @apply(--layout-center-center);
         padding-top: 20px;
       }
@@ -36,9 +36,6 @@
 
       .item {
         margin-bottom: 10px;
-      }
-      .form-title {
-        margin-bottom: 20px;
       }
 
       .avatar {
@@ -121,7 +118,7 @@
 				</div>
 				<div class="card-content">
 					<!-- Thai Language -->
-					<div class="flex-layout center form-title">
+					<div class="flex-layout center">
 						<div class="avatar" item-icon><img src="/public/img/th.png" /></div>
 						<div class="flex company">ภาษาไทย</div>
 					</div>
@@ -137,9 +134,11 @@
               {{facility.description.th}}
 						</div>
 					</div>
+        </div>
 
+        <div class="card-content">
 					<!-- English Language -->
-					<div class="flex-layout center form-title">
+					<div class="flex-layout center">
 						<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
 						<div class="flex company">English</div>
 					</div>
@@ -156,6 +155,7 @@
               {{facility.description.en}}
             </div>
   				</div>
+        </div>
       </paper-card>
     </div>
   </template>
@@ -174,9 +174,6 @@
           type: Number,
           value: 16
         },
-        route: {
-          type: String,
-        },
         facility: {
           type: Object,
         }
@@ -184,15 +181,17 @@
       observers: [
         '_routeIdChanged(routeData.facilityId)',
       ],
-      _routeIdChanged: function(facilityId) {
-        if(!!facilityId){
-          this.urlId = `/api/facilities/${facilityId}`;
-          this.$.facilityGetId.generateRequest();
+      _routeIdChanged: function(id) {
+        if(!!id) {
+          this.urlId = `/api/facilities/${id}`;
+          this.generateRequest();
         }
+      },
+      generateRequest: function(){
+        this.$.facilityGetId.generateRequest();
       },
       _handleResponse: function(event) {
         if (event.detail.response.success) {
-          console.log(this.facility);
           this.facility = event.detail.response.results;
         } else {
           this.error = event.detail.response.errors;

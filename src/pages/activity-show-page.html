@@ -13,26 +13,26 @@
 <link rel="import" href="/public/lib/google-map/google-map.html">
 <link rel="import" href="/public/lib/google-map/google-map-marker.html">
 
+<link rel="import" href="/components/round-api.html">
+<link rel="import" href="/components/paper-card-dataitem.html">
+
 <link rel="import" href="/components/shared-styles.html">
 
 <dom-module id="activity-show-page">
   <template>
-    <style is="custom-style" include="shared-styles">
+		<style is="custom-style" include="shared-styles">
       :host {
         @apply(--layout-vertical);
         @apply(--layout-center-center);
         padding-top: 20px;
       }
 
-      paper-card {
+			paper-card {
         width: 100%;
       }
 
       .item {
         margin-bottom: 10px;
-      }
-      .form-title {
-        margin-bottom: 20px;
       }
 
       .avatar {
@@ -72,8 +72,65 @@
         @apply(--layout-end-justified);
         margin-top: 10px;
       }
+
+			#main {
+        min-height: 800px;
+        margin: 0px;
+        padding: 0px;
+        display: flex;
+        flex-flow: row;
+			}
+
+			#main > #left {
+				margin: 4px;
+				flex: 3 1 70%;
+        min-width: 70%;
+				order: 1;
+			}
+
+			#main > #right {
+				flex: 3 1 30%;
+        min-width: 30%;
+				order: 2;
+			}
+
+      .card {
+        margin: 4px;
+        padding: 5px;
+      }
+
+			/* Too narrow to support three columns */
+			@media all and (max-width: 800px) {
+					#main {
+							flex-direction: column;
+					}
+
+					#main > #left, #main > #right {
+					/* Return them to document order */
+							order: 0;
+					}
+
+					#main > #left, #main > #right {
+							min-height: 50px;
+					}
+			}
+
+      paper-button > a {
+        color: #000;
+        text-decoration: none;
+        width: 100%;
+      }
+
+      .block {
+        margin: 10px;
+      }
+
+      .deleteBtn {
+        float: right;
+        cursor: pointer;
+      }
     </style>
-		<app-route
+    <app-route
       route="{{route}}"
       pattern="/:activityId"
       data="{{routeData}}"
@@ -86,34 +143,15 @@
       headers='{"Authentication": "{{token}}"}'
       handle-as="json"
     ></iron-ajax>
-    <div class="container">
-      <paper-card>
-				<div class="card-content">
+		<div id="main" class="container">
+			<paper-card id="left">
+        <div class="card-content">
 					<!-- Thumbnail Upload -->
 					<div class="item">
 						<div class="flex-layout">
 							<label class="label --upload">Thumbnail</label>
 							<div class="flex">
-								<vaadin-upload
-									id="thumbnailUpload"
-									accept="image/*"
-									target="/upload/img/activities/thumbnail"
-									method="POST"
-									headers="{'Authorization': 'JWT {{token}}'}"
-									form-data-name="picture"
-								>
-									<div class="drop-label">
-										<iron-icon icon="image:collections"></iron-icon>
-										รูปทัมเนล
-									</div>
-								</vaadin-upload>
-								<input id="thumbnail" type="hidden" name="thumbnail">
-								<script>
-									var thumbnailUpload = document.querySelector('activity-show-page').querySelector('vaadin-upload#thumbnailUpload');
-									thumbnailUpload.addEventListener("upload-response", function(event) {
-										document.querySelector('activity-show-page').querySelector('#thumbnail').value = event;
-									});
-								</script>
+                <iron-image style="width:140px; height:80px;" sizing="cover" preload fade src="{{activity.thumbnail}}"></iron-image>
 							</div>
 						</div>
 					</div>
@@ -122,19 +160,7 @@
 						<div class="flex-layout">
 							<label class="label --upload">Banner</label>
 							<div class="flex">
-								<vaadin-upload
-									id="bannerUpload"
-									accept="image/*"
-									target="/upload/img/activities/banner"
-									method="POST"
-									headers="{'Authorization': 'JWT {{token}}'}"
-									form-data-name="picture"
-								>
-									<div class="drop-label">
-										<iron-icon icon="image:collections"></iron-icon>
-										แบรนเนอร์
-									</div>
-								</vaadin-upload>
+                <iron-image style="width:200px; height:150px;" sizing="cover" preload fade src="{{activity.banner}}"></iron-image>
 							</div>
 						</div>
 					</div>
@@ -143,13 +169,13 @@
 						<div>
 							<label class="label --input">Start Time</label>
 							<div class="flex" style="display: inline-block">
-								{{activity.startTime}}
+								{{activity.start}}
 							</div>
 						</div>
 						<div>
 							<label class="label --input">End Time</label>
 							<div class="flex" style="display: inline-block">
-								{{activity.endTime}}
+								{{activity.end}}
 							</div>
 						</div>
 					</div>
@@ -244,7 +270,7 @@
 								}.bind(this), delay);
 							});
 						</script>
-						
+
 						<div>
 							<label class="label --input">Floor</label>
 							<div class="flex" style="display: inline-block">
@@ -278,11 +304,11 @@
 				</div>
 				<div class="card-content">
 					<!-- Thai Language -->
-					<div class="flex-layout center form-title">
+					<div class="flex-layout center">
 						<div class="avatar" item-icon><img src="/public/img/th.png" /></div>
 						<div class="flex company">ภาษาไทย</div>
 					</div>
-					
+
 					<div class="item">
 						<label class="label --input">ชื่อกิจกรรม</label>
 						<div class="flex" style="display: inline-block">
@@ -305,11 +331,11 @@
 
 				<div class="card-content">
 					<!-- English Language -->
-					<div class="flex-layout center form-title">
+					<div class="flex-layout center">
 						<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
 						<div class="flex company">English</div>
 					</div>
-					
+
 					<div class="item">
 						<label class="label --input">activity name</label>
 						<div class="flex" style="display: inline-block">
@@ -331,36 +357,120 @@
 				</div>
 
 				<div class="card-content">
-					<vaadin-upload
-						id="activityImage"
-						accept="image/*"
-						target="/upload/img/activities"
-						method="POST"
-						headers="{'Authorization': 'JWT {{token}}'}"
-						form-data-name="picture"
-					>
-						<div class="drop-label">
-							<iron-icon icon="image:collections"></iron-icon>
-							รูปประกอบกิจกกรม
-						</div>
-					</vaadin-upload>
-					<!-- Tags -->
-					<div class="item">
-						<label class="label --input">description</label>
-						<div class="flex" style="display: inline-block">
-							{{activity.tags}}
-						</div>
-					</div>
+          <template is="dom-repeat" items="{{activity.pictures}}">
+            <iron-image style="width:100px; height:100px;" sizing="cover" preload fade src="{{item}}"></iron-image>
+          </template>
 				</div>
-      </paper-card>
-    </div>
+
+        <div class="card-content">
+          <!-- Tags -->
+          <div class="item">
+            <label class="label --input">Tags</label>
+            <div class="flex" style="display: inline-block">
+              {{activity.tags}}
+            </div>
+          </div>
+        </div>
+			</paper-card>
+			<div id="right">
+        <paper-card class="card">
+          <form is="iron-form" id="form" method="post" class="card-content"
+  					action="{{urlIdRound}}" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
+  					<div class="card-content">
+
+              <!-- time -->
+              <div class="item">
+  							<div>
+  								<label class="label --input">Start Time</label>
+  								<div class="flex" style="display: inline-block">
+  									<datetime-local-input name="start" label="" no-label-float="true" required></datetime-local-input>
+  								</div>
+  							</div>
+  							<div>
+  								<label class="label --input">End Time</label>
+  								<div class="flex" style="display: inline-block">
+  									<datetime-local-input name="end" label="" no-label-float="true" required></datetime-local-input>
+  								</div>
+  							</div>
+  						</div>
+
+              <!-- Seat -->
+  						<div class="item">
+                <div>
+  								<label class="label --input">Reserved</label>
+  								<div class="flex" style="display: inline-block">
+  									<paper-input type="number" name="seatsReserved" label="" no-label-float="true" required></paper-input>
+  								</div>
+  							</div>
+                <div>
+  								<label class="label --input">Seats</label>
+  								<div class="flex" style="display: inline-block">
+  									<paper-input type="number" name="seatsFullCapacity" label="" no-label-float="true" required></paper-input>
+  								</div>
+  							</div>
+  						</div>
+
+  						<!-- name -->
+  						<div class="item">
+                <div>
+                  <label class="label --input">ชื่อ (ไทย)</label>
+                  <div class="flex" style="display: inline-block">
+                    <paper-input type="text" name="nameTH" label="" no-label-float="true" required></paper-input>
+                  </div>
+                </div>
+                <div>
+                  <label class="label --input">Name (English)</label>
+                  <div class="flex" style="display: inline-block">
+                    <paper-input type="text" name="nameEN" label="" no-label-float="true" required></paper-input>
+                  </div>
+                </div>
+  						</div>
+  					</div>
+
+  					<!-- Submit Button -->
+  					<div class="card-actions">
+  						<div class="button-holder">
+  							<paper-button on-click="_delayedSubmit">
+  								<paper-spinner id="spinner" hidden></paper-spinner>Submit
+  							</paper-button>
+  							<!-- Reset Button -->
+  							<paper-button on-click="_reset">Reset</paper-button>
+  						</div>
+  					</div>
+  				</form>
+        </paper-card>
+        <paper-card class="card">
+  				<h3>Round</h3>
+          <template is="dom-repeat" items="{{rounds}}">
+            <div class="block">
+              <paper-card-dataitem action image="https://www.polymer-project.org/images/logos/p-logo.png">
+                <div class="card-item-header">
+                  {{item.name.en}} ({{item.seats.reserved}}/{{item.seats.fullCapacity}})
+                  <div class="deleteBtn" on-tap="_deleteClick">
+                    <iron-icon icon="icons:close"></iron-icon>
+                  </div>
+                </div>
+                <div class="card-item-content">
+                  {{_convertToDate(item.start)}}<br>{{_convertToDate(item.end)}}
+                </div>
+              </paper-card-dataitem>
+            </div>
+          </template>
+          <round-api id="roundAPI" url="[[urlIdRound]]" rounds="{{rounds}}" error="{{error}}"></round-api>
+        </paper-card>
+			</div>
+		</div>
   </template>
   <script>
     Polymer({
       is: 'activity-show-page',
       properties: {
         urlId: {
-          type: Object,
+          type: String,
+          value: ''
+        },
+        urlIdRound: {
+          type: String,
           value: ''
         },
         token: {
@@ -370,21 +480,33 @@
           type: Number,
           value: 16
         },
-        route: {
-          type: String,
-        },
         activity: {
           type: Object,
-        }
+        },
+        error: {
+          type: Object,
+        },
+        rounds: {
+          type: Array,
+          value: [],
+        },
       },
       observers: [
         '_routeIdChanged(routeData.activityId)',
       ],
-      _routeIdChanged: function(activityId) {
-        if(!!activityId){
-          this.urlId = `/api/activities/${activityId}`;
-          this.$.activityGetId.generateRequest();
+      _routeIdChanged: function(id) {
+        if(!!id) {
+          this.urlId = `/api/activities/${id}`;
+          this.urlIdRound = `/api/activities/${id}/rounds`;
+          this.generateRequest();
         }
+      },
+      generateRequest: function(){
+        this.$.activityGetId.generateRequest();
+        this.$.roundAPI.generateRequest();
+      },
+      _convertToDate: function(dateTime) {
+        return moment.utc(dateTime).format('MM-DD-YYYY HH:mm');
       },
       _delayedSubmit: function(event) {
         var form = this.$.form;
@@ -398,13 +520,14 @@
       },
       _response: function(e) {
         if (e.detail.response.success) {
-          window.location = '/activity/show/' + this.routeData.activityId;
+          this.$.form.reset();
+          this.$.roundAPI.generateRequest();
         }
       },
+      _reset: function(event) {
+        this.$.form.reset();
+      },
       _presubmit: function(event) {
-        this.$.form.request.method = 'put';
-      	this.$.form.request.body.locationLat = this.activity.location.latitude;
-				this.$.form.request.body.locationLong = this.activity.location.longitude;
       },
       _handleResponse: function(event) {
         if (event.detail.response.success) {
@@ -412,6 +535,22 @@
         } else {
           this.error = event.detail.response.errors;
         }
+      },
+      _deleteClick: function(event) {
+        var id = event.model.item['_id'];
+        var url = '/api/rounds/' + id;
+
+        var dom = this;
+        setTimeout(function () {
+          var req = new XMLHttpRequest();
+          req.open('DELETE',encodeURI(url));
+          req.onload = function() {
+            if (req.status === 202) {
+              dom.$.roundAPI.generateRequest();
+            }
+          };
+          req.send();
+        }.bind(this), 300);
       }
     })
   </script>

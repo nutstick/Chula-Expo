@@ -3,7 +3,7 @@
 <!-- Web Component -->
 <link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
 
-<dom-module id="paper-card-item">
+<dom-module id="paper-card-dataitem">
   <template>
     <style>
       :host {
@@ -12,9 +12,7 @@
         margin-bottom: 12px;
         @apply(--layout);
         @apply(--layout-horizontal);
-        background-color: var(--paper-card-item-header-color, #fff);
-        border-radius: 2px;
-        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+        background-color: #fff;
       }
       /* IE 10 support for HTML5 hidden attr */
       [hidden] {
@@ -41,14 +39,14 @@
         padding-bottom: 0px;
       }
       :host .container ::content .card-item-header {
-        font-size: 20px;
+        font-size: 16px;
         font-weight: 400;
-        color: var(--paper-card-item-header-color, #000);
+        color: var(--paper-card-dataitem-header-color, #000);
       }
       :host .container ::content .card-item-content {
-        font-size: 14px;
+        font-size: 12px;
         font-weight: 400;
-        color: var(--paper-card-item-content-color, #666);
+        color: var(--paper-card-dataitem-content-color, #666);
         margin-bottom: 12px;
       }
       /*:host .container ::content .card-item-button {
@@ -81,7 +79,7 @@
   </template>
   <script>
     Polymer({
-      is: 'paper-card-item',
+      is: 'paper-card-dataitem',
       properties: {
         image: {
           type: String,

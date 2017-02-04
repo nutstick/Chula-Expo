@@ -5,7 +5,7 @@ const mime = require('mime');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'src/public/img/activity');
+    cb(null, 'src/public/img/zone');
   },
   filename: (req, file, cb) => {
     crypto.pseudoRandomBytes(16, (err, raw) => {
@@ -28,7 +28,7 @@ router.post('/thumbnail', multer({ storage, limits: { fileSize: 4000000 } }).sin
   return res.json({
     success: true,
     results: {
-      thumbnail: `/public/img/activity/${req.file.filename}`,
+      thumbnail: `/public/img/zone/${req.file.filename}`,
     }
   });
 });
@@ -37,16 +37,7 @@ router.post('/banner', multer({ storage, limits: { fileSize: 4000000 } }).single
   return res.json({
     success: true,
     results: {
-      thumbnail: `/public/img/activity/${req.file.filename}`,
-    }
-  });
-});
-
-router.post('/picture', multer({ storage, limits: { fileSize: 4000000 } }).single('picture'), (req, res, next) => {
-  return res.json({
-    success: true,
-    results: {
-      thumbnail: `/public/img/activity/${req.file.filename}`,
+      thumbnail: `/public/img/zone/${req.file.filename}`,
     }
   });
 });

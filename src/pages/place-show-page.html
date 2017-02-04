@@ -31,9 +31,6 @@
       .item {
         margin-bottom: 10px;
       }
-      .form-title {
-        margin-bottom: 20px;
-      }
 
       .avatar {
         display: inline-block;
@@ -73,7 +70,7 @@
         margin-top: 10px;
       }
     </style>
-		<app-route
+    <app-route
       route="{{route}}"
       pattern="/:placeId"
       data="{{routeData}}"
@@ -109,7 +106,7 @@
 				</div>
 				<div class="card-content">
 					<!-- Thai Language -->
-					<div class="flex-layout center form-title">
+					<div class="flex-layout center">
 						<div class="avatar" item-icon><img src="/public/img/th.png" /></div>
 						<div class="flex company">ภาษาไทย</div>
 					</div>
@@ -124,7 +121,7 @@
 				</div>
 				<div class="card-content">
 					<!-- English Language -->
-					<div class="flex-layout center form-title">
+					<div class="flex-layout center">
 						<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
 						<div class="flex company">English</div>
 					</div>
@@ -158,9 +155,6 @@
           type: Array,
           value: ['Chula Expo']
         },
-        route: {
-          type: String,
-        },
         place: {
           type: Object,
         }
@@ -168,11 +162,14 @@
       observers: [
         '_routeIdChanged(routeData.placeId)',
       ],
-      _routeIdChanged: function(placeId) {
-        if(!!placeId){
-          this.urlId = `/api/places/${placeId}`;
-          this.$.placeGetId.generateRequest();
+      _routeIdChanged: function(id) {
+        if(!!id) {
+          this.urlId = `/api/places/${id}`;
+          this.generateRequest();
         }
+      },
+      generateRequest: function(){
+        this.$.placeGetId.generateRequest();
       },
       _delayedSubmit: function(event) {
         var form = this.$.form;
@@ -193,7 +190,6 @@
         this.$.form.request.method = 'put';
       	this.$.form.request.body.locationLat = this.place.location.latitude;
 				this.$.form.request.body.locationLong = this.place.location.longitude;
-				console.log(this.$.form.request.body);
       },
       _handleResponse: function(event) {
         if (event.detail.response.success) {

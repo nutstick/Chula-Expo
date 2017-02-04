@@ -19,8 +19,8 @@ describe('Round Model', () => {
     const round = new Round({
       name: casual.safe_color_name,
       activityId: ObjectId(),
-      startTime: new Date(casual.unix_time),
-      endTime: new Date(casual.unix_time),
+      start: new Date(casual.unix_time),
+      end: new Date(casual.unix_time),
       seats: {
         fullCapacity: casual.integer(40, 400),
       },
@@ -35,8 +35,8 @@ describe('Round Model', () => {
   it('should not create a round if missing field', (done) => {
     const round = new Round({
       name: casual.safe_color_name,
-      startTime: new Date(casual.unix_time),
-      endTime: new Date(casual.unix_time),
+      start: new Date(casual.unix_time),
+      end: new Date(casual.unix_time),
     });
 
     round.save((error, result) => {

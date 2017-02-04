@@ -41,7 +41,7 @@ const ActivitySchema = new mongoose.Schema({
     }
   },
   contact: String,
-  image: [String],
+  pictures: [String],
   video: String,
   pdf: String,
   link: [String],
@@ -71,12 +71,12 @@ const ActivitySchema = new mongoose.Schema({
     type: ObjectId,
     ref: 'Round'
   }],
-  startTime: {
+  start: {
     type: Date,
     required: true,
     index: true
   },
-  endTime: {
+  end: {
     type: Date,
     required: true,
     index: true
@@ -103,7 +103,7 @@ ActivitySchema.index({
  * @param {string} [options.name] - Get matched round's name.
  * @param {Date | RangeQuery<Date>} [options.start] - Get by start time.
  * @param {Date | RangeQuery<Date>} [options.end] - Get by end time.
- * @param {number | RangeQuery<number>} [options.avaliableSeats] - Get by avaliable seats.
+ * @param {number | RangeQuery<number>} [options.seatsAvaliable] - Get by avaliable seats.
  * @param {string} [options.sort] - Sort fields (ex. "-start,+createAt").
  * @param {string} [options.fields] - Fields selected (ex. "name,fullCapacity").
  * @param {number} [options.limit] - Number of limit per query.
@@ -116,9 +116,9 @@ ActivitySchema.index({
  * @return {Result.skip} - Number of offset that used.
  */
 
-ActivitySchema.static.findRoundByActivityId = (id, options) => {
-  const filter = _.pick(options, ['name', 'start', 'end', 'avaliableSeats'])
-  .merge({ activityId: id });
+ActivitySchema.statics.findRoundByActivityId = (id, options) => {
+  const filter = _.pick(options, ['name.en', 'start', 'end', 'seats.avaliable']);
+  filter.activityId = id;
 
   return new Promise((resolve, reject) => {
     Round.find(filter).count().exec((err, count) => {
@@ -152,7 +152,7 @@ ActivitySchema.static.findRoundByActivityId = (id, options) => {
  *
  * @return {Promise<Activity>} - Promise of adding rounds totarget activity
  */
-ActivitySchema.static.findAndAddRound = (id, rounds) => (
+ActivitySchema.statics.findAndAddRound = (id, rounds) => (
   new Promise((resolve, reject) => {
     this.findById(id, (err, activity) => {
       if (err) {
@@ -168,7 +168,7 @@ ActivitySchema.static.findAndAddRound = (id, rounds) => (
           start: round.start,
           end: round.end,
           seats: {
-            reserved: round.reservedSeats,
+            reserved: round.seatsReserved,
             fullCapacity: round.fullCapacity,
           }
         }).save()));
@@ -179,7 +179,7 @@ ActivitySchema.static.findAndAddRound = (id, rounds) => (
           start: rounds.start,
           end: rounds.end,
           seats: {
-            reserved: rounds.reservedSeats,
+            reserved: rounds.seatsReserved,
             fullCapacity: rounds.fullCapacity,
           }
         }).save()]);

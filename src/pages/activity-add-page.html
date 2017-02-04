@@ -30,10 +30,6 @@
       .item {
         margin-bottom: 10px;
       }
-      .form-title {
-        margin-bottom: 20px;
-      }
-
       .avatar {
         display: inline-block;
         height: 40px;
@@ -87,6 +83,7 @@
 										accept="image/*"
 										target="/upload/img/activities/thumbnail"
 										method="POST"
+                    max-files="1"
 										headers="{'Authorization': 'JWT {{token}}'}"
 										form-data-name="picture"
 									>
@@ -95,12 +92,18 @@
 											รูปทัมเนล
 										</div>
 									</vaadin-upload>
-									<input id="thumbnail" type="hidden" name="thumbnail">
+                  <input id="thumbnail" type="hidden" name="thumbnail" value="">
 									<script>
-										var thumbnailUpload = document.querySelector('vaadin-upload#thumbnailUpload')
+										var thumbnailUpload = document.querySelector('activity-add-page').querySelector('vaadin-upload#thumbnailUpload')
 										thumbnailUpload.addEventListener("upload-response", function(event) {
-											document.querySelector('#thumbnail').value = event;
+											if(event.detail.file.xhr.status == 200){
+                        var name = JSON.parse(event.detail.xhr.responseText);
+                        document.querySelector('activity-add-page').querySelector('#thumbnail').value = name.results.thumbnail;
+                      }
 										});
+                    thumbnailUpload.addEventListener("upload-abort", function(event) {
+                      document.querySelector('activity-add-page').querySelector('#thumbnail').value = '';
+                    });
 									</script>
 								</div>
 							</div>
@@ -113,6 +116,7 @@
 									<vaadin-upload
 										id="bannerUpload"
 										accept="image/*"
+                    max-files="1"
 										target="/upload/img/activities/banner"
 										method="POST"
 										headers="{'Authorization': 'JWT {{token}}'}"
@@ -123,6 +127,19 @@
 											แบรนเนอร์
 										</div>
 									</vaadin-upload>
+                  <input id="banner" type="hidden" name="banner" value="">
+                  <script>
+                    var bannerUpload = document.querySelector('activity-add-page').querySelector('vaadin-upload#bannerUpload')
+                    bannerUpload.addEventListener("upload-response", function(event) {
+                      if(event.detail.file.xhr.status == 200){
+                        var name = JSON.parse(event.detail.xhr.responseText);
+                        document.querySelector('activity-add-page').querySelector('#banner').value = name.results.thumbnail;
+                      }
+                    });
+                    bannerUpload.addEventListener("upload-abort", function(event) {
+                      document.querySelector('activity-add-page').querySelector('#banner').value = '';
+                    });
+                  </script>
 								</div>
 							</div>
 						</div>
@@ -131,13 +148,13 @@
 							<div>
 								<label class="label --input">Start Time</label>
 								<div class="flex" style="display: inline-block">
-									<datetime-local-input name="startTime" label="" no-label-float="true"></datetime-local-input>
+									<datetime-local-input name="start" no-label-float="true" required></datetime-local-input>
 								</div>
 							</div>
 							<div>
 								<label class="label --input">End Time</label>
 								<div class="flex" style="display: inline-block">
-									<datetime-local-input name="endTime" label="" no-label-float="true" required></datetime-local-input>
+									<datetime-local-input name="end" no-label-float="true" required></datetime-local-input>
 								</div>
 							</div>
 						</div>
@@ -155,19 +172,19 @@
 							<div>
 								<label class="label --input">Video Url</label>
 								<div class="flex" style="display: inline-block">
-									<paper-input type="text" name="video" label="" no-label-float="true" required></paper-input>
+									<paper-input type="text" name="video" label="" no-label-float="true"></paper-input>
 								</div>
 							</div>
 							<div>
 								<label class="label --input">PDF Url</label>
 								<div class="flex" style="display: inline-block">
-									<paper-input type="text" name="pdf" label="" no-label-float="true" required></paper-input>
+									<paper-input type="text" name="pdf" label="" no-label-float="true"></paper-input>
 								</div>
 							</div>
 							<div>
 								<label class="label --input">Link</label>
 								<div class="flex" style="display: inline-block">
-									<paper-input type="text" name="pdf" label="" no-label-float="true" required></paper-input>
+									<paper-input type="text" name="link" label="" no-label-float="true"></paper-input>
 								</div>
 							</div>
 
@@ -177,81 +194,94 @@
 						<div class="item">
 							<label class="label --upload">Zone</label>
 							<div class="flex" style="display: inline-block">
-								<paper-autocomplete name="zone" label="Zone" id="input-zone" no-label-float="true" remote-source="true"></paper-autocomplete>
+                <vaadin-combo-box name="zone" id="input-zone" class="elements-box" no-label-float="true" item-label-path="name" item-value-path="value" required></vaadin-combo-box>
 							</div>
-							<script>
-								document.querySelector('#input-zone').addEventListener('autocomplete-change', function(event) {
-									var input = document.querySelector('#input-zone');
-									var search = event.detail.option.text;
-									var url = '/api/zones?nameEN=' + search;
-									var delay = Math.random() * (500 - 100) + 100;
+              <script>
+                HTMLImports.whenReady(function() {
+                  var comboboxZone = document.querySelector('activity-add-page').querySelector('#input-zone');
 
-									setTimeout(function () {
-										var req = new XMLHttpRequest();
-										req.open('GET',encodeURI(url));
-										req.onload = function() {
-											if (req.status === 200) {
-												var data = JSON.parse(req.response);
-												var arr = data.results.map(function(obj){
-													return { text:obj.name.en, value:obj['_id'] };
-												});
-												input.suggestions(arr);
-											}
-										};
-										req.send();
-									}.bind(this), delay);
-								});
-							</script>
+                  var url = '/api/zones';
+                  setTimeout(function () {
+                    var req = new XMLHttpRequest();
+                    req.open('GET',encodeURI(url));
+                    req.onload = function() {
+                      if (req.status === 200) {
+                        var data = JSON.parse(req.response);
+                        var arr = data.results.map(function(obj){
+                          return { name:obj.name.en, value:obj['_id'] };
+                        });
+                        comboboxZone.items = arr;
+                      }
+                    };
+                    req.send();
+                  }.bind(this), 500);
+                });
+              </script>
+
 						</div>
 
 						<!-- Location -->
 						<div class="item">
-							<label class="label --input">Location</label>
-							<div class="" style="display: inline-block">
-								<paper-autocomplete name="locationPlace" label="Location" id="input-location" no-label-float="true" remote-source="true"></paper-autocomplete>
-							</div>
-							<script>
-								document.querySelector('#input-location').addEventListener('autocomplete-change', function(event) {
-									var input = document.querySelector('#input-location');
-									var search = event.detail.option.text;
-									var url = '/api/places?nameEN=' + search;
-									var delay = Math.random() * (500 - 100) + 100;
+              <label class="label --input">Place</label>
+              <div class="" style="display: inline-block">
+                <vaadin-combo-box name="locationPlace" id="input-place" class="elements-box" no-label-float="true" item-label-path="name" item-value-path="value" required></vaadin-combo-box>
+              </div>
+              <script>
+                HTMLImports.whenReady(function() {
+                  var comboboxPlace = document.querySelector('activity-add-page').querySelector('#input-place');
 
-									setTimeout(function () {
-										var req = new XMLHttpRequest();
-										req.open('GET',encodeURI(url));
-										req.onload = function() {
-											if (req.status === 200) {
-												var data = JSON.parse(req.response);
-												var arr = data.results.map(function(obj){
-													return { text:obj.name.en, value:obj['_id'] };
-												});
-												input.suggestions(arr);
-											}
-										};
-										req.send();
-									}.bind(this), delay);
-								});
-							</script>
-							<div>
-								<label class="label --input">Floor</label>
-								<div class="flex" style="display: inline-block">
-									<paper-input type="text" name="locationFloor" label="" no-label-float="true"></paper-input>
-								</div>
-							</div>
+                  var url = '/api/places';
+                  setTimeout(function () {
+                    var req = new XMLHttpRequest();
+                    req.open('GET',encodeURI(url));
+                    req.onload = function() {
+                      if (req.status === 200) {
+                        var data = JSON.parse(req.response);
+                        var arr = data.results.map(function(obj){
+                          return { name:obj.name.en, value:obj['_id'] };
+                        });
+                        comboboxPlace.items = arr;
+                      }
+                    };
+                    req.send();
+                  }.bind(this), 500);
+                });
+              </script>
+
 							<div>
 								<label class="label --input">Room</label>
 								<div class="flex" style="display: inline-block">
-									<paper-input type="text" name="locationRoom" label="" no-label-float="true"></paper-input>
+                  <vaadin-combo-box name="locationRoom" id="input-room" class="elements-box" no-label-float="true" item-label-path="name" item-value-path="value"></vaadin-combo-box>
 								</div>
 							</div>
+              <script>
+                HTMLImports.whenReady(function() {
+                  var comboboxRoom = document.querySelector('activity-add-page').querySelector('#input-room');
+
+                  var url = '/api/rooms';
+  								setTimeout(function () {
+  									var req = new XMLHttpRequest();
+  									req.open('GET',encodeURI(url));
+  									req.onload = function() {
+  										if (req.status === 200) {
+//  											var data = JSON.parse(req.response);
+  //											var arr = data.results.map(function(obj){
+  	//											return { name:obj.name.en, value:obj['_id'] };
+  		//									});
+        //                comboboxRoom.items = arr;
+  										}
+  									};
+  									req.send();
+  								}.bind(this), 500);
+                });
+              </script>
 						</div>
 
 						<div class="item">
 							<div>
 								<label class="label --input">HighLight</label>
 								<div class="flex" style="display: inline-block">
-									<paper-checkbox name="isHighlight" label="" no-label-float="true" required></paper-checkbox>
+									<paper-checkbox name="isHighlight" label="" no-label-float="true"></paper-checkbox>
 								</div>
 							</div>
 						</div>
@@ -266,27 +296,30 @@
 					</div>
 					<div class="card-content">
 						<!-- Thai Language -->
-						<div class="flex-layout center form-title">
+						<div class="flex-layout center">
 							<div class="avatar" item-icon><img src="/public/img/th.png" /></div>
 							<div class="flex company">ภาษาไทย</div>
 						</div>
-						<paper-input type="text" label="ชื่อกิจกรรม" name="nameTH" always-float-label></paper-input>
-						<paper-input type="text" label="รายละเอียดย่อ" name="shortDescriptionTH" char-counter maxlength="80" always-float-label></paper-input>
-						<paper-textarea label="รายละเอียด" name="descriptionTH" rows="4" always-float-label></paper-textarea>
+						<paper-input type="text" label="ชื่อกิจกรรม" name="nameTH" always-float-label required></paper-input>
+						<paper-input type="text" label="รายละเอียดย่อ" name="shortDescriptionTH" char-counter maxlength="80" always-float-label required></paper-input>
+						<paper-textarea label="รายละเอียด" name="descriptionTH" rows="4" always-float-label required></paper-textarea>
+          </div>
+
+					<div class="card-content">
 						<!-- English Language -->
-						<div class="flex-layout center form-title">
+						<div class="flex-layout center">
 							<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
 							<div class="flex company">English</div>
 						</div>
-						<paper-input type="text" label="Activity name" name="nameEN" always-float-label></paper-input>
-						<paper-input type="text" label="Short description" name="shortDescriptionEN" char-counter maxlength="80" always-float-label></paper-input>
-						<paper-textarea label="Description" name="descriptionEN" rows="4" always-float-label></paper-textarea>
+						<paper-input type="text" label="Activity name" name="nameEN" always-float-label required></paper-input>
+						<paper-input type="text" label="Short description" name="shortDescriptionEN" char-counter maxlength="80" always-float-label required></paper-input>
+						<paper-textarea label="Description" name="descriptionEN" rows="4" always-float-label required></paper-textarea>
 					</div>
 					<div class="card-content">
 						<vaadin-upload
-							id="activityImage"
+							id="pictureUpload"
 							accept="image/*"
-							target="/upload/img/activities"
+							target="/upload/img/activities/picture"
 							method="POST"
 							headers="{'Authorization': 'JWT {{token}}'}"
 							form-data-name="picture"
@@ -296,9 +329,22 @@
 								รูปประกอบกิจกกรม
 							</div>
 						</vaadin-upload>
+            <script>
+              var pictureUpload = document.querySelector('activity-add-page').querySelector('vaadin-upload#pictureUpload')
+              pictureUpload.addEventListener("upload-response", function(event) {
+                if(event.detail.file.xhr.status == 200){
+                  var name = JSON.parse(event.detail.xhr.responseText);
+                  document.querySelector('activity-add-page').pictures.add(name.results.thumbnail);
+                }
+              });
+              pictureUpload.addEventListener("upload-abort", function(event) {
+                var name = JSON.parse(event.detail.xhr.responseText);
+                document.querySelector('activity-add-page').pictures.delete(name.results.thumbnail);
+              });
+            </script>
 						<!-- Tags -->
 						<div class="item">
-							<paper-tags-input label="Tags" tags="{{tags_list}}"></paper-tags-input>
+							<paper-tags-input name="tags" label="Tags" tags="{{tags_list}}"></paper-tags-input>
 						</div>
 					</div>
 
@@ -338,6 +384,10 @@
         tags_list: {
           type: Array,
           value: ['Chula Expo']
+        },
+        pictures: {
+          type: Set,
+          value: new Set()
         }
       },
       _delayedSubmit: function(event) {
@@ -352,7 +402,8 @@
       },
       _response: function(e) {
         if (e.detail.response.success) {
-          window.location = '/';
+          this.$.form.reset();
+          window.location = '/activity';
         }
       },
       _reset: function(event) {
@@ -360,8 +411,12 @@
       },
       _presubmit: function(event) {
 					this.$.form.request.body.locationLat = this.latitude;
-					this.$.form.request.body.locationLong = this.longitude;
-          console.log(this);
+          this.$.form.request.body.locationLong = this.longitude;
+          this.$.form.request.body.pictures = [];
+          var dom = this;
+          this.pictures.forEach(function(key,value, Set) {
+            dom.$.form.request.body.pictures.push(key);
+          });
       }
     })
   </script>

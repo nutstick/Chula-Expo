@@ -13,7 +13,7 @@ const router = express.Router();
  * @param {Date | RangeQuery<Date>} [start] - Get by start time.
  * @param {Date | RangeQuery<Date>} [end] - Get by end time.
  * @param {string} [location] - Get by Location name.
- * @param {string} [sort] - Sort fields (ex. "-startTime,+createAt").
+ * @param {string} [sort] - Sort fields (ex. "-start,+createAt").
  * @param {string} [fields] - Fields selected (ex. "name,location").
  * @param {number} [limit] - Number of limit per query.
  * @param {number} [skip=0] - Offset documents.
@@ -60,14 +60,14 @@ router.get('/', (req, res) => {
     }, {});
   }
 
-  // RangeQuery of startTime and endTime
+  // RangeQuery of start and end
   // Activities's start time range query
-  if (req.query.startTime) {
-    filter.startTime = RangeQuery(JSON.parse(req.query.startTime), 'Date');
+  if (req.query.start) {
+    filter.start = RangeQuery(JSON.parse(req.query.start), 'Date');
   }
   // Activities's end time range query
-  if (req.query.endTime) {
-    filter.endTime = RangeQuery(JSON.parse(req.query.endTime), 'Date');
+  if (req.query.end) {
+    filter.end = RangeQuery(JSON.parse(req.query.end), 'Date');
   }
 
   // Name Query
@@ -188,7 +188,7 @@ router.post('/', (req, res) => {
   activity.description.en = req.body.descriptionEN;
   activity.description.th = req.body.descriptionTH;
   activity.contact = req.body.contact;
-  activity.image = req.body.image;
+  activity.pictures = req.body.pictures.split(',');
   activity.video = req.body.video;
   activity.pdf = req.body.pdf;
   activity.link = req.body.link;
@@ -200,8 +200,9 @@ router.post('/', (req, res) => {
   activity.location.latitude = req.body.locationLat;
   activity.location.longitude = req.body.locationLong;
   activity.zone = req.body.zone;
-  activity.startTime = req.body.startTime;
-  activity.endTime = req.body.endTime;
+  activity.start = req.body.start;
+  activity.end = req.body.end;
+
   // Save User and check for error
   activity.save((err, _act) => {
     if (err) {
@@ -219,13 +220,13 @@ router.post('/', (req, res) => {
 // ex. { "name","EditName"}
 // Access at PUT http://localhost:3000/api/activities/:id
 router.put('/:id', (req, res) => {
-  const updateFields = _.pick(req.body, ['thumbnail', 'banner', 'contact', 'image', 'video', 'pdf', 'link', 'isHighlight', 'tags', 'zone', 'startTime', 'endTime']);
+  const updateFields = _.pick(req.body, ['thumbnail', 'banner', 'contact', 'video', 'pdf', 'link', 'isHighlight', 'tags', 'zone', 'start', 'end']);
 
-  if (updateFields.startTime) {
-    updateFields.startTime = new Date(updateFields.startTime);
+  if (updateFields.start) {
+    updateFields.start = new Date(updateFields.start);
   }
-  if (updateFields.endTime) {
-    updateFields.endTime = new Date(updateFields.endTime);
+  if (updateFields.end) {
+    updateFields.end = new Date(updateFields.end);
   }
   Activity.findById(req.params.id, (err, act) => {
     if (err) {
@@ -238,6 +239,7 @@ router.put('/:id', (req, res) => {
     _.assignIn(act, updateFields);
     act.name.en = req.body.nameEN;
     act.name.th = req.body.nameTH;
+    act.pictures = req.body.pictures.split(',');
     act.shortDescription.en = req.body.shortDescriptionEN;
     act.shortDescription.th = req.body.shortDescriptionTH;
     act.description.en = req.body.descriptionEN;
@@ -274,5 +276,7 @@ router.delete('/:id', (req, res) => {
     });
   });
 });
+
+router.use('/:id/rounds', require('./rounds'));
 
 module.exports = router;

@@ -9,9 +9,9 @@
       auto
       id="activityResource"
       url="/api/activities"
+      headers="{{headers}}"
       params="{{params}}"
       on-response="_handleResponse"
-      headers="{{headers}}"
       handle-as="json"
       debounce-duration="300"
     ></iron-ajax>
@@ -67,6 +67,9 @@
         this.set('params.start', start);
         this.set('params.end', end);
         this.set('params.zone', zone);
+      },
+      generateRequest: function() {
+         this.$.activityResource.generateRequest();
       },
       _handleResponse: function(event) {
         if (event.detail.response.success) {

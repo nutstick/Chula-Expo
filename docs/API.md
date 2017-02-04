@@ -15,7 +15,7 @@ GET api/token
  * @param {ObjectId} [ticketId] - Get round of ticket.
  * @param {Date | RangeQuery<Date>} [start] - Get by start time.
  * @param {Date | RangeQuery<Date>} [end] - Get by end time.
- * @param {number | RangeQuery<number>} [avaliableSeats] - Get by avaliable seats.
+ * @param {number | RangeQuery<number>} [seatsAvaliable] - Get by avaliable seats.
  * @param {string} [sort] - Sort fields (ex. "-start,+createAt").
  * @param {string} [fields] - Fields selected (ex. "name,fullCapacity").
  * @param {number} [limit] - Number of limit per query.
@@ -36,8 +36,8 @@ GET api/rounds
  * start
  * end
  * fullCapacity
- * avaliableSeats
- * reservedSeats
+ * seatsAvaliable
+ * seatsReserved
 
 ```java
 /**
@@ -46,7 +46,7 @@ GET api/rounds
  * @param {ObjectId} activityId - Related activity id.
  * @param {Date} start - Start time of round.
  * @param {Date} end - End time of round.
- * @param {number} [reservedSeats] - Number of reserved seats.
+ * @param {number} [seatsReserved] - Number of reserved seats.
  * @param {number} fullCapacity - Number of full capacity seats.
  *
  * @return {boolean} success - Successful querying flag.

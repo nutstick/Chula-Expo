@@ -35,12 +35,10 @@
           }
         },
         page: {
-          type: Number,
-          value: 1
+          type: Number
         },
         pageSize: {
-          type: Number,
-          value: 10
+          type: Number
         },
         token: {
           type: String,
@@ -66,9 +64,12 @@
       ],
 
       _updateRequest: function(page, pageSize, fields) {
-        this.params.limit = pageSize;
-        this.params.skip = (page - 1) * pageSize;
-        this.params.fields = fields;
+        this.set('params.limit', pageSize);
+        this.set('params.skip', (page - 1) * pageSize);
+        this.set('params.fields', fields)
+      },
+      generateRequest: function() {
+         this.$.zoneResource.generateRequest();
       },
       _handleResponse: function(event) {
         if (event.detail.response.success) {
