@@ -6,7 +6,7 @@
 <dom-module id="me-api">
   <template>
     <iron-ajax
-      auto
+      auto="{{auto}}"
       url="/api/me"
       params="{{params}}"
       on-response="_handleResponse"
@@ -29,8 +29,11 @@
         },
         headers: {
           type: Object,
-          value: {},
-          computed: '_computeHeader(token)'
+          value: {}
+        },
+        auto: {
+          type: Boolean,
+          value: false,
         },
         token: {
           type: String,
@@ -50,12 +53,14 @@
       },
 
       observers: [
+        '_updateToken(token)',
         '_updateRequest(fields)'
       ],
 
-      _computeHeader: function(token) {
-        console.log(token)
-        return {
+      _updateToken: function(token) {
+        this.set('auto', !!token);
+        if (!token) return;
+        this.headers = {
           'Authorization': 'JWT ' + token
         };
       },
@@ -63,9 +68,8 @@
         this.set('params.fields', fields);
       },
       _handleResponse: function(event) {
-        console.log(event.detail.response);
         if (event.detail.response.success) {
-          this.activities = event.detail.response.results;
+          this.me = event.detail.response.results;
         } else {
           this.error = event.detail.response.errors;
         }

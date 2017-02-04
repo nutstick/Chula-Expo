@@ -94,7 +94,6 @@
       token="[[token]]"
       fields="name,_id,profile,type,staff"
     ></me-api>
-      
 
     <!-- Main Layout -->
     <app-drawer-layout force-narrow>
@@ -105,10 +104,10 @@
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
           <a name="home" href="/">Home</a>
           <a name="signup" href="/signup/">Sign Up</a>
-          <a name="activity" href="/activity/">Activity</a>
-          <a name="facility" href="/facility/">Facility</a>
-          <a name="place" href="/place/">Place</a>
-          <a name="zone" href="/zone/">Zone</a>
+          <a hidden$="[[!isAuthenticate]]" name="activity" href="/activity/">Activity</a>
+          <a hidden$="[[!isAuthenticate]]" name="facility" href="/facility/">Facility</a>
+          <a hidden$="[[!isAuthenticate]]" name="place" href="/place/">Place</a>
+          <a hidden$="[[!isAuthenticate]]" name="zone" href="/zone/">Zone</a>
         </iron-selector>
       </app-drawer>
       <!-- Navbar Layout on desktop -->
@@ -129,10 +128,10 @@
             <paper-tabs selected="[[page]]" attr-for-selected="name">
               <paper-tab name="home"><a href="/" horizontal center-center layout>Home</a></paper-tab>
               <paper-tab name="signup"><a href="/signup/" horizontal center-center layout>Sign Up</a></paper-tab>
-              <paper-tab name="activity"><a href="/activity/" horizontal center-center layout>Activity</a></paper-tab>
-              <paper-tab name="facility"><a href="/facility/" horizontal center-center layout>Facility</a></paper-tab>
-              <paper-tab name="place"><a href="/place/" horizontal center-center layout>Place</a></paper-tab>
-              <paper-tab name="zone"><a href="/zone/" horizontal center-center layout>Zone</a></paper-tab>
+              <paper-tab hidden$="[[!isAuthenticate]]" name="activity"><a href="/activity/" horizontal center-center layout>Activity</a></paper-tab>
+              <paper-tab hidden$="[[!isAuthenticate]]" name="facility"><a href="/facility/" horizontal center-center layout>Facility</a></paper-tab>
+              <paper-tab hidden$="[[!isAuthenticate]]" name="place"><a href="/place/" horizontal center-center layout>Place</a></paper-tab>
+              <paper-tab hidden$="[[!isAuthenticate]]" name="zone"><a href="/zone/" horizontal center-center layout>Zone</a></paper-tab>
             </paper-tabs>
           </app-toolbar>
         </app-header>
@@ -188,6 +187,14 @@
           type: Boolean,
           computed: '_computeDisplayTab(wideLayout,page)'
         },
+        me: {
+          type: Object,
+          value: {}
+        },
+        isAuthenticate: {
+          type: Boolean,
+          computed: '_computeAuthenticate(me)'
+        }
       },
 
       observers: [
@@ -233,8 +240,16 @@
       _computeDisplayTab: function(wideLayout, page) {
         return (page == 'login' || page == 'account') ? false : wideLayout;
       },
+      _computeLoggedIn: function(page, token) {
+        return !!token || page === 'signup';
+      },
       _computeLogInIcon: function(token) {
         return token ? 'account-circle' : 'lock-outline';
+      },
+      _computeAuthenticate: function(me) {
+        if (!me || !me.staff)
+          return false;
+        return me.staff.staffType === 'Admin' || me.staff.staffType === 'Staff';
       }
     });
   </script>
