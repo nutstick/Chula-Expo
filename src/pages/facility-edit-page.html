@@ -74,6 +74,12 @@
         margin-top: 10px;
       }
     </style>
+    <app-route
+      route="{{route}}"
+      pattern="/:facilityId"
+      data="{{routeData}}"
+      tail="{{subroute}}"
+    ></app-route>
     <iron-ajax
       id="facilityGetId"
       url="{{urlId}}"
@@ -129,7 +135,6 @@
   									req.send();
   								}.bind(this), 500);
                 });
-
               </script>
 						</div>
 
@@ -192,6 +197,15 @@
           type: Object,
         }
       },
+      observers: [
+        '_routeIdChanged(routeData.facilityId)',
+      ],
+      _routeIdChanged: function(id) {
+        if(!!id) {
+          this.urlId = `/api/facilities/${id}`;
+          this.generateRequest();
+        }
+      },
       generateRequest: function(){
         this.$.facilityGetId.generateRequest();
       },
@@ -207,6 +221,7 @@
       },
       _response: function(e) {
         if (e.detail.response.success) {
+          this.$.form.reset();
           window.location = '/facility';
         }
       },

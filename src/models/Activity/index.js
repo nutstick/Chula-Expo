@@ -41,7 +41,7 @@ const ActivitySchema = new mongoose.Schema({
     }
   },
   contact: String,
-  image: [String],
+  pictures: [String],
   video: String,
   pdf: String,
   link: [String],

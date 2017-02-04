@@ -243,6 +243,7 @@
       },
       _response: function(e) {
         if (e.detail.response.success) {
+          this.$.form.reset();
           window.location = '/zone';
         }
       },

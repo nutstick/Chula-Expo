@@ -76,6 +76,12 @@
         margin-top: 10px;
       }
     </style>
+    <app-route
+      route="{{route}}"
+      pattern="/:facilityId"
+      data="{{routeData}}"
+      tail="{{subroute}}"
+    ></app-route>
     <iron-ajax
       id="facilityGetId"
       url="{{urlId}}"
@@ -170,6 +176,15 @@
         },
         facility: {
           type: Object,
+        }
+      },
+      observers: [
+        '_routeIdChanged(routeData.facilityId)',
+      ],
+      _routeIdChanged: function(id) {
+        if(!!id) {
+          this.urlId = `/api/facilities/${id}`;
+          this.generateRequest();
         }
       },
       generateRequest: function(){
