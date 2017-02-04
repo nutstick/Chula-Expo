@@ -11,7 +11,7 @@
       url="/api/zones"
       params="{{params}}"
       on-response="_handleResponse"
-      headers='{"Authentication": "{{token}}"}'
+      headers="{{headers}}"
       handle-as="json"
       debounce-duration="300"
     ></iron-ajax>
@@ -26,6 +26,12 @@
             fields: 'nameEN,thumbnail,shortNameEN,type',
             limit: 0,
             skip: 0
+          }
+        },
+        headers: {
+          type: Object,
+          value: {
+            Authentication: document.querySelector('chulaexpo-staff-app').token
           }
         },
         page: {
@@ -45,6 +51,9 @@
           value: [],
           notify: true,
         },
+        fields: {
+          type: String,
+        },
         loading: Boolean,
         error: {
           type: Object,
@@ -53,12 +62,13 @@
       },
 
       observers: [
-        '_updateRequest(page, pageSize)'
+        '_updateRequest(page, pageSize, fields)'
       ],
 
-      _updateRequest: function(page, pageSize) {
+      _updateRequest: function(page, pageSize, fields) {
         this.params.limit = pageSize;
         this.params.skip = (page - 1) * pageSize;
+        this.params.fields = fields;
       },
       _handleResponse: function(event) {
         if (event.detail.response.success) {

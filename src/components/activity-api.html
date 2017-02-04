@@ -57,8 +57,13 @@
       ],
 
       _updateRequest: function(page, pageSize, start, end) {
-        this.set('params.limit', pageSize);
-        this.set('params.skip', (page - 1) * pageSize);
+        if (pageSize === 0) {
+          this.set('params.limit', null);
+          this.set('params.skip', page);
+        } else {
+          this.set('params.limit', pageSize);
+          this.set('params.skip', (page - 1) * pageSize);
+        }
         this.set('params.start', start);
         this.set('params.end', end);
       },

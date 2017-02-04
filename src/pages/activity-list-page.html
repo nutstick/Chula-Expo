@@ -4,19 +4,22 @@
 <link rel="import" href="/public/lib/paper-card/paper-card.html">
 <link rel="import" href="/public/lib/paper-fab/paper-fab.html">
 <link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="/public/lib/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="/public/lib/paper-date-picker-item/paper-datetime-picker-item.html">
 <link rel="import" href="/public/lib/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="/public/lib/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="/public/lib/paper-menu/paper-menu.html">
 <link rel="import" href="/public/lib/paper-item/paper-item.html">
 <link rel="import" href="/public/lib/paper-styles/shadow.html">
+<link rel="import" href="/public/lib/vaadin-combo-box/vaadin-combo-box.html">
 
-<link rel="import" href="/pages/activity-view-page.html">
 <link rel="import" href="/components/activity-api.html">
+<link rel="import" href="/components/zone-api.html">
 <link rel="import" href="/components/paper-card-item.html">
 <link rel="import" href="/components/paper-card-item-header.html">
 <link rel="import" href="/components/paper-card-item-pagination.html">
 <link rel="import" href="/components/shared-styles.html">
 
+<script src="/public/lib/moment/locale/th.js"></script>
 <dom-module id="activity-list-page">
   <template>
     <style is="custom-style" include="shared-styles">
@@ -59,26 +62,46 @@
         text-decoration: none;
         width: 100%;
       }
+      #card-item-header {
+        @apply(--layout-horizontal);
+        @apply(--layout-justified);
+      }
+      #card-item-header > .right,
+      #card-item-header > .left {
+        @apply(--layout-horizontal);
+      }
+      .text-between {
+        margin: 0 6px;
+        line-height: 48px;
+      }
     </style>
     <div class="container">
-      <iron-ajax
-        auto
-        id="zoneResource"
-        url="/api/zones"
-        params="{{zoneParams}}"
-        on-response="_handleResponse"
-        headers="{{headerToken}}"
-        handle-as="json"
-      ></iron-ajax>
-      <acitivty-view-page></acitivty-view-page>
+      <activity-api
+        activities="{{activities}}"
+        error="{{error}}"
+        start="{{start}}"
+        end="{{end}}"
+        page="[[page]]"
+        page-size="[[pageSize]]"
+        totalPages="{{totalPages}}"
+      ></activity-api>
+      <zone-api
+        zones="{{zones}}"
+        error="{{error}}"
+        loading="{{zoneLoading}}"
+        page="0"
+        page-size="0"
+        fields="_id,nameEN"
+      ></zone-api>
       <paper-card-item action>
-        <div class="card-item-content">
+        <div id="card-item-header" class="card-item-content">
           <div class="left">
-            <vaadin-combo-box label="สังกัด" item-label-path="name" items="{{zones}}" always-float-label></vaadin-combo-box>
+            <vaadin-combo-box label="สังกัด" item-label-path="name.en" items="{{zones}}" always-float-label></vaadin-combo-box>
           </div>
           <div class="right">
-            <datetime-local-input label="เวลาเริ่ม" name="start" value="{{start}}" always-float-label></datetime-local-input>
-            <datetime-local-input label="เวลาจบ" name="end" value="{{end}}" always-float-label></datetime-local-input>
+            <paper-datetime-picker-item locale="[[locale]]" placeholder="เวลาเริ่ม" date={{start}} defaultTime="08:00"></paper-datetime-picker-item>
+            <div class="text-between">-</div>
+            <paper-datetime-picker-item locale="[[locale]]" placeholder="เวลาจบ" date={{end}} defaultTime="08:00"></paper-datetime-picker-item>
           </div>
         </div>
       </paper-card-item>
@@ -108,7 +131,6 @@
           <div class="clearfix"></div>
         </div>
       </div>
-      <activity-api activities="{{activities}}" error="{{error}}" start={{start}} end={end} page="[[page]]" page-size="[[pageSize]]" totalPages="{{totalPages}}"></activity-api>
   </template>
   <script>
     Polymer({
@@ -130,6 +152,10 @@
           type: Array,
           value: [],
         },
+        locale: {
+          type: String,
+          value: moment.locale('th')
+        }
       },
       _computePathShow: function(id) {
 					return '/activity/show/' + id;
