@@ -64,9 +64,8 @@
     Polymer({
       is: 'login-page',
       properties: {
-        loggedIn: {
-          type: Boolean,
-          value: false
+        token: {
+          type: String
         },
         page: {
           type: String,
@@ -75,7 +74,7 @@
           type: Boolean,
           reflectToAttribute: true,
           value: false,
-          computed: '_computeHide(loggedIn,page)'
+          computed: '_computeHide(token,page)'
         },
         email: {
           type: String
@@ -92,8 +91,8 @@
       _submitDisable: function(email, password) {
         this.$.loginButton.disabled = !email || !password;
       },
-      _computeHide: function(loggedIn, page) {
-        return loggedIn || page == 'signin';
+      _computeHide: function(token, page) {
+        return token || page === 'signup';
       },
       _delayedSubmit: function(event) {
         var form = this.$.form;

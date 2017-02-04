@@ -235,7 +235,7 @@
       },
       _computedHeaderToken: function(token) {
         return JSON.stringify({
-          Authentication: token
+          Authorization: 'JWT ' + token
         });
       },
       _typeChanged: function(event) {

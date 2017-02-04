@@ -1,3 +1,4 @@
+// let passport = null;
 const passport = require('passport');
 
 module.exports = {

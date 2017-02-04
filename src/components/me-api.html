@@ -3,12 +3,11 @@
 <!-- Web Component -->
 <link rel="import" href="/public/lib/iron-ajax/iron-ajax.html">
 
-<dom-module id="zone-api">
+<dom-module id="me-api">
   <template>
     <iron-ajax
       auto
-      id="zoneResource"
-      url="/api/zones"
+      url="/api/me"
       params="{{params}}"
       on-response="_handleResponse"
       headers="{{headers}}"
@@ -18,41 +17,30 @@
   </template>
   <script>
     Polymer({
-      is: 'zone-api',
+      is: 'me-api',
       properties: {
         params: {
           type: Object,
           value: {
-            fields: 'nameEN,thumbnail,shortNameEN,type',
+            fields: 'name,profile,type,staff',
             limit: 0,
             skip: 0
           }
         },
         headers: {
           type: Object,
-          value: {
-            Authorization: document.querySelector('chulaexpo-staff-app').token
-          }
-        },
-        page: {
-          type: Number,
-          value: 1
-        },
-        pageSize: {
-          type: Number,
-          value: 10
+          value: {},
+          computed: '_computeHeader(token)'
         },
         token: {
           type: String,
-          value: document.querySelector('chulaexpo-staff-app').token
-        },
-        zones: {
-          type: Array,
-          value: [],
-          notify: true,
         },
         fields: {
           type: String,
+        },
+        me: {
+          type: Object,
+          notify: true,
         },
         loading: Boolean,
         error: {
@@ -62,17 +50,22 @@
       },
 
       observers: [
-        '_updateRequest(page, pageSize, fields)'
+        '_updateRequest(fields)'
       ],
 
-      _updateRequest: function(page, pageSize, fields) {
-        this.params.limit = pageSize;
-        this.params.skip = (page - 1) * pageSize;
-        this.params.fields = fields;
+      _computeHeader: function(token) {
+        console.log(token)
+        return {
+          'Authorization': 'JWT ' + token
+        };
+      },
+      _updateRequest: function(fields) {
+        this.set('params.fields', fields);
       },
       _handleResponse: function(event) {
+        console.log(event.detail.response);
         if (event.detail.response.success) {
-          this.zones = event.detail.response.results;
+          this.activities = event.detail.response.results;
         } else {
           this.error = event.detail.response.errors;
         }

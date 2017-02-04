@@ -31,7 +31,7 @@
         headers: {
           type: Object,
           value: {
-            Authentication: document.querySelector('chulaexpo-staff-app').token
+            'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
           }
         },
         page: {

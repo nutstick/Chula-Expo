@@ -17,6 +17,7 @@
 <link rel="import" href="/public/lib/paper-menu/paper-menu.html">
 <link rel="import" href="/public/lib/paper-tabs/paper-tabs.html">
 <!-- Pages -->
+<link rel="import" href="/components/me-api.html">
 <link rel="import" href="/pages/login-page.html">
 
 <dom-module id="chulaexpo-staff-app">
@@ -88,6 +89,11 @@
       value="{{token}}"
       autoSaveDisabled
     ></iron-localstorage>
+    <me-api
+      me="{{me}}"
+      token="[[token]]"
+      fields="name,_id,type,staf"
+    ></me-api>
       
 
     <!-- Main Layout -->
@@ -134,7 +140,7 @@
 
       <!-- Content Gose Here -->
       <div>
-        <login-page logged-in="{{loggedIn}}" page={{page}}></login-page>
+        <login-page token="[[token]]" page=[[page]]></login-page>
         <iron-pages
           selected="[[page]]"
           attr-for-selected="name"
@@ -220,10 +226,6 @@
           this.set('prevPath', this.route.path);
           this.set('route.path', '/account');
         }
-      },
-      _computeLoggedIn: function(page, token) {
-        return true;
-        return !!token || page === "signup";
       },
       _computeDisplayMenu: function(wideLayout, page) {
         return (page == 'login') ? false : wideLayout;

@@ -5,7 +5,7 @@ const { isAuthenticatedByToken } = require('../../../config/authenticate');
 
 const router = express.Router();
 
-const avaliableFields = ['name', 'email', 'age', 'gender', 'profile', 'type', 'academic', 'worker', 'staff'];
+const avaliableFields = ['_id', 'name', 'email', 'age', 'gender', 'profile', 'type', 'academic', 'worker', 'staff'];
 
 router.use(isAuthenticatedByToken);
 
@@ -24,7 +24,7 @@ router.get('/', (req, res) => {
   // Fields selecting query
   if (req.query.fields) {
     fields = req.query.fields.split(',')
-      .reduce((prev, field) => (avaliableFields.find(f => f === field)), []);
+      .filter(f => avaliableFields.find(field => f === field))
   }
   if (fields.length === 0) {
     fields = avaliableFields;

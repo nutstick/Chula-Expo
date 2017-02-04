@@ -18,8 +18,6 @@ const MongoStore = require('connect-mongo')(session);
 // SASS
 const sass = require('node-sass-middleware');
 // Route
-const home = require('./routes/home');
-const api = require('./routes/api');
 // Passport Config
 const passportConfig = require('./config/passport');
 const popupTools = require('popup-tools');
