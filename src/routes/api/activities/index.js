@@ -1,7 +1,6 @@
 const express = require('express');
 const Activity = require('../../../models/Activity');
 const _ = require('lodash');
-const retrieveError = require('../../../tools/retrieveError');
 const RangeQuery = require('../../../tools/RangeQuery');
 
 const router = express.Router();
@@ -124,10 +123,7 @@ router.get('/', (req, res) => {
 
   query.exec((err, _act) => {
     if (err) {
-      res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err)
-      });
+      res.sendError(5, err);
     }
     res.status(200).json({
       success: true,
@@ -162,16 +158,10 @@ router.get('/:id', (req, res) => {
   Activity.findById(req.params.id).select(fields).exec((err, act) => {
     if (err) {
       // Handle error from User.findById
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err)
-      });
+      return res.sendError(5, err);
     }
     if (!act) {
-      return res.status(403).json({
-        success: false,
-        results: retrieveError(25)
-      });
+      return res.sendError(25);
     }
     return res.status(200).json({
       success: true,
@@ -184,7 +174,7 @@ router.get('/:id', (req, res) => {
  * Create a new activity
  * Access at POST http://localhost:8080/api/activities
  */
-router.post('/', (req, res, next) => {
+router.post('/', (req, res) => {
   // Create a new instance of the User model
   const activity = new Activity();
 
@@ -198,7 +188,7 @@ router.post('/', (req, res, next) => {
   activity.description.en = req.body.descriptionEN;
   activity.description.th = req.body.descriptionTH;
   activity.contact = req.body.contact;
-  activity.image = req.body.image;
+  activity.pictures = req.body.pictures.split(',');
   activity.video = req.body.video;
   activity.pdf = req.body.pdf;
   activity.link = req.body.link;
@@ -212,14 +202,12 @@ router.post('/', (req, res, next) => {
   activity.zone = req.body.zone;
   activity.start = req.body.start;
   activity.end = req.body.end;
+
   // Save User and check for error
   activity.save((err, _act) => {
     if (err) {
       // Handle error from
-      return res.status(500).json({
-        success: false,
-        results: retrieveError(5, err)
-      });
+      return res.sendError(5, err);
     }
 
     res.status(200).json({
@@ -232,7 +220,7 @@ router.post('/', (req, res, next) => {
 // ex. { "name","EditName"}
 // Access at PUT http://localhost:3000/api/activities/:id
 router.put('/:id', (req, res) => {
-  const updateFields = _.pick(req.body, ['thumbnail', 'banner', 'contact', 'image', 'video', 'pdf', 'link', 'isHighlight', 'tags', 'zone', 'start', 'end']);
+  const updateFields = _.pick(req.body, ['thumbnail', 'banner', 'contact', 'video', 'pdf', 'link', 'isHighlight', 'tags', 'zone', 'start', 'end']);
 
   if (updateFields.start) {
     updateFields.start = new Date(updateFields.start);
@@ -243,20 +231,15 @@ router.put('/:id', (req, res) => {
   Activity.findById(req.params.id, (err, act) => {
     if (err) {
       // Handle error from User.findById
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err)
-      });
+      return res.sendError(5, err);
     }
     if (!act) {
-      res.status(403).json({
-        success: false,
-        results: retrieveError(25)
-      });
+      res.sendError(25);
     }
     _.assignIn(act, updateFields);
     act.name.en = req.body.nameEN;
     act.name.th = req.body.nameTH;
+    act.pictures = req.body.pictures.split(',');
     act.shortDescription.en = req.body.shortDescriptionEN;
     act.shortDescription.th = req.body.shortDescriptionTH;
     act.description.en = req.body.descriptionEN;
@@ -270,10 +253,7 @@ router.put('/:id', (req, res) => {
     act.save((err, updatedAct) => {
       if (err) {
         // Handle error from save
-        return res.status(500).json({
-          success: false,
-          errors: retrieveError(5, err)
-        });
+        return res.sendError(5, err);
       }
       res.status(200).json({
         success: true,
@@ -288,10 +268,7 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
   Activity.findByIdAndRemove(req.params.id, (err) => {
     if (err) {
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
     return res.status(202).json({
       success: true,

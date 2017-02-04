@@ -16,10 +16,7 @@ router.get('/:id', (req, res) => {
   User.findById(req.params.id, (err, user) => {
     if (err) {
       // Handle error from User.findById
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
     const params = {
       name: user.name,
@@ -78,10 +75,7 @@ router.get('/', (req, res) => {
     }
     query.exec((err, users) => {
       if (err) {
-        res.status(500).json({
-          success: false,
-          errors: retrieveError(5, err)
-        });
+        res.sendError(5, err);
       } else {
         res.json({
           success: true,
@@ -90,7 +84,7 @@ router.get('/', (req, res) => {
       }
     });
   } catch (error) {
-    res.send(error);
+    res.sendError(5, error);
   }
 });
 
@@ -162,10 +156,7 @@ router.post('/', (req, res) => {
   user.save((err, _user) => {
     if (err) {
       // Handle error from save
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
 
     res.status(201).json({

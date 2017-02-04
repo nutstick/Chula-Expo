@@ -130,6 +130,12 @@
         cursor: pointer;
       }
     </style>
+    <app-route
+      route="{{route}}"
+      pattern="/:activityId"
+      data="{{routeData}}"
+      tail="{{subroute}}"
+    ></app-route>
     <iron-ajax
       id="activityGetId"
       url="{{urlId}}"
@@ -145,26 +151,7 @@
 						<div class="flex-layout">
 							<label class="label --upload">Thumbnail</label>
 							<div class="flex">
-								<vaadin-upload
-									id="thumbnailUpload"
-									accept="image/*"
-									target="/upload/img/activities/thumbnail"
-									method="POST"
-									headers="{'Authorization': 'JWT {{token}}'}"
-									form-data-name="picture"
-								>
-									<div class="drop-label">
-										<iron-icon icon="image:collections"></iron-icon>
-										รูปทัมเนล
-									</div>
-								</vaadin-upload>
-								<input id="thumbnail" type="hidden" name="thumbnail">
-								<script>
-									var thumbnailUpload = document.querySelector('activity-show-page').querySelector('vaadin-upload#thumbnailUpload');
-									thumbnailUpload.addEventListener("upload-response", function(event) {
-										document.querySelector('activity-show-page').querySelector('#thumbnail').value = event;
-									});
-								</script>
+                <iron-image style="width:140px; height:80px;" sizing="cover" preload fade src="{{activity.thumbnail}}"></iron-image>
 							</div>
 						</div>
 					</div>
@@ -173,19 +160,7 @@
 						<div class="flex-layout">
 							<label class="label --upload">Banner</label>
 							<div class="flex">
-								<vaadin-upload
-									id="bannerUpload"
-									accept="image/*"
-									target="/upload/img/activities/banner"
-									method="POST"
-									headers="{'Authorization': 'JWT {{token}}'}"
-									form-data-name="picture"
-								>
-									<div class="drop-label">
-										<iron-icon icon="image:collections"></iron-icon>
-										แบรนเนอร์
-									</div>
-								</vaadin-upload>
+                <iron-image style="width:200px; height:150px;" sizing="cover" preload fade src="{{activity.banner}}"></iron-image>
 							</div>
 						</div>
 					</div>
@@ -382,27 +357,20 @@
 				</div>
 
 				<div class="card-content">
-					<vaadin-upload
-						id="activityImage"
-						accept="image/*"
-						target="/upload/img/activities"
-						method="POST"
-						headers="{'Authorization': 'JWT {{token}}'}"
-						form-data-name="picture"
-					>
-						<div class="drop-label">
-							<iron-icon icon="image:collections"></iron-icon>
-							รูปประกอบกิจกกรม
-						</div>
-					</vaadin-upload>
-					<!-- Tags -->
-					<div class="item">
-						<label class="label --input">description</label>
-						<div class="flex" style="display: inline-block">
-							{{activity.tags}}
-						</div>
-					</div>
+          <template is="dom-repeat" items="{{activity.pictures}}">
+            <iron-image style="width:100px; height:100px;" sizing="cover" preload fade src="{{item}}"></iron-image>
+          </template>
 				</div>
+
+        <div class="card-content">
+          <!-- Tags -->
+          <div class="item">
+            <label class="label --input">Tags</label>
+            <div class="flex" style="display: inline-block">
+              {{activity.tags}}
+            </div>
+          </div>
+        </div>
 			</paper-card>
 			<div id="right">
         <paper-card class="card">
@@ -522,6 +490,17 @@
           type: Array,
           value: [],
         },
+      },
+      observers: [
+        '_routeIdChanged(routeData.activityId)',
+      ],
+      _routeIdChanged: function(id) {
+				console.log(id)
+        if(!!id) {
+          this.urlId = `/api/activities/${id}`;
+          this.urlIdRound = `/api/activities/${id}/rounds`;
+          this.generateRequest();
+        }
       },
       generateRequest: function(){
         this.$.activityGetId.generateRequest();

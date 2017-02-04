@@ -70,6 +70,12 @@
         margin-top: 10px;
       }
     </style>
+    <app-route
+      route="{{route}}"
+      pattern="/:placeId"
+      data="{{routeData}}"
+      tail="{{subroute}}"
+    ></app-route>
     <iron-ajax
       id="placeGetId"
       url="{{urlId}}"
@@ -150,6 +156,15 @@
           type: Object,
         }
       },
+      observers: [
+        '_routeIdChanged(routeData.placeId)',
+      ],
+      _routeIdChanged: function(id) {
+        if(!!id) {
+          this.urlId = `/api/places/${id}`;
+          this.generateRequest();
+        }
+      },
       generateRequest: function(){
         this.$.placeGetId.generateRequest();
       },
@@ -165,6 +180,7 @@
       },
       _response: function(e) {
         if (e.detail.response.success) {
+          this.$.form.reset();
           window.location = '/place';
         }
       },

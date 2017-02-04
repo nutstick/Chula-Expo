@@ -68,6 +68,12 @@
         margin-top: 10px;
       }
     </style>
+    <app-route
+      route="{{route}}"
+      pattern="/:zoneId"
+      data="{{routeData}}"
+      tail="{{subroute}}"
+    ></app-route>
     <iron-ajax
       id="zoneGetId"
       url="{{urlId}}"
@@ -235,6 +241,15 @@
 				zone: {
 					type: Object
 				}
+      },
+      observers: [
+        '_routeIdChanged(routeData.zoneId)',
+      ],
+      _routeIdChanged: function(id) {
+        if(!!id) {
+          this.urlId = `/api/zones/${id}`;
+          this.generateRequest();
+        }
       },
       generateRequest: function(){
         this.$.zoneGetId.generateRequest();

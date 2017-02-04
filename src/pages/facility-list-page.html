@@ -121,16 +121,10 @@
       },
       _showClick: function(id) {
         var id = event.model.item['_id'];
-        var page = document.querySelector('facility-show-page');
-        page.urlId = `/api/facilities/${id}`;
-        page.generateRequest();
         document.querySelector('chulaexpo-staff-app').set('route.path', '/facility/show/'+id);
 			},
       _editClick: function(id) {
         var id = event.model.item['_id'];
-        var page = document.querySelector('facility-edit-page');
-        page.urlId = `/api/facilities/${id}`;
-        page.generateRequest();
         document.querySelector('chulaexpo-staff-app').set('route.path', '/facility/edit/'+id);
 			},
       _addClick: function() {

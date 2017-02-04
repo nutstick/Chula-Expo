@@ -54,7 +54,7 @@
         <paper-button raised on-tap="_delayedSubmit" disabled id="loginButton">
           <paper-spinner id="spinner" hidden></paper-spinner>Submit
         </paper-button>
-        <paper-button raised on-tap="_gotoSingup">Sign Up</paper-button>
+        <paper-button raised on-tap="_gotoSignup">Sign Up</paper-button>
         <div class="output"></div>
       </form>
       <facebook-login-button></facebook-login-button>
@@ -64,9 +64,8 @@
     Polymer({
       is: 'login-page',
       properties: {
-        loggedIn: {
-          type: Boolean,
-          value: false
+        token: {
+          type: String
         },
         page: {
           type: String,
@@ -75,7 +74,7 @@
           type: Boolean,
           reflectToAttribute: true,
           value: false,
-          computed: '_computeHide(loggedIn,page)'
+          computed: '_computeHide(token,page)'
         },
         email: {
           type: String
@@ -92,8 +91,8 @@
       _submitDisable: function(email, password) {
         this.$.loginButton.disabled = !email || !password;
       },
-      _computeHide: function(loggedIn, page) {
-        return loggedIn || page == 'signin';
+      _computeHide: function(token, page) {
+        return token || page === 'signup';
       },
       _delayedSubmit: function(event) {
         var form = this.$.form;
@@ -104,9 +103,8 @@
         form.submit();
       },
       _gotoSignup: function(event) {
-        window.location = '/signup';
-        // window.history.pushState({}, null, '/signup');
-        // window.dispatchEvent(new CustomEvent('location-changed'));
+        window.history.pushState({}, null, '/signup');
+        window.dispatchEvent(new CustomEvent('location-changed'));
       },
       _response: function(e) {
         if (e.detail.response.success) {

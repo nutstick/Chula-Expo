@@ -99,6 +99,7 @@ const UserSchema = new mongoose.Schema({
   staff: {
     staffType: {
       type: String,
+      enum: ['Staff', 'Admin', 'Scanner']
     },
     zone: {
       type: ObjectId,

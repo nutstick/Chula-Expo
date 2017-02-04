@@ -17,10 +17,7 @@ const router = express.Router();
 router.post('/', (req, res, next) => {
   if (!req.body.email || !req.body.password) {
     // Handle error from save
-    return res.status(400).json({
-      success: false,
-      errors: retrieveError(2),
-    });
+    return res.sendError(2);
   }
 
   passport.authenticate('local', (err, user) => {
@@ -28,17 +25,11 @@ router.post('/', (req, res, next) => {
       return next(err);
     }
     if (!user) {
-      return res.status(401).json({
-        success: false,
-        errors: retrieveError(22)
-      });
+      return res.sendError(4);
     }
     req.logIn(user, { session: false }, (err) => {
       if (err) {
-        return res.status(500).json({
-          success: false,
-          errors: retrieveError(5, err)
-        });
+        return res.sendError(5, err);
       }
       res.json({
         success: true,
