@@ -25,7 +25,6 @@
         @apply(--layout-vertical);
         @apply(--layout-center-center);
         padding-top: 20px;
-        font-size: 14px;
       }
 
 			paper-card {
@@ -34,9 +33,6 @@
 
       .item {
         margin-bottom: 10px;
-      }
-      .form-title {
-        margin-bottom: 20px;
       }
 
       .avatar {
@@ -134,12 +130,6 @@
         cursor: pointer;
       }
     </style>
-		<app-route
-      route="{{route}}"
-      pattern="/:activityId"
-      data="{{routeData}}"
-      tail="{{subroute}}"
-    ></app-route>
     <iron-ajax
       id="activityGetId"
       url="{{urlId}}"
@@ -339,7 +329,7 @@
 				</div>
 				<div class="card-content">
 					<!-- Thai Language -->
-					<div class="flex-layout center form-title">
+					<div class="flex-layout center">
 						<div class="avatar" item-icon><img src="/public/img/th.png" /></div>
 						<div class="flex company">ภาษาไทย</div>
 					</div>
@@ -366,7 +356,7 @@
 
 				<div class="card-content">
 					<!-- English Language -->
-					<div class="flex-layout center form-title">
+					<div class="flex-layout center">
 						<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
 						<div class="flex company">English</div>
 					</div>
@@ -522,9 +512,6 @@
           type: Number,
           value: 16
         },
-        route: {
-          type: String,
-        },
         activity: {
           type: Object,
         },
@@ -536,19 +523,12 @@
           value: [],
         },
       },
-      observers: [
-        '_routeIdChanged(routeData.activityId)',
-      ],
+      generateRequest: function(){
+        this.$.activityGetId.generateRequest();
+        this.$.roundAPI.generateRequest();
+      },
       _convertToDate: function(dateTime) {
         return moment.utc(dateTime).format('MM-DD-YYYY HH:mm');
-      },
-      _routeIdChanged: function(activityId) {
-        if(!!activityId){
-          this.set('urlId', `/api/activities/${activityId}`);
-          this.set('urlIdRound', `${this.urlId}/rounds`);
-          this.$.activityGetId.generateRequest();
-          this.$.roundAPI.generateRequest();
-        }
       },
       _delayedSubmit: function(event) {
         var form = this.$.form;

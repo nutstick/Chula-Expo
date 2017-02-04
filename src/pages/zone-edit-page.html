@@ -29,9 +29,6 @@
       .item {
         margin-bottom: 10px;
       }
-      .form-title {
-        margin-bottom: 20px;
-      }
 
       .avatar {
         display: inline-block;
@@ -71,12 +68,6 @@
         margin-top: 10px;
       }
     </style>
-		<app-route
-      route="{{route}}"
-      pattern="/:zoneId"
-      data="{{routeData}}"
-      tail="{{subroute}}"
-    ></app-route>
     <iron-ajax
       id="zoneGetId"
       url="{{urlId}}"
@@ -114,11 +105,13 @@
 							<div class="flex-layout">
 								<label class="label --upload">Thumbnail</label>
 								<div class="flex">
+                  <iron-image style="width:140px; height:80px;" sizing="cover" preload fade src="{{zone.thumbnail}}"></iron-image>
 									<vaadin-upload
 										id="thumbnailUpload"
 										accept="image/*"
 										target="/upload/img/zones/thumbnail"
 										method="POST"
+                    max-files="1"
 										headers="{'Authorization': 'JWT {{token}}'}"
 										form-data-name="picture"
 									>
@@ -127,12 +120,18 @@
 											รูปทัมเนล
 										</div>
 									</vaadin-upload>
-									<input id="thumbnail" type="hidden" name="thumbnail">
+                  <input id="thumbnail" type="hidden" name="thumbnail" value="">
 									<script>
-										var thumbnailUpload = document.querySelector('zone-edit-page').querySelector('vaadin-upload#thumbnailUpload');
+										var thumbnailUpload = document.querySelector('zone-edit-page').querySelector('vaadin-upload#thumbnailUpload')
 										thumbnailUpload.addEventListener("upload-response", function(event) {
-											document.querySelector('zone-edit-page').querySelector('#thumbnail').value = event;
+											if(event.detail.file.xhr.status == 200){
+                        var name = JSON.parse(event.detail.xhr.responseText);
+                        document.querySelector('zone-edit-page').querySelector('#thumbnail').value = name.results.thumbnail;
+                      }
 										});
+                    thumbnailUpload.addEventListener("upload-abort", function(event) {
+                      document.querySelector('zone-edit-page').querySelector('#thumbnail').value = '';
+                    });
 									</script>
 								</div>
 							</div>
@@ -142,10 +141,12 @@
 							<div class="flex-layout">
 								<label class="label --upload">Banner</label>
 								<div class="flex">
+                  <iron-image style="width:200px; height:150px;" sizing="cover" preload fade src="{{zone.banner}}"></iron-image>
 									<vaadin-upload
 										id="bannerUpload"
 										accept="image/*"
 										target="/upload/img/zones/banner"
+                    max-files="1"
 										method="POST"
 										headers="{'Authorization': 'JWT {{token}}'}"
 										form-data-name="picture"
@@ -155,6 +156,19 @@
 											แบรนเนอร์
 										</div>
 									</vaadin-upload>
+                  <input id="banner" type="hidden" name="banner" value="">
+                  <script>
+                    var bannerUpload = document.querySelector('zone-edit-page').querySelector('vaadin-upload#bannerUpload')
+                    bannerUpload.addEventListener("upload-response", function(event) {
+                      if(event.detail.file.xhr.status == 200){
+                        var name = JSON.parse(event.detail.xhr.responseText);
+                        document.querySelector('zone-edit-page').querySelector('#banner').value = name.results.thumbnail;
+                      }
+                    });
+                    bannerUpload.addEventListener("upload-abort", function(event) {
+                      document.querySelector('zone-edit-page').querySelector('#banner').value = '';
+                    });
+                  </script>
 								</div>
 							</div>
 						</div>
@@ -169,7 +183,7 @@
 					</div>
 					<div class="card-content">
 						<!-- Thai Language -->
-						<div class="flex-layout center form-title">
+						<div class="flex-layout center">
 							<div class="avatar" item-icon><img src="/public/img/th.png" /></div>
 							<div class="flex company">ภาษาไทย</div>
 						</div>
@@ -177,8 +191,11 @@
 						<paper-input type="text" label="ชื่อย่อ" value="[[zone.shortName.th]]" name="shortNameTH" char-counter maxlength="10" always-float-label></paper-input>
 						<paper-input type="text" label="ข้อความต้อนรับ" value="[[zone.welcomeMessage.th]]" name="welcomeMessageTH" char-counter maxlength="150" always-float-label></paper-input>
 						<paper-textarea label="รายละเอียด" value="[[zone.description.th]]" name="descriptionTH" rows="4" always-float-label></paper-textarea>
+          </div>
+
+          <div class="card-content">
 						<!-- English Language -->
-						<div class="flex-layout center form-title">
+						<div class="flex-layout center">
 							<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
 							<div class="flex company">English</div>
 						</div>
@@ -215,21 +232,12 @@
           type: Number,
           value: 16
         },
-        route: {
-          type: String,
-        },
 				zone: {
 					type: Object
 				}
       },
-      observers: [
-        '_routeIdChanged(routeData.zoneId)',
-      ],
-      _routeIdChanged: function(zoneId) {
-        if(!!zoneId){
-          this.urlId = `/api/zones/${zoneId}`;
-          this.$.zoneGetId.generateRequest();
-        }
+      generateRequest: function(){
+        this.$.zoneGetId.generateRequest();
       },
       _delayedSubmit: function(event) {
         var form = this.$.form;
@@ -243,13 +251,18 @@
       },
       _response: function(e) {
 				if (e.detail.response.success) {
-          window.location = '/zone/show/' + this.routeData.zoneId;
-        }      
+          this.$.form.reset();
+          window.location = '/zone';
+        }
 			},
       _presubmit: function(event) {
 				this.$.form.request.method = 'put';
 				this.$.form.request.body.locationLat = this.zone.location.latitude;
-				this.$.form.request.body.locationLong = this.zone.location.longitude;
+        this.$.form.request.body.locationLong = this.zone.location.longitude;
+        if(this.$.form.request.body.thumbnail == '')
+          this.$.form.request.body.thumbnail = this.zone.thumbnail;
+        if(this.$.form.request.body.banner == '')
+          this.$.form.request.body.banner = this.zone.banner;
       },
       _handleResponse: function(event) {
         if (event.detail.response.success) {

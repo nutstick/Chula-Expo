@@ -9,6 +9,8 @@
 <link rel="import" href="/public/lib/paper-menu/paper-menu.html">
 <link rel="import" href="/public/lib/paper-item/paper-item.html">
 <link rel="import" href="/public/lib/paper-styles/shadow.html">
+<link rel="import" href="/public/lib/paper-dialog/paper-dialog.html">
+
 
 <link rel="import" href="/components/place-api.html">
 <link rel="import" href="/components/paper-card-item.html">
@@ -69,8 +71,8 @@
           </div>
           <div class="card-item-actions">
             <div class="horizontal justified">
-              <paper-button><a href="{{_computePathShow(item._id)}}">Show</a></paper-button>
-              <paper-button><a href="{{_computePathEdit(item._id)}}">Edit</a></paper-button>
+              <paper-button on-tap="_showClick">Show</paper-button>
+              <paper-button on-tap="_editClick">Edit</paper-button>
               <paper-button on-tap="_deleteClick">Delete</paper-button>
             </div>
           </div>
@@ -80,10 +82,18 @@
       <div class="fixed-bottom">
         <div class="container">
           <paper-fab id="add-icon" icon="add" on-tap="_addClick"></paper-fab>
-          <div class="clearfix">
+          <div class="clearfix"></div>
         </div>
       </div>
       <place-api id="placeAPI" places="{{places}}" error="{{error}}" page="{{page}}" page-size="{{pageSize}}" totalPages="{{totalPages}}"></place-api>
+    </div>
+    <paper-dialog id="dialog" on-iron-overlay-closed="_delete">
+      <h2>Are you sure?</h2>
+      <div class="buttons">
+        <paper-button dialog-dismiss>No</paper-button>
+        <paper-button dialog-confirm autofocus>Yes</paper-button>
+      </div>
+    </paper-dialog>
   </template>
   <script>
     Polymer({
@@ -106,30 +116,44 @@
           value: [],
         },
       },
-      _computePathShow: function(id) {
-					return '/place/show/' + id;
+      _showClick: function(id) {
+        var id = event.model.item['_id'];
+        var page = document.querySelector('place-show-page');
+        page.urlId = `/api/places/${id}`;
+        page.generateRequest();
+        document.querySelector('chulaexpo-staff-app').set('route.path', '/place/show/'+id);
 			},
-      _computePathEdit: function(id) {
-					return '/place/edit/' + id;
+      _editClick: function(id) {
+        var id = event.model.item['_id'];
+        var page = document.querySelector('place-edit-page');
+        page.urlId = `/api/places/${id}`;
+        page.generateRequest();
+        document.querySelector('chulaexpo-staff-app').set('route.path', '/place/edit/'+id);
 			},
       _addClick: function() {
         document.querySelector('chulaexpo-staff-app').set('route.path', '/place/add/');
       },
       _deleteClick: function(event) {
-        var id = event.model.item['_id'];
-        var url = '/api/places/' + id;
+        this.deleteId = event.model.item['_id'];
+        this.$.dialog.open();
+      },
+      _delete: function(event) {
+        if(event.detail.confirmed) {
+          var id = this.deleteId;
+          var url = '/api/places/' + id;
 
-        var dom = this;
-        setTimeout(function () {
-          var req = new XMLHttpRequest();
-          req.open('DELETE',encodeURI(url));
-          req.onload = function() {
-            if (req.status === 202) {
-              dom.$.placeAPI.generateRequest();
-            }
-          };
-          req.send();
-        }.bind(this), 300);
+          var dom = this;
+          setTimeout(function () {
+            var req = new XMLHttpRequest();
+            req.open('DELETE',encodeURI(url));
+            req.onload = function() {
+              if (req.status === 202) {
+                dom.$.placeAPI.generateRequest();
+              }
+            };
+            req.send();
+          }.bind(this), 300);
+        }
       }
     })
   </script>

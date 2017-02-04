@@ -14,6 +14,7 @@
 <link rel="import" href="/public/lib/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="/public/lib/paper-listbox/paper-listbox.html">
 <link rel="import" href="/public/lib/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="/public/lib/vaadin-combo-box/vaadin-combo-box.html">
 
 <link rel="import" href="/components/shared-styles.html">
 
@@ -32,9 +33,6 @@
 
       .item {
         margin-bottom: 10px;
-      }
-      .form-title {
-        margin-bottom: 20px;
       }
 
       .avatar {
@@ -74,6 +72,7 @@
         @apply(--layout-end-justified);
         margin-top: 10px;
       }
+
     </style>
     <div class="container">
       <paper-card>
@@ -100,31 +99,31 @@
 						<div class="item">
 							<label class="label --input">Place</label>
 							<div class="" style="display: inline-block">
-								<paper-autocomplete name="place" label="place" id="input-place" no-label-float="true" remote-source="true"></paper-autocomplete>
+                <vaadin-combo-box name="place" id="input-place" class="elements-box" no-label-float="true" item-label-path="name" item-value-path="value"></vaadin-combo-box>
 							</div>
-							<script>
-								document.querySelector('facility-add-page').querySelector('#input-place').addEventListener('autocomplete-change', function(event) {
-									var input = this;
-									var search = event.detail.option.text;
-									var url = '/api/places?nameEN=' + search;
-									var delay = Math.random() * (500 - 100) + 100;
+              <script>
+                HTMLImports.whenReady(function() {
+                  var combobox = document.querySelector('facility-add-page').querySelector('#input-place');
 
-									setTimeout(function () {
-										var req = new XMLHttpRequest();
-										req.open('GET',encodeURI(url));
-										req.onload = function() {
-											if (req.status === 200) {
-												var data = JSON.parse(req.response);
-												var arr = data.results.map(function(obj){
-													return { text:obj.name.en, value:obj['_id'] };
-												});
-												input.suggestions(arr);
-											}
-										};
-										req.send();
-									}.bind(this), delay);
-								});
-							</script>
+                  var url = '/api/places';
+  								setTimeout(function () {
+  									var req = new XMLHttpRequest();
+  									req.open('GET',encodeURI(url));
+  									req.onload = function() {
+  										if (req.status === 200) {
+  											var data = JSON.parse(req.response);
+  											var arr = data.results.map(function(obj){
+  												return { name:obj.name.en, value:obj['_id'] };
+  											});
+                        combobox.items = arr;
+                        console.log(arr);
+  										}
+  									};
+  									req.send();
+  								}.bind(this), 500);
+                });
+
+              </script>
 						</div>
 
 						<!-- Google Map -->
@@ -137,14 +136,17 @@
 					</div>
 					<div class="card-content">
 						<!-- Thai Language -->
-						<div class="flex-layout center form-title">
+						<div class="flex-layout center">
 							<div class="avatar" item-icon><img src="/public/img/th.png" /></div>
 							<div class="flex company">ภาษาไทย</div>
 						</div>
 						<paper-input type="text" label="ชื่อ" name="nameTH" always-float-label></paper-input>
 						<paper-textarea label="รายละเอียด" name="descriptionTH" rows="4" always-float-label></paper-textarea>
+          </div>
+
+          <div class="card-content">
 						<!-- English Language -->
-						<div class="flex-layout center form-title">
+						<div class="flex-layout center">
 							<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
 							<div class="flex company">English</div>
 						</div>
@@ -202,6 +204,7 @@
             },
             _response: function(e) {
                 if (e.detail.response.success) {
+                   this.$.form.reset();
                    window.location = '/facility';
                 }
             },
@@ -209,8 +212,6 @@
                 this.$.form.reset();
             },
             _presubmit: function(event) {
-                console.log(this.$.form.request.body);
-
                 this.$.form.request.body.locationLat = this.latitude;
                 this.$.form.request.body.locationLong = this.longitude;
             }

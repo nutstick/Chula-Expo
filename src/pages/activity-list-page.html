@@ -9,6 +9,8 @@
 <link rel="import" href="/public/lib/paper-menu/paper-menu.html">
 <link rel="import" href="/public/lib/paper-item/paper-item.html">
 <link rel="import" href="/public/lib/paper-styles/shadow.html">
+<link rel="import" href="/public/lib/paper-dialog/paper-dialog.html">
+
 
 <link rel="import" href="/pages/activity-view-page.html">
 <link rel="import" href="/components/activity-api.html">
@@ -72,8 +74,8 @@
           </div>
           <div class="card-item-actions">
             <div class="horizontal justified">
-              <paper-button><a href="{{_computePathShow(item._id)}}">Show</a></paper-button>
-              <paper-button><a href="{{_computePathEdit(item._id)}}">Edit</a></paper-button>
+              <paper-button on-tap="_showClick">Show</paper-button>
+              <paper-button on-tap="_editClick">Edit</paper-button>
               <paper-button on-tap="_deleteClick">Delete</paper-button>
             </div>
           </div>
@@ -88,6 +90,13 @@
       </div>
       <activity-api id="activityAPI" activities="{{activities}}" error="{{error}}" start="{{start}}" end="{{end}}" page="[[page]]" page-size="[[pageSize]]" totalPages="{{totalPages}}"></activity-api>
     </div>
+    <paper-dialog id="dialog" on-iron-overlay-closed="_delete">
+      <h2>Are you sure?</h2>
+      <div class="buttons">
+        <paper-button dialog-dismiss>No</paper-button>
+        <paper-button dialog-confirm autofocus>Yes</paper-button>
+      </div>
+    </paper-dialog>
   </template>
   <script>
     Polymer({
@@ -110,30 +119,45 @@
           value: [],
         },
       },
-      _computePathShow: function(id) {
-					return '/activity/show/' + id;
+      _showClick: function(id) {
+        var id = event.model.item['_id'];
+        var page = document.querySelector('activity-show-page');
+        page.urlId = `/api/activities/${id}`;
+        page.urlIdRound = `/api/activities/${id}/rounds`;
+        page.generateRequest();
+        document.querySelector('chulaexpo-staff-app').set('route.path', '/activity/show/'+id);
 			},
-      _computePathEdit: function(id) {
-					return '/activity/edit/' + id;
+      _editClick: function(id) {
+        var id = event.model.item['_id'];
+        var page = document.querySelector('activity-edit-page');
+        page.urlId = `/api/activities/${id}`;
+        page.generateRequest();
+        document.querySelector('chulaexpo-staff-app').set('route.path', '/activity/edit/'+id);
 			},
       _addClick: function() {
         document.querySelector('chulaexpo-staff-app').set('route.path', '/activity/add/');
       },
       _deleteClick: function(event) {
-        var id = event.model.item['_id'];
-        var url = '/api/activities/' + id;
+        this.deleteId = event.model.item['_id'];
+        this.$.dialog.open();
+      },
+      _delete: function(event) {
+        if(event.detail.confirmed) {
+          var id = this.deleteId;
+          var url = '/api/activities/' + id;
 
-        var dom = this;
-        setTimeout(function () {
-          var req = new XMLHttpRequest();
-          req.open('DELETE',encodeURI(url));
-          req.onload = function() {
-            if (req.status === 202) {
-              dom.$.activityAPI.generateRequest();
-            }
-          };
-          req.send();
-        }.bind(this), 300);
+          var dom = this;
+          setTimeout(function () {
+            var req = new XMLHttpRequest();
+            req.open('DELETE',encodeURI(url));
+            req.onload = function() {
+              if (req.status === 202) {
+                dom.$.activityAPI.generateRequest();
+              }
+            };
+            req.send();
+          }.bind(this), 300);
+        }
       }
     })
   </script>

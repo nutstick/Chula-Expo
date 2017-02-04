@@ -51,10 +51,12 @@
          this.$.roundResource.generateRequest();
       },
       _handleResponse: function(event) {
-        if (event.detail.response.success) {
-          this.rounds = event.detail.response.results;
-        } else {
-          this.error = event.detail.response.errors;
+        if(!!event.detail.response) {
+          if (event.detail.response.success) {
+            this.rounds = event.detail.response.results;
+          } else {
+            this.error = event.detail.response.errors;
+          }
         }
       }
     });

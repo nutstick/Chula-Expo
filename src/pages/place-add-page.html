@@ -30,9 +30,6 @@
       .item {
         margin-bottom: 10px;
       }
-      .form-title {
-        margin-bottom: 20px;
-      }
 
       .avatar {
         display: inline-block;
@@ -98,13 +95,16 @@
 					</div>
 					<div class="card-content">
 						<!-- Thai Language -->
-						<div class="flex-layout center form-title">
+						<div class="flex-layout center">
 							<div class="avatar" item-icon><img src="/public/img/th.png" /></div>
 							<div class="flex company">ภาษาไทย</div>
 						</div>
 						<paper-input type="text" label="ชื่อสถานที่" name="nameTH" always-float-label></paper-input>
+          </div>
+
+					<div class="card-content">
 						<!-- English Language -->
-						<div class="flex-layout center form-title">
+						<div class="flex-layout center">
 							<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
 							<div class="flex company">English</div>
 						</div>
@@ -161,7 +161,7 @@
       },
       _response: function(e) {
         if (e.detail.response.success) {
-          window.location = '/';
+          window.location = '/place';
         }
       },
       _reset: function(event) {

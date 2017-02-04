@@ -35,9 +35,6 @@
       .item {
         margin-bottom: 10px;
       }
-      .form-title {
-        margin-bottom: 20px;
-      }
 
       .avatar {
         display: inline-block;
@@ -77,12 +74,6 @@
         margin-top: 10px;
       }
     </style>
-    <app-route
-      route="{{route}}"
-      pattern="/:facilityId"
-      data="{{routeData}}"
-      tail="{{subroute}}"
-    ></app-route>
     <iron-ajax
       id="facilityGetId"
       url="{{urlId}}"
@@ -113,33 +104,33 @@
 
 						<!-- Location -->
 						<div class="item">
-							<label class="label --input">Place</label>
+              <label class="label --input">Place</label>
 							<div class="" style="display: inline-block">
-								<paper-autocomplete name="place" label="place" id="input-place" no-label-float="true" remote-source="true" value="{{facility.place.id}}" text="{{facility.place.name.en}}"></paper-autocomplete>
+                <vaadin-combo-box name="place" id="input-place" class="elements-box" no-label-float="true" item-label-path="name" item-value-path="value" value="{{facility.place._id}}"></vaadin-combo-box>
 							</div>
-							<script>
-								document.querySelector('facility-edit-page').querySelector('#input-place').addEventListener('autocomplete-change', function(event) {
-									var input = this;
-									var search = event.detail.option.text;
-									var url = '/api/places?nameEN=' + search;
-									var delay = Math.random() * (500 - 100) + 100;
+              <script>
+                HTMLImports.whenReady(function() {
+                  var combobox = document.querySelector('facility-edit-page').querySelector('#input-place');
 
-									setTimeout(function () {
-										var req = new XMLHttpRequest();
-										req.open('GET',encodeURI(url));
-										req.onload = function() {
-											if (req.status === 200) {
-												var data = JSON.parse(req.response);
-												var arr = data.results.map(function(obj){
-													return { text:obj.name.en, value:obj['_id'] };
-												});
-												input.suggestions(arr);
-											}
-										};
-										req.send();
-									}.bind(this), delay);
-								});
-							</script>
+                  var url = '/api/places';
+  								setTimeout(function () {
+  									var req = new XMLHttpRequest();
+  									req.open('GET',encodeURI(url));
+  									req.onload = function() {
+  										if (req.status === 200) {
+  											var data = JSON.parse(req.response);
+  											var arr = data.results.map(function(obj){
+  												return { name:obj.name.en, value:obj['_id'] };
+  											});
+                        combobox.items = arr;
+                        console.log(arr);
+  										}
+  									};
+  									req.send();
+  								}.bind(this), 500);
+                });
+
+              </script>
 						</div>
 
 						<!-- Google Map -->
@@ -152,14 +143,17 @@
 					</div>
 					<div class="card-content">
 						<!-- Thai Language -->
-						<div class="flex-layout center form-title">
+						<div class="flex-layout center">
 							<div class="avatar" item-icon><img src="/public/img/th.png" /></div>
 							<div class="flex company">ภาษาไทย</div>
 						</div>
 						<paper-input type="text" value="[[facility.name.th]]" label="ชื่อ" name="nameTH" always-float-label></paper-input>
 						<paper-textarea label="รายละเอียด" value="[[facility.description.th]]" name="descriptionTH" rows="4" always-float-label></paper-textarea>
+          </div>
+
+          <div class="card-content">
 						<!-- English Language -->
-						<div class="flex-layout center form-title">
+						<div class="flex-layout center">
 							<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
 							<div class="flex company">English</div>
 						</div>
@@ -194,21 +188,12 @@
           type: Number,
           value: 16
         },
-        route: {
-          type: String,
-        },
         facility: {
           type: Object,
         }
       },
-      observers: [
-        '_routeIdChanged(routeData.facilityId)',
-      ],
-      _routeIdChanged: function(facilityId) {
-        if(!!facilityId){
-          this.urlId = `/api/facilities/${facilityId}`;
-          this.$.facilityGetId.generateRequest();
-        }
+      generateRequest: function(){
+        this.$.facilityGetId.generateRequest();
       },
       _delayedSubmit: function(event) {
         var form = this.$.form;
@@ -222,7 +207,7 @@
       },
       _response: function(e) {
         if (e.detail.response.success) {
-          window.location = '/facility/show/' + this.routeData.facilityId;
+          window.location = '/facility';
         }
       },
       _presubmit: function(event) {
