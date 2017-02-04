@@ -13,7 +13,7 @@ router.use(isAuthenticatedByToken);
  * Get user by token
  * Access at GET http://localhost:8080/api/me
  * @param {string} fields
- * Accessible field 'name', 'email', 'age', 'gender', 'profile', 'type',
+ * Accessible field '_id', name', 'email', 'age', 'gender', 'profile', 'type',
  *    'academic', 'worker', 'staff'.
  *
  * @return {boolean} success - Successful querying flag.
@@ -24,7 +24,7 @@ router.get('/', (req, res) => {
   // Fields selecting query
   if (req.query.fields) {
     fields = req.query.fields.split(',')
-      .filter(f => avaliableFields.find(field => f === field))
+      .filter(f => avaliableFields.find(field => f === field));
   }
   if (fields.length === 0) {
     fields = avaliableFields;

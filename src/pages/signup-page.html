@@ -95,83 +95,84 @@
       headers="{{headerToken}}"
       handle-as="json"
     ></iron-ajax>
-    <paper-card class="container">
-      <div class="header style-scope paper-card">
-        <!-- Profile Image with uploadility -->
-        <div class="center offset">
-          <profile-image-uploadable image="{{queryParams.profile}}" alt="User profile" name="profile"></profile-image-uploadable>
-        </div>
-      </div>
-      <!-- Polymer Iron form -->
-      <form is="iron-form" id="form" method="post" class="card-content"
-        action="/api/signup" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
-          <!-- Name -->
-          <paper-input name="name" label="ชื่อ" value="{{queryParams.name}}" required always-float-label></paper-input>
-          <!-- E-mail -->
-          <paper-input name="email" label="อีเมลล์" value="{{queryParams.email}}" required always-float-label></paper-input>
-          <!-- Password -->
-          <paper-input name="password" label="พาสเวิร์ด" type="password" value="{{password}}" hidden$={{queryParams.facebook}} required={{!queryParams.facebook}} always-float-label></paper-input>
-          <paper-input name="confirmPassword" label="คอนเฟิร์มพาสเวิร์ด" value="{{confirmPassword}}" type="password" hidden$={{queryParams.facebook}} required={{!queryParams.facebook}} always-float-label></paper-input>
-          <!-- Gender -->
-          <div class="item">
-            <div class="input-label" id="gender">เพศ:</div>
-            <paper-button-group selected="male">
-              <paper-button toggles name="male" active={{male}}>ชาย</paper-button>
-              <paper-button toggles name="female" active={{female}}>หญิง</paper-button>
-            </paper-button-group>
-          </div>
-          <!-- Age -->
-          <paper-input name="age" label="อายุ" type="number" value="{{queryParams.age}}" required always-float-label></paper-input>
-          <div class="item">
-            <!-- Student/Worker -->
-            <div class="input-label">ประเภท:</div>
-            <paper-button-group selected="student">
-              <paper-button toggles name="student" active={{student}}>นักเรียน นิสิต</paper-button>
-              <paper-button toggles name="worker" active={{worker}}>บุคคลทั่วๆ</paper-button>
-              <paper-button toggles name="staff" active={{staff}}>สตาฟ</paper-button>
-            </paper-button-group>
-            <!-- Student -->
-            <fieldset class="field" hidden$="{{!student}}">
-              <paper-input name="academicLevel" label="การศึกษาปัจจุบัน" required="{{student}}" always-float-label></paper-input>
-              <paper-input name="academicYear" label="ชั้นปี" required="{{student}}" always-float-label></paper-input>
-              <paper-input name="academicSchool" label="สถาบันการศึกษา" required="{{student}}" always-float-label></paper-input>
-            </fieldset>
-            <!-- Worker -->
-            <fieldset class="field" hidden$="{{!worker}}">
-              <paper-input name="workerJob" label="อาชีพ" required="{{worker}}" always-float-label></paper-input>
-            </fieldset>
-            <!-- Staff -->
-            <fieldset class="field" hidden$="{{!staff}}">
-              <div class="item">
-                <div class="input-label">ประเภท:</div>
-                <paper-button-group selected="scannerStaff">
-                  <paper-button toggles name="adminStaff" active="{{adminStaff}}">Admin</paper-button>
-                  <paper-button toggles name="scannerStaff" active="{{scannerStaff}}">Scan man</paper-button>
-                  <paper-button toggles name="staffStaff" active="{{staffStaff}}">Staff</paper-button>
-                </paper-button-group>
-              </div>
-              <paper-input name="registrationCode" label="รหัส" required="{{staff}}" always-float-label></paper-input>
-              <vaadin-combo-box name="zone" label="สังกัด" item-label-path="name" items="{{zones}}" hidden$="{{adminStaff}}" require="{{!adminStaff}}"></vaadin-combo-box>
-            </fieldset>
-          </div>
-          <!-- Hidden Fields -->
-          <input name="accessToken" type="hidden" value="{{queryParams.accessToken}}"></input>
-          <input name="tokens[0].kind" type="hidden" value="{{queryParams.kind}}"></input>
-          <input name="tokens[0].accessToken" type="hidden" value="{{queryParams.accessToken}}"></input>
-          <input name="facebook" type="hidden" value="{{queryParams.facebook}}"></input>
-        </div>
-        <!-- Submit Button -->
-        <div class="card-actions">
-          <div class="button-holder">
-            <paper-button on-tap="_delayedSubmit">
-              <paper-spinner id="spinner" hidden></paper-spinner>Submit
-            </paper-button>
-            <!-- Reset Button -->
-            <paper-button on-tap="_reset">Reset</paper-button>
+    <form is="iron-form" id="form" method="post"
+      action="/api/signup" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
+      <paper-card class="container">
+        <div class="header style-scope paper-card">
+          <!-- Profile Image with uploadility -->
+          <div class="center offset">
+            <profile-image-uploadable image="{{queryParams.profile}}" alt="User profile" name="profile"></profile-image-uploadable>
           </div>
         </div>
-      </form>
-    </paper-card>
+        <!-- Polymer Iron form -->
+        <div class="card-content">
+            <!-- Name -->
+            <paper-input name="name" label="ชื่อ" value="{{queryParams.name}}" required always-float-label></paper-input>
+            <!-- E-mail -->
+            <paper-input name="email" label="อีเมลล์" value="{{queryParams.email}}" required always-float-label></paper-input>
+            <!-- Password -->
+            <paper-input name="password" label="พาสเวิร์ด" type="password" value="{{password}}" hidden$={{queryParams.facebook}} required={{!queryParams.facebook}} always-float-label></paper-input>
+            <paper-input name="confirmPassword" label="คอนเฟิร์มพาสเวิร์ด" value="{{confirmPassword}}" type="password" hidden$={{queryParams.facebook}} required={{!queryParams.facebook}} always-float-label></paper-input>
+            <!-- Gender -->
+            <div class="item">
+              <div class="input-label" id="gender">เพศ:</div>
+              <paper-button-group selected="male">
+                <paper-button toggles name="male" active={{male}}>ชาย</paper-button>
+                <paper-button toggles name="female" active={{female}}>หญิง</paper-button>
+              </paper-button-group>
+            </div>
+            <!-- Age -->
+            <paper-input name="age" label="อายุ" type="number" value="{{queryParams.age}}" required always-float-label></paper-input>
+            <div class="item">
+              <!-- Student/Worker -->
+              <div class="input-label">ประเภท:</div>
+              <paper-button-group selected="student">
+                <paper-button toggles name="student" active={{student}}>นักเรียน นิสิต</paper-button>
+                <paper-button toggles name="worker" active={{worker}}>บุคคลทั่วๆ</paper-button>
+                <paper-button toggles name="staff" active={{staff}}>สตาฟ</paper-button>
+              </paper-button-group>
+              <!-- Student -->
+              <fieldset class="field" hidden$="{{!student}}">
+                <paper-input name="academicLevel" label="การศึกษาปัจจุบัน" required="{{student}}" always-float-label></paper-input>
+                <paper-input name="academicYear" label="ชั้นปี" required="{{student}}" always-float-label></paper-input>
+                <paper-input name="academicSchool" label="สถาบันการศึกษา" required="{{student}}" always-float-label></paper-input>
+              </fieldset>
+              <!-- Worker -->
+              <fieldset class="field" hidden$="{{!worker}}">
+                <paper-input name="workerJob" label="อาชีพ" required="{{worker}}" always-float-label></paper-input>
+              </fieldset>
+              <!-- Staff -->
+              <fieldset class="field" hidden$="{{!staff}}">
+                <div class="item">
+                  <div class="input-label">ประเภท:</div>
+                  <paper-button-group selected="scannerStaff">
+                    <paper-button toggles name="adminStaff" active="{{adminStaff}}">Admin</paper-button>
+                    <paper-button toggles name="scannerStaff" active="{{scannerStaff}}">Scan man</paper-button>
+                    <paper-button toggles name="staffStaff" active="{{staffStaff}}">Staff</paper-button>
+                  </paper-button-group>
+                </div>
+                <paper-input name="registrationCode" label="รหัส" required="{{staff}}" always-float-label></paper-input>
+                <vaadin-combo-box name="zone" label="สังกัด" item-label-path="name" items="{{zones}}" hidden$="{{adminStaff}}" require="{{!adminStaff}}"></vaadin-combo-box>
+              </fieldset>
+            </div>
+            <!-- Hidden Fields -->
+            <input name="accessToken" type="hidden" value="{{queryParams.accessToken}}"></input>
+            <input name="tokens[0].kind" type="hidden" value="{{queryParams.kind}}"></input>
+            <input name="tokens[0].accessToken" type="hidden" value="{{queryParams.accessToken}}"></input>
+            <input name="facebook" type="hidden" value="{{queryParams.facebook}}"></input>
+          </div>
+          <!-- Submit Button -->
+          <div class="card-actions">
+            <div class="button-holder">
+              <paper-button on-tap="_delayedSubmit">
+                <paper-spinner id="spinner" hidden></paper-spinner>Submit
+              </paper-button>
+              <!-- Reset Button -->
+              <paper-button on-tap="_reset">Reset</paper-button>
+            </div>
+          </div>
+      </paper-card>
+    </form>
   </template>
   <script>
     Polymer({
@@ -255,6 +256,7 @@
         form.reset();
       },
       _presubmit: function(event) {
+        console.log( this.$.form.request.body)
         for (field in this.$.form.request.body) {
           if (!this.$.form.request.body[field]) {
             delete this.$.form.request.body[field];
@@ -266,7 +268,6 @@
       },
       _response: function(e) {
         if (e.detail.response.success) {
-
           document.querySelector('chulaexpo-staff-app').token = e.detail.response.results.token;
           document.getElementById('storage').save();
 
