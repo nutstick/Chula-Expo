@@ -3,12 +3,12 @@
 <!-- Web Component -->
 <link rel="import" href="/public/lib/iron-ajax/iron-ajax.html">
 
-<dom-module id="activity-api">
+<dom-module id="round-api">
   <template>
     <iron-ajax
       auto
-      id="activityResource"
-      url="/api/activities"
+      id="roundResource"
+      url="{{url}}"
       params="{{params}}"
       on-response="_handleResponse"
       handle-as="json"
@@ -17,12 +17,15 @@
   </template>
   <script>
     Polymer({
-      is: 'activity-api',
+      is: 'round-api',
       properties: {
+        url: {
+          type: String,
+        },
         params: {
           type: Object,
           value: {
-            fields: 'nameEN,thumbnail,shortDescriptionEN',
+            fields: 'nameEN,start,end,seatsReserved,seatsFullCapacity',
             limit: 0,
             skip: 0
           }
@@ -33,13 +36,7 @@
             Authentication: document.querySelector('chulaexpo-staff-app').token
           }
         },
-        page: {
-          type: Number
-        },
-        pageSize: {
-          type: Number
-        },
-        activities: {
+        rounds: {
           type: Array,
           value: [],
           notify: true,
@@ -50,23 +47,12 @@
           value: {}
         }
       },
-
-      observers: [
-        '_updateRequest(page, pageSize)'
-      ],
-
-      _updateRequest: function(page, pageSize, start, end) {
-        this.set('params.limit', pageSize);
-        this.set('params.skip', (page - 1) * pageSize);
-        //this.set('params.start', start);
-        //this.set('params.end', end);
-      },
       generateRequest: function() {
-         this.$.activityResource.generateRequest();
+         this.$.roundResource.generateRequest();
       },
       _handleResponse: function(event) {
         if (event.detail.response.success) {
-          this.activities = event.detail.response.results;
+          this.rounds = event.detail.response.results;
         } else {
           this.error = event.detail.response.errors;
         }

@@ -5,7 +5,7 @@ const { retrieveError, RangeQuery } = require('../../../tools/retrieveError');
 
 const router = express.Router();
 
-const accessibleFields = ['name', 'activityId', 'start', 'end', 'fullCapacity', 'seats.avaliable', 'seats.reserved'];
+const accessibleFields = ['name', 'activityId', 'start', 'end','seatsFullCapacity', 'seats.avaliable', 'seats.reserved'];
 /**
  * Get all reserved reservable activities's rounds
  * Access at GET http://localhost:8080/api/me/reserved_rounds
@@ -17,7 +17,7 @@ const accessibleFields = ['name', 'activityId', 'start', 'end', 'fullCapacity', 
  * @param {number} [limit] - Number of limit per query.
  * @param {number} [skip=0] - Offset documents.
  *
- * Accessible fields { name, activityId, start, end, fullCapacity, avaliableSeats, reservedSeats }
+ * Accessible fields { name, activityId, start, end, fullCapacity, seatsAvaliable, seatsReserved }
  *
  * @return {boolean} success - Successful querying flag.
  * @return {Round[] + check} results - Result rounds for the query.
@@ -50,13 +50,13 @@ router.get('/', (req, res) => {
   if (req.query.sort) {
     sort = req.query.sort.split(',').reduce((prev, sortQuery) => {
       let sortFields = sortQuery.substr(1);
-      if (sortFields === 'fullCapacity') {
+      if (sortFields === 'seatsFullCapacity') {
         sortFields = 'seats.capacity';
       }
-      if (sortFields === 'reservedSeats') {
+      if (sortFields === 'seatsReserved') {
         sortFields = 'seats.reserved';
       }
-      if (sortFields === 'avaliableSeats') {
+      if (sortFields === 'seatsAvaliable') {
         sortFields = 'seats.avaliable';
       }
 
@@ -79,13 +79,13 @@ router.get('/', (req, res) => {
   // Fields selecting query
   if (req.query.fields) {
     fields = _.intersection(req.query.fields.split(',').map((field) => {
-      if (field === 'fullCapacity') {
+      if (field === 'seatsFullCapacity') {
         return 'seats.capacity';
       }
-      if (field === 'reservedSeats') {
+      if (field === 'seatsReserved') {
         return 'seats.reserved';
       }
-      if (field === 'avaliableSeats') {
+      if (field === 'seatsAvaliable') {
         return 'seats.avaliable';
       }
       return field;
@@ -129,7 +129,7 @@ router.get('/', (req, res) => {
  * Access at GET http://localhost:8080/api/me/reserved_rounds/:rid
  * @param {string} [fields] - Fields selected (ex. "name,fullCapacity").
  *
- * Accessible fields { name, activityId, start, end, fullCapacity, avaliableSeats, reservedSeats }
+ * Accessible fields { name, activityId, start, end, fullCapacity, seatsAvaliable, seatsReserved }
  *
  * @return {boolean} success - Successful querying flag.
  * @return {Round[] + check} results - Result rounds for the query.
@@ -145,13 +145,13 @@ router.get('/:rid', (req, res) => {
   // Fields selecting query
   if (req.query.fields) {
     fields = _.intersection(req.query.fields.split(',').map((field) => {
-      if (field === 'fullCapacity') {
+      if (field === 'seatsFullCapacity') {
         return 'seats.capacity';
       }
-      if (field === 'reservedSeats') {
+      if (field === 'seatsReserved') {
         return 'seats.reserved';
       }
-      if (field === 'avaliableSeats') {
+      if (field === 'seatsAvaliable') {
         return 'seats.avaliable';
       }
       return field;

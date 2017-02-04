@@ -152,18 +152,17 @@
 									</vaadin-upload>
                   <input id="banner" type="hidden" name="banner" value="">
                   <script>
-                    var thumbnailUpload = document.querySelector('zone-add-page').querySelector('vaadin-upload#bannerUpload')
-                    thumbnailUpload.addEventListener("upload-response", function(event) {
+                    var bannerUpload = document.querySelector('zone-add-page').querySelector('vaadin-upload#bannerUpload')
+                    bannerUpload.addEventListener("upload-response", function(event) {
                       if(event.detail.file.xhr.status == 200){
                         var name = JSON.parse(event.detail.xhr.responseText);
                         document.querySelector('zone-add-page').querySelector('#banner').value = name.results.thumbnail;
                       }
                     });
-                    thumbnailUpload.addEventListener("upload-abort", function(event) {
+                    bannerUpload.addEventListener("upload-abort", function(event) {
                       document.querySelector('zone-add-page').querySelector('#banner').value = '';
                     });
                   </script>
-
 								</div>
 							</div>
 						</div>
@@ -243,7 +242,7 @@
       },
       _response: function(e) {
         if (e.detail.response.success) {
-        //window.location = '/zone';
+          window.location = '/zone';
         }
       },
       _reset: function(event) {
@@ -252,7 +251,6 @@
       _presubmit: function(event) {
 				this.$.form.request.body.locationLat = this.latitude;
         this.$.form.request.body.locationLong = this.longitude;
-        console.log(this.$.form.request.body);
       }
     })
   </script>

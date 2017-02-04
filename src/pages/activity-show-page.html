@@ -13,6 +13,9 @@
 <link rel="import" href="/public/lib/google-map/google-map.html">
 <link rel="import" href="/public/lib/google-map/google-map-marker.html">
 
+<link rel="import" href="/components/round-api.html">
+<link rel="import" href="/components/paper-card-dataitem.html">
+
 <link rel="import" href="/components/shared-styles.html">
 
 <dom-module id="activity-show-page">
@@ -22,6 +25,7 @@
         @apply(--layout-vertical);
         @apply(--layout-center-center);
         padding-top: 20px;
+        font-size: 14px;
       }
 
 			paper-card {
@@ -82,18 +86,22 @@
 			}
 
 			#main > #left {
-					margin: 4px;
-					flex: 3 1 70%;
-          min-width: 70%;
-					order: 1;
+				margin: 4px;
+				flex: 3 1 70%;
+        min-width: 70%;
+				order: 1;
 			}
 
 			#main > #right {
-					margin: 4px;
-					flex: 3 1 30%;
-          min-width: 30%;
-					order: 2;
+				flex: 3 1 30%;
+        min-width: 30%;
+				order: 2;
 			}
+
+      .card {
+        margin: 4px;
+        padding: 5px;
+      }
 
 			/* Too narrow to support three columns */
 			@media all and (max-width: 800px) {
@@ -118,7 +126,12 @@
       }
 
       .block {
-        border-top: 1px solid rgba(15,70,100,.12);
+        margin: 10px;
+      }
+
+      .deleteBtn {
+        float: right;
+        cursor: pointer;
       }
     </style>
 		<app-route
@@ -191,13 +204,13 @@
 						<div>
 							<label class="label --input">Start Time</label>
 							<div class="flex" style="display: inline-block">
-								{{activity.startTime}}
+								{{activity.start}}
 							</div>
 						</div>
 						<div>
 							<label class="label --input">End Time</label>
 							<div class="flex" style="display: inline-block">
-								{{activity.endTime}}
+								{{activity.end}}
 							</div>
 						</div>
 					</div>
@@ -402,26 +415,91 @@
 				</div>
 			</paper-card>
 			<div id="right">
-				<h3>Round</h3>
-        <template is="dom-repeat" items="{{activities}}">
-          <div class="block">
-            <!--  action image="https://www.polymer-project.org/images/logos/p-logo.png" -->
-            <div class="card-item-header">
-              {{item.name.en}}
+        <paper-card class="card">
+          <form is="iron-form" id="form" method="post" class="card-content"
+  					action="{{urlIdRound}}" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
+  					<div class="card-content">
+
+              <!-- time -->
+              <div class="item">
+  							<div>
+  								<label class="label --input">Start Time</label>
+  								<div class="flex" style="display: inline-block">
+  									<datetime-local-input name="start" label="" no-label-float="true" required></datetime-local-input>
+  								</div>
+  							</div>
+  							<div>
+  								<label class="label --input">End Time</label>
+  								<div class="flex" style="display: inline-block">
+  									<datetime-local-input name="end" label="" no-label-float="true" required></datetime-local-input>
+  								</div>
+  							</div>
+  						</div>
+
+              <!-- Seat -->
+  						<div class="item">
+                <div>
+  								<label class="label --input">Reserved</label>
+  								<div class="flex" style="display: inline-block">
+  									<paper-input type="number" name="seatsReserved" label="" no-label-float="true" required></paper-input>
+  								</div>
+  							</div>
+                <div>
+  								<label class="label --input">Seats</label>
+  								<div class="flex" style="display: inline-block">
+  									<paper-input type="number" name="seatsFullCapacity" label="" no-label-float="true" required></paper-input>
+  								</div>
+  							</div>
+  						</div>
+
+  						<!-- name -->
+  						<div class="item">
+                <div>
+                  <label class="label --input">ชื่อ (ไทย)</label>
+                  <div class="flex" style="display: inline-block">
+                    <paper-input type="text" name="nameTH" label="" no-label-float="true" required></paper-input>
+                  </div>
+                </div>
+                <div>
+                  <label class="label --input">Name (English)</label>
+                  <div class="flex" style="display: inline-block">
+                    <paper-input type="text" name="nameEN" label="" no-label-float="true" required></paper-input>
+                  </div>
+                </div>
+  						</div>
+  					</div>
+
+  					<!-- Submit Button -->
+  					<div class="card-actions">
+  						<div class="button-holder">
+  							<paper-button on-click="_delayedSubmit">
+  								<paper-spinner id="spinner" hidden></paper-spinner>Submit
+  							</paper-button>
+  							<!-- Reset Button -->
+  							<paper-button on-click="_reset">Reset</paper-button>
+  						</div>
+  					</div>
+  				</form>
+        </paper-card>
+        <paper-card class="card">
+  				<h3>Round</h3>
+          <template is="dom-repeat" items="{{rounds}}">
+            <div class="block">
+              <paper-card-dataitem action image="https://www.polymer-project.org/images/logos/p-logo.png">
+                <div class="card-item-header">
+                  {{item.name.en}} ({{item.seats.reserved}}/{{item.seats.fullCapacity}})
+                  <div class="deleteBtn" on-tap="_deleteClick">
+                    <iron-icon icon="icons:close"></iron-icon>
+                  </div>
+                </div>
+                <div class="card-item-content">
+                  {{_convertToDate(item.start)}}<br>{{_convertToDate(item.end)}}
+                </div>
+              </paper-card-dataitem>
             </div>
-            <div class="card-item-content">
-              {{item.shortDescription.en}}
-            </div>
-            <div class="card-item-actions">
-              <div class="horizontal justified">
-                <paper-button><a href="{{_computePathShow(item._id)}}">Show</a></paper-button>
-                <paper-button><a href="{{_computePathEdit(item._id)}}">Edit</a></paper-button>
-                <paper-button on-tap="_deleteClick">Delete</paper-button>
-              </div>
-            </div>
-          </div>
-        </template>
-        <activity-api id="activityAPI" activities="{{activities}}" error="{{error}}" page="1" page-size="100" totalPages="1"></activity-api>
+          </template>
+          <round-api id="roundAPI" url="[[urlIdRound]]" rounds="{{rounds}}" error="{{error}}"></round-api>
+        </paper-card>
 			</div>
 		</div>
   </template>
@@ -430,7 +508,11 @@
       is: 'activity-show-page',
       properties: {
         urlId: {
-          type: Object,
+          type: String,
+          value: ''
+        },
+        urlIdRound: {
+          type: String,
           value: ''
         },
         token: {
@@ -446,19 +528,10 @@
         activity: {
           type: Object,
         },
-        page: {
-          type: Number
-        },
-        pageSize: {
-          type: Number
-        },
-        totalPages: {
-          type: Number,
-        },
         error: {
           type: Object,
         },
-        activities: {
+        rounds: {
           type: Array,
           value: [],
         },
@@ -466,16 +539,15 @@
       observers: [
         '_routeIdChanged(routeData.activityId)',
       ],
-      _computePathShow: function(id) {
-					return '/activity/show/' + id;
-			},
-      _computePathEdit: function(id) {
-					return '/activity/edit/' + id;
-			},
+      _convertToDate: function(dateTime) {
+        return moment.utc(dateTime).format('MM-DD-YYYY HH:mm');
+      },
       _routeIdChanged: function(activityId) {
         if(!!activityId){
-          this.urlId = `/api/activities/${activityId}`;
+          this.set('urlId', `/api/activities/${activityId}`);
+          this.set('urlIdRound', `${this.urlId}/rounds`);
           this.$.activityGetId.generateRequest();
+          this.$.roundAPI.generateRequest();
         }
       },
       _delayedSubmit: function(event) {
@@ -490,13 +562,14 @@
       },
       _response: function(e) {
         if (e.detail.response.success) {
-          window.location = '/activity/show/' + this.routeData.activityId;
+          this.$.form.reset();
+          this.$.roundAPI.generateRequest();
         }
       },
+      _reset: function(event) {
+        this.$.form.reset();
+      },
       _presubmit: function(event) {
-        this.$.form.request.method = 'put';
-      	this.$.form.request.body.locationLat = this.activity.location.latitude;
-				this.$.form.request.body.locationLong = this.activity.location.longitude;
       },
       _handleResponse: function(event) {
         if (event.detail.response.success) {
@@ -504,6 +577,22 @@
         } else {
           this.error = event.detail.response.errors;
         }
+      },
+      _deleteClick: function(event) {
+        var id = event.model.item['_id'];
+        var url = '/api/rounds/' + id;
+
+        var dom = this;
+        setTimeout(function () {
+          var req = new XMLHttpRequest();
+          req.open('DELETE',encodeURI(url));
+          req.onload = function() {
+            if (req.status === 202) {
+              dom.$.roundAPI.generateRequest();
+            }
+          };
+          req.send();
+        }.bind(this), 300);
       }
     })
   </script>

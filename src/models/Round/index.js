@@ -8,14 +8,17 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
  * Round Schema
  */
 const RoundSchema = new mongoose.Schema({
-  name: { type: String, required: true },
+  name: {
+    th: { type: String, required: true },
+    en: { type: String, required: true }
+  },
   activityId: {
     type: ObjectId,
     ref: 'Activity',
     required: true,
   },
-  startTime: { type: Date, required: true },
-  endTime: { type: Date, required: true },
+  start: { type: Date, required: true },
+  end: { type: Date, required: true },
 
   seats: {
     avaliable: { type: Number, default: 0 },
@@ -68,7 +71,7 @@ RoundSchema.method.reserve = userId => new Promise((resolve, reject) => {
         return reject({ code: 24 });
       }
       // Fully booked seats
-      if (this.reservedSeats + 1 > this.avaliableSeats) {
+      if (this.seatsReserved + 1 > this.seatsAvaliable) {
         return reject({ code: 30 });
       }
 

@@ -82,8 +82,8 @@
       "round": ["RoundId"]
     },
 
-    "startTime": "Datetime",
-    "endTime": "Datetime",
+    "start": "Datetime",
+    "end": "Datetime",
   },
 
   "round": {
