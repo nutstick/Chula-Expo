@@ -74,8 +74,8 @@ app.use(flash());
 app.use(favicon(path.join(__dirname, '/public/favicon.ico')));
 // Set '/public' as static Routes
 app.use('/public', express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
-app.use('/components', express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
-app.use('/pages', express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
+app.use('/components', express.static(path.join(__dirname, 'components'), { maxAge: 31557600000 }));
+app.use('/pages', express.static(path.join(__dirname, 'pages'), { maxAge: 31557600000 }));
 // app.use(express.static(__dirname, { maxAge: 31557600000 }));
 // Error Foramt send
 app.use(require('./tools/sendError'));
