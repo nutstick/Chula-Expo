@@ -79,6 +79,7 @@
       <activity-api
         activities="{{activities}}"
         error="{{error}}"
+        zone="{{zone}}"
         start="{{start}}"
         end="{{end}}"
         page="[[page]]"
@@ -96,7 +97,14 @@
       <paper-card-item action>
         <div id="card-item-header" class="card-item-content">
           <div class="left">
-            <vaadin-combo-box label="สังกัด" item-label-path="name.en" items="{{zones}}" always-float-label></vaadin-combo-box>
+            <vaadin-combo-box
+              label="สังกัด"
+              items="{{zones}}"
+              item-value-path="_id"
+              item-label-path="name.en"
+              value="{{zone}}"
+              always-float-label
+            ></vaadin-combo-box>
           </div>
           <div class="right">
             <paper-datetime-picker-item locale="[[locale]]" placeholder="เวลาเริ่ม" date={{start}} defaultTime="08:00"></paper-datetime-picker-item>

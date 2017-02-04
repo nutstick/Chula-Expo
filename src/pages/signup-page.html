@@ -15,6 +15,7 @@
 <link rel="import" href="/public/lib/paper-toggle-button/paper-toggle-button.html">
 
 <link rel="import" href="/components/shared-styles.html">
+<link rel="import" href="/components/zone-api.html">
 <link rel="import" href="/components/profile-image-uploadable.html">
 <dom-module id="signup-page">
   <template>
@@ -86,15 +87,14 @@
         margin-top: 10px;
       }
     </style>
-    <iron-ajax
-      auto
-      id="zoneResource"
-      url="/api/zones"
-      params="{{zoneParams}}"
-      on-response="_handleResponse"
-      headers="{{headerToken}}"
-      handle-as="json"
-    ></iron-ajax>
+    <zone-api
+      zones="{{zones}}"
+      error="{{error}}"
+      loading="{{zoneLoading}}"
+      page="0"
+      page-size="0"
+      fields="_id,nameEN"
+    ></zone-api>
     <form is="iron-form" id="form" method="post"
       action="/api/signup" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
       <paper-card class="container">
@@ -152,7 +152,7 @@
                   </paper-button-group>
                 </div>
                 <paper-input name="registrationCode" label="รหัส" required="{{staff}}" always-float-label></paper-input>
-                <vaadin-combo-box name="zone" label="สังกัด" item-label-path="name" items="{{zones}}" hidden$="{{adminStaff}}" require="{{!adminStaff}}"></vaadin-combo-box>
+                <vaadin-combo-box name="zone" item-value-path="_id" label="สังกัด" item-label-path="name.en" items="{{zones}}" hidden$="{{adminStaff}}" require="{{!adminStaff}}" always-float-label></vaadin-combo-box>
               </fieldset>
             </div>
             <!-- Hidden Fields -->

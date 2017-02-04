@@ -53,10 +53,10 @@
       },
 
       observers: [
-        '_updateRequest(page, pageSize)'
+        '_updateRequest(page, pageSize, start, end, zone)'
       ],
 
-      _updateRequest: function(page, pageSize, start, end) {
+      _updateRequest: function(page, pageSize, start, end, zone) {
         if (pageSize === 0) {
           this.set('params.limit', null);
           this.set('params.skip', page);
@@ -66,6 +66,7 @@
         }
         this.set('params.start', start);
         this.set('params.end', end);
+        this.set('params.zone', zone);
       },
       _handleResponse: function(event) {
         if (event.detail.response.success) {
