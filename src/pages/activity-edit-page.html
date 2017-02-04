@@ -70,12 +70,6 @@
         margin-top: 10px;
       }
     </style>
-    <app-route
-      route="{{route}}"
-      pattern="/:activityId"
-      data="{{routeData}}"
-      tail="{{subroute}}"
-    ></app-route>
     <iron-ajax
       id="activityGetId"
       url="{{urlId}}"
@@ -385,9 +379,6 @@
           type: Object,
           value: ''
         },
-        token: {
-          type: String,
-        },
         zoom: {
           type: Number,
           value: 16
@@ -398,19 +389,10 @@
         pictures: {
           type: Set,
           value: new Set()
+        },
+        activityId: {
+          type: String,
         }
-      },
-      observers: [
-        '_routeIdChanged(routeData.activityId)',
-      ],
-      _routeIdChanged: function(id) {
-        if(!!id) {
-          this.urlId = `/api/activities/${id}`;
-          this.generateRequest();
-        }
-      },
-      generateRequest: function(){
-        this.$.activityGetId.generateRequest();
       },
       _delayedSubmit: function(event) {
         var form = this.$.form;
