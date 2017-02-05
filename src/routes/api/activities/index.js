@@ -239,7 +239,9 @@ router.put('/:id', (req, res) => {
     _.assignIn(act, updateFields);
     act.name.en = req.body.nameEN;
     act.name.th = req.body.nameTH;
-    act.pictures = req.body.pictures.split(',');
+    if (req.body.pictures) {
+      act.pictures = req.body.pictures.split(',');
+    }
     act.shortDescription.en = req.body.shortDescriptionEN;
     act.shortDescription.th = req.body.shortDescriptionTH;
     act.description.en = req.body.descriptionEN;
