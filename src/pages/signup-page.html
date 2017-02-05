@@ -264,7 +264,11 @@
         }
         this.$.form.request.body.gender = this.male ? 'Male' : 'Female';
         this.$.form.request.body.type = this.student ? 'Academic' : (this.worker ? 'Worker' : 'Staff');
-        this.$.form.request.body.staff = this.adminStaff ? 'Admin' : (this.scannerStaff ? 'Staff' : 'Scanner');
+        if (this.$.form.request.body.type === 'Staff') {
+          this.$.form.request.body.staff = this.adminStaff ? 'Admin' : (this.scannerStaff ? 'Staff' : 'Scanner');
+        } else {
+          delete this.$.form.request.body.staff;
+        }
       },
       _response: function(e) {
         if (e.detail.response.success) {
