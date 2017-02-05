@@ -128,7 +128,7 @@
 
 						<!-- Google Map -->
 						<div class="item">
-							<google-map latitude="[[latitude]]" longitude="[[longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
+							<google-map id="addFacilityMaps" latitude="[[latitude]]" longitude="[[longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
 								<google-map-marker latitude="{{latitude}}" longitude="{{longitude}}" draggable="true"
 										title="facility Location!"></google-map-marker>
 							</google-map>
@@ -191,6 +191,9 @@
                     type: Array,
                     value: ['Chula Expo']
                 }
+            },
+            attached: function() {
+              this.$.addFacilityMaps.resize();
             },
             _delayedSubmit: function(event) {
                 var form = this.$.form;

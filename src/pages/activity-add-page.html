@@ -288,7 +288,7 @@
 
 						<!-- Google Map -->
 						<div class="item">
-							<google-map latitude="[[latitude]]" longitude="[[longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
+							<google-map id="addActivityMaps" latitude="[[latitude]]" longitude="[[longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
 								<google-map-marker latitude="{{latitude}}" longitude="{{longitude}}" draggable="true"
 										title="Activity Location!"></google-map-marker>
 							</google-map>
@@ -389,6 +389,10 @@
           type: Set,
           value: new Set()
         }
+      },
+      attached: function(event) {
+        console.log(event);
+        this.$.addActivityMaps.resize();
       },
       _delayedSubmit: function(event) {
         var form = this.$.form;
