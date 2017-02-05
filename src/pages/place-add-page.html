@@ -11,7 +11,7 @@
 <link rel="import" href="/public/lib/greenyouse-datetime-local-input/datetime-local-input.html">
 <link rel="import" href="/public/lib/google-map/google-map.html">
 <link rel="import" href="/public/lib/google-map/google-map-marker.html">
-
+<link rel="import" href="/public/lib/vaadin-combo-box/vaadin-combo-box.html">
 <link rel="import" href="/components/shared-styles.html">
 
 <dom-module id="place-add-page">
@@ -84,6 +84,36 @@
 								</div>
 							</div>
 						</div>
+            <!-- Location -->
+            <div class="item">
+              <label class="label --input">Zone</label>
+              <div class="" style="display: inline-block">
+                <vaadin-combo-box name="zone" id="input-zone" class="elements-box" no-label-float="true" item-label-path="name" item-value-path="value"></vaadin-combo-box>
+              </div>
+              <script>
+                HTMLImports.whenReady(function() {
+                  var combobox = document.querySelector('place-add-page').querySelector('#input-zone');
+
+                  var url = '/api/zones';
+                  setTimeout(function () {
+                    var req = new XMLHttpRequest();
+                    req.open('GET',encodeURI(url));
+                    req.onload = function() {
+                      if (req.status === 200) {
+                        var data = JSON.parse(req.response);
+                        var arr = data.results.map(function(obj){
+                          return { name:obj.name.en, value:obj['_id'] };
+                        });
+                        combobox.items = arr;
+                        console.log(arr);
+                      }
+                    };
+                    req.send();
+                  }.bind(this), 500);
+                });
+
+              </script>
+            </div>
 
 						<!-- Google Map -->
 						<div class="item">
@@ -93,6 +123,8 @@
 							</google-map>
 						</div>
 					</div>
+
+
 					<div class="card-content">
 						<!-- Thai Language -->
 						<div class="flex-layout center">
