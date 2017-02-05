@@ -56,7 +56,10 @@ router.use('/zones/:zoneid/places', require('./places'));
  * zone API
 */
 router.use('/zones', require('./zones'));
-
+/**
+ * room API
+*/
+router.use('/rooms', require('./rooms'));
 /**
  * Welcome Message
  * Access at GET http://localhost:8080/api

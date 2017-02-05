@@ -1,13 +1,13 @@
 const express = require('express');
+const Room = require('../../../models/Room');
 const Place = require('../../../models/Place');
-const Zone = require('../../../models/Zone');
 const retrieveError = require('../../../tools/retrieveError');
   var ObjectId = require('mongoose').Types.ObjectId;
 const router = express.Router();
 
 /**
- * Get Place list
- * Access at GET https://localhost:8080/api/en/places
+ * Get Room list
+ * Access at GET https://localhost:8080/api/en/rooms
  * @param {string} [name] - Get by name.
  * @param {string} [sort] - Sort fields (ex. "+name").
  * @param {string} [fields] - Fields selected (ex. "name").
@@ -15,7 +15,7 @@ const router = express.Router();
  * @param {number} [skip=0] - Offset documents.
  *
  * @return {boolean} success - Successful querying flag.
- * @return {places[]} results - Result places from the query.
+ * @return {rooms[]} results - Result rooms from the query.
  * @return {Object} queryInfo - Metadata query information.
  * @return {number} queryInfo.total - Total numbers of documents in collection that match the query.
  * @return {number} queryInfo.limit - Limit that was used.
@@ -29,8 +29,6 @@ router.get('/', (req, res) => {
     fields = req.query.fields.replace(/,/g, ' ');
     fields = fields.replace(/nameTH/g, 'name.th');
     fields = fields.replace(/nameEN/g, 'name.en');
-    fields = fields.replace(/locationLat/g, 'location.latitude');
-    fields = fields.replace(/locationLong/g, 'location.longitude');
   }
 //----------------------------------------------------------------
 // initial filter : name query
@@ -40,7 +38,7 @@ router.get('/', (req, res) => {
     filter['name.en'] = { $regex: req.query.nameEN };
   }
 
-  if(req.query.zoneid)filter.zone = req.query.zoneid;
+  if(req.query.placeid)filter.place = req.query.placeid;
 //----------------------------------------------------------------
 // initial limit
   let limit;
@@ -69,11 +67,11 @@ router.get('/', (req, res) => {
     }, {});
   }
 //----------------------------------------------------------------
-  Place.find(filter)
+  Room.find(filter)
     .select(fields).sort(sort).skip(skip)
     .limit(limit)
     .exec(
-    (err, places) => {
+    (err, rooms) => {
       if (err) {
         return res.status(500).send({
           success: false,
@@ -83,13 +81,13 @@ router.get('/', (req, res) => {
 
       res.status(200).json({
         success: true,
-        results: places
+        results: rooms
       });
     });
 });
 
 /**
- * Get Places by Id
+ * Get Rooms by Id
  */
 router.get('/:id', (req, res) => {
  //----------------------------------------------------------------
@@ -99,11 +97,9 @@ router.get('/:id', (req, res) => {
     fields = req.query.fields.replace(/,/g, ' ');
     fields = fields.replace(/nameTH/g, 'name.th');
     fields = fields.replace(/nameEN/g, 'name.en');
-    fields = fields.replace(/locationLat/g, 'location.latitude');
-    fields = fields.replace(/locationLong/g, 'location.longitude');
   }
 
-  Place.findById(req.params.id).select(fields).exec((err, place) => {
+  Room.findById(req.params.id).select(fields).exec((err, room) => {
     if (err) {
        // Handle error from User.findById
       return res.status(500).json({
@@ -112,7 +108,7 @@ router.get('/:id', (req, res) => {
       });
     }
 
-    if (!place) {
+    if (!room) {
       return res.status(403).json({
         success: false,
         results: retrieveError(33)
@@ -121,7 +117,7 @@ router.get('/:id', (req, res) => {
 
     return res.status(200).json({
       success: true,
-      results: place
+      results: room
     });
   });
 });
@@ -129,28 +125,25 @@ router.get('/:id', (req, res) => {
  //----------------------------------------------------------------
 
 /**
-* Create a new Place
-* Access at POST http://localhost:8080/api/en/places
+* Create a new Room
+* Access at POST http://localhost:8080/api/en/rooms
 */
 
 router.post('/', (req, res) => {
    // Create object
 
-  const place = new Place();
+  const room = new Room();
 
    // Set field value (comes from the request)
-  place.name.en = req.body.nameEN;
-  place.name.th = req.body.nameTH;
+  room.name.en = req.body.nameEN;
+  room.name.th = req.body.nameTH;
 
-  if (req.body.code) {
-    place.code = req.body.code;
-  }
-  place.location.latitude = req.body.locationLat;
-  place.location.longitude = req.body.locationLong;
+  room.floor= req.body.floor;
 
- place.zone = req.body.zone;
-  // Save place and check for error
-  place.save((err, _place) => {
+
+ room.place = req.body.place;
+  // Save room and check for error
+  room.save((err, _room) => {
     if (err) {
       // Handle error from save
       return res.status(500).json({
@@ -160,17 +153,17 @@ router.post('/', (req, res) => {
     }
     res.status(201).json({
       success: true,
-      results: _place
+      results: _room
     });
-        Zone.findOneAndUpdate(
+        Place.findOneAndUpdate(
      {
-       _id:req.body.zone
+       _id:req.body.place
      },{
-       $addToSet:{places:_place._id}
-     },function(err,places){
+       $addToSet:{rooms:_room._id}
+     },function(err,rooms){
                          if(err){
                              return res.status(400).send({
-                                 message:"Error add  place to zone"
+                                 message:"Error add  room to place"
                              });
                          } else{
 
@@ -182,11 +175,11 @@ router.post('/', (req, res) => {
 
 });
 
-// Update an existing place via PUT(JSON format)
+// Update an existing room via PUT(JSON format)
 // ex. { "name","EditName"}
-// Access at PUT http://localhost:3000/api/en/places/:id
+// Access at PUT http://localhost:3000/api/en/rooms/:id
 router.put('/:id', (req, res) => {
-  Place.findById(req.params.id, (err, place) => {
+  Room.findById(req.params.id, (err, room) => {
     // check error first
     if (err) {
       return res.status(500).json({
@@ -194,8 +187,8 @@ router.put('/:id', (req, res) => {
         errors: retrieveError(5, err)
       });
     }
-    // check place
-    if (!place) {
+    // check room
+    if (!room) {
       return res.status(403).json({
         success: false,
         errors: retrieveError(33)
@@ -204,26 +197,22 @@ router.put('/:id', (req, res) => {
 
 
     if (req.body.nameEN) {
-      place.name.en = req.body.nameEN;
+      room.name.en = req.body.nameEN;
     }
     if (req.body.nameTH) {
-      place.name.th = req.body.nameTH;
+      room.name.th = req.body.nameTH;
     }
-    if (req.body.code) {
-      place.code = req.body.code;
+
+    if (req.body.floor) {
+      room.location.floor= req.body.floor;
     }
-    if (req.body.locationLat) {
-      place.location.latitude = req.body.locationLat;
-    }
-    if (req.body.locationLong) {
-      place.location.longitude = req.body.locationLong;
-    }
-    if (req.body.zone) {
-      place.zone= req.body.zone;
+    if (req.body.place) {
+      room.place = req.body.place;
     }
 
 
-      place.save((err, _place) => {
+
+      room.save((err, _room) => {
         if (err) {
           return res.status(500).json({
             success: false,
@@ -232,19 +221,19 @@ router.put('/:id', (req, res) => {
         }
         res.status(202).json({
           success: true,
-          message: 'Update place successful',
-          results: _place
+          message: 'Update room successful',
+          results: _room
         });
       });
 
   });
 });
 
-// Delete an existing place via DEL.
-// Access at DEL http://localhost:3000/api/en/places/:id
+// Delete an existing room via DEL.
+// Access at DEL http://localhost:3000/api/en/rooms/:id
 router.delete('/:id', (req, res) => {
 
-  Place.findByIdAndRemove(req.params.id).exec((err, place) => {
+  Room.findByIdAndRemove(req.params.id).exec((err, room) => {
     if (err) {
        // Handle error from User.findById
       return res.status(500).json({
@@ -253,7 +242,7 @@ router.delete('/:id', (req, res) => {
       });
     }
 
-    if (!place) {
+    if (!room) {
       return res.status(403).json({
         success: false,
         results: retrieveError(33)
@@ -262,12 +251,12 @@ router.delete('/:id', (req, res) => {
 
     res.status(202).json({
       success: true,
-      message: `An Place with id ${req.params.id} was removed.`
+      message: `An Room with id ${req.params.id} was removed.`
     });
 
-    Zone.update(
-        { _id :  new ObjectId(place.zone) },
-        { '$pull': { places: new ObjectId(req.params.id) } },function(err, obj) {
+    Place.update(
+        { _id :  new ObjectId(room.place) },
+        { '$pull': { rooms: new ObjectId(req.params.id) } },function(err, obj) {
           //do something smart
           if (err) {
              // Handle error from User.findById
