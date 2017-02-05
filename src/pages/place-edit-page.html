@@ -93,7 +93,7 @@
 							<div>
 								<label class="label --input">Code</label>
 								<div class="flex" style="display: inline-block">
-									<paper-input type="text" value="{{place.code}}" name="code" label="" no-label-float="true"></paper-input>
+									<paper-input type="text" value="{{place.code}}" name="code" label="" no-label-float="true" required></paper-input>
 								</div>
 							</div>
 						</div>
@@ -112,20 +112,20 @@
 							<div class="avatar" item-icon><img src="/public/img/th.png" /></div>
 							<div class="flex company">ภาษาไทย</div>
 						</div>
-						<paper-input type="text" label="ชื่อสถานที่" value="{{place.name.th}}" name="nameTH" always-float-label></paper-input>
+						<paper-input type="text" label="ชื่อสถานที่" value="{{place.name.th}}" name="nameTH" always-float-label required></paper-input>
 						<!-- English Language -->
 						<div class="flex-layout center">
 							<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
 							<div class="flex company">English</div>
 						</div>
-						<paper-input type="text" label="place name" value="{{place.name.en}}" name="nameEN" always-float-label></paper-input>
+						<paper-input type="text" label="place name" value="{{place.name.en}}" name="nameEN" always-float-label required></paper-input>
 					</div>
 
 					<!-- Submit Button -->
 					<div class="card-actions">
 						<div class="button-holder">
 							<paper-button on-click="_delayedSubmit">
-								<paper-spinner id="spinner" hidden></paper-spinner>Edit
+								<paper-spinner id="spinner" hidden></paper-spinner>Save
 							</paper-button>
 						</div>
 					</div>

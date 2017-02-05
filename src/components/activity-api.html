@@ -102,6 +102,7 @@
         this.set('params.zone', zone);
       },
       generateRequest: function() {
+        console.log(fields);
         this.$.activityResource.generateRequest();
       },
       _handleResponse: function(event) {

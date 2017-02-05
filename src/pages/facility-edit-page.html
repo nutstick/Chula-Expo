@@ -16,6 +16,7 @@
 <link rel="import" href="/public/lib/paper-menu/paper-menu.html">
 <link rel="import" href="/public/lib/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="/public/lib/iron-pages/iron-pages.html">
+<link rel="import" href="/public/lib/vaadin-combo-box/vaadin-combo-box.html">
 
 <link rel="import" href="/components/facility-api.html">
 
@@ -97,22 +98,21 @@
 						<div class="item">
 							<label class="label --input">Type</label>
 							<div class="flex" style="display: inline-block">
-								<paper-dropdown-menu label="" no-label-float="true" name="type">
+								<paper-dropdown-menu label="" no-label-float="true" name="type" required>
 									<paper-menu class="dropdown-content" selected="{{facility.type}}" attr-for-selected="value">
-										<paper-item value="toilet">Toilet</paper-item>
-										<paper-item value="canteen">Canteen</paper-item>
-										<paper-item value="carpark">Car park</paper-item>
-										<paper-item value="prayer">Prayer</paper-item>
+										<paper-item value="Toilet">Toilet</paper-item>
+										<paper-item value="Canteen">Canteen</paper-item>
+										<paper-item value="Carpark">Car park</paper-item>
+										<paper-item value="Prayer">Prayer</paper-item>
 									</paper-menu>
 								</paper-dropdown-menu>
 							</div>
 						</div>
-
-						<!-- Location -->
+            <!-- Location -->
 						<div class="item">
-              <label class="label --input">Place</label>
+							<label class="label --input">Place</label>
 							<div class="" style="display: inline-block">
-                <vaadin-combo-box name="place" id="input-place" class="elements-box" no-label-float="true" item-label-path="name" item-value-path="value" value="{{facility.place._id}}"></vaadin-combo-box>
+                <vaadin-combo-box name="place" id="input-place" class="elements-box" no-label-float="true" item-label-path="name" item-value-path="value" value="{{facility.place}}" required></vaadin-combo-box>
 							</div>
               <script>
                 HTMLImports.whenReady(function() {
@@ -134,6 +134,7 @@
   									req.send();
   								}.bind(this), 500);
                 });
+
               </script>
 						</div>
 
@@ -151,8 +152,8 @@
 							<div class="avatar" item-icon><img src="/public/img/th.png" /></div>
 							<div class="flex company">ภาษาไทย</div>
 						</div>
-						<paper-input type="text" value="[[facility.name.th]]" label="ชื่อ" name="nameTH" always-float-label></paper-input>
-						<paper-textarea label="รายละเอียด" value="[[facility.description.th]]" name="descriptionTH" rows="4" always-float-label></paper-textarea>
+						<paper-input type="text" value="[[facility.name.th]]" label="ชื่อ" name="nameTH" always-float-label required></paper-input>
+						<paper-textarea label="รายละเอียด" value="[[facility.description.th]]" name="descriptionTH" rows="4" always-float-label required></paper-textarea>
           </div>
 
           <div class="card-content">
@@ -161,15 +162,15 @@
 							<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
 							<div class="flex company">English</div>
 						</div>
-						<paper-input type="text" label="name" value="[[facility.name.en]]" name="nameEN" always-float-label></paper-input>
-						<paper-textarea label="Description" value="[[facility.description.en]]" name="descriptionEN" rows="4" always-float-label></paper-textarea>
+						<paper-input type="text" label="name" value="[[facility.name.en]]" name="nameEN" always-float-label required></paper-input>
+						<paper-textarea label="Description" value="[[facility.description.en]]" name="descriptionEN" rows="4" always-float-label required></paper-textarea>
 					</div>
 
 					<!-- Submit Button -->
 					<div class="card-actions">
 						<div class="button-holder">
 							<paper-button on-click="_delayedSubmit">
-								<paper-spinner id="spinner" hidden></paper-spinner>Edit
+								<paper-spinner id="spinner" hidden></paper-spinner>Save
 							</paper-button>
 						</div>
 					</div>
@@ -198,7 +199,6 @@
         },
         facility: {
           type: Object,
-          observer: '_idChanged'
         }
       },
       generateRequest: function(){

@@ -87,7 +87,7 @@
 						<div class="item">
 							<label class="label --input">Type</label>
 							<div class="flex" style="display: inline-block">
-								<paper-dropdown-menu label="" no-label-float="true" name="type">
+								<paper-dropdown-menu label="" no-label-float="true" name="type" required>
 									<paper-listbox class="dropdown-content">
 										<paper-item value="toilet">Toilet</paper-item>
 										<paper-item value="city">Canteen</paper-item>
@@ -102,7 +102,7 @@
 						<div class="item">
 							<label class="label --input">Place</label>
 							<div class="" style="display: inline-block">
-                <vaadin-combo-box name="place" id="input-place" class="elements-box" no-label-float="true" item-label-path="name" item-value-path="value"></vaadin-combo-box>
+                <vaadin-combo-box name="place" id="input-place" class="elements-box" no-label-float="true" item-label-path="name" item-value-path="value" required></vaadin-combo-box>
 							</div>
               <script>
                 HTMLImports.whenReady(function() {
@@ -130,7 +130,7 @@
 
 						<!-- Google Map -->
 						<div class="item">
-							<google-map id="addFacilityMaps" latitude="[[latitude]]" longitude="[[longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
+							<google-map latitude="[[latitude]]" longitude="[[longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
 								<google-map-marker latitude="{{latitude}}" longitude="{{longitude}}" draggable="true"
 										title="facility Location!" ></google-map-marker>
 							</google-map>
@@ -142,8 +142,8 @@
 							<div class="avatar" item-icon><img src="/public/img/th.png" /></div>
 							<div class="flex company">ภาษาไทย</div>
 						</div>
-						<paper-input type="text" label="ชื่อ" name="nameTH" always-float-label></paper-input>
-						<paper-textarea label="รายละเอียด" name="descriptionTH" rows="4" always-float-label></paper-textarea>
+						<paper-input type="text" label="ชื่อ" name="nameTH" always-float-label required></paper-input>
+						<paper-textarea label="รายละเอียด" name="descriptionTH" rows="4" always-float-label required></paper-textarea>
           </div>
 
           <div class="card-content">
@@ -152,8 +152,8 @@
 							<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
 							<div class="flex company">English</div>
 						</div>
-						<paper-input type="text" label="name" name="nameEN" always-float-label></paper-input>
-						<paper-textarea label="Description" name="descriptionEN" rows="4" always-float-label></paper-textarea>
+						<paper-input type="text" label="name" name="nameEN" always-float-label required></paper-input>
+						<paper-textarea label="Description" name="descriptionEN" rows="4" always-float-label required></paper-textarea>
 					</div>
 
 					<!-- Submit Button -->
@@ -193,9 +193,6 @@
                     type: Array,
                     value: ['Chula Expo']
                 }
-            },
-            attached: function() {
-              this.$.addFacilityMaps.resize();
             },
             _delayedSubmit: function(event) {
                 var form = this.$.form;

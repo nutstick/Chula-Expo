@@ -166,13 +166,13 @@
 							<div>
 								<label class="label --input">Start Time</label>
 								<div class="flex" style="display: inline-block">
-									<datetime-local-input name="start" label="" no-label-float="true"></datetime-local-input>
+									<datetime-local-input name="start" label="" no-label-float="true" value="{{_convertToDate(activity.start)}}" required></datetime-local-input>
 								</div>
 							</div>
 							<div>
 								<label class="label --input">End Time</label>
 								<div class="flex" style="display: inline-block">
-									<datetime-local-input name="end" label="" no-label-float="true" required></datetime-local-input>
+									<datetime-local-input name="end" label="" no-label-float="true" value="{{_convertToDate(activity.end)}}" required></datetime-local-input>
 								</div>
 							</div>
 						</div>
@@ -370,7 +370,7 @@
 					<div class="card-actions">
 						<div class="button-holder">
 							<paper-button on-click="_delayedSubmit">
-								<paper-spinner id="spinner" hidden></paper-spinner>Edit
+								<paper-spinner id="spinner" hidden></paper-spinner>Save
 							</paper-button>
 						</div>
 					</div>
@@ -404,6 +404,9 @@
       },
       generateRequest: function(){
         this.$.activityAPI.generateRequest();
+      },
+      _convertToDate: function(dateTime) {
+        return moment.utc(dateTime).format('YYYY-MM-DDThh:mm');
       },
       _delayedSubmit: function(event) {
         var form = this.$.form;
