@@ -281,4 +281,14 @@ router.delete('/:id', (req, res) => {
 
 router.use('/:id/rounds', require('./rounds'));
 
+// pdf redirect
+router.pdfRedirect('/:id', (req, res) => {
+  Activity.findById(req.params.id, (err, act) => {
+    if(err) {
+      return res.sendError(5, err);
+    }
+    window.location = 'https://www.google.co.th';
+  });
+});
+
 module.exports = router;
