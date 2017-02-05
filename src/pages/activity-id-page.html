@@ -4,6 +4,9 @@
 <link rel="import" href="/public/lib/app-route/app-route.html">
 <link rel="import" href="/public/lib/iron-pages/iron-pages.html">
 
+<link rel="import" href="/pages/activity-show-page.html">
+<link rel="import" href="/pages/activity-edit-page.html">
+
 <dom-module id="activity-id-page">
   <template>
     <app-route
@@ -52,6 +55,9 @@
         this.importHref(resolvedPageUrl, null, this._showPage404, true);
 
         document.querySelector('activity-'+ subpage + '-page').generateRequest();
+      },
+      _showPage404: function() {
+        this.page = '404-page'
       },
     });
   </script>

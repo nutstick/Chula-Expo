@@ -50,7 +50,7 @@
         if (page !== 'list' && page !== 'add')
           page = 'id';
         var resolvedPageUrl = this.resolveUrl('activity-' + page + '-page.html');
-        this.importHref(resolvedPageUrl, null);
+        this.importHref(resolvedPageUrl, null, null, true);
       }
     });
   </script>

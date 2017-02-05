@@ -58,14 +58,19 @@
         font-weight: 200;
       }
 
-      google-map {
-        height: 300px;
-      }
-
 			.button-holder {
         @apply(--layout-horizontal);
         @apply(--layout-end-justified);
         margin-top: 10px;
+      }
+
+      .google-map {
+        display: block;
+        height: 300px;
+      }
+
+      google-map {
+        height: 300px;
       }
     </style>
     <div class="container">
@@ -288,9 +293,9 @@
 
 						<!-- Google Map -->
 						<div class="item">
-							<google-map latitude="[[latitude]]" longitude="[[longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
+							<google-map id="addActivityMaps" latitude="[[latitude]]" longitude="[[longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
 								<google-map-marker latitude="{{latitude}}" longitude="{{longitude}}" draggable="true"
-										title="Activity Location!"></google-map-marker>
+										title="Activity Location!" ></google-map-marker>
 							</google-map>
 						</div>
 					</div>
@@ -389,6 +394,10 @@
           type: Set,
           value: new Set()
         }
+      },
+      attached: function(event) {
+        console.log(event);
+        this.$.addActivityMaps.resize();
       },
       _delayedSubmit: function(event) {
         var form = this.$.form;

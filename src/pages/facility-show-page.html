@@ -17,7 +17,8 @@
 <link rel="import" href="/public/lib/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="/public/lib/iron-pages/iron-pages.html">
 
-<link rel="import" href="/components/shared-styles.html">
+<link rel="import" href="/components/facility-api.html">
+<link rel="import" href="/components/place-api.html">
 
 <link rel="import" href="/components/shared-styles.html">
 
@@ -65,8 +66,11 @@
         font-size: 20px;
         font-weight: 200;
       }
-
       google-map {
+        height: 300px;
+      }
+      .google-map {
+        display: block;
         height: 300px;
       }
 
@@ -99,15 +103,23 @@
 					<div class="item">
 						<label class="label --input">Place</label>
             <div class="flex" style="display: inline-block">
-              {{facility.place.name.en}}
+              {{place.name.en}}
 						</div>
+            <place-api
+              id="placeAPI"
+              place-id="{{facility.place}}"
+              fields="nameEN"
+              page="0"
+              page-size="0"
+              place="{{place}}"
+            ></place-api>
 					</div>
 
 					<!-- Google Map -->
-					<div class="item">
-						<google-map latitude="[[facility.location.latitude]]" longitude="[[facility.location.longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
+					<div class="item google-map">
+						<google-map latitude="[[facility.location.latitude]]" longitude="[[facility.location.longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o" fit>
 							<google-map-marker latitude="{{facility.location.latitude}}" longitude="{{facility.location.longitude}}" draggable="false"
-									title="facility Location!"></google-map-marker>
+									title="facility Location!" ></google-map-marker>
 						</google-map>
 					</div>
 				</div>
@@ -174,6 +186,7 @@
       },
       generateRequest: function(){
         this.$.facilityAPI.generateRequest();
+        this.$.placeAPI.generateRequest();
       }
     })
   </script>

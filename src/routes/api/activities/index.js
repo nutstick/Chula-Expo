@@ -239,7 +239,9 @@ router.put('/:id', (req, res) => {
     _.assignIn(act, updateFields);
     act.name.en = req.body.nameEN;
     act.name.th = req.body.nameTH;
-    act.pictures = req.body.pictures.split(',');
+    if (req.body.pictures) {
+      act.pictures = req.body.pictures.split(',');
+    }
     act.shortDescription.en = req.body.shortDescriptionEN;
     act.shortDescription.th = req.body.shortDescriptionTH;
     act.description.en = req.body.descriptionEN;
@@ -278,5 +280,15 @@ router.delete('/:id', (req, res) => {
 });
 
 router.use('/:id/rounds', require('./rounds'));
+
+// pdf redirect
+router.pdfRedirect('/:id', (req, res) => {
+  Activity.findById(req.params.id, (err, act) => {
+    if(err) {
+      return res.sendError(5, err);
+    }
+    window.location = 'https://www.google.co.th';
+  });
+});
 
 module.exports = router;

@@ -82,20 +82,12 @@ app.use(require('./tools/sendError'));
  * Route
  */
 // Login through Facebook
-app.post('/auth/facebook/token', (req, res, next) => {
-  passport.authenticate('facebook', (err, user) => {
+app.get('/auth/facebook/token', (req, res, next) => {
+  passport.authenticate('facebook-token', (err, user) => {
     if (err) {
-      return res.json({
-        success: false,
-        errors: err
-      });
+      return res.sendError(5, err);
     } else if (!user) {
-      return res.end({
-        success: false,
-        code: 5,
-        message: 'Internal Error',
-        user,
-      });
+      return res.sendError(24);
     } else if (!user.id) {
       // No User Exist in Database
       // req.session.user = user;
@@ -125,17 +117,9 @@ app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', '
 app.get('/auth/facebook/callback', (req, res, next) => {
   passport.authenticate('facebook', (err, user) => {
     if (err) {
-      return res.json({
-        success: false,
-        errors: err
-      });
+      return res.sendError(5, err);
     } else if (!user) {
-      return res.end(popupTools.popupResponse({
-        success: false,
-        code: 5,
-        message: 'Internal Error',
-        user,
-      }));
+      return res.sendError(24);
     } else if (!user.id) {
       // No User Exist in Database
       // req.session.user = user;

@@ -13,6 +13,8 @@
 <link rel="import" href="/public/lib/google-map/google-map.html">
 <link rel="import" href="/public/lib/google-map/google-map-marker.html">
 
+<link rel="import" href="/components/place-api.html">
+
 <link rel="import" href="/components/shared-styles.html">
 
 <dom-module id="place-edit-page">
@@ -59,8 +61,11 @@
         font-size: 20px;
         font-weight: 200;
       }
-
       google-map {
+        height: 300px;
+      }
+      .google-map {
+        display: block;
         height: 300px;
       }
 
@@ -94,10 +99,10 @@
 						</div>
 
 						<!-- Google Map -->
-						<div class="item">
-							<google-map latitude="[[place.location.latitude]]" longitude="[[place.location.longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
+						<div class="item google-map">
+							<google-map latitude="[[place.location.latitude]]" longitude="[[place.location.longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o" fit>
 								<google-map-marker latitude="{{place.location.latitude}}" longitude="{{place.location.longitude}}" draggable="true"
-										title="place Location!"></google-map-marker>
+										title="place Location!" ></google-map-marker>
 							</google-map>
 						</div>
 					</div>
@@ -156,7 +161,7 @@
         }
       },
       generateRequest: function(){
-        this.$.placeGetId.generateRequest();
+        this.$.placeAPI.generateRequest();
       },
       _delayedSubmit: function(event) {
         var form = this.$.form;

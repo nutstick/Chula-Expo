@@ -62,8 +62,11 @@
         font-size: 20px;
         font-weight: 200;
       }
-
       google-map {
+        height: 300px;
+      }
+      .google-map {
+        display: block;
         height: 300px;
       }
 
@@ -116,7 +119,6 @@
   												return { name:obj.name.en, value:obj['_id'] };
   											});
                         combobox.items = arr;
-                        console.log(arr);
   										}
   									};
   									req.send();
@@ -128,9 +130,9 @@
 
 						<!-- Google Map -->
 						<div class="item">
-							<google-map latitude="[[latitude]]" longitude="[[longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
+							<google-map id="addFacilityMaps" latitude="[[latitude]]" longitude="[[longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
 								<google-map-marker latitude="{{latitude}}" longitude="{{longitude}}" draggable="true"
-										title="facility Location!"></google-map-marker>
+										title="facility Location!" ></google-map-marker>
 							</google-map>
 						</div>
 					</div>
@@ -191,6 +193,9 @@
                     type: Array,
                     value: ['Chula Expo']
                 }
+            },
+            attached: function() {
+              this.$.addFacilityMaps.resize();
             },
             _delayedSubmit: function(event) {
                 var form = this.$.form;

@@ -20,6 +20,7 @@
 <link rel="import" href="/components/me-api.html">
 <link rel="import" href="/pages/login-page.html">
 
+
 <dom-module id="chulaexpo-staff-app">
   <template>
     <style is="custome-style" include="shared-styles">
@@ -34,9 +35,23 @@
         background-color: var(--primary-color);
         color: var(--secondary-color);
       }
-      iron-selector a {
+      .drawer-list {
+        @apply(--layout);
+        @apply(--layout-vertical);
+      }
+      .drawer-list a {
         color: var(--primary-color);
         text-decoration: none;
+        display: block;
+        line-height: 40px;
+        text-decoration: none;
+        text-transform: uppercase;
+        color: #7c7c7c;
+        padding-left: 18px;
+      }
+      .drawer-list a.iron-selected {
+        color: black;
+        font-weight: bold;
       }
       paper-tabs {
         --paper-tabs-selection-bar-color: white;
@@ -46,12 +61,14 @@
       paper-tab {
         --paper-tab-ink: var(--primary-color);
         text-transform: uppercase;
+        padding: 0px;
       }
       paper-tab a {
         @apply(--layout-horizontal);
         @apply(--layout-center-center);
         color: var(--secondary-color);
         text-decoration: none;
+        padding: 0 12px;
       }
       [hidden] {
         display: none !important;
