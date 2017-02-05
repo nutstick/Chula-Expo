@@ -17,7 +17,7 @@
 <link rel="import" href="/public/lib/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="/public/lib/iron-pages/iron-pages.html">
 
-<link rel="import" href="/components/shared-styles.html">
+<link rel="import" href="/components/place-api.html">
 
 <link rel="import" href="/components/shared-styles.html">
 
@@ -99,8 +99,16 @@
 					<div class="item">
 						<label class="label --input">Place</label>
             <div class="flex" style="display: inline-block">
-              {{facility.place.name.en}}
+              {{place.name.en}}
 						</div>
+            <place-api
+              id="placeAPI"
+              place-id="{{facility.place}}"
+              fields="nameEN"
+              page="0"
+              page-size="0"
+              place="{{place}}"
+            ></place-api>
 					</div>
 
 					<!-- Google Map -->
@@ -174,6 +182,7 @@
       },
       generateRequest: function(){
         this.$.facilityAPI.generateRequest();
+        this.$.placeAPI.generateRequest();
       }
     })
   </script>
