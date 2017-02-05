@@ -17,6 +17,8 @@
 <link rel="import" href="/public/lib/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="/public/lib/iron-pages/iron-pages.html">
 
+<link rel="import" href="/components/facility-api.html">
+
 <link rel="import" href="/components/shared-styles.html">
 
 <dom-module id="facility-edit-page">
@@ -124,7 +126,6 @@
   												return { name:obj.name.en, value:obj['_id'] };
   											});
                         combobox.items = arr;
-                        console.log(arr);
   										}
   									};
   									req.send();

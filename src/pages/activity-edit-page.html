@@ -13,6 +13,8 @@
 <link rel="import" href="/public/lib/google-map/google-map.html">
 <link rel="import" href="/public/lib/google-map/google-map-marker.html">
 
+<link rel="import" href="/components/activity-api.html">
+
 <link rel="import" href="/components/shared-styles.html">
 
 <dom-module id="activity-edit-page">
@@ -396,6 +398,9 @@
           observer: '_idChanged'
         }
       },
+      generateRequest: function(){
+        this.$.activityAPI.generateRequest();
+      },
       _delayedSubmit: function(event) {
         var form = this.$.form;
         this.$.spinner.active = true;
@@ -425,7 +430,6 @@
           this.$.form.request.body.thumbnail = this.activity.thumbnail;
         if(this.$.form.request.body.banner == '')
           this.$.form.request.body.banner = this.activity.banner;
-				console.log(this.$.form.request.body);
       },
       _handleResponse: function(event) {
         if (event.detail.response.success) {
