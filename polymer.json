@@ -1,0 +1,7 @@
+{
+  "entrypoint": "src/index.html",
+  "shell": "src/pages/chulaexpo-staff-app.html",
+  "fragments": [
+    "src/pages/account-page.html"
+  ]
+}

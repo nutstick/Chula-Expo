@@ -1,7 +1,6 @@
 {
   "name": "chulaexpo",
   "description": "Chulalongkorn expo application",
-  "main": "src/server.js",
   "authors": [
     "Chula team"
   ],
