@@ -17,6 +17,15 @@ const PlaceSchema = new mongoose.Schema({
     latitude: { type: Number, required: true },
     longitude: { type: Number, required: true }
   },
+  rooms: [{
+    type: ObjectId,
+    ref: 'Room'
+  }],
+  zone:{
+     type: ObjectId,
+     ref: 'Zone'
+
+    }
 });
 
 const Place = mongoose.model('Place', PlaceSchema);
