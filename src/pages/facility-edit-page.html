@@ -65,8 +65,11 @@
         font-size: 20px;
         font-weight: 200;
       }
-
       google-map {
+        height: 300px;
+      }
+      .google-map {
+        display: block;
         height: 300px;
       }
 
@@ -135,10 +138,10 @@
 						</div>
 
 						<!-- Google Map -->
-						<div class="item">
-							<google-map latitude="[[facility.location.latitude]]" longitude="[[facility.location.longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
+						<div class="item google-map">
+							<google-map latitude="[[facility.location.latitude]]" longitude="[[facility.location.longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o" fit>
 								<google-map-marker latitude="{{facility.location.latitude}}" longitude="{{facility.location.longitude}}" draggable="true"
-										title="facility Location!"></google-map-marker>
+										title="facility Location!" ></google-map-marker>
 							</google-map>
 						</div>
 					</div>
