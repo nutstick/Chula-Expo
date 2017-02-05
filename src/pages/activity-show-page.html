@@ -12,7 +12,9 @@
 <link rel="import" href="/public/lib/greenyouse-datetime-local-input/datetime-local-input.html">
 <link rel="import" href="/public/lib/google-map/google-map.html">
 <link rel="import" href="/public/lib/google-map/google-map-marker.html">
-<link rel="import" href="/public/lib/granite-qrcode-generator/granite-qrcode-generator.html">
+
+<script type="text/javascript" src="/public/js/jquery.min.js"></script>
+<script type="text/javascript" src="/public/js/qrcode.min.js"></script>
 
 <link rel="import" href="/components/activity-api.html">
 <link rel="import" href="/components/round-api.html">
@@ -147,7 +149,7 @@
 		<div id="main" class="container">
 			<paper-card id="left">
         <div class="card-content">
-					<!-- Thumbnail Upload -->
+          <!-- Thumbnail Upload -->
 					<div class="item">
 						<div class="flex-layout">
 							<label class="label --upload">Thumbnail</label>
@@ -194,13 +196,35 @@
 						<div>
 							<label class="label --input">Video Url</label>
 							<div class="flex" style="display: inline-block">
-								{{activity.video}}
+								{{activity.video}}<br>
+                <div id="qrcodeVideo" style="width:200px; height:200px; margin-bottom:15px; margin-top:4px;"></div>
+                <script type="text/javascript">
+                  var qrcode = new QRCode(document.getElementById("qrcodeVideo"), {
+                    text: "https://staffchulaexpo.com/activities/" + document.querySelector('activity-show-page').activityId + "/qrvideo",
+                    width: 200,
+                    height: 200,
+                    colorDark : "#ff69B4",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.L
+                  });
+                </script>
 							</div>
 						</div>
 						<div>
 							<label class="label --input">PDF Url</label>
 							<div class="flex" style="display: inline-block">
-								{{activity.pdf}}
+								{{activity.pdf}}<br>
+                <div id="qrcodePDF" style="width:200px; height:200px; margin-bottom:15px; margin-top:4px;"></div>
+                <script type="text/javascript">
+                  var qrcode = new QRCode(document.getElementById("qrcodePDF"), {
+                    text: "https://staffchulaexpo.com/activities/" + document.querySelector('activity-show-page').activityId + "/qrpdf",
+                    width: 200,
+                    height: 200,
+                    colorDark : "#000000",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.L
+                  });
+                </script>
 							</div>
 						</div>
 						<div>
