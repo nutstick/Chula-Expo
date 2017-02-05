@@ -409,7 +409,7 @@
       _response: function(e) {
         if (e.detail.response.success) {
           this.$.form.reset();
-          window.location = '/activity';
+          window.location = '/activity/' + this.activityId + '/show/';
         }
       },
       _presubmit: function(event) {

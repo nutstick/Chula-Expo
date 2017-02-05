@@ -171,7 +171,7 @@
       _response: function(e) {
         if (e.detail.response.success) {
           this.$.form.reset();
-          window.location = '/place' + placeId + '/show';
+          window.location = '/place/' + this.placeId + '/show';
         }
       },
       _presubmit: function(event) {
