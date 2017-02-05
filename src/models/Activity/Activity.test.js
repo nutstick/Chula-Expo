@@ -43,7 +43,7 @@ describe('Activity Model', () => {
         longitude: casual.double(from = -10, to = 10)
       },
       contact: casual.first_name,
-      image: [
+      pictures: [
         casual.string,
         casual.string
       ],
