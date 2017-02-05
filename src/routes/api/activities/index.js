@@ -132,6 +132,20 @@ router.get('/', (req, res) => {
   });
 });
 
+// pdf redirect
+router.get('/:id/qrcode', (req, res) => {
+  Activity.findById(req.params.id, (err, act) => {
+    if (err) {
+      return res.sendError(5, err);
+    }
+    res.writeHead(301, {
+      Location: 'https://www.google.co.th'
+    });
+    res.end();
+  });
+});
+
+
 /**
  * Get Activities by Id
  * Access at GET http://localhost:8080/api/activities/:id
@@ -281,14 +295,5 @@ router.delete('/:id', (req, res) => {
 
 router.use('/:id/rounds', require('./rounds'));
 
-// pdf redirect
-router.pdfRedirect('/:id', (req, res) => {
-  Activity.findById(req.params.id, (err, act) => {
-    if(err) {
-      return res.sendError(5, err);
-    }
-    window.location = 'https://www.google.co.th';
-  });
-});
 
 module.exports = router;
