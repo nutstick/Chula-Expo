@@ -32,26 +32,14 @@ const router = express.Router();
  */
 router.post('/', (req, res) => {
   // Reject `admin` field if not correct registration code
-  if (req.body.staff === 'Admin' && req.body.registrationCode !== process.env.ADMIN_REGISTRATION_CODE) {
-    // Handle error from save
-    return res.status(400).json({
-      success: false,
-      errors: retrieveError(11),
-    });
+  if (req.body.type === 'Staff' && req.body.staff === 'Admin' && req.body.registrationCode !== process.env.ADMIN_REGISTRATION_CODE) {
+    return res.sendError(11);
   }
-  if (req.body.staff === 'Staff' && req.body.registrationCode !== process.env.STAFF_REGISTRATION_CODE) {
-    // Handle error from save
-    return res.status(400).json({
-      success: false,
-      errors: retrieveError(12),
-    });
+  if (req.body.type === 'Staff' && req.body.staff === 'Staff' && req.body.registrationCode !== process.env.STAFF_REGISTRATION_CODE) {
+    return res.sendError(11);
   }
-  if (req.body.staff === 'Scanner' && req.body.regisationCode !== process.env.SCANNER_REGISTRATION_CODE) {
-    // Handle error from save
-    return res.status(400).json({
-      success: false,
-      errors: retrieveError(13),
-    });
+  if (req.body.type === 'Staff' && req.body.staff === 'Scanner' && req.body.regisationCode !== process.env.SCANNER_REGISTRATION_CODE) {
+    return res.sendError(11);
   }
 
   // Create a new instance of the User model
