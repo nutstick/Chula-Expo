@@ -51,6 +51,8 @@
       _pageChanged: function(subpage) {
         var resolvedPageUrl = this.resolveUrl('zone-' + subpage + '-page.html');
         this.importHref(resolvedPageUrl, null, this._showPage404, true);
+
+        document.querySelector('zone-'+ subpage + '-page').generateRequest();
       },
     });
   </script>

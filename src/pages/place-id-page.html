@@ -50,6 +50,8 @@
       _pageChanged: function(subpage) {
         var resolvedPageUrl = this.resolveUrl('place-' + subpage + '-page.html');
         this.importHref(resolvedPageUrl, null, this._showPage404, true);
+
+        document.querySelector('place-'+ subpage + '-page').generateRequest();
       },
     });
   </script>
