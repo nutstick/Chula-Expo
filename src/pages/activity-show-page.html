@@ -200,7 +200,7 @@
                 <div id="qrcodeVideo" style="width:200px; height:200px; margin-bottom:15px; margin-top:4px;"></div>
                 <script type="text/javascript">
                   var qrcode = new QRCode(document.getElementById("qrcodeVideo"), {
-                    text: "https://staffchulaexpo.com/activities/" + document.querySelector('activity-show-page').activityId + "/qrvideo",
+                    text: "https://staffchulaexpo.com/api/activities/" + document.querySelector('activity-show-page').activityId + "/qrvideo",
                     width: 200,
                     height: 200,
                     colorDark : "#ff69B4",
@@ -217,7 +217,7 @@
                 <div id="qrcodePDF" style="width:200px; height:200px; margin-bottom:15px; margin-top:4px;"></div>
                 <script type="text/javascript">
                   var qrcode = new QRCode(document.getElementById("qrcodePDF"), {
-                    text: "https://staffchulaexpo.com/activities/" + document.querySelector('activity-show-page').activityId + "/qrpdf",
+                    text: "https://staffchulaexpo.com/api/activities/" + document.querySelector('activity-show-page').activityId + "/qrpdf",
                     width: 200,
                     height: 200,
                     colorDark : "#000000",
