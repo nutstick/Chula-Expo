@@ -18,12 +18,11 @@
     <iron-pages
       selected="[[page]]"
       attr-for-selected="name"
-      fallback-selection="view404"
+      fallback-selection="id"
       role="main">
       <activity-list-page name="list"></activity-list-page>
       <activity-add-page name="add"></activity-add-page>
-			<activity-edit-page route="{{subroute}}" name="edit"></activity-edit-page>
-      <activity-show-page route="{{subroute}}" name="show"></activity-show-page>
+      <activity-id-page activity-id="{{page}}" route="{{subroute}}" name="id"></activity-show-page>
     </iron-pages>
   </template>
   <script>
@@ -48,12 +47,11 @@
         this.page = page || 'list';
       },
       _pageChanged: function(page) {
+        if (page !== 'list' && page !== 'add')
+          page = 'id';
         var resolvedPageUrl = this.resolveUrl('activity-' + page + '-page.html');
-        this.importHref(resolvedPageUrl, null, this._showPage404, true);
-      },
-      _showPage404: function() {
-        this.page = '404-page'
-      },
+        this.importHref(resolvedPageUrl, null);
+      }
     });
   </script>
 </dom-module>

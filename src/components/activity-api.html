@@ -8,25 +8,24 @@
     <iron-ajax
       auto
       id="activityResource"
-      url="/api/activities"
+      url="{{url}}"
       headers="{{headers}}"
       params="{{params}}"
       on-response="_handleResponse"
       handle-as="json"
-      debounce-duration="300"
     ></iron-ajax>
   </template>
   <script>
     Polymer({
       is: 'activity-api',
       properties: {
+        url: {
+          type: String,
+          value: '/api/activities',
+        },
         params: {
           type: Object,
-          value: {
-            fields: 'nameEN,thumbnail,shortDescriptionEN',
-            limit: 0,
-            skip: 0
-          }
+          value: {}
         },
         headers: {
           type: Object,
@@ -34,15 +33,47 @@
             'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
           }
         },
+        /*
+          Input Data
+        */
+        activityId: {
+          type: String,
+          observer: '_idChanged'
+        },
         page: {
-          type: Number
+          type: Number,
+          value: 0
         },
         pageSize: {
-          type: Number
+          type: Number,
+          value: 0
         },
+        fields: {
+          type: String,
+          value: 'nameEN,thumbnail,shortDescriptionEN'
+        },
+        start: {
+          type: String,
+          value: ''
+        },
+        end: {
+          type: String,
+          value: ''
+        },
+        zone: {
+          type: String,
+          value: ''
+        },
+        /*
+          Output Data
+        */
         activities: {
           type: Array,
           value: [],
+          notify: true,
+        },
+        activity: {
+          type: Object,
           notify: true,
         },
         loading: Boolean,
@@ -53,10 +84,10 @@
       },
 
       observers: [
-        '_updateRequest(page, pageSize, start, end, zone)'
+        'updateRequest(page,pageSize,fields,start,end,zone)'
       ],
 
-      _updateRequest: function(page, pageSize, start, end, zone) {
+      updateRequest: function(page, pageSize, fields, start, end, zone) {
         if (pageSize === 0) {
           this.set('params.limit', null);
           this.set('params.skip', page);
@@ -64,18 +95,32 @@
           this.set('params.limit', pageSize);
           this.set('params.skip', (page - 1) * pageSize);
         }
+
+        this.set('params.fields', fields)
         this.set('params.start', start);
         this.set('params.end', end);
         this.set('params.zone', zone);
       },
       generateRequest: function() {
-         this.$.activityResource.generateRequest();
+        this.$.activityResource.generateRequest();
       },
       _handleResponse: function(event) {
+        console.log(event.detail.response)
         if (event.detail.response.success) {
-          this.activities = event.detail.response.results;
+          if (this.activityId) {
+            this.activity = event.detail.response.results;
+          } else {
+            this.activities = event.detail.response.results;
+          }
         } else {
           this.error = event.detail.response.errors;
+        }
+      },
+      _idChanged: function(id) {
+        if (id) {
+          this.url = '/api/activities/' + id;
+        } else {
+          this.url = '/api/activities';
         }
       }
     });

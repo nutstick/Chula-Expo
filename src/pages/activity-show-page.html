@@ -14,9 +14,9 @@
 <link rel="import" href="/public/lib/google-map/google-map-marker.html">
 <link rel="import" href="/public/lib/granite-qrcode-generator/granite-qrcode-generator.html">
 
+<link rel="import" href="/components/activity-api.html">
 <link rel="import" href="/components/round-api.html">
 <link rel="import" href="/components/paper-card-dataitem.html">
-
 <link rel="import" href="/components/shared-styles.html">
 
 <dom-module id="activity-show-page">
@@ -131,19 +131,13 @@
         cursor: pointer;
       }
     </style>
-    <app-route
-      route="{{route}}"
-      pattern="/:activityId"
-      data="{{routeData}}"
-      tail="{{subroute}}"
-    ></app-route>
-    <iron-ajax
-      id="activityGetId"
-      url="{{urlId}}"
-      on-response="_handleResponse"
-      headers='{"Authentication": "{{token}}"}'
-      handle-as="json"
-    ></iron-ajax>
+    <activity-api
+			activity-id="{{activityId}}"
+			fields=""
+			page="0"
+			page-size="0"
+			activity="{{activity}}"
+    ></activity-api>
 		<div id="main" class="container">
 			<paper-card id="left">
         <div class="card-content">
@@ -248,7 +242,8 @@
 						<div class="" style="display: inline-block">
 							<paper-autocomplete name="locationPlace" label="Location" id="input-location" no-label-float="true" remote-source="true"></paper-autocomplete>
 						</div>
-						<script>
+						<!-- Go Use place-api instead -->
+						<!--<script>
 							document.querySelector('activity-show-page').querySelector('#input-location').addEventListener('autocomplete-change', function(event) {
 								var input = this;
 								var search = event.detail.option.text;
@@ -270,7 +265,7 @@
 									req.send();
 								}.bind(this), delay);
 							});
-						</script>
+						</script>-->
 
 						<div>
 							<label class="label --input">Floor</label>
@@ -466,9 +461,8 @@
     Polymer({
       is: 'activity-show-page',
       properties: {
-        urlId: {
-          type: String,
-          value: ''
+        activityId: {
+          type: String
         },
         urlIdRound: {
           type: String,
@@ -491,21 +485,6 @@
           type: Array,
           value: [],
         },
-      },
-      observers: [
-        '_routeIdChanged(routeData.activityId)',
-      ],
-      _routeIdChanged: function(id) {
-				console.log(id)
-        if(!!id) {
-          this.urlId = `/api/activities/${id}`;
-          this.urlIdRound = `/api/activities/${id}/rounds`;
-          this.generateRequest();
-        }
-      },
-      generateRequest: function(){
-        this.$.activityGetId.generateRequest();
-        this.$.roundAPI.generateRequest();
       },
       _convertToDate: function(dateTime) {
         return moment.utc(dateTime).format('MM-DD-YYYY HH:mm');

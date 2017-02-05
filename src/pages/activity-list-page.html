@@ -173,11 +173,11 @@
       },
       _showClick: function(id) {
         var id = event.model.item['_id'];
-        document.querySelector('chulaexpo-staff-app').set('route.path', '/activity/show/'+id+'/');
+        document.querySelector('chulaexpo-staff-app').set('route.path', '/activity/'+id+'/show/');
 			},
       _editClick: function(id) {
         var id = event.model.item['_id'];
-        document.querySelector('chulaexpo-staff-app').set('route.path', '/activity/edit/'+id+'/');
+        document.querySelector('chulaexpo-staff-app').set('route.path', '/activity/'+id+'/edit/');
 			},
       _addClick: function() {
         document.querySelector('chulaexpo-staff-app').set('route.path', '/activity/add/');
