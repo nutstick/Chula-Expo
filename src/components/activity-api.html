@@ -105,22 +105,25 @@
         this.$.activityResource.generateRequest();
       },
       _handleResponse: function(event) {
-        console.log(event.detail.response)
-        if (event.detail.response.success) {
-          if (this.activityId) {
-            this.activity = event.detail.response.results;
+        if(event.detail.response) {
+          if (event.detail.response.success) {
+            if (this.activityId) {
+              this.activity = event.detail.response.results;
+            } else {
+              this.activities = event.detail.response.results;
+            }
           } else {
-            this.activities = event.detail.response.results;
+            this.error = event.detail.response.errors;
           }
-        } else {
-          this.error = event.detail.response.errors;
         }
       },
       _idChanged: function(id) {
-        if (id) {
+        if (id && id!='show' && id!='edit' && id!='add' && id!='list') {
           this.url = '/api/activities/' + id;
-        } else {
+        } else if (id && id=='list'){
           this.url = '/api/activities';
+        } else {
+          this.url = '';
         }
       }
     });

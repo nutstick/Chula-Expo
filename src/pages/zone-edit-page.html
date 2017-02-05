@@ -68,19 +68,14 @@
         margin-top: 10px;
       }
     </style>
-    <app-route
-      route="{{route}}"
-      pattern="/:zoneId"
-      data="{{routeData}}"
-      tail="{{subroute}}"
-    ></app-route>
-    <iron-ajax
-      id="zoneGetId"
-      url="{{urlId}}"
-      on-response="_handleResponse"
-      headers='{"Authentication": "{{token}}"}'
-      handle-as="json"
-    ></iron-ajax>
+    <zone-api
+      id="zoneAPI"
+			zone-id="{{zoneId}}"
+			fields=""
+			page="0"
+			page-size="0"
+			zone="{{zone}}"
+    ></zone-api>
     <div class="container">
       <paper-card>
 				<form is="iron-form" id="form" method="post" class="card-content"
@@ -227,7 +222,11 @@
     Polymer({
       is: 'zone-edit-page',
       properties: {
-				urlId: {
+				url: {
+          type: Object,
+          value: ''
+        },
+        zoneId: {
           type: Object,
           value: ''
         },
@@ -242,17 +241,8 @@
 					type: Object
 				}
       },
-      observers: [
-        '_routeIdChanged(routeData.zoneId)',
-      ],
-      _routeIdChanged: function(id) {
-        if(!!id) {
-          this.urlId = `/api/zones/${id}`;
-          this.generateRequest();
-        }
-      },
       generateRequest: function(){
-        this.$.zoneGetId.generateRequest();
+        this.$.zoneAPI.generateRequest();
       },
       _delayedSubmit: function(event) {
         var form = this.$.form;
@@ -267,7 +257,7 @@
       _response: function(e) {
 				if (e.detail.response.success) {
           this.$.form.reset();
-          window.location = '/zone';
+          window.location = '/zone' + zoneId + '/show';
         }
 			},
       _presubmit: function(event) {
@@ -279,11 +269,11 @@
         if(this.$.form.request.body.banner == '')
           this.$.form.request.body.banner = this.zone.banner;
       },
-      _handleResponse: function(event) {
-        if (event.detail.response.success) {
-          this.zone = event.detail.response.results;
+      _idChanged: function(id) {
+        if (id) {
+          this.url = '/api/zones/' + id;
         } else {
-          this.error = event.detail.response.errors;
+          this.url = '/api/zones';
         }
       }
     })

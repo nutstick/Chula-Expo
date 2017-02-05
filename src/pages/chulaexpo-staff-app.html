@@ -211,10 +211,6 @@
       _pageChanged: function(page) {
         var resolvedPageUrl = this.resolveUrl(page + '-page.html');
         this.importHref(resolvedPageUrl, null, this._showPage404, true);
-
-        var api = document.querySelector(`#${page}API`);
-        if(!!api)
-          api.generateRequest();
       },
       _showPage404: function() {
         this.page = '404-page'

@@ -70,17 +70,18 @@
         margin-top: 10px;
       }
     </style>
-    <iron-ajax
-      id="activityGetId"
-      url="{{urlId}}"
-      on-response="_handleResponse"
-      headers='{"Authentication": "{{token}}"}'
-      handle-as="json"
-    ></iron-ajax>
+    <activity-api
+      id="activityAPI"
+			activity-id="{{activityId}}"
+			fields=""
+			page="0"
+			page-size="0"
+			activity="{{activity}}"
+    ></activity-api>
     <div class="container">
       <paper-card>
 				<form is="iron-form" id="form" method="post" class="card-content"
-					action="{{urlId}}" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
+					action="{{url}}" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
 					<div class="card-content">
 						<!-- Thumbnail Upload -->
 						<div class="item">
@@ -375,7 +376,7 @@
     Polymer({
       is: 'activity-edit-page',
       properties: {
-        urlId: {
+        url: {
           type: Object,
           value: ''
         },
@@ -392,6 +393,7 @@
         },
         activityId: {
           type: String,
+          observer: '_idChanged'
         }
       },
       _delayedSubmit: function(event) {
@@ -415,10 +417,10 @@
       	this.$.form.request.body.locationLat = this.activity.location.latitude;
 				this.$.form.request.body.locationLong = this.activity.location.longitude;
 				this.$.form.request.body.pictures = [];
-          var dom = this;
-          this.pictures.forEach(function(key,value, Set) {
-            dom.$.form.request.body.pictures.push(key);
-          });
+        var dom = this;
+        this.pictures.forEach(function(key,value, Set) {
+          dom.$.form.request.body.pictures.push(key);
+        });
         if(this.$.form.request.body.thumbnail == '')
           this.$.form.request.body.thumbnail = this.activity.thumbnail;
         if(this.$.form.request.body.banner == '')
@@ -430,6 +432,13 @@
           this.activity = event.detail.response.results;
         } else {
           this.error = event.detail.response.errors;
+        }
+      },
+      _idChanged: function(id) {
+        if (id && id!='show' && id!='edit' && id!='add' && id!='list') {
+          this.url = '/api/activities/' + id;
+        } else {
+          this.url = '';
         }
       }
     })

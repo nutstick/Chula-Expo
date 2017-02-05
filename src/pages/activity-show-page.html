@@ -132,6 +132,7 @@
       }
     </style>
     <activity-api
+			id="activityAPI"
 			activity-id="{{activityId}}"
 			fields=""
 			page="0"
@@ -371,7 +372,7 @@
 			<div id="right">
         <paper-card class="card">
           <form is="iron-form" id="form" method="post" class="card-content"
-  					action="{{urlIdRound}}" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
+  					action="{{urlRound}}" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
   					<div class="card-content">
 
               <!-- time -->
@@ -452,7 +453,7 @@
               </paper-card-dataitem>
             </div>
           </template>
-          <round-api id="roundAPI" url="[[urlIdRound]]" rounds="{{rounds}}" error="{{error}}"></round-api>
+          <round-api id="roundAPI" url="[[urlRound]]" rounds="{{rounds}}" error="{{error}}"></round-api>
         </paper-card>
 			</div>
 		</div>
@@ -462,9 +463,10 @@
       is: 'activity-show-page',
       properties: {
         activityId: {
-          type: String
+          type: String,
+          observer: '_idChanged'
         },
-        urlIdRound: {
+        urlRound: {
           type: String,
           value: ''
         },
@@ -532,6 +534,13 @@
           };
           req.send();
         }.bind(this), 300);
+      },
+      _idChanged: function(id) {
+        if (id && id!='show' && id!='edit' && id!='add' && id!='list') {
+          this.urlRound = '/api/activities/' + id + '/rounds';
+        } else {
+          this.urlRound = '';
+        }
       }
     })
   </script>

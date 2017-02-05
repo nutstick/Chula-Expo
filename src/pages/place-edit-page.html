@@ -70,19 +70,14 @@
         margin-top: 10px;
       }
     </style>
-    <app-route
-      route="{{route}}"
-      pattern="/:placeId"
-      data="{{routeData}}"
-      tail="{{subroute}}"
-    ></app-route>
-    <iron-ajax
-      id="placeGetId"
-      url="{{urlId}}"
-      on-response="_handleResponse"
-      headers='{"Authentication": "{{token}}"}'
-      handle-as="json"
-    ></iron-ajax>
+    <place-api
+      id="placeAPI"
+			place-id="{{placeId}}"
+			fields=""
+			page="0"
+			page-size="0"
+			place="{{place}}"
+    ></place-api>
     <div class="container">
       <paper-card>
 				<form is="iron-form" id="form" method="post" class="card-content"
@@ -137,7 +132,11 @@
     Polymer({
       is: 'place-edit-page',
       properties: {
-        urlId: {
+        url: {
+          type: Object,
+          value: ''
+        },
+        placeId: {
           type: Object,
           value: ''
         },
@@ -156,15 +155,6 @@
           type: Object,
         }
       },
-      observers: [
-        '_routeIdChanged(routeData.placeId)',
-      ],
-      _routeIdChanged: function(id) {
-        if(!!id) {
-          this.urlId = `/api/places/${id}`;
-          this.generateRequest();
-        }
-      },
       generateRequest: function(){
         this.$.placeGetId.generateRequest();
       },
@@ -181,7 +171,7 @@
       _response: function(e) {
         if (e.detail.response.success) {
           this.$.form.reset();
-          window.location = '/place';
+          window.location = '/place' + placeId + '/show';
         }
       },
       _presubmit: function(event) {
@@ -189,11 +179,11 @@
       	this.$.form.request.body.locationLat = this.place.location.latitude;
 				this.$.form.request.body.locationLong = this.place.location.longitude;
       },
-      _handleResponse: function(event) {
-        if (event.detail.response.success) {
-          this.place = event.detail.response.results;
+      _idChanged: function(id) {
+        if (id) {
+          this.url = '/api/places/' + id;
         } else {
-          this.error = event.detail.response.errors;
+          this.url = '/api/places';
         }
       }
     })

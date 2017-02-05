@@ -9,10 +9,10 @@
       auto
       id="roundResource"
       url="{{url}}"
+      headers="{{headers}}"
       params="{{params}}"
       on-response="_handleResponse"
       handle-as="json"
-      debounce-duration="300"
     ></iron-ajax>
   </template>
   <script>
@@ -21,24 +21,59 @@
       properties: {
         url: {
           type: String,
+          value: '/api/rounds',
         },
         params: {
           type: Object,
-          value: {
-            fields: 'nameEN,start,end,seatsReserved,seatsFullCapacity',
-            limit: 0,
-            skip: 0
-          }
+          value: {}
         },
         headers: {
           type: Object,
           value: {
-            Authentication: document.querySelector('chulaexpo-staff-app').token
+            'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
           }
         },
+        /*
+          Input Data
+        */
+        roundId: {
+          type: String,
+          observer: '_idChanged'
+        },
+        page: {
+          type: Number,
+          value: 0
+        },
+        pageSize: {
+          type: Number,
+          value: 0
+        },
+        fields: {
+          type: String,
+          value: 'nameEN,seatsReserved,seatsFullCapacity,start,end'
+        },
+        start: {
+          type: String,
+          value: ''
+        },
+        end: {
+          type: String,
+          value: ''
+        },
+        zone: {
+          type: String,
+          value: ''
+        },
+        /*
+          Output Data
+        */
         rounds: {
           type: Array,
           value: [],
+          notify: true,
+        },
+        round: {
+          type: Object,
           notify: true,
         },
         loading: Boolean,
@@ -47,16 +82,45 @@
           value: {}
         }
       },
+
+      observers: [
+        'updateRequest(page,pageSize,fields,start,end,zone)'
+      ],
+
+      updateRequest: function(page, pageSize, fields, start, end, zone) {
+        if (pageSize === 0) {
+          this.set('params.limit', null);
+          this.set('params.skip', page);
+        } else {
+          this.set('params.limit', pageSize);
+          this.set('params.skip', (page - 1) * pageSize);
+        }
+
+        this.set('params.fields', fields)
+      },
       generateRequest: function() {
-         this.$.roundResource.generateRequest();
+        this.$.roundResource.generateRequest();
       },
       _handleResponse: function(event) {
-        if(!!event.detail.response) {
+        if(event.detail.response) {
           if (event.detail.response.success) {
-            this.rounds = event.detail.response.results;
+            if (this.roundId) {
+              this.round = event.detail.response.results;
+            } else {
+              this.rounds = event.detail.response.results;
+            }
           } else {
             this.error = event.detail.response.errors;
           }
+        }
+      },
+      _idChanged: function(id) {
+        if (id && id!='show' && id!='edit' && id!='add' && id!='list') {
+          this.url = '/api/rounds/' + id;
+        } else if (id && id=='list'){
+          this.url = '/api/rounds';
+        } else {
+          this.url = '';
         }
       }
     });

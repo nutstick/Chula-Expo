@@ -70,19 +70,14 @@
         margin-top: 10px;
       }
     </style>
-    <app-route
-      route="{{route}}"
-      pattern="/:placeId"
-      data="{{routeData}}"
-      tail="{{subroute}}"
-    ></app-route>
-    <iron-ajax
-      id="placeGetId"
-      url="{{urlId}}"
-      on-response="_handleResponse"
-      headers='{"Authentication": "{{token}}"}'
-      handle-as="json"
-    ></iron-ajax>
+		<place-api
+			id="placeAPI"
+			place-id="{{placeId}}"
+			fields=""
+			page="0"
+			page-size="0"
+			place="{{place}}"
+    ></place-api>
     <div class="container">
       <paper-card>
 				<div class="card-content">
@@ -140,7 +135,7 @@
     Polymer({
       is: 'place-show-page',
       properties: {
-        urlId: {
+        placeId: {
           type: Object,
           value: ''
         },
@@ -151,53 +146,13 @@
           type: Number,
           value: 16
         },
-        tags_list: {
-          type: Array,
-          value: ['Chula Expo']
-        },
         place: {
           type: Object,
         }
       },
-      observers: [
-        '_routeIdChanged(routeData.placeId)',
-      ],
-      _routeIdChanged: function(id) {
-        if(!!id) {
-          this.urlId = `/api/places/${id}`;
-          this.generateRequest();
-        }
-      },
       generateRequest: function(){
-        this.$.placeGetId.generateRequest();
+        this.$.placeAPI.generateRequest();
       },
-      _delayedSubmit: function(event) {
-        var form = this.$.form;
-        this.$.spinner.active = true;
-        this.$.spinner.hidden = false;
-        this.$.form.disabled = true;
-        // Simulate a slow server response.
-        setTimeout(function() {
-          form.submit();
-        }, 1000);
-      },
-      _response: function(e) {
-        if (e.detail.response.success) {
-          window.location = '/place/show/' + this.routeData.placeId;
-        }
-      },
-      _presubmit: function(event) {
-        this.$.form.request.method = 'put';
-      	this.$.form.request.body.locationLat = this.place.location.latitude;
-				this.$.form.request.body.locationLong = this.place.location.longitude;
-      },
-      _handleResponse: function(event) {
-        if (event.detail.response.success) {
-          this.place = event.detail.response.results;
-        } else {
-          this.error = event.detail.response.errors;
-        }
-      }
     })
   </script>
 </dom-module>

@@ -8,49 +8,73 @@
     <iron-ajax
       auto
       id="zoneResource"
-      url="/api/zones"
+      url="{{url}}"
+      headers="{{headers}}"
       params="{{params}}"
       on-response="_handleResponse"
-      headers="{{headers}}"
       handle-as="json"
-      debounce-duration="300"
     ></iron-ajax>
   </template>
   <script>
     Polymer({
       is: 'zone-api',
       properties: {
+        url: {
+          type: String,
+          value: '/api/zones',
+        },
         params: {
           type: Object,
-          value: {
-            fields: 'nameEN,thumbnail,shortNameEN,type',
-            limit: 0,
-            skip: 0
-          }
+          value: {}
         },
         headers: {
           type: Object,
           value: {
-            Authorization: document.querySelector('chulaexpo-staff-app').token
+            'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
           }
         },
+        /*
+          Input Data
+        */
+        zoneId: {
+          type: String,
+          observer: '_idChanged'
+        },
         page: {
-          type: Number
+          type: Number,
+          value: 0
         },
         pageSize: {
-          type: Number
+          type: Number,
+          value: 0
         },
-        token: {
+        fields: {
           type: String,
-          value: document.querySelector('chulaexpo-staff-app').token
+          value: 'nameEN,thumbnail,shortNameEN,type'
         },
+        start: {
+          type: String,
+          value: ''
+        },
+        end: {
+          type: String,
+          value: ''
+        },
+        zone: {
+          type: String,
+          value: ''
+        },
+        /*
+          Output Data
+        */
         zones: {
           type: Array,
           value: [],
           notify: true,
         },
-        fields: {
-          type: String,
+        zone: {
+          type: Object,
+          notify: true,
         },
         loading: Boolean,
         error: {
@@ -60,22 +84,43 @@
       },
 
       observers: [
-        '_updateRequest(page, pageSize, fields)'
+        'updateRequest(page,pageSize,fields,start,end,zone)'
       ],
 
-      _updateRequest: function(page, pageSize, fields) {
-        this.set('params.limit', pageSize);
-        this.set('params.skip', (page - 1) * pageSize);
+      updateRequest: function(page, pageSize, fields, start, end, zone) {
+        if (pageSize === 0) {
+          this.set('params.limit', null);
+          this.set('params.skip', page);
+        } else {
+          this.set('params.limit', pageSize);
+          this.set('params.skip', (page - 1) * pageSize);
+        }
+
         this.set('params.fields', fields)
       },
       generateRequest: function() {
-         this.$.zoneResource.generateRequest();
+        this.$.zoneResource.generateRequest();
       },
       _handleResponse: function(event) {
-        if (event.detail.response.success) {
-          this.zones = event.detail.response.results;
+        if(event.detail.response) {
+          if (event.detail.response.success) {
+            if (this.zoneId) {
+              this.zone = event.detail.response.results;
+            } else {
+              this.zones = event.detail.response.results;
+            }
+          } else {
+            this.error = event.detail.response.errors;
+          }
+        }
+      },
+      _idChanged: function(id) {
+        if (id && id!='show' && id!='edit' && id!='add' && id!='list') {
+          this.url = '/api/zones/' + id;
+        } else if (id && id=='list'){
+          this.url = '/api/zones';
         } else {
-          this.error = event.detail.response.errors;
+          this.url = '';
         }
       }
     });

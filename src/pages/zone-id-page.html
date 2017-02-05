@@ -3,8 +3,11 @@
 <!-- Web Component -->
 <link rel="import" href="/public/lib/app-route/app-route.html">
 <link rel="import" href="/public/lib/iron-pages/iron-pages.html">
+<link rel="import" href="/pages/zone-show-page.html">
+<link rel="import" href="/pages/zone-edit-page.html">
 
-<dom-module id="activity-id-page">
+
+<dom-module id="zone-id-page">
   <template>
     <app-route
       route="{{route}}"
@@ -17,24 +20,22 @@
       attr-for-selected="name"
       fallback-selection="id"
       role="main">
-      <activity-edit-page activity-id="[[activityId]]" name="edit"></activity-edit-page>
-      <activity-show-page activity-id="[[activityId]]" name="show"></activity-show-page>
-      <!--<activity-id-page route="{{subroute}}" name="id"></activity-show-page>-->
+      <zone-edit-page zone-id="[[zoneId]]" name="edit"></zone-edit-page>
+      <zone-show-page zone-id="[[zoneId]]" name="show"></zone-show-page>
     </iron-pages>
   </template>
   <script>
     Polymer({
-      is: 'activity-id-page',
+      is: 'zone-id-page',
       properties: {
         route: {
           type: String,
         },
         subpage: {
           type: String,
-          // reflectToAttribute: true,
           observer: '_pageChanged',
         },
-        activityId: {
+        zoneId: {
           type: String,
           reflectToAttribute: true,
         }
@@ -48,7 +49,7 @@
         this.subpage = subpage || 'show';
       },
       _pageChanged: function(subpage) {
-        var resolvedPageUrl = this.resolveUrl('activity-' + subpage + '-page.html');
+        var resolvedPageUrl = this.resolveUrl('zone-' + subpage + '-page.html');
         this.importHref(resolvedPageUrl, null, this._showPage404, true);
       },
     });

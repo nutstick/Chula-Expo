@@ -74,19 +74,14 @@
         margin-top: 10px;
       }
     </style>
-    <app-route
-      route="{{route}}"
-      pattern="/:facilityId"
-      data="{{routeData}}"
-      tail="{{subroute}}"
-    ></app-route>
-    <iron-ajax
-      id="facilityGetId"
-      url="{{urlId}}"
-      on-response="_handleResponse"
-      headers='{"Authentication": "{{token}}"}'
-      handle-as="json"
-    ></iron-ajax>
+    <facility-api
+      id="facilityAPI"
+			facility-id="{{facilityId}}"
+			fields=""
+			page="0"
+			page-size="0"
+			facility="{{facility}}"
+    ></facility-api>
     <div class="container">
       <paper-card>
 				<form is="iron-form" id="form" method="post" class="card-content"
@@ -182,7 +177,11 @@
     Polymer({
       is: 'facility-edit-page',
       properties: {
-        urlId: {
+				url: {
+					type: Object,
+					value: ''
+				},
+        facilityId: {
           type: Object,
           value: ''
         },
@@ -195,19 +194,11 @@
         },
         facility: {
           type: Object,
-        }
-      },
-      observers: [
-        '_routeIdChanged(routeData.facilityId)',
-      ],
-      _routeIdChanged: function(id) {
-        if(!!id) {
-          this.urlId = `/api/facilities/${id}`;
-          this.generateRequest();
+          observer: '_idChanged'
         }
       },
       generateRequest: function(){
-        this.$.facilityGetId.generateRequest();
+        this.$.facilityAPI.generateRequest();
       },
       _delayedSubmit: function(event) {
         var form = this.$.form;
@@ -222,7 +213,7 @@
       _response: function(e) {
         if (e.detail.response.success) {
           this.$.form.reset();
-          window.location = '/facility';
+          window.location = '/facility' + facilityId + '/show';
         }
       },
       _presubmit: function(event) {
@@ -230,11 +221,11 @@
       	this.$.form.request.body.locationLat = this.facility.location.latitude;
 				this.$.form.request.body.locationLong = this.facility.location.longitude;
       },
-      _handleResponse: function(event) {
-        if (event.detail.response.success) {
-          this.facility = event.detail.response.results;
+      _idChanged: function(id) {
+        if (id) {
+          this.url = '/api/facilities/' + id;
         } else {
-          this.error = event.detail.response.errors;
+          this.url = '/api/facilities';
         }
       }
     })
