@@ -5,7 +5,7 @@
 <link rel="import" href="/public/lib/paper-card/paper-card.html">
 <link rel="import" href="/public/lib/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="/public/lib/paper-autocomplete/paper-autocomplete.html">
-<link rel="import" href="/public/lib/paper-tags-input/paper-tags-input.html">
+<link rel="import" href="/public/lib/paper-select/paper-select.html">
 <link rel="import" href="/public/lib/paper-input/paper-textarea.html">
 <link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="/public/lib/greenyouse-datetime-local-input/datetime-local-input.html">
@@ -344,7 +344,14 @@
             </script>
 						<!-- Tags -->
 						<div class="item">
-							<paper-tags-input name="tags" label="Tags" tags="{{tags_list}}"></paper-tags-input>
+							<paper-select 
+                multiple
+                label-field="tags"
+                bind-value="{{tags}}"
+                select-on-blur
+                label="เลือก tags สำหรับกิจกรรม"
+                on-input-changed="inputChanged"
+              ></paper-select>
 						</div>
 					</div>
 
@@ -388,13 +395,23 @@
         pictures: {
           type: Set,
           value: new Set()
-        }
+        },
       },
-      attached: function(event) {
-        console.log(event);
+      attached: function(e) {
         this.$.addActivityMaps.resize();
       },
-      _delayedSubmit: function(event) {
+      inputChanged: function(e) {
+        var data = ['พระราชกรณียกิจ','Royal Duties','ไทยแลนด์ 4.0','Thailand 4.0','พลังงาน','Energy','สิ่งประดิษฐ์','Inventions','การออกแบบ','Design','ไอที','IT','การแพทย์','Medication','ร่างกาย','Body','จิตใจ','Mind','สิ่งแวดล้อม','Environment','สัตว์และพันธุ์พืช','Life','อาหารและน้ำ','Food &  Water','ความงาม','Beauty','คุณภาพชีวิต','Quality of Life','สังคมผู้สูงอายุ','Aging Society','เศรษฐกิจ','Economy','ชุมชน','Community','ปัญหาสังคม','Social Issues','การศึกษา','Education','การสื่อสาร','Communication','การขนส่ง','Transportation','ภูมิปัญญาไทย','Thai Wisdom','ศิลปวัฒนธรรม','Art & Culture','กฎหมาย','Law'];
+        var input = (e.detail.value || '').trim().toLowerCase();
+        if (input) {
+          e.target.options = data.filter(function(item) {
+            return item.toLowerCase().indexOf(input) === 0;
+          });
+        } else {
+          e.target.options = [];
+        }
+      },
+      _delayedSubmit: function(e) {
         var form = this.$.form;
         this.$.spinner.active = true;
         this.$.spinner.hidden = false;
@@ -421,6 +438,7 @@
           this.pictures.forEach(function(key,value, Set) {
             dom.$.form.request.body.pictures.push(key);
           });
+          this.$.form.request.body.tags = this.tags;
       }
     })
   </script>

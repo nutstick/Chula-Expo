@@ -6,7 +6,7 @@
 <dom-module id="me-api">
   <template>
     <iron-ajax
-      auto="{{auto}}"
+      id="ajax"
       url="/api/me"
       params="{{params}}"
       on-response="_handleResponse"
@@ -63,14 +63,29 @@
         this.headers = {
           'Authorization': 'JWT ' + token
         };
+        if (token) {
+          this.$.ajax.generateRequest();
+        }
       },
       _updateRequest: function(fields) {
         this.set('params.fields', fields);
+        if (this.token) {
+          this.$.ajax.generateRequest();
+        }
       },
       _handleResponse: function(event) {
         if (event.detail.response.success) {
           this.me = event.detail.response.results;
         } else {
+          if (event.detail.response.code === 4) {
+            // Logout
+            document.querySelector('chulaexpo-staff-app').token = null;
+            document.getElementById('storage').save();
+
+            // window.history.pushState({}, null, '/');
+            document.querySelector('chulaexpo-staff-app').set('route.path', '/');
+            window.dispatchEvent(new CustomEvent('location-changed'));
+          }
           this.error = event.detail.response.errors;
         }
       }
