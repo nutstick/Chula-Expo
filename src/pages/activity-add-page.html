@@ -243,7 +243,9 @@
                       if (req.status === 200) {
                         var data = JSON.parse(req.response);
                         var arr = data.results.map(function(obj){
-                          return { name:obj.name.en, value:obj['_id'] };
+                          console.log(obj);
+                        //  var zone = JSON.parse(obj.zone);
+                          return { name:obj.name.en/*+" - "+zone.name.en*/, value:obj['_id'] };
                         });
                         comboboxPlace.items = arr;
                       }
@@ -269,11 +271,11 @@
   									req.open('GET',encodeURI(url));
   									req.onload = function() {
   										if (req.status === 200) {
-//  											var data = JSON.parse(req.response);
-  //											var arr = data.results.map(function(obj){
-  	//											return { name:obj.name.en, value:obj['_id'] };
-  		//									});
-        //                comboboxRoom.items = arr;
+ 											var data = JSON.parse(req.response);
+  											var arr = data.results.map(function(obj){
+  												return { name:obj.name.en/*+" - "+obj.place.name.en*/, value:obj['_id'] };
+  											});
+                        comboboxRoom.items = arr;
   										}
   									};
   									req.send();

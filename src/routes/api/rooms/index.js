@@ -66,10 +66,13 @@ router.get('/', (req, res) => {
       return prev;
     }, {});
   }
+  //-------------
+  let populate;
+  if(req.query.populate)populate= req.query.populate
 //----------------------------------------------------------------
   Room.find(filter)
     .select(fields).sort(sort).skip(skip)
-    .limit(limit)
+    .limit(limit)//.populate('place')
     .exec(
     (err, rooms) => {
       if (err) {
@@ -114,11 +117,23 @@ router.get('/:id', (req, res) => {
         results: retrieveError(33)
       });
     }
+/*
+   Place.findById(place.zone).exec((err, place) => {
+      if (err) {
+         // Handle error from User.findById
+        return res.status(500).json({
+          success: false,
+          errors: retrieveError(5, err)
+        });
+      }
 
-    return res.status(200).json({
-      success: true,
-      results: room
-    });
+       room.place = place;
+*/
+      return res.status(200).json({
+        success: true,
+        results: room
+      });
+//    });
   });
 });
 
