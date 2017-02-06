@@ -1,7 +1,8 @@
 const express = require('express');
-const Activity = require('../../../models/Activity');
+const { Activity } = require('../../../models');
 const _ = require('lodash');
-const RangeQuery = require('../../../tools/RangeQuery');
+const { RangeQuery } = require('../../../tools');
+const { isAuthenticatedByToken, isStaff } = require('../../../config/authenticate');
 
 const router = express.Router();
 
@@ -10,6 +11,7 @@ const router = express.Router();
  * Access at GET https://localhost:8080/api/activities
  * @param {string} [name] - Get by name.
  * @param {string} [tags] - Get by Tags.
+ * @param {ObjectId} [zone] - Get by Zone.
  * @param {Date | RangeQuery<Date>} [start] - Get by start time.
  * @param {Date | RangeQuery<Date>} [end] - Get by end time.
  * @param {string} [location] - Get by Location name.
@@ -82,6 +84,10 @@ router.get('/', (req, res) => {
     filter.location = { desc: req.query.location };
   }
 
+  if (req.query.zone) {
+    filter.zone = req.query.zone;
+  }
+
   // field selector
   // http://localhost:3000/?fields=name,faculty
   let fields;
@@ -132,76 +138,16 @@ router.get('/', (req, res) => {
   });
 });
 
-// pdf redirect
-router.get('/:id/qrpdf', (req, res) => {
-  Activity.findById(req.params.id, (err, act) => {
-    if (err) {
-      return res.sendError(5, err);
-    }
-    res.writeHead(301, {
-      Location: act.pdf
-    });
-    res.end();
-  });
-});
-
-// video redirect
-router.get('/:id/qrvideo', (req, res) => {
-  Activity.findById(req.params.id, (err, act) => {
-    if (err) {
-      return res.sendError(5, err);
-    }
-    res.writeHead(301, {
-      Location: act.video
-    });
-    res.end();
-  });
-});
-
-
-/**
- * Get Activities by Id
- * Access at GET http://localhost:8080/api/activities/:id
- * @param {string} [fields] - Fields selected (ex. "name,location").
- *
- * @return {boolean} success - Successful querying flag.
- * @return {Round} results - The Matched Activity by id.
- */
-router.get('/:id', (req, res) => {
-  // Get User from instance User model by ID
-  let fields = '';
-  if (req.query.fields) {
-    fields = req.query.fields.replace(/,/g, ' ');
-    fields = fields.replace(/nameEN/g, 'name.en');
-    fields = fields.replace(/shortDescriptionEN/g, 'shortDescription.en');
-    fields = fields.replace(/descriptionEN/g, 'description.en');
-    fields = fields.replace(/locationPlace/g, 'location.place');
-    fields = fields.replace(/locationFloor/g, 'location.floor');
-    fields = fields.replace(/locationRoom/g, 'location.room');
-    fields = fields.replace(/locationLat/g, 'location.latitude');
-    fields = fields.replace(/locationLong/g, 'location.longitude');
-  }
-
-  Activity.findById(req.params.id).select(fields).exec((err, act) => {
-    if (err) {
-      // Handle error from User.findById
-      return res.sendError(5, err);
-    }
-    if (!act) {
-      return res.sendError(25);
-    }
-    return res.status(200).json({
-      success: true,
-      results: act
-    });
-  });
-});
-
 /**
  * Create a new activity
  * Access at POST http://localhost:8080/api/activities
  */
-router.post('/', (req, res) => {
+router.post('/', isAuthenticatedByToken, isStaff, (req, res) => {
+  // Check match zone with User
+  if (req.user.staff.type === 'Staff' && req.user.staff.zone !== req.body.zone) {
+    return res.sendError(4, 'No permission on creating activity outside your own zone');
+  }
+
   // Create a new instance of the User model
   const activity = new Activity();
 
@@ -243,10 +189,75 @@ router.post('/', (req, res) => {
     });
   });
 });
+
+/**
+ * Get Activities by Id
+ * Access at GET http://localhost:8080/api/activities/:id
+ * @param {string} [fields] - Fields selected (ex. "name,location").
+ *
+ * @return {boolean} success - Successful querying flag.
+ * @return {Round} results - The Matched Activity by id.
+ */
+router.get('/:id', (req, res) => {
+  // Get User from instance User model by ID
+  let fields = '';
+  if (req.query.fields) {
+    fields = req.query.fields.replace(/,/g, ' ');
+    fields = fields.replace(/nameEN/g, 'name.en');
+    fields = fields.replace(/shortDescriptionEN/g, 'shortDescription.en');
+    fields = fields.replace(/descriptionEN/g, 'description.en');
+    fields = fields.replace(/locationPlace/g, 'location.place');
+    fields = fields.replace(/locationFloor/g, 'location.floor');
+    fields = fields.replace(/locationRoom/g, 'location.room');
+    fields = fields.replace(/locationLat/g, 'location.latitude');
+    fields = fields.replace(/locationLong/g, 'location.longitude');
+  }
+
+  Activity.findById(req.params.id).select(fields).exec((err, act) => {
+    if (err) {
+      // Handle error from User.findById
+      return res.sendError(5, err);
+    }
+    if (!act) {
+      return res.sendError(25);
+    }
+    return res.status(200).json({
+      success: true,
+      results: act
+    });
+  });
+});
+
+// pdf redirect
+router.get('/:id/qrpdf', (req, res) => {
+  Activity.findById(req.params.id, (err, act) => {
+    if (err) {
+      return res.sendError(5, err);
+    }
+    res.writeHead(301, {
+      Location: act.pdf
+    });
+    res.end();
+  });
+});
+
+// video redirect
+router.get('/:id/qrvideo', (req, res) => {
+  Activity.findById(req.params.id, (err, act) => {
+    if (err) {
+      return res.sendError(5, err);
+    }
+    res.writeHead(301, {
+      Location: act.video
+    });
+    res.end();
+  });
+});
+
 // Update an existing activity via PUT(JSON format)
 // ex. { "name","EditName"}
 // Access at PUT http://localhost:3000/api/activities/:id
-router.put('/:id', (req, res) => {
+router.put('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
   const updateFields = _.pick(req.body, ['thumbnail', 'banner', 'contact', 'video', 'pdf', 'link', 'isHighlight', 'tags', 'zone', 'start', 'end']);
 
   if (updateFields.start) {
@@ -255,31 +266,36 @@ router.put('/:id', (req, res) => {
   if (updateFields.end) {
     updateFields.end = new Date(updateFields.end);
   }
-  Activity.findById(req.params.id, (err, act) => {
+  Activity.findById(req.params.id, (err, activity) => {
+    // Handle error from User.findById
     if (err) {
-      // Handle error from User.findById
       return res.sendError(5, err);
     }
-    if (!act) {
+    // Check for exist activity
+    if (!activity) {
       res.sendError(25);
     }
-    _.assignIn(act, updateFields);
-    act.name.en = req.body.nameEN;
-    act.name.th = req.body.nameTH;
-    if (req.body.pictures) {
-      act.pictures = req.body.pictures.split(',');
+    // Check match zone with User
+    if (req.user.staff.type === 'Staff' && req.user.staff.zone !== activity.zone) {
+      return res.sendError(4, 'No permission on editing activity outside your own zone');
     }
-    act.shortDescription.en = req.body.shortDescriptionEN;
-    act.shortDescription.th = req.body.shortDescriptionTH;
-    act.description.en = req.body.descriptionEN;
-    act.description.th = req.body.descriptionTH;
-    act.location.place = req.body.locationPlace;
-    act.location.floor = req.body.locationFloor;
-    act.location.room = req.body.locationRoom;
-    act.location.latitude = req.body.locationLat;
-    act.location.longitude = req.body.locationLong;
+    _.assignIn(activity, updateFields);
+    activity.name.en = req.body.nameEN;
+    activity.name.th = req.body.nameTH;
+    if (req.body.pictures) {
+      activity.pictures = req.body.pictures.split(',');
+    }
+    activity.shortDescription.en = req.body.shortDescriptionEN;
+    activity.shortDescription.th = req.body.shortDescriptionTH;
+    activity.description.en = req.body.descriptionEN;
+    activity.description.th = req.body.descriptionTH;
+    activity.location.place = req.body.locationPlace;
+    activity.location.floor = req.body.locationFloor;
+    activity.location.room = req.body.locationRoom;
+    activity.location.latitude = req.body.locationLat;
+    activity.location.longitude = req.body.locationLong;
 
-    act.save((err, updatedAct) => {
+    activity.save((err, updatedAct) => {
       if (err) {
         // Handle error from save
         return res.sendError(5, err);
@@ -294,14 +310,30 @@ router.put('/:id', (req, res) => {
 
 // Delete an existing activity via DEL.
 // Access at DEL http://localhost:3000/api/activities/:id
-router.delete('/:id', (req, res) => {
-  Activity.findByIdAndRemove(req.params.id, (err) => {
+router.delete('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
+  Activity.findById(req.params.id, (err, activity) => {
+    // Handle error from User.findById
     if (err) {
       return res.sendError(5, err);
     }
-    return res.status(202).json({
-      success: true,
-      message: `An Activity with id ${req.params.id} was removed.`,
+    // Check for exist activity
+    if (!activity) {
+      res.sendError(25);
+    }
+    // Check match zone with User
+    if (req.user.staff.type === 'Staff' && req.user.staff.zone !== activity.zone) {
+      return res.sendError(4, 'No permission on removing activity outside your own zone');
+    }
+
+    activity.remove((err) => {
+      // Handle error remove
+      if (err) {
+        return res.sendError(5, err);
+      }
+      res.status(202).json({
+        success: true,
+        message: `An Activity with id ${req.params.id} was removed.`,
+      });
     });
   });
 });
