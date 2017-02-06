@@ -132,6 +132,33 @@ router.get('/', (req, res) => {
   });
 });
 
+// pdf redirect
+router.get('/:id/qrpdf', (req, res) => {
+  Activity.findById(req.params.id, (err, act) => {
+    if (err) {
+      return res.sendError(5, err);
+    }
+    res.writeHead(301, {
+      Location: act.pdf
+    });
+    res.end();
+  });
+});
+
+// video redirect
+router.get('/:id/qrvideo', (req, res) => {
+  Activity.findById(req.params.id, (err, act) => {
+    if (err) {
+      return res.sendError(5, err);
+    }
+    res.writeHead(301, {
+      Location: act.video
+    });
+    res.end();
+  });
+});
+
+
 /**
  * Get Activities by Id
  * Access at GET http://localhost:8080/api/activities/:id
@@ -239,7 +266,9 @@ router.put('/:id', (req, res) => {
     _.assignIn(act, updateFields);
     act.name.en = req.body.nameEN;
     act.name.th = req.body.nameTH;
-    act.pictures = req.body.pictures.split(',');
+    if (req.body.pictures) {
+      act.pictures = req.body.pictures.split(',');
+    }
     act.shortDescription.en = req.body.shortDescriptionEN;
     act.shortDescription.th = req.body.shortDescriptionTH;
     act.description.en = req.body.descriptionEN;
@@ -278,5 +307,6 @@ router.delete('/:id', (req, res) => {
 });
 
 router.use('/:id/rounds', require('./rounds'));
+
 
 module.exports = router;

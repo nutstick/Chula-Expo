@@ -13,6 +13,8 @@
 <link rel="import" href="/public/lib/google-map/google-map.html">
 <link rel="import" href="/public/lib/google-map/google-map-marker.html">
 
+<link rel="import" href="/components/place-api.html">
+
 <link rel="import" href="/components/shared-styles.html">
 
 <dom-module id="place-edit-page">
@@ -59,8 +61,11 @@
         font-size: 20px;
         font-weight: 200;
       }
-
       google-map {
+        height: 300px;
+      }
+      .google-map {
+        display: block;
         height: 300px;
       }
 
@@ -70,39 +75,34 @@
         margin-top: 10px;
       }
     </style>
-    <app-route
-      route="{{route}}"
-      pattern="/:placeId"
-      data="{{routeData}}"
-      tail="{{subroute}}"
-    ></app-route>
-    <iron-ajax
-      id="placeGetId"
-      url="{{urlId}}"
-      on-response="_handleResponse"
-      headers='{"Authentication": "{{token}}"}'
-      handle-as="json"
-    ></iron-ajax>
+    <place-api
+      id="placeAPI"
+			place-id="{{placeId}}"
+			fields=""
+			page="0"
+			page-size="0"
+			place="{{place}}"
+    ></place-api>
     <div class="container">
       <paper-card>
 				<form is="iron-form" id="form" method="post" class="card-content"
-					action="{{urlId}}" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
+					action="{{url}}" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
 					<div class="card-content">
 						<!-- Code -->
 						<div class="item">
 							<div>
 								<label class="label --input">Code</label>
 								<div class="flex" style="display: inline-block">
-									<paper-input type="text" value="{{place.code}}" name="code" label="" no-label-float="true"></paper-input>
+									<paper-input type="text" value="{{place.code}}" name="code" label="" no-label-float="true" required></paper-input>
 								</div>
 							</div>
 						</div>
 
 						<!-- Google Map -->
-						<div class="item">
-							<google-map latitude="[[place.location.latitude]]" longitude="[[place.location.longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
+						<div class="item google-map">
+							<google-map latitude="[[place.location.latitude]]" longitude="[[place.location.longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o" fit>
 								<google-map-marker latitude="{{place.location.latitude}}" longitude="{{place.location.longitude}}" draggable="true"
-										title="place Location!"></google-map-marker>
+										title="place Location!" ></google-map-marker>
 							</google-map>
 						</div>
 					</div>
@@ -112,20 +112,20 @@
 							<div class="avatar" item-icon><img src="/public/img/th.png" /></div>
 							<div class="flex company">ภาษาไทย</div>
 						</div>
-						<paper-input type="text" label="ชื่อสถานที่" value="{{place.name.th}}" name="nameTH" always-float-label></paper-input>
+						<paper-input type="text" label="ชื่อสถานที่" value="{{place.name.th}}" name="nameTH" always-float-label required></paper-input>
 						<!-- English Language -->
 						<div class="flex-layout center">
 							<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
 							<div class="flex company">English</div>
 						</div>
-						<paper-input type="text" label="place name" value="{{place.name.en}}" name="nameEN" always-float-label></paper-input>
+						<paper-input type="text" label="place name" value="{{place.name.en}}" name="nameEN" always-float-label required></paper-input>
 					</div>
 
 					<!-- Submit Button -->
 					<div class="card-actions">
 						<div class="button-holder">
 							<paper-button on-click="_delayedSubmit">
-								<paper-spinner id="spinner" hidden></paper-spinner>Edit
+								<paper-spinner id="spinner" hidden></paper-spinner>Save
 							</paper-button>
 						</div>
 					</div>
@@ -137,9 +137,13 @@
     Polymer({
       is: 'place-edit-page',
       properties: {
-        urlId: {
+        url: {
           type: Object,
           value: ''
+        },
+        placeId: {
+          type: Object,
+          observer: '_idChanged'
         },
 				token: {
           type: String,
@@ -156,17 +160,8 @@
           type: Object,
         }
       },
-      observers: [
-        '_routeIdChanged(routeData.placeId)',
-      ],
-      _routeIdChanged: function(id) {
-        if(!!id) {
-          this.urlId = `/api/places/${id}`;
-          this.generateRequest();
-        }
-      },
       generateRequest: function(){
-        this.$.placeGetId.generateRequest();
+        this.$.placeAPI.generateRequest();
       },
       _delayedSubmit: function(event) {
         var form = this.$.form;
@@ -181,7 +176,7 @@
       _response: function(e) {
         if (e.detail.response.success) {
           this.$.form.reset();
-          window.location = '/place';
+          window.location = '/place/' + this.placeId + '/show';
         }
       },
       _presubmit: function(event) {
@@ -189,11 +184,11 @@
       	this.$.form.request.body.locationLat = this.place.location.latitude;
 				this.$.form.request.body.locationLong = this.place.location.longitude;
       },
-      _handleResponse: function(event) {
-        if (event.detail.response.success) {
-          this.place = event.detail.response.results;
+      _idChanged: function(id) {
+        if (id) {
+          this.url = '/api/places/' + id;
         } else {
-          this.error = event.detail.response.errors;
+          this.url = '/api/places';
         }
       }
     })

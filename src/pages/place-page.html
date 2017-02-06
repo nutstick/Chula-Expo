@@ -6,10 +6,6 @@
 <link rel="import" href="/public/lib/app-route/app-route.html">
 
 <link rel="import" href="/components/shared-styles.html">
-<link rel="import" href="/pages/place-add-page.html">
-<link rel="import" href="/pages/place-list-page.html">
-<link rel="import" href="/pages/place-edit-page.html">
-<link rel="import" href="/pages/place-show-page.html">
 
 <dom-module id="place-page">
   <template>
@@ -22,12 +18,11 @@
     <iron-pages
       selected="[[page]]"
       attr-for-selected="name"
-      fallback-selection="view404"
+      fallback-selection="id"
       role="main">
       <place-list-page name="list"></place-list-page>
       <place-add-page name="add"></place-add-page>
-			<place-edit-page route="{{subroute}}" name="edit"></place-edit-page>
-      <place-show-page route="{{subroute}}" name="show"></place-show-page>
+			<place-id-page place-id="{{page}}" route="{{subroute}}" name="id"></place-show-page>
     </iron-pages>
   </template>
   <script>
@@ -52,12 +47,11 @@
         this.page = page || 'list';
       },
       _pageChanged: function(page) {
+				if (page !== 'list' && page !== 'add')
+          page = 'id';
         var resolvedPageUrl = this.resolveUrl('place-' + page + '-page.html');
-        this.importHref(resolvedPageUrl, null, this._showPage404, true);
-      },
-      _showPage404: function() {
-        this.page = '404-page'
-      },
+        this.importHref(resolvedPageUrl, null, null, true);
+      }
     });
   </script>
 </dom-module>

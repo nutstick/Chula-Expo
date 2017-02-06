@@ -13,8 +13,13 @@
 <link rel="import" href="/public/lib/google-map/google-map.html">
 <link rel="import" href="/public/lib/google-map/google-map-marker.html">
 
+<script type="text/javascript" src="/public/js/jquery.min.js"></script>
+<script type="text/javascript" src="/public/js/qrcode.min.js"></script>
+
 <link rel="import" href="/components/activity-api.html">
 <link rel="import" href="/components/round-api.html">
+<link rel="import" href="/components/place-api.html">
+<link rel="import" href="/components/zone-api.html">
 <link rel="import" href="/components/paper-card-dataitem.html">
 <link rel="import" href="/components/shared-styles.html">
 
@@ -62,8 +67,11 @@
         font-size: 20px;
         font-weight: 200;
       }
-
       google-map {
+        height: 300px;
+      }
+      .google-map {
+        display: block;
         height: 300px;
       }
 
@@ -131,6 +139,7 @@
       }
     </style>
     <activity-api
+			id="activityAPI"
 			activity-id="{{activityId}}"
 			fields=""
 			page="0"
@@ -140,7 +149,7 @@
 		<div id="main" class="container">
 			<paper-card id="left">
         <div class="card-content">
-					<!-- Thumbnail Upload -->
+          <!-- Thumbnail Upload -->
 					<div class="item">
 						<div class="flex-layout">
 							<label class="label --upload">Thumbnail</label>
@@ -163,13 +172,13 @@
 						<div>
 							<label class="label --input">Start Time</label>
 							<div class="flex" style="display: inline-block">
-								{{activity.start}}
+								{{_convertToDate(activity.start)}}
 							</div>
 						</div>
 						<div>
 							<label class="label --input">End Time</label>
 							<div class="flex" style="display: inline-block">
-								{{activity.end}}
+								{{_convertToDate(activity.end)}}
 							</div>
 						</div>
 					</div>
@@ -187,13 +196,35 @@
 						<div>
 							<label class="label --input">Video Url</label>
 							<div class="flex" style="display: inline-block">
-								{{activity.video}}
+								{{activity.video}}<br>
+                <div id="qrcodeVideo" style="width:200px; height:200px; margin-bottom:15px; margin-top:4px;"></div>
+                <script type="text/javascript">
+                  var qrcode = new QRCode(document.getElementById("qrcodeVideo"), {
+                    text: "https://staffchulaexpo.com/api/activities/" + document.querySelector('activity-show-page').activityId + "/qrvideo",
+                    width: 200,
+                    height: 200,
+                    colorDark : "#ff69B4",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.L
+                  });
+                </script>
 							</div>
 						</div>
 						<div>
 							<label class="label --input">PDF Url</label>
 							<div class="flex" style="display: inline-block">
-								{{activity.pdf}}
+								{{activity.pdf}}<br>
+                <div id="qrcodePDF" style="width:200px; height:200px; margin-bottom:15px; margin-top:4px;"></div>
+                <script type="text/javascript">
+                  var qrcode = new QRCode(document.getElementById("qrcodePDF"), {
+                    text: "https://staffchulaexpo.com/api/activities/" + document.querySelector('activity-show-page').activityId + "/qrpdf",
+                    width: 200,
+                    height: 200,
+                    colorDark : "#000000",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.L
+                  });
+                </script>
 							</div>
 						</div>
 						<div>
@@ -208,63 +239,32 @@
 					<div class="item">
 						<label class="label --upload">Zone</label>
 						<div class="flex" style="display: inline-block">
-							<paper-autocomplete name="zone" label="Zone" id="input-zone" no-label-float="true" remote-source="true"></paper-autocomplete>
+              {{zone.name.en}}
 						</div>
-						<script>
-							document.querySelector('activity-show-page').querySelector('#input-zone').addEventListener('autocomplete-change', function(event) {
-								var input = this;
-								var search = event.detail.option.text;
-								var url = '/api/zones?nameEN=' + search;
-								var delay = Math.random() * (500 - 100) + 100;
-
-								setTimeout(function () {
-									var req = new XMLHttpRequest();
-									req.open('GET',encodeURI(url));
-									req.onload = function() {
-										if (req.status === 200) {
-											var data = JSON.parse(req.response);
-											var arr = data.results.map(function(obj){
-												return { text:obj.name.en, value:obj['_id'] };
-											});
-											input.suggestions(arr);
-										}
-									};
-									req.send();
-								}.bind(this), delay);
-							});
-						</script>
+            <zone-api
+              id="zoneAPI"
+              zone-id="{{activity.zone}}"
+              fields="nameEN"
+              page="0"
+              page-size="0"
+              zone="{{zone}}"
+            ></zone-api>
 					</div>
 
 					<!-- Location -->
 					<div class="item">
-						<label class="label --input">Location</label>
+						<label class="label --input">Place</label>
 						<div class="" style="display: inline-block">
-							<paper-autocomplete name="locationPlace" label="Location" id="input-location" no-label-float="true" remote-source="true"></paper-autocomplete>
-						</div>
-						<!-- Go Use place-api instead -->
-						<!--<script>
-							document.querySelector('activity-show-page').querySelector('#input-location').addEventListener('autocomplete-change', function(event) {
-								var input = this;
-								var search = event.detail.option.text;
-								var url = '/api/places?nameEN=' + search;
-								var delay = Math.random() * (500 - 100) + 100;
-
-								setTimeout(function () {
-									var req = new XMLHttpRequest();
-									req.open('GET',encodeURI(url));
-									req.onload = function() {
-										if (req.status === 200) {
-											var data = JSON.parse(req.response);
-											var arr = data.results.map(function(obj){
-												return { text:obj.name.en, value:obj['_id'] };
-											});
-											input.suggestions(arr);
-										}
-									};
-									req.send();
-								}.bind(this), delay);
-							});
-						</script>-->
+              {{place.name.en}}
+            </div>
+            <place-api
+              id="placeAPI"
+              zone-id="{{activity.place}}"
+              fields="nameEN"
+              page="0"
+              page-size="0"
+              zone="{{place}}"
+            ></zone-api>
 
 						<div>
 							<label class="label --input">Floor</label>
@@ -284,16 +284,16 @@
 						<div>
 							<label class="label --input">HighLight</label>
 							<div class="flex" style="display: inline-block">
-								<paper-checkbox name="isHighlight" label="" no-label-float="true" ></paper-checkbox>
+                {{activity.isHighlight}}
 							</div>
 						</div>
 					</div>
 
 					<!-- Google Map -->
-					<div class="item">
-						<google-map id="showActivityMaps" latitude="[[activity.location.latitude]]" longitude="[[activity.location.longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
-							<!--<google-map-marker latitude="{{activity.location.latitude}}" longitude="{{activity.location.longitude}}" draggable="true"
-									title="Activity Location!"></google-map-marker>-->
+					<div class="item google-map">
+						<google-map latitude="[[activity.location.latitude]]" longitude="[[activity.location.longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o" fit>
+							<google-map-marker latitude="{{activity.location.latitude}}" longitude="{{activity.location.longitude}}" draggable="true"
+									title="Activity Location!" ></google-map-marker>
 						</google-map>
 					</div>
 				</div>
@@ -370,7 +370,7 @@
 			<div id="right">
         <paper-card class="card">
           <form is="iron-form" id="form" method="post" class="card-content"
-  					action="{{urlIdRound}}" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
+  					action="{{urlRound}}" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
   					<div class="card-content">
 
               <!-- time -->
@@ -451,19 +451,27 @@
               </paper-card-dataitem>
             </div>
           </template>
-          <round-api id="roundAPI" url="[[urlIdRound]]" rounds="{{rounds}}" error="{{error}}"></round-api>
+          <round-api id="roundAPI" url="[[urlRound]]" rounds="{{rounds}}" error="{{error}}"></round-api>
         </paper-card>
 			</div>
 		</div>
+    <paper-dialog id="dialog" on-iron-overlay-closed="_delete">
+      <h2>Are you sure?</h2>
+      <div class="buttons">
+        <paper-button dialog-dismiss>No</paper-button>
+        <paper-button dialog-confirm autofocus>Yes</paper-button>
+      </div>
+    </paper-dialog>
   </template>
   <script>
     Polymer({
       is: 'activity-show-page',
       properties: {
         activityId: {
-          type: String
+          type: String,
+          observer: '_idChanged'
         },
-        urlIdRound: {
+        urlRound: {
           type: String,
           value: ''
         },
@@ -484,6 +492,14 @@
           type: Array,
           value: [],
         },
+        deleteId: {
+          type: String,
+        },
+      },
+      generateRequest: function(){
+        this.$.activityAPI.generateRequest();
+        this.$.zoneAPI.generateRequest();
+        this.$.placeAPI.generateRequest();
       },
       _convertToDate: function(dateTime) {
         return moment.utc(dateTime).format('MM-DD-YYYY HH:mm');
@@ -517,20 +533,34 @@
         }
       },
       _deleteClick: function(event) {
-        var id = event.model.item['_id'];
-        var url = '/api/rounds/' + id;
+        this.deleteId = event.model.item['_id'];
+        this.$.dialog.open();
+      },
+      _delete: function(event) {
+        if(event.detail.confirmed) {
+          var id = this.deleteId;
+          var url = '/api/rounds/' + id;
 
-        var dom = this;
-        setTimeout(function () {
-          var req = new XMLHttpRequest();
-          req.open('DELETE',encodeURI(url));
-          req.onload = function() {
-            if (req.status === 202) {
-              dom.$.roundAPI.generateRequest();
-            }
-          };
-          req.send();
-        }.bind(this), 300);
+          var dom = this;
+          setTimeout(function () {
+            var req = new XMLHttpRequest();
+            req.open('DELETE',encodeURI(url));
+            req.onload = function() {
+              if (req.status === 202) {
+                dom.$.roundAPI.generateRequest();
+              }
+            };
+            req.send();
+          }.bind(this), 300);
+        }
+      },
+      _idChanged: function(id) {
+        if (id && id!='
+            ' && id!='edit' && id!='add' && id!='list') {
+          this.urlRound = '/api/activities/' + id + '/rounds';
+        } else {
+          this.urlRound = '';
+        }
       }
     })
   </script>

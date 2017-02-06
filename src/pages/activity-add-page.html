@@ -58,14 +58,19 @@
         font-weight: 200;
       }
 
-      google-map {
-        height: 300px;
-      }
-
 			.button-holder {
         @apply(--layout-horizontal);
         @apply(--layout-end-justified);
         margin-top: 10px;
+      }
+
+      .google-map {
+        display: block;
+        height: 300px;
+      }
+
+      google-map {
+        height: 300px;
       }
     </style>
     <div class="container">
@@ -238,7 +243,9 @@
                       if (req.status === 200) {
                         var data = JSON.parse(req.response);
                         var arr = data.results.map(function(obj){
-                          return { name:obj.name.en, value:obj['_id'] };
+                          console.log(obj);
+                        //  var zone = JSON.parse(obj.zone);
+                          return { name:obj.name.en/*+" - "+zone.name.en*/, value:obj['_id'] };
                         });
                         comboboxPlace.items = arr;
                       }
@@ -264,11 +271,11 @@
   									req.open('GET',encodeURI(url));
   									req.onload = function() {
   										if (req.status === 200) {
-//  											var data = JSON.parse(req.response);
-  //											var arr = data.results.map(function(obj){
-  	//											return { name:obj.name.en, value:obj['_id'] };
-  		//									});
-        //                comboboxRoom.items = arr;
+ 											var data = JSON.parse(req.response);
+  											var arr = data.results.map(function(obj){
+  												return { name:obj.name.en/*+" - "+obj.place.name.en*/, value:obj['_id'] };
+  											});
+                        comboboxRoom.items = arr;
   										}
   									};
   									req.send();
@@ -290,7 +297,7 @@
 						<div class="item">
 							<google-map id="addActivityMaps" latitude="[[latitude]]" longitude="[[longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
 								<google-map-marker latitude="{{latitude}}" longitude="{{longitude}}" draggable="true"
-										title="Activity Location!"></google-map-marker>
+										title="Activity Location!" ></google-map-marker>
 							</google-map>
 						</div>
 					</div>

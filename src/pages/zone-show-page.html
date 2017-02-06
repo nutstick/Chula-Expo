@@ -11,6 +11,8 @@
 <link rel="import" href="/public/lib/google-map/google-map-marker.html">
 <link rel="import" href="/public/lib/paper-dropdown-menu/paper-dropdown-menu.html">
 
+<link rel="import" href="/components/zone-api.html">
+
 <link rel="import" href="/components/shared-styles.html">
 
 <dom-module id="zone-show-page">
@@ -57,8 +59,11 @@
         font-size: 20px;
         font-weight: 200;
       }
-
       google-map {
+        height: 300px;
+      }
+      .google-map {
+        display: block;
         height: 300px;
       }
 
@@ -68,19 +73,14 @@
         margin-top: 10px;
       }
     </style>
-    <app-route
-      route="{{route}}"
-      pattern="/:zoneId"
-      data="{{routeData}}"
-      tail="{{subroute}}"
-    ></app-route>
-    <iron-ajax
-      id="zoneGetId"
-      url="{{urlId}}"
-      on-response="_handleResponse"
-      headers='{"Authentication": "{{token}}"}'
-      handle-as="json"
-    ></iron-ajax>
+		<zone-api
+			id="zoneAPI"
+			zone-id="{{zoneId}}"
+			fields=""
+			page="0"
+			page-size="0"
+			zone="{{zone}}"
+    ></zone-api>
     <div class="container">
       <paper-card>
 				<div class="card-content">
@@ -119,10 +119,10 @@
 					</div>
 
 					<!-- Google Map -->
-					<div class="item">
-						<google-map latitude="[[zone.location.latitude]]" longitude="[[zone.location.longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
+					<div class="item google-map">
+						<google-map latitude="[[zone.location.latitude]]" longitude="[[zone.location.longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o" fit>
 							<google-map-marker latitude="{{zone.location.latitude}}" longitude="{{zone.location.longitude}}" draggable="false"
-									title="Zone Location!"></google-map-marker>
+									title="Zone Location!" ></google-map-marker>
 						</google-map>
 					</div>
 				</div>
@@ -197,9 +197,8 @@
     Polymer({
       is: 'zone-show-page',
       properties: {
-				urlId: {
+				zoneId: {
           type: String,
-          value: ''
         },
         token: {
           type: String,
@@ -212,44 +211,8 @@
 					type: Object
 				}
       },
-      observers: [
-        '_routeIdChanged(routeData.zoneId)',
-      ],
-      _routeIdChanged: function(id) {
-        if(!!id) {
-          this.urlId = `/api/zones/${id}`;
-          this.generateRequest();
-        }
-      },
       generateRequest: function(){
-        this.$.zoneGetId.generateRequest();
-      },
-      _delayedSubmit: function(event) {
-        var form = this.$.form;
-        this.$.spinner.active = true;
-        this.$.spinner.hidden = false;
-        this.$.form.disabled = true;
-        // Simulate a slow server response.
-        setTimeout(function() {
-          form.submit();
-        }, 1000);
-      },
-      _response: function(e) {
-				if (e.detail.response.success) {
-          window.location = '/zone/show/' + this.routeData.zoneId;
-        }
-			},
-      _presubmit: function(event) {
-				this.$.form.request.method = 'put';
-				this.$.form.request.body.locationLat = this.zone.location.latitude;
-				this.$.form.request.body.locationLong = this.zone.location.longitude;
-      },
-      _handleResponse: function(event) {
-        if (event.detail.response.success) {
-          this.zone = event.detail.response.results;
-        } else {
-          this.error = event.detail.response.errors;
-        }
+        this.$.zoneAPI.generateRequest();
       }
     })
   </script>

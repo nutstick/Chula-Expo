@@ -13,6 +13,8 @@
 <link rel="import" href="/public/lib/google-map/google-map.html">
 <link rel="import" href="/public/lib/google-map/google-map-marker.html">
 
+<link rel="import" href="/components/activity-api.html">
+
 <link rel="import" href="/components/shared-styles.html">
 
 <dom-module id="activity-edit-page">
@@ -59,8 +61,12 @@
         font-size: 20px;
         font-weight: 200;
       }
-
       google-map {
+        height: 300px;
+      }
+
+      .google-map {
+        display: block;
         height: 300px;
       }
 
@@ -70,17 +76,18 @@
         margin-top: 10px;
       }
     </style>
-    <iron-ajax
-      id="activityGetId"
-      url="{{urlId}}"
-      on-response="_handleResponse"
-      headers='{"Authentication": "{{token}}"}'
-      handle-as="json"
-    ></iron-ajax>
+    <activity-api
+      id="activityAPI"
+			activity-id="{{activityId}}"
+			fields=""
+			page="0"
+			page-size="0"
+			activity="{{activity}}"
+    ></activity-api>
     <div class="container">
       <paper-card>
 				<form is="iron-form" id="form" method="post" class="card-content"
-					action="{{urlId}}" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
+					action="{{url}}" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
 					<div class="card-content">
 						<!-- Thumbnail Upload -->
 						<div class="item">
@@ -159,13 +166,13 @@
 							<div>
 								<label class="label --input">Start Time</label>
 								<div class="flex" style="display: inline-block">
-									<datetime-local-input name="start" label="" no-label-float="true"></datetime-local-input>
+									<datetime-local-input name="start" label="" no-label-float="true" value="{{_convertToDate(activity.start)}}" required></datetime-local-input>
 								</div>
 							</div>
 							<div>
 								<label class="label --input">End Time</label>
 								<div class="flex" style="display: inline-block">
-									<datetime-local-input name="end" label="" no-label-float="true" required></datetime-local-input>
+									<datetime-local-input name="end" label="" no-label-float="true" value="{{_convertToDate(activity.end)}}" required></datetime-local-input>
 								</div>
 							</div>
 						</div>
@@ -297,10 +304,10 @@
 						</div>
 
 						<!-- Google Map -->
-						<div class="item">
-							<google-map latitude="[[activity.location.latitude]]" longitude="[[activity.location.longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
+						<div class="item google-map">
+							<google-map latitude="[[activity.location.latitude]]" longitude="[[activity.location.longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o" fit>
 								<google-map-marker latitude="{{activity.location.latitude}}" longitude="{{activity.location.longitude}}" draggable="true"
-										title="Activity Location!"></google-map-marker>
+										title="Activity Location!" fit ></google-map-marker>
 							</google-map>
 						</div>
 					</div>
@@ -363,7 +370,7 @@
 					<div class="card-actions">
 						<div class="button-holder">
 							<paper-button on-click="_delayedSubmit">
-								<paper-spinner id="spinner" hidden></paper-spinner>Edit
+								<paper-spinner id="spinner" hidden></paper-spinner>Save
 							</paper-button>
 						</div>
 					</div>
@@ -375,7 +382,7 @@
     Polymer({
       is: 'activity-edit-page',
       properties: {
-        urlId: {
+        url: {
           type: Object,
           value: ''
         },
@@ -392,7 +399,14 @@
         },
         activityId: {
           type: String,
+          observer: '_idChanged'
         }
+      },
+      generateRequest: function(){
+        this.$.activityAPI.generateRequest();
+      },
+      _convertToDate: function(dateTime) {
+        return moment.utc(dateTime).format('YYYY-MM-DDThh:mm');
       },
       _delayedSubmit: function(event) {
         var form = this.$.form;
@@ -407,7 +421,7 @@
       _response: function(e) {
         if (e.detail.response.success) {
           this.$.form.reset();
-          window.location = '/activity';
+          window.location = '/activity/' + this.activityId + '/show/';
         }
       },
       _presubmit: function(event) {
@@ -415,21 +429,27 @@
       	this.$.form.request.body.locationLat = this.activity.location.latitude;
 				this.$.form.request.body.locationLong = this.activity.location.longitude;
 				this.$.form.request.body.pictures = [];
-          var dom = this;
-          this.pictures.forEach(function(key,value, Set) {
-            dom.$.form.request.body.pictures.push(key);
-          });
+        var dom = this;
+        this.pictures.forEach(function(key,value, Set) {
+          dom.$.form.request.body.pictures.push(key);
+        });
         if(this.$.form.request.body.thumbnail == '')
           this.$.form.request.body.thumbnail = this.activity.thumbnail;
         if(this.$.form.request.body.banner == '')
           this.$.form.request.body.banner = this.activity.banner;
-				console.log(this.$.form.request.body);
       },
       _handleResponse: function(event) {
         if (event.detail.response.success) {
           this.activity = event.detail.response.results;
         } else {
           this.error = event.detail.response.errors;
+        }
+      },
+      _idChanged: function(id) {
+        if (id && id!='show' && id!='edit' && id!='add' && id!='list') {
+          this.url = '/api/activities/' + id;
+        } else {
+          this.url = '';
         }
       }
     })

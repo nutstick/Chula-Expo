@@ -3,11 +3,11 @@
 <!-- Web Component -->
 <link rel="import" href="/public/lib/iron-ajax/iron-ajax.html">
 
-<dom-module id="place-api">
+<dom-module id="room-api">
   <template>
     <iron-ajax
       auto
-      id="placeResource"
+      id="roomResource"
       url="{{url}}"
       headers="{{headers}}"
       params="{{params}}"
@@ -17,11 +17,11 @@
   </template>
   <script>
     Polymer({
-      is: 'place-api',
+      is: 'room-api',
       properties: {
         url: {
           type: String,
-          value: '/api/places',
+          value: '/api/rooms',
         },
         params: {
           type: Object,
@@ -36,7 +36,7 @@
         /*
           Input Data
         */
-        placeId: {
+        roomId: {
           type: String,
           observer: '_idChanged'
         },
@@ -60,19 +60,19 @@
           type: String,
           value: ''
         },
-        zone: {
+        room: {
           type: String,
           value: ''
         },
         /*
           Output Data
         */
-        places: {
+        rooms: {
           type: Array,
           value: [],
           notify: true,
         },
-        place: {
+        room: {
           type: Object,
           notify: true,
         },
@@ -84,10 +84,10 @@
       },
 
       observers: [
-        'updateRequest(page,pageSize,fields)'
+        'updateRequest(page,pageSize,fields,start,end,room)'
       ],
 
-      updateRequest: function(page, pageSize, fields) {
+      updateRequest: function(page, pageSize, fields, start, end, room) {
         if (pageSize === 0) {
           this.set('params.limit', null);
           this.set('params.skip', page);
@@ -99,15 +99,15 @@
         this.set('params.fields', fields)
       },
       generateRequest: function() {
-        this.$.placeResource.generateRequest();
+        this.$.roomResource.generateRequest();
       },
       _handleResponse: function(event) {
         if(event.detail.response) {
           if (event.detail.response.success) {
-            if (this.placeId) {
-              this.place = event.detail.response.results;
+            if (this.roomId) {
+              this.room = event.detail.response.results;
             } else {
-              this.places = event.detail.response.results;
+              this.rooms = event.detail.response.results;
             }
           } else {
             this.error = event.detail.response.errors;
@@ -116,9 +116,9 @@
       },
       _idChanged: function(id) {
         if (id && id!='show' && id!='edit' && id!='add' && id!='list') {
-          this.url = '/api/places/' + id;
+          this.url = '/api/rooms/' + id;
         } else if (id && id=='list'){
-          this.url = '/api/place';
+          this.url = '/api/rooms';
         } else {
           this.url = '';
         }

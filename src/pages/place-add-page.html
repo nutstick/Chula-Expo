@@ -11,7 +11,7 @@
 <link rel="import" href="/public/lib/greenyouse-datetime-local-input/datetime-local-input.html">
 <link rel="import" href="/public/lib/google-map/google-map.html">
 <link rel="import" href="/public/lib/google-map/google-map-marker.html">
-
+<link rel="import" href="/public/lib/vaadin-combo-box/vaadin-combo-box.html">
 <link rel="import" href="/components/shared-styles.html">
 
 <dom-module id="place-add-page">
@@ -58,8 +58,11 @@
         font-size: 20px;
         font-weight: 200;
       }
-
       google-map {
+        height: 300px;
+      }
+      .google-map {
+        display: block;
         height: 300px;
       }
 
@@ -80,26 +83,57 @@
 							<div>
 								<label class="label --input">Code</label>
 								<div class="flex" style="display: inline-block">
-									<paper-input type="text" name="code" label="" no-label-float="true"></paper-input>
+									<paper-input type="text" name="code" label="" no-label-float="true" required></paper-input>
 								</div>
 							</div>
 						</div>
+            <!-- Location -->
+            <div class="item">
+              <label class="label --input">Zone</label>
+              <div class="" style="display: inline-block">
+                <vaadin-combo-box name="zone" id="input-zone" class="elements-box" no-label-float="true" item-label-path="name" item-value-path="value"></vaadin-combo-box>
+              </div>
+              <script>
+                HTMLImports.whenReady(function() {
+                  var combobox = document.querySelector('place-add-page').querySelector('#input-zone');
+
+                  var url = '/api/zones';
+                  setTimeout(function () {
+                    var req = new XMLHttpRequest();
+                    req.open('GET',encodeURI(url));
+                    req.onload = function() {
+                      if (req.status === 200) {
+                        var data = JSON.parse(req.response);
+                        var arr = data.results.map(function(obj){
+                          return { name:obj.name.en, value:obj['_id'] };
+                        });
+                        combobox.items = arr;
+                      }
+                    };
+                    req.send();
+                  }.bind(this), 500);
+                });
+
+              </script>
+            </div>
 
 						<!-- Google Map -->
-						<div class="item">
-							<google-map latitude="[[latitude]]" longitude="[[longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
+						<div class="item google-map">
+							<google-map id="place-add-map" latitude="[[latitude]]" longitude="[[longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o" fit>
 								<google-map-marker latitude="{{latitude}}" longitude="{{longitude}}" draggable="true"
-										title="place Location!"></google-map-marker>
+										title="place Location!" ></google-map-marker>
 							</google-map>
 						</div>
 					</div>
+
+
 					<div class="card-content">
 						<!-- Thai Language -->
 						<div class="flex-layout center">
 							<div class="avatar" item-icon><img src="/public/img/th.png" /></div>
 							<div class="flex company">ภาษาไทย</div>
 						</div>
-						<paper-input type="text" label="ชื่อสถานที่" name="nameTH" always-float-label></paper-input>
+						<paper-input type="text" label="ชื่อสถานที่" name="nameTH" always-float-label required></paper-input>
           </div>
 
 					<div class="card-content">
@@ -108,7 +142,7 @@
 							<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
 							<div class="flex company">English</div>
 						</div>
-						<paper-input type="text" label="place name" name="nameEN" always-float-label></paper-input>
+						<paper-input type="text" label="place name" name="nameEN" always-float-label required></paper-input>
 					</div>
 
 					<!-- Submit Button -->
