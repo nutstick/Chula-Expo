@@ -154,18 +154,17 @@ app.use('/', require('./routes'));
 /**
  * Server run on localhost:3000
  */
-/*
 app.listen(app.get('port'), (err) => {
   if (err) {
     throw err;
   }
   console.log('%s App is running at http://localhost:%d in %s mode', chalk.green('✓'), app.get('port'), app.get('env')); // eslint-disable-line no-console
 });
-*/
+
 
 /**
  * Server run on https://localhost:3000
- */
+
 const https = require('https');
 const fs = require('fs');
 const options = {
@@ -173,5 +172,6 @@ const options = {
   cert: fs.readFileSync('cert.pem')
 };
 https.createServer(options, app).listen(3000);
+*/
 
 module.exports = app;
