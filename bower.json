@@ -65,7 +65,7 @@
     "mn-paper-datetime-picker": "^1.1.4",
     "paper-dialog": "^1.1.0",
     "paper-date-picker-item": "^1.2.1",
-    "granite-qrcode-generator": "LostInBrittany/granite-qrcode-generator#^1.0.4",
+    "paper-select": "^0.2.6",
     "qrcodejs": "^0.1.0"
   }
 }
