@@ -41,12 +41,10 @@ module.exports = {
         return next();
       });
     })(req, res, next);
-  }
+  },
 
   isAdmin: (req, res, next) => {
     if (req.user && req.user.type === 'Staff' && req.user.staff.staffType === 'Admin') {
-      next();
-    } if (req.user && req.user.type === 'Staff' && req.user.staff.staffType === 'Staff') {
       next();
     } else {
       res.sendError(4);
@@ -54,7 +52,9 @@ module.exports = {
   },
 
   isStaff: (req, res, next) => {
-    if (req.user && req.user.type === 'Staff' && req.user.staff.staffType === 'Staff') {
+    if (req.user && req.user.type === 'Staff' && req.user.staff.staffType === 'Admin') {
+      next();
+    } if (req.user && req.user.type === 'Staff' && req.user.staff.staffType === 'Staff') {
       next();
     } else {
       res.sendError(4);
