@@ -133,13 +133,26 @@ router.get('/', (req, res) => {
 });
 
 // pdf redirect
-router.get('/:id/qrcode', (req, res) => {
+router.get('/:id/qrpdf', (req, res) => {
   Activity.findById(req.params.id, (err, act) => {
     if (err) {
       return res.sendError(5, err);
     }
     res.writeHead(301, {
-      Location: 'https://www.google.co.th'
+      Location: act.pdf
+    });
+    res.end();
+  });
+});
+
+// video redirect
+router.get('/:id/qrvideo', (req, res) => {
+  Activity.findById(req.params.id, (err, act) => {
+    if (err) {
+      return res.sendError(5, err);
+    }
+    res.writeHead(301, {
+      Location: act.video
     });
     res.end();
   });
