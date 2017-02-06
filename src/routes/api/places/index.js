@@ -118,11 +118,23 @@ router.get('/:id', (req, res) => {
         results: retrieveError(33)
       });
     }
+/*    Zone.findById(place.zone).exec((err, zone) => {
+      if (err) {
+         // Handle error from User.findById
+        return res.status(500).json({
+          success: false,
+          errors: retrieveError(5, err)
+        });
+      }
 
-    return res.status(200).json({
-      success: true,
-      results: place
-    });
+       place.zone = zone;
+  */
+      return res.status(200).json({
+        success: true,
+        results: place
+      });
+    //});
+
   });
 });
 
