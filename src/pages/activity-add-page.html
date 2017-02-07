@@ -14,6 +14,7 @@
 <link rel="import" href="/public/lib/google-map/google-map-marker.html">
 
 <link rel="import" href="/components/shared-styles.html">
+<link rel="import" href="/components/images-upload.html">
 
 <dom-module id="activity-add-page">
   <template>
@@ -26,6 +27,9 @@
 
       paper-card {
         width: 100%;
+      }
+      .form-header {
+        @apply(--paper-font-headline)
       }
 
       .item {
@@ -85,6 +89,9 @@
           on-iron-form-response="_response"
           headers="{{headers}}">
 					<div class="card-content">
+            <div class="form-header">
+              สร้าง Activity ใหม่
+            </div>
 						<!-- Thumbnail Upload -->
 						<div class="item">
 							<div class="flex-layout">
@@ -250,7 +257,6 @@
                       if (req.status === 200) {
                         var data = JSON.parse(req.response);
                         var arr = data.results.map(function(obj){
-                          console.log(obj);
                         //  var zone = JSON.parse(obj.zone);
                           return { name:obj.name.en/*+" - "+zone.name.en*/, value:obj['_id'] };
                         });
@@ -330,32 +336,14 @@
 						<paper-textarea label="Description" name="descriptionEN" rows="4" always-float-label required></paper-textarea>
 					</div>
 					<div class="card-content">
-						<vaadin-upload
-							id="pictureUpload"
-							accept="image/*"
-							target="/upload/img/activities/picture"
-							method="POST"
-							headers="{'Authorization': 'JWT {{token}}'}"
-							form-data-name="picture"
-						>
-							<div class="drop-label">
-								<iron-icon icon="image:collections"></iron-icon>
-								รูปประกอบกิจกกรม
-							</div>
-						</vaadin-upload>
-            <script>
-              var pictureUpload = document.querySelector('activity-add-page').querySelector('vaadin-upload#pictureUpload')
-              pictureUpload.addEventListener("upload-response", function(event) {
-                if(event.detail.file.xhr.status == 200){
-                  var name = JSON.parse(event.detail.xhr.responseText);
-                  document.querySelector('activity-add-page').pictures.add(name.results.thumbnail);
-                }
-              });
-              pictureUpload.addEventListener("upload-abort", function(event) {
-                var name = JSON.parse(event.detail.xhr.responseText);
-                document.querySelector('activity-add-page').pictures.delete(name.results.thumbnail);
-              });
-            </script>
+            <images-upload
+              id="pictureUpload"
+              upload-url="/upload/img/activities/picture"
+              headers="{{headers}}"
+              method="POST"
+              value="{{picture}}"
+              form-data-name="picture"
+            ></images-upload>
 						<!-- Tags -->
 						<div class="item">
 							<paper-select 
