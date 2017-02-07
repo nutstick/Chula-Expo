@@ -56,8 +56,10 @@ const ActivitySchema = new mongoose.Schema({
       ref: 'Place',
       required: true
     },
-    floor: String,
-    room: String,
+    room:  {
+      type: ObjectId,
+      ref: 'Room'
+    },
     latitude: Number,
     longitude: Number
   },
