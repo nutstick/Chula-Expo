@@ -80,6 +80,7 @@
 			place-id="{{placeId}}"
 			fields=""
 			page="0"
+      headers="{{headers}}"
 			page-size="0"
 			place="{{place}}"
     ></place-api>
@@ -158,6 +159,12 @@
         },
         place: {
           type: Object,
+        },
+        headers: {
+          type: Object,
+          value: {
+            'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
+          }
         }
       },
       generateRequest: function(){

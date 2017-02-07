@@ -79,6 +79,7 @@
     <activity-api
       id="activityAPI"
 			activity-id="{{activityId}}"
+      headers="{{headers}}"
 			fields=""
 			page="0"
 			page-size="0"
@@ -400,6 +401,12 @@
         activityId: {
           type: String,
           observer: '_idChanged'
+        },
+        headers: {
+          type: Object,
+          value: {
+            'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
+          }
         }
       },
       generateRequest: function(){

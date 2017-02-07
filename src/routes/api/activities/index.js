@@ -143,7 +143,7 @@ router.get('/', (req, res) => {
  */
 router.post('/', isAuthenticatedByToken, isStaff, (req, res) => {
   // Check match zone with User
-  if (req.user.staff.type === 'Staff' && req.user.staff.zone !== req.body.zone) {
+  if (req.user.staff.type === 'Staff' && req.user.staff.staffType !== 'Admin' && req.user.staff.zone !== req.body.zone) {
     return res.sendError(4, 'No permission on creating activity outside your own zone');
   }
 
@@ -235,27 +235,14 @@ router.get('/:id', (req, res) => {
   });
 });
 
-// pdf redirect
-router.get('/:id/qrpdf', (req, res) => {
+// qr redirect
+router.get('/:id/qrcode', (req, res) => {
   Activity.findById(req.params.id, (err, act) => {
     if (err) {
       return res.sendError(5, err);
     }
     res.writeHead(301, {
       Location: act.pdf
-    });
-    res.end();
-  });
-});
-
-// video redirect
-router.get('/:id/qrvideo', (req, res) => {
-  Activity.findById(req.params.id, (err, act) => {
-    if (err) {
-      return res.sendError(5, err);
-    }
-    res.writeHead(301, {
-      Location: act.video
     });
     res.end();
   });
@@ -283,7 +270,7 @@ router.put('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
       res.sendError(25);
     }
     // Check match zone with User
-    if (req.user.staff.type === 'Staff' && req.user.staff.zone !== activity.zone) {
+    if (req.user.staff.type === 'Staff' && req.user.staff.staffType !== 'Admin' && req.user.staff.zone !== activity.zone) {
       return res.sendError(4, 'No permission on editing activity outside your own zone');
     }
     _.assignIn(activity, updateFields);
@@ -325,10 +312,10 @@ router.delete('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
     }
     // Check for exist activity
     if (!activity) {
-      res.sendError(25);
+      return res.sendError(25);
     }
     // Check match zone with User
-    if (req.user.staff.type === 'Staff' && req.user.staff.zone !== activity.zone) {
+    if (req.user.staff.type === 'Staff' && req.user.staff.staffType !== 'Admin' && req.user.staff.zone !== activity.zone) {
       return res.sendError(4, 'No permission on removing activity outside your own zone');
     }
 

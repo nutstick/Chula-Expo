@@ -192,15 +192,14 @@
 						</div>
 					</div>
 
-					<div class="item">
+          <div class="item">
 						<div>
-							<label class="label --input">Video Url</label>
+							<label class="label --input">QR code</label>
 							<div class="flex" style="display: inline-block">
-								{{activity.video}}<br>
-                <div id="qrcodeVideo" style="width:200px; height:200px; margin-bottom:15px; margin-top:4px;"></div>
+                <div id="qrcode" style="width:200px; height:200px; margin-bottom:15px; margin-top:4px;"></div>
                 <script type="text/javascript">
-                  var qrcode = new QRCode(document.getElementById("qrcodeVideo"), {
-                    text: "https://staffchulaexpo.com/api/activities/" + document.querySelector('activity-show-page').activityId + "/qrvideo",
+                  var qrcode = new QRCode(document.getElementById("qrcode"), {
+                    text: "staff.chulaexpo.com/api/activities/" + document.querySelector('activity-show-page').activityId + "/qrcode",
                     width: 200,
                     height: 200,
                     colorDark : "#ff69B4",
@@ -210,21 +209,19 @@
                 </script>
 							</div>
 						</div>
+          </div>
+
+					<div class="item">
+						<div>
+							<label class="label --input">Video Url</label>
+							<div class="flex" style="display: inline-block">
+								{{activity.video}}<br>
+							</div>
+						</div>
 						<div>
 							<label class="label --input">PDF Url</label>
 							<div class="flex" style="display: inline-block">
-								{{activity.pdf}}<br>
-                <div id="qrcodePDF" style="width:200px; height:200px; margin-bottom:15px; margin-top:4px;"></div>
-                <script type="text/javascript">
-                  var qrcode = new QRCode(document.getElementById("qrcodePDF"), {
-                    text: "https://staffchulaexpo.com/api/activities/" + document.querySelector('activity-show-page').activityId + "/qrpdf",
-                    width: 200,
-                    height: 200,
-                    colorDark : "#000000",
-                    colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.L
-                  });
-                </script>
+								{{activity.pdf}}
 							</div>
 						</div>
 						<div>
