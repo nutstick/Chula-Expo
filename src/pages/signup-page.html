@@ -117,14 +117,13 @@
             <paper-input name="email" label="อีเมลล์" value="{{queryParams.email}}" required always-float-label></paper-input>
             <!-- Password -->
             <paper-input id="password" name="password" label="พาสเวิร์ด" type="password" hidden$={{queryParams.facebook}} required={{!queryParams.facebook}} always-float-label></paper-input>
-            <paper-input-container always-float-label attr-for-value="value" id="confirmPassword">
+            <paper-input-container always-float-label attr-for-value="value" id="confirmPassword"  hidden$={{queryParams.facebook}}>
               <label>คอนเฟิร์มพาสเวิร์ด</label>
               <input
                 is="iron-input"
                 class="paper-input-input"
                 name="confirmPassword"
                 type="password"
-                hidden$="{{queryParams.facebook}}"
                 required="{{!queryParams.facebook}}"
                 validator="confirmPasswordValidate"
               ></input>
