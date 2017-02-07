@@ -28,12 +28,16 @@
       paper-card {
         width: 100%;
       }
-      .form-header {
-        @apply(--paper-font-headline)
-      }
 
       .item {
+        @apply(--layout);
+        /*@apply(--layout-horizontal);*/
         margin-bottom: 10px;
+      }
+      .item .input-wrapper {
+      }
+      .item .input-wrapper.--width {
+        @apply(--layout-flex);
       }
       .avatar {
         display: inline-block;
@@ -41,18 +45,15 @@
         overflow: hidden;
         margin-right: 20px;
       }
-
-      .flex-layout {
-        @apply(--layout-horizontal);
-      }
-      .flex {
-        @apply(--layout-flex);
-      }
       .label {
         font-weight: 200;
         width: 100px;
         display: inline-block;
         margin-right: 20px;
+
+        @apply(--layout);
+        flex-direction: column;
+        justify-content: center;
       }
       .label.--upload {
         line-height: 70px;
@@ -69,17 +70,17 @@
         margin-top: 10px;
       }
 
-      .google-map {
+      google-map {
         display: block;
+        width: 100%;
         height: 300px;
       }
-
-      google-map {
-        height: 300px;
+      .title {
+        @apply(--layout);
       }
     </style>
     <div class="container">
-      <paper-card>
+      <paper-card heading="New Activity">
 				<form
           is="iron-form"
           id="form" method="post"
@@ -88,132 +89,148 @@
           on-iron-form-presubmit="_presubmit"
           on-iron-form-response="_response"
           headers="{{headers}}">
+          <div class="card-content">
+						<!-- Thai Language -->
+						<div class="title">
+							<div class="avatar" item-icon><img src="/public/img/th.png" /></div>
+							<div class="flex company">ภาษาไทย</div>
+						</div>
+						<paper-input type="text" label="ชื่อกิจกรรม" name="nameTH" always-float-label required></paper-input>
+						<paper-input type="text" label="รายละเอียดย่อ" name="shortDescriptionTH" char-counter maxlength="80" always-float-label required></paper-input>
+						<paper-textarea label="รายละเอียด" name="descriptionTH" rows="4" always-float-label required></paper-textarea>
+          </div>
+
 					<div class="card-content">
-            <div class="form-header">
-              สร้าง Activity ใหม่
-            </div>
+						<!-- English Language -->
+						<div class="title">
+							<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
+							<div class="flex company">English</div>
+						</div>
+						<paper-input type="text" label="Activity name" name="nameEN" always-float-label required></paper-input>
+						<paper-input type="text" label="Short description" name="shortDescriptionEN" char-counter maxlength="80" always-float-label required></paper-input>
+						<paper-textarea label="Description" name="descriptionEN" rows="4" always-float-label required></paper-textarea>
+					</div>
+					<div class="card-content">
 						<!-- Thumbnail Upload -->
 						<div class="item">
-							<div class="flex-layout">
-								<label class="label --upload">Thumbnail</label>
-								<div class="flex">
-									<vaadin-upload
-										id="thumbnailUpload"
-										accept="image/*"
-										target="/upload/img/activities/thumbnail"
-										method="POST"
-                    max-files="1"
-										headers="{'Authorization': 'JWT {{token}}'}"
-										form-data-name="picture"
-									>
-										<div class="drop-label">
-											<iron-icon icon="image:collections"></iron-icon>
-											รูปทัมเนล
-										</div>
-									</vaadin-upload>
-                  <input id="thumbnail" type="hidden" name="thumbnail" value="">
-									<script>
-										var thumbnailUpload = document.querySelector('activity-add-page').querySelector('vaadin-upload#thumbnailUpload')
-										thumbnailUpload.addEventListener("upload-response", function(event) {
-											if(event.detail.file.xhr.status == 200){
-                        var name = JSON.parse(event.detail.xhr.responseText);
-                        document.querySelector('activity-add-page').querySelector('#thumbnail').value = name.results.thumbnail;
-                      }
-										});
-                    thumbnailUpload.addEventListener("upload-abort", function(event) {
-                      document.querySelector('activity-add-page').querySelector('#thumbnail').value = '';
-                    });
-									</script>
-								</div>
-							</div>
+              <label class="label --upload">Thumbnail</label>
+              <div class="input-wrapper --width">
+                <vaadin-upload
+                  id="thumbnailUpload"
+                  accept="image/*"
+                  target="/upload/img/activities/thumbnail"
+                  method="POST"
+                  max-files="1"
+                  headers="{'Authorization': 'JWT {{token}}'}"
+                  form-data-name="picture"
+                >
+                  <div class="drop-label">
+                    <iron-icon icon="image:collections"></iron-icon>
+                    รูปทัมเนล
+                  </div>
+                </vaadin-upload>
+                <input id="thumbnail" type="hidden" name="thumbnail" value="">
+                <script>
+                  var thumbnailUpload = document.querySelector('activity-add-page').querySelector('vaadin-upload#thumbnailUpload')
+                  thumbnailUpload.addEventListener("upload-response", function(event) {
+                    if(event.detail.file.xhr.status == 200){
+                      var name = JSON.parse(event.detail.xhr.responseText);
+                      document.querySelector('activity-add-page').querySelector('#thumbnail').value = name.results.thumbnail;
+                    }
+                  });
+                  thumbnailUpload.addEventListener("upload-abort", function(event) {
+                    document.querySelector('activity-add-page').querySelector('#thumbnail').value = '';
+                  });
+                </script>
+              </div>
 						</div>
 						<!-- Banner Upload -->
 						<div class="item">
-							<div class="flex-layout">
-								<label class="label --upload">Banner</label>
-								<div class="flex">
-									<vaadin-upload
-										id="bannerUpload"
-										accept="image/*"
-                    max-files="1"
-										target="/upload/img/activities/banner"
-										method="POST"
-										headers="{'Authorization': 'JWT {{token}}'}"
-										form-data-name="picture"
-									>
-										<div class="drop-label">
-											<iron-icon icon="image:collections"></iron-icon>
-											แบรนเนอร์
-										</div>
-									</vaadin-upload>
-                  <input id="banner" type="hidden" name="banner" value="">
-                  <script>
-                    var bannerUpload = document.querySelector('activity-add-page').querySelector('vaadin-upload#bannerUpload')
-                    bannerUpload.addEventListener("upload-response", function(event) {
-                      if(event.detail.file.xhr.status == 200){
-                        var name = JSON.parse(event.detail.xhr.responseText);
-                        document.querySelector('activity-add-page').querySelector('#banner').value = name.results.thumbnail;
-                      }
-                    });
-                    bannerUpload.addEventListener("upload-abort", function(event) {
-                      document.querySelector('activity-add-page').querySelector('#banner').value = '';
-                    });
-                  </script>
-								</div>
-							</div>
+              <label class="label --upload">Banner</label>
+              <div class="input-wrapper --width">
+                <vaadin-upload
+                  id="bannerUpload"
+                  accept="image/*"
+                  max-files="1"
+                  target="/upload/img/activities/banner"
+                  method="POST"
+                  headers="{'Authorization': 'JWT {{token}}'}"
+                  form-data-name="picture"
+                >
+                  <div class="drop-label">
+                    <iron-icon icon="image:collections"></iron-icon>
+                    แบรนเนอร์
+                  </div>
+                </vaadin-upload>
+                <input id="banner" type="hidden" name="banner" value="">
+                <script>
+                  var bannerUpload = document.querySelector('activity-add-page').querySelector('vaadin-upload#bannerUpload')
+                  bannerUpload.addEventListener("upload-response", function(event) {
+                    if(event.detail.file.xhr.status == 200){
+                      var name = JSON.parse(event.detail.xhr.responseText);
+                      document.querySelector('activity-add-page').querySelector('#banner').value = name.results.thumbnail;
+                    }
+                  });
+                  bannerUpload.addEventListener("upload-abort", function(event) {
+                    document.querySelector('activity-add-page').querySelector('#banner').value = '';
+                  });
+                </script>
+              </div>
 						</div>
 						<!-- Time -->
 						<div class="item">
-							<div>
-								<label class="label --input">Start Time</label>
-								<div class="flex" style="display: inline-block">
-									<datetime-local-input name="start" no-label-float="true" required></datetime-local-input>
-								</div>
-							</div>
-							<div>
-								<label class="label --input">End Time</label>
-								<div class="flex" style="display: inline-block">
-									<datetime-local-input name="end" no-label-float="true" required></datetime-local-input>
-								</div>
-							</div>
+              <label class="label --input">Start Time</label>
+              <div class="input-wrapper">
+                <datetime-local-input name="start" no-label-float="true" required></datetime-local-input>
+              </div>
+						</div>
+						<div class="item">
+              <label class="label --input">End Time</label>
+              <div class="input-wrapper">
+                <datetime-local-input name="end" no-label-float="true" required></datetime-local-input>
+              </div>
 						</div>
 
 						<div class="item">
-							<div>
-								<label class="label --input">Contact</label>
-								<div class="flex" style="display: inline-block">
-									<paper-input type="text" name="contact" label="" no-label-float="true"></paper-input>
-								</div>
-							</div>
+              <label class="label --input">Contact</label>
+              <div class="input-wrapper --width">
+                <paper-input type="text" name="contact" label="" no-label-float="true"></paper-input>
+              </div>
 						</div>
 
 						<div class="item">
-							<div>
-								<label class="label --input">Video Url</label>
-								<div class="flex" style="display: inline-block">
-									<paper-input type="text" name="video" label="" no-label-float="true"></paper-input>
-								</div>
-							</div>
-							<div>
-								<label class="label --input">PDF Url</label>
-								<div class="flex" style="display: inline-block">
-									<paper-input type="text" name="pdf" label="" no-label-float="true"></paper-input>
-								</div>
-							</div>
-							<div>
-								<label class="label --input">Link</label>
-								<div class="flex" style="display: inline-block">
-									<paper-input type="text" name="link" label="" no-label-float="true"></paper-input>
-								</div>
-							</div>
-
+              <label class="label --input">Video Url</label>
+              <div class="input-wrapper">
+                <paper-input type="text" name="video" label="" no-label-float="true" placeholder="www."></paper-input>
+              </div>
+            </div>
+						<div class="item">
+              <label class="label --input">PDF Url</label>
+              <div class="input-wrapper">
+                <paper-input type="text" name="pdf" label="" no-label-float="true" placeholder="www."></paper-input>
+              </div>
+            </div>
+						<div class="item">
+              <label class="label --input">Link</label>
+              <div class="input-wrapper">
+                <paper-input type="text" name="link" label="" no-label-float="true" placeholder="www."></paper-input>
+              </div>
 						</div>
 
 						<!-- Zone -->
 						<div class="item">
-							<label class="label --upload">Zone</label>
-							<div class="flex" style="display: inline-block">
-                <vaadin-combo-box name="zone" id="input-zone" class="elements-box" no-label-float="true" item-label-path="name" item-value-path="value" required></vaadin-combo-box>
+							<label class="label --input">Zone</label>
+							<div class="input-wrapper">
+                <vaadin-combo-box
+                  name="zone"
+                  id="input-zone"
+                  class="elements-box"
+                  no-label-float="true"
+                  item-label-path="name"
+                  item-value-path="value"
+                  placeholder="เลือก zone ของกิจกรรม"
+                  required
+                ></vaadin-combo-box>
 							</div>
               <script>
                 HTMLImports.whenReady(function() {
@@ -236,14 +253,22 @@
                   }.bind(this), 500);
                 });
               </script>
-
 						</div>
 
 						<!-- Location -->
 						<div class="item">
               <label class="label --input">Place</label>
-              <div class="" style="display: inline-block">
-                <vaadin-combo-box name="locationPlace" id="input-place" class="elements-box" no-label-float="true" item-label-path="name" item-value-path="value" required></vaadin-combo-box>
+              <div class="input-wrapper">
+                <vaadin-combo-box
+                  name="locationPlace"
+                  id="input-place"
+                  class="elements-box"
+                  no-label-float="true"
+                  item-label-path="name"
+                  item-value-path="value"
+                  required
+                  placeholder="เลือกสถานที่"
+                ></vaadin-combo-box>
               </div>
               <script>
                 HTMLImports.whenReady(function() {
@@ -267,96 +292,88 @@
                   }.bind(this), 500);
                 });
               </script>
-
-							<div>
-								<label class="label --input">Room</label>
-								<div class="flex" style="display: inline-block">
-                  <vaadin-combo-box name="locationRoom" id="input-room" class="elements-box" no-label-float="true" item-label-path="name" item-value-path="value"></vaadin-combo-box>
-								</div>
-							</div>
+						</div>
+            <div class="item">
+              <label class="label --input">Room</label>
+              <div class="input-wrapper">
+                <vaadin-combo-box
+                  name="locationRoom"
+                  id="input-room"
+                  class="elements-box"
+                  no-label-float="true"
+                  item-label-path="name"
+                  item-value-path="value"
+                  placeholder="เลือกห้อง"
+                ></vaadin-combo-box>
+              </div>
               <script>
                 HTMLImports.whenReady(function() {
                   var comboboxRoom = document.querySelector('activity-add-page').querySelector('#input-room');
 
                   var url = '/api/rooms';
-  								setTimeout(function () {
-  									var req = new XMLHttpRequest();
-  									req.open('GET',encodeURI(url));
-  									req.onload = function() {
-  										if (req.status === 200) {
- 											var data = JSON.parse(req.response);
-  											var arr = data.results.map(function(obj){
-  												return { name:obj.name.en/*+" - "+obj.place.name.en*/, value:obj['_id'] };
-  											});
+                  setTimeout(function () {
+                    var req = new XMLHttpRequest();
+                    req.open('GET',encodeURI(url));
+                    req.onload = function() {
+                      if (req.status === 200) {
+                      var data = JSON.parse(req.response);
+                        var arr = data.results.map(function(obj){
+                          return { name:obj.name.en/*+" - "+obj.place.name.en*/, value:obj['_id'] };
+                        });
                         comboboxRoom.items = arr;
-  										}
-  									};
-  									req.send();
-  								}.bind(this), 500);
+                      }
+                    };
+                    req.send();
+                  }.bind(this), 500);
                 });
               </script>
-						</div>
-
+            </div>
+            <!-- HighLight -->
 						<div class="item">
-							<div>
-								<label class="label --input">HighLight</label>
-								<div class="flex" style="display: inline-block">
-									<paper-checkbox name="isHighlight" label="" no-label-float="true"></paper-checkbox>
+              <label class="label --input">HighLight</label>
+              <div class="input-wrapper">
+                <paper-checkbox name="isHighlight" label="" no-label-float="true"></paper-checkbox>
+              </div>
+						</div>
+					</div>
+					
+					<div class="card-content">
+						<!-- Picture -->
+						<div class="item">
+								<label class="label --height">รูปภาพที่เกี่ยวข้อง</label>
+								<div class="input-wrapper">
+                  <images-upload
+                    id="pictureUpload"
+                    upload-url="/upload/img/activities/picture"
+                    headers="{{headers}}"
+                    method="POST"
+                    value="{{picture}}"
+                    form-data-name="picture"
+                  ></images-upload>
 								</div>
-							</div>
 						</div>
-
-						<!-- Google Map -->
-						<div class="item">
-							<google-map id="addActivityMaps" latitude="[[latitude]]" longitude="[[longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
-								<google-map-marker latitude="{{latitude}}" longitude="{{longitude}}" draggable="true"
-										title="Activity Location!" ></google-map-marker>
-							</google-map>
-						</div>
-					</div>
-					<div class="card-content">
-						<!-- Thai Language -->
-						<div class="flex-layout center">
-							<div class="avatar" item-icon><img src="/public/img/th.png" /></div>
-							<div class="flex company">ภาษาไทย</div>
-						</div>
-						<paper-input type="text" label="ชื่อกิจกรรม" name="nameTH" always-float-label required></paper-input>
-						<paper-input type="text" label="รายละเอียดย่อ" name="shortDescriptionTH" char-counter maxlength="80" always-float-label required></paper-input>
-						<paper-textarea label="รายละเอียด" name="descriptionTH" rows="4" always-float-label required></paper-textarea>
-          </div>
-
-					<div class="card-content">
-						<!-- English Language -->
-						<div class="flex-layout center">
-							<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
-							<div class="flex company">English</div>
-						</div>
-						<paper-input type="text" label="Activity name" name="nameEN" always-float-label required></paper-input>
-						<paper-input type="text" label="Short description" name="shortDescriptionEN" char-counter maxlength="80" always-float-label required></paper-input>
-						<paper-textarea label="Description" name="descriptionEN" rows="4" always-float-label required></paper-textarea>
-					</div>
-					<div class="card-content">
-            <images-upload
-              id="pictureUpload"
-              upload-url="/upload/img/activities/picture"
-              headers="{{headers}}"
-              method="POST"
-              value="{{picture}}"
-              form-data-name="picture"
-            ></images-upload>
 						<!-- Tags -->
 						<div class="item">
-							<paper-select 
-                multiple
-                label-field="tags"
-                bind-value="{{tags}}"
-                select-on-blur
-                label="เลือก tags สำหรับกิจกรรม"
-                on-input-changed="inputChanged"
-              ></paper-select>
+              <label class="label --input">Tags</label>
+              <div class="input-wrapper">
+                <paper-select 
+                  multiple
+                  label-field="tags"
+                  bind-value="{{tags}}"
+                  select-on-blur
+                  label="เลือก tags สำหรับกิจกรรม"
+                  on-input-changed="inputChanged"
+                ></paper-select>
+              </div>
 						</div>
 					</div>
-
+          <!-- Google Map -->
+          <div class="item">
+            <google-map id="addActivityMaps" latitude="[[latitude]]" longitude="[[longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
+              <google-map-marker latitude="{{latitude}}" longitude="{{longitude}}" draggable="true"
+                  title="Activity Location!" ></google-map-marker>
+            </google-map>
+          </div>
 					<!-- Submit Button -->
 					<div class="card-actions">
 						<div class="button-holder">
