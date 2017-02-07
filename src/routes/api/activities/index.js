@@ -1,6 +1,9 @@
 const express = require('express');
 const Activity = require('../../../models/Activity');
 const _ = require('lodash');
+const RangeQuery = require('../../../tools/RangeQuery');
+var ObjectId = require('mongoose').Types.ObjectId;
+const mongoose = require('mongoose');
 const { RangeQuery } = require('../../../tools');
 const { isAuthenticatedByToken, isStaff } = require('../../../config/authenticate');
 
@@ -235,27 +238,61 @@ router.get('/:id', (req, res) => {
   });
 });
 
+/**
+ * Create a new activity
+ * Access at POST http://localhost:8080/api/activities
+ */
+router.post('/', (req, res) => {
+  // Create a new instance of the User model
+  const activity = new Activity();
+
+  // Set field value (comes from the request)
+  activity.name.en = req.body.nameEN;
+  activity.name.th = req.body.nameTH;
+  activity.thumbnail = req.body.thumbnail;
+  activity.banner = req.body.banner;
+  activity.shortDescription.en = req.body.shortDescriptionEN;
+  activity.shortDescription.th = req.body.shortDescriptionTH;
+  activity.description.en = req.body.descriptionEN;
+  activity.description.th = req.body.descriptionTH;
+  activity.contact = req.body.contact;
+  activity.pictures = req.body.pictures.split(',');
+  activity.video = req.body.video;
+  activity.pdf = req.body.pdf;
+  activity.link = req.body.link;
+  activity.isHighlight = req.body.isHighlight;
+  activity.tags = req.body.tags;
+  activity.location.place = mongoose.Types.ObjectId(req.body.locationPlace);
+  if(req.body.locationRoom)activity.location.room = mongoose.Types.ObjectId(req.body.locationRoom);
+  activity.location.latitude = req.body.locationLat;
+  activity.location.longitude = req.body.locationLong;
+  activity.zone = mongoose.Types.ObjectId(req.body.zone);
+  activity.start = req.body.start;
+  activity.end = req.body.end;
+
+  // Save User and check for error
+  activity.save((err, _act) => {
+    if (err) {
+      // Handle error from
+      return res.sendError(5, err);
+    }
+
+    res.status(200).json({
+      success: true,
+      results: _act
+    });
+  });
+});
+    
+    
 // pdf redirect
-router.get('/:id/qrpdf', (req, res) => {
+router.get('/:id/qrcode', (req, res) => {
   Activity.findById(req.params.id, (err, act) => {
     if (err) {
       return res.sendError(5, err);
     }
     res.writeHead(301, {
       Location: act.pdf
-    });
-    res.end();
-  });
-});
-
-// video redirect
-router.get('/:id/qrvideo', (req, res) => {
-  Activity.findById(req.params.id, (err, act) => {
-    if (err) {
-      return res.sendError(5, err);
-    }
-    res.writeHead(301, {
-      Location: act.video
     });
     res.end();
   });
@@ -292,15 +329,16 @@ router.put('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
     if (req.body.pictures) {
       activity.pictures = req.body.pictures.split(',');
     }
-    activity.shortDescription.en = req.body.shortDescriptionEN;
-    activity.shortDescription.th = req.body.shortDescriptionTH;
-    activity.description.en = req.body.descriptionEN;
-    activity.description.th = req.body.descriptionTH;
-    activity.location.place = req.body.locationPlace;
-    activity.location.floor = req.body.locationFloor;
-    activity.location.room = req.body.locationRoom;
-    activity.location.latitude = req.body.locationLat;
-    activity.location.longitude = req.body.locationLong;
+
+    act.shortDescription.en = req.body.shortDescriptionEN;
+    act.shortDescription.th = req.body.shortDescriptionTH;
+    act.description.en = req.body.descriptionEN;
+    act.description.th = req.body.descriptionTH;
+    act.location.place = mongoose.Types.ObjectId(req.body.locationPlace);
+    if(req.body.locationRoom)act.location.room = mongoose.Types.ObjectId(req.body.locationRoom);
+    act.location.latitude = req.body.locationLat;
+    act.location.longitude = req.body.locationLong;
+    act.zone = mongoose.Types.ObjectId(req.body.zone);
 
     activity.save((err, updatedAct) => {
       // Handle error from save
