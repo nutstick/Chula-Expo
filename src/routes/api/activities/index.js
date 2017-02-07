@@ -161,12 +161,16 @@ router.post('/', isAuthenticatedByToken, isStaff, (req, res) => {
     activity.description.en = req.body.descriptionEN;
     activity.description.th = req.body.descriptionTH;
     activity.contact = req.body.contact;
-    activity.pictures = req.body.pictures.split(',');
+    if (req.body.pictures) {
+      activity.pictures = req.body.pictures.split(',');
+    }
     activity.video = req.body.video;
     activity.pdf = req.body.pdf;
     activity.link = req.body.link;
     activity.isHighlight = req.body.isHighlight;
-    activity.tags = req.body.tags.split(',');
+    if (req.body.tags) {
+      activity.tags = req.body.tags.split(',');
+    }
     activity.location.place = req.body.locationPlace;
     activity.location.floor = req.body.locationFloor;
     activity.location.room = req.body.locationRoom;
