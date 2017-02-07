@@ -2,6 +2,7 @@
 <link rel="import" href="/public/lib/polymer/polymer.html">
 <!-- Web Component -->
 <link rel="import" href="/public/lib/app-route/app-route.html">
+<link rel="import" href="/public/lib/vaadin-combo-box/vaadin-combo-box.html">
 <link rel="import" href="/public/lib/vaadin-upload/vaadin-upload.html">
 <link rel="import" href="/public/lib/paper-card/paper-card.html">
 <link rel="import" href="/public/lib/paper-checkbox/paper-checkbox.html">
@@ -12,6 +13,7 @@
 <link rel="import" href="/public/lib/greenyouse-datetime-local-input/datetime-local-input.html">
 <link rel="import" href="/public/lib/google-map/google-map.html">
 <link rel="import" href="/public/lib/google-map/google-map-marker.html">
+<link rel="import" href="/public/lib/paper-select/paper-select.html">
 
 <link rel="import" href="/components/activity-api.html">
 
@@ -280,7 +282,7 @@
                 HTMLImports.whenReady(function() {
                   var comboboxRoom = document.querySelector('activity-edit-page').querySelector('#input-room');
 
-                  var url = '/api/rooms';
+                  var url = "/api/rooms?populate=place";
   								setTimeout(function () {
   									var req = new XMLHttpRequest();
   									req.open('GET',encodeURI(url));
@@ -366,10 +368,16 @@
                 document.querySelector('activity-edit-page').pictures.delete(name.results.thumbnail);
               });
             </script>
-
-						<!-- Tags -->
+            <!-- Tags -->
 						<div class="item">
-							<paper-tags-input label="Tags" tags="{{tags_list}}"></paper-tags-input>
+							<paper-select
+                multiple
+                label-field="tags"
+                bind-value="{{tags}}"
+                select-on-blur
+                label="เลือก tags สำหรับกิจกรรม"
+                on-input-changed="inputChanged"
+              ></paper-select>
 						</div>
 					</div>
 
@@ -415,6 +423,17 @@
           }
         }
       },
+      inputChanged: function(e) {
+        var data = ['พระราชกรณียกิจ','Royal Duties','ไทยแลนด์ 4.0','Thailand 4.0','พลังงาน','Energy','สิ่งประดิษฐ์','Inventions','การออกแบบ','Design','ไอที','IT','การแพทย์','Medication','ร่างกาย','Body','จิตใจ','Mind','สิ่งแวดล้อม','Environment','สัตว์และพันธุ์พืช','Life','อาหารและน้ำ','Food &  Water','ความงาม','Beauty','คุณภาพชีวิต','Quality of Life','สังคมผู้สูงอายุ','Aging Society','เศรษฐกิจ','Economy','ชุมชน','Community','ปัญหาสังคม','Social Issues','การศึกษา','Education','การสื่อสาร','Communication','การขนส่ง','Transportation','ภูมิปัญญาไทย','Thai Wisdom','ศิลปวัฒนธรรม','Art & Culture','กฎหมาย','Law'];
+        var input = (e.detail.value || '').trim().toLowerCase();
+        if (input) {
+          e.target.options = data.filter(function(item) {
+            return item.toLowerCase().indexOf(input) === 0;
+          });
+        } else {
+          e.target.options = [];
+        }
+      },
       generateRequest: function(){
         this.$.activityAPI.generateRequest();
       },
@@ -450,6 +469,7 @@
           this.$.form.request.body.thumbnail = this.activity.thumbnail;
         if(this.$.form.request.body.banner == '')
           this.$.form.request.body.banner = this.activity.banner;
+        this.$.form.request.body.tags = this.tags;
       },
       _handleResponse: function(event) {
         if (event.detail.response.success) {

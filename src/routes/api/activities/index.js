@@ -260,7 +260,7 @@ router.get('/:id/qrcode', (req, res) => {
 // Access at PUT http://localhost:3000/api/activities/:id
 //router.put('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
 router.put('/:id', (req, res) => {
-  const updateFields = _.pick(req.body, ['thumbnail', 'banner', 'contact', 'video', 'pdf', 'link', 'isHighlight', 'tags', 'zone', 'start', 'end']);
+  const updateFields = _.pick(req.body, ['thumbnail', 'banner', 'contact', 'video', 'pdf', 'link', 'isHighlight', 'zone', 'start', 'end']);
 
   if (updateFields.start) {
     updateFields.start = new Date(updateFields.start);
@@ -303,6 +303,10 @@ router.put('/:id', (req, res) => {
     activity.location.latitude = req.body.locationLat;
     activity.location.longitude = req.body.locationLong;
     activity.zone = mongoose.Types.ObjectId(req.body.zone);
+    if (req.body.tags) {
+      activity.tags = req.body.tags.split(',');
+    }
+
 
     activity.save((err, updatedAct) => {
       // Handle error from save

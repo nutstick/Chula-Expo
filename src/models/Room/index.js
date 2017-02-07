@@ -15,7 +15,7 @@ const RoomSchema = new mongoose.Schema({
   },
   place: {
     type: ObjectId,
-    required : true,
+    required: true,
     ref: 'Place'
   }
 

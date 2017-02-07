@@ -56,7 +56,7 @@ const ActivitySchema = new mongoose.Schema({
       ref: 'Place',
       required: true
     },
-    room:  {
+    room: {
       type: ObjectId,
       ref: 'Room'
     },
