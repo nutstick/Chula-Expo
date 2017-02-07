@@ -284,8 +284,6 @@
  											var data = JSON.parse(req.response);
 
   											var arr = data.results.map(function(obj){
-                          console.log(obj);
-                          console.log("aaa");
   												return { name:obj.name.en+"/"+obj.place.name.en/*+" - "+obj.place.name.en*/, value:obj['_id'] };
   											});
                         comboboxRoom.items = arr;

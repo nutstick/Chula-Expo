@@ -297,7 +297,7 @@
         this.$.form.request.body.gender = this.male ? 'Male' : 'Female';
         this.$.form.request.body.type = this.student ? 'Academic' : (this.worker ? 'Worker' : 'Staff');
         if (this.$.form.request.body.type === 'Staff') {
-          this.$.form.request.body.staff = this.adminStaff ? 'Admin' : (this.scannerStaff ? 'Staff' : 'Scanner');
+          this.$.form.request.body.staff = this.adminStaff ? 'Admin' : (this.scannerStaff ? 'Scanner' : 'Staff');
         } else {
           delete this.$.form.request.body.staff;
         }
