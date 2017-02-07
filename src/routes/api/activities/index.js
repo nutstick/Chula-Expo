@@ -143,13 +143,14 @@ router.get('/', (req, res) => {
  */
 router.post('/', isAuthenticatedByToken, isStaff, (req, res) => {
   // Check match zone with User
-  if (req.user.staff.type === 'Staff' && req.user.staff.staffType !== 'Admin' && req.user.staff.zone !== req.body.zone) {
+  if (req.user.staff.type === 'Staff' && req.user.staff.zone !== req.body.zone) {
     return res.sendError(4, 'No permission on creating activity outside your own zone');
   }
 
   try {
     // Create a new instance of the User model
     const activity = new Activity();
+
     // Set field value (comes from the request)
     activity.name.en = req.body.nameEN;
     activity.name.th = req.body.nameTH;
@@ -264,7 +265,7 @@ router.get('/:id/qrvideo', (req, res) => {
 // ex. { "name","EditName"}
 // Access at PUT http://localhost:3000/api/activities/:id
 router.put('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
-  const updateFields = _.pick(req.body, ['thumbnail', 'banner', 'contact', 'video', 'pdf', 'link', 'isHighlight', 'zone', 'start', 'end']);
+  const updateFields = _.pick(req.body, ['thumbnail', 'banner', 'contact', 'video', 'pdf', 'link', 'isHighlight', 'tags', 'zone', 'start', 'end']);
 
   if (updateFields.start) {
     updateFields.start = new Date(updateFields.start);
@@ -282,7 +283,7 @@ router.put('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
       res.sendError(25);
     }
     // Check match zone with User
-    if (req.user.staff.type === 'Staff' && req.user.staff.staffType !== 'Admin' && req.user.staff.zone !== activity.zone) {
+    if (req.user.staff.type === 'Staff' && req.user.staff.zone !== activity.zone) {
       return res.sendError(4, 'No permission on editing activity outside your own zone');
     }
     _.assignIn(activity, updateFields);
@@ -290,9 +291,6 @@ router.put('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
     activity.name.th = req.body.nameTH;
     if (req.body.pictures) {
       activity.pictures = req.body.pictures.split(',');
-    }
-    if (req.body.pictures) {
-      activity.tags = req.body.tags.split(',');
     }
     activity.shortDescription.en = req.body.shortDescriptionEN;
     activity.shortDescription.th = req.body.shortDescriptionTH;
