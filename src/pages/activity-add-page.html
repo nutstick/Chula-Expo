@@ -73,6 +73,7 @@
       google-map {
         height: 300px;
       }
+
     </style>
     <div class="container">
       <paper-card>
@@ -206,7 +207,7 @@
 						<div class="item">
 							<label class="label --upload">Zone</label>
 							<div class="flex" style="display: inline-block">
-                <vaadin-combo-box name="zone" id="input-zone" class="elements-box" no-label-float="true" item-label-path="name" item-value-path="value" required></vaadin-combo-box>
+                <vaadin-combo-box  style="width:300px" name="zone" id="input-zone" class="elements-box" no-label-float="true" item-label-path="name" item-value-path="value" required></vaadin-combo-box>
 							</div>
               <script>
                 HTMLImports.whenReady(function() {
@@ -236,13 +237,13 @@
 						<div class="item">
               <label class="label --input">Place</label>
               <div class="" style="display: inline-block">
-                <vaadin-combo-box name="locationPlace" id="input-place" class="elements-box" no-label-float="true" item-label-path="name" item-value-path="value" required></vaadin-combo-box>
+                <vaadin-combo-box style="width:300px" name="locationPlace" id="input-place" class="elements-box" no-label-float="true" item-label-path="name" item-value-path="value" required></vaadin-combo-box>
               </div>
               <script>
                 HTMLImports.whenReady(function() {
                   var comboboxPlace = document.querySelector('activity-add-page').querySelector('#input-place');
 
-                  var url = '/api/places';
+                  var url = '/api/places?populate=zone';
                   setTimeout(function () {
                     var req = new XMLHttpRequest();
                     req.open('GET',encodeURI(url));
@@ -250,9 +251,11 @@
                       if (req.status === 200) {
                         var data = JSON.parse(req.response);
                         var arr = data.results.map(function(obj){
-                          console.log(obj);
+                      //    console.log(obj);
                         //  var zone = JSON.parse(obj.zone);
-                          return { name:obj.name.en/*+" - "+zone.name.en*/, value:obj['_id'] };
+                        var zoneNameEn='';
+                        if(obj.zone != undefined ) zoneNameEn = "/" + obj.zone.name.en;
+                          return { name:obj.name.en+zoneNameEn, value:obj['_id'] };
                         });
                         comboboxPlace.items = arr;
                       }
@@ -265,22 +268,25 @@
 							<div>
 								<label class="label --input">Room</label>
 								<div class="flex" style="display: inline-block">
-                  <vaadin-combo-box name="locationRoom" id="input-room" class="elements-box" no-label-float="true" item-label-path="name" item-value-path="value"></vaadin-combo-box>
+                  <vaadin-combo-box  style="width:300px" name="locationRoom" id="input-room" class="elements-box" no-label-float="true" item-label-path="name" item-value-path="value"></vaadin-combo-box>
 								</div>
 							</div>
               <script>
                 HTMLImports.whenReady(function() {
                   var comboboxRoom = document.querySelector('activity-add-page').querySelector('#input-room');
 
-                  var url = '/api/rooms';
+                  var url = "/api/rooms?populate=place";
   								setTimeout(function () {
   									var req = new XMLHttpRequest();
   									req.open('GET',encodeURI(url));
   									req.onload = function() {
   										if (req.status === 200) {
  											var data = JSON.parse(req.response);
+
   											var arr = data.results.map(function(obj){
-  												return { name:obj.name.en/*+" - "+obj.place.name.en*/, value:obj['_id'] };
+                          console.log(obj);
+                          console.log("aaa");
+  												return { name:obj.name.en+"/"+obj.place.name.en/*+" - "+obj.place.name.en*/, value:obj['_id'] };
   											});
                         comboboxRoom.items = arr;
   										}

@@ -1,8 +1,10 @@
 const express = require('express');
 const Place = require('../../../models/Place');
+const Room = require('../../../models/Room');
 const Zone = require('../../../models/Zone');
 const retrieveError = require('../../../tools/retrieveError');
   var ObjectId = require('mongoose').Types.ObjectId;
+  const mongoose = require('mongoose');
 const router = express.Router();
 
 /**
@@ -68,8 +70,11 @@ router.get('/', (req, res) => {
       return prev;
     }, {});
   }
+  //----
+  let populate='';
+  if(req.query.populate)populate= req.query.populate;
 //----------------------------------------------------------------
-  Place.find(filter)
+  Place.find(filter).populate(populate,'name')
     .select(fields).sort(sort).skip(skip)
     .limit(limit)
     .exec(
@@ -160,7 +165,9 @@ router.post('/', (req, res) => {
   place.location.latitude = req.body.locationLat;
   place.location.longitude = req.body.locationLong;
 
- place.zone = req.body.zone;
+  if(req.body.zone){
+ place.zone = mongoose.Types.ObjectId(req.body.zone);
+}
   // Save place and check for error
   place.save((err, _place) => {
     if (err) {
@@ -174,11 +181,13 @@ router.post('/', (req, res) => {
       success: true,
       results: _place
     });
+
+    if(req.body.zone){
         Zone.findOneAndUpdate(
      {
        _id:req.body.zone
      },{
-       $addToSet:{places:_place._id}
+       $addToSet:{places:mongoose.Types.ObjectId(_place._id)}
      },function(err,places){
                          if(err){
                              return res.status(400).send({
@@ -187,7 +196,8 @@ router.post('/', (req, res) => {
                          } else{
 
                              }
-                      });
+      });
+    }
 
 
     });
@@ -231,7 +241,7 @@ router.put('/:id', (req, res) => {
       place.location.longitude = req.body.locationLong;
     }
     if (req.body.zone) {
-      place.zone= req.body.zone;
+       place.zone = mongoose.Types.ObjectId(req.body.zone);
     }
 
 
@@ -290,6 +300,10 @@ router.delete('/:id', (req, res) => {
           }
 }
      );
+
+     Room.remove({ _id: { $in: place.rooms }}, function(err, numberRemoved) {
+     // The identified comments are now removed.
+    });
 
 
   });
