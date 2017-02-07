@@ -10,6 +10,7 @@
       url="/api/me"
       params="{{params}}"
       on-response="_handleResponse"
+      on-error="_handleError"
       headers="{{headers}}"
       handle-as="json"
       debounce-duration="300"
@@ -76,8 +77,12 @@
       _handleResponse: function(event) {
         if (event.detail.response.success) {
           this.me = event.detail.response.results;
-        } else {
-          if (event.detail.response.code === 4) {
+        }
+      },
+      _handleError: function(event) {
+        var response = event.detail.request.xhr.response;
+        if (!response.success) {
+          if (response.errors.code === "4") {
             // Logout
             document.querySelector('chulaexpo-staff-app').token = null;
             document.getElementById('storage').save();
@@ -86,7 +91,7 @@
             document.querySelector('chulaexpo-staff-app').set('route.path', '/');
             window.dispatchEvent(new CustomEvent('location-changed'));
           }
-          this.error = event.detail.response.errors;
+          this.error = response.errors;
         }
       }
     });

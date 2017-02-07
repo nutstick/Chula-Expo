@@ -56,6 +56,8 @@ module.exports = {
       next();
     } if (req.user && req.user.type === 'Staff' && req.user.staff.staffType === 'Staff') {
       next();
+    } if (req.user && req.user.type === 'Staff' && req.user.staff.staffType === 'Admin') {
+      next();
     } else {
       res.sendError(4);
     }
