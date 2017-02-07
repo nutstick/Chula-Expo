@@ -2,7 +2,8 @@ const express = require('express');
 const Activity = require('../../../models/Activity');
 const _ = require('lodash');
 const RangeQuery = require('../../../tools/RangeQuery');
-
+var ObjectId = require('mongoose').Types.ObjectId;
+const mongoose = require('mongoose');
 const router = express.Router();
 
 /**
@@ -221,12 +222,11 @@ router.post('/', (req, res) => {
   activity.link = req.body.link;
   activity.isHighlight = req.body.isHighlight;
   activity.tags = req.body.tags;
-  activity.location.place = req.body.locationPlace;
-  activity.location.floor = req.body.locationFloor;
-  activity.location.room = req.body.locationRoom;
+  activity.location.place = mongoose.Types.ObjectId(req.body.locationPlace);
+  if(req.body.locationRoom)activity.location.room = mongoose.Types.ObjectId(req.body.locationRoom);
   activity.location.latitude = req.body.locationLat;
   activity.location.longitude = req.body.locationLong;
-  activity.zone = req.body.zone;
+  activity.zone = mongoose.Types.ObjectId(req.body.zone);
   activity.start = req.body.start;
   activity.end = req.body.end;
 
@@ -273,11 +273,11 @@ router.put('/:id', (req, res) => {
     act.shortDescription.th = req.body.shortDescriptionTH;
     act.description.en = req.body.descriptionEN;
     act.description.th = req.body.descriptionTH;
-    act.location.place = req.body.locationPlace;
-    act.location.floor = req.body.locationFloor;
-    act.location.room = req.body.locationRoom;
+    act.location.place = mongoose.Types.ObjectId(req.body.locationPlace);
+    if(req.body.locationRoom)act.location.room = mongoose.Types.ObjectId(req.body.locationRoom);
     act.location.latitude = req.body.locationLat;
     act.location.longitude = req.body.locationLong;
+    act.zone = mongoose.Types.ObjectId(req.body.zone);
 
     act.save((err, updatedAct) => {
       if (err) {
