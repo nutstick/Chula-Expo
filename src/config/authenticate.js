@@ -26,6 +26,23 @@ module.exports = {
     })(req, res, next);
   },
 
+  deserializeToken: (req, res, next) => {
+    passport.authenticate('jwt', (err, user) => {
+      if (err) {
+        return res.sendError(5, err);
+      }
+      if (!user) {
+        return next();
+      }
+      req.logIn(user, { session: false }, (err) => {
+        if (err) {
+          return next(err);
+        }
+        return next();
+      });
+    })(req, res, next);
+  },
+
   isAdmin: (req, res, next) => {
     if (req.user && req.user.type === 'Staff' && req.user.staff.staffType === 'Admin') {
       next();
@@ -36,6 +53,8 @@ module.exports = {
 
   isStaff: (req, res, next) => {
     if (req.user && req.user.type === 'Staff' && req.user.staff.staffType === 'Staff') {
+      next();
+    } if (req.user && req.user.type === 'Staff' && req.user.staff.staffType === 'Admin') {
       next();
     } else {
       res.sendError(4);
