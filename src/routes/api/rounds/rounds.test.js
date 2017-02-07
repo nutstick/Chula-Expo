@@ -219,7 +219,7 @@ describe('API Rounds', () => {
             expect(res.body.results).to.have.property('end').eql(round.end);
             expect(res.body.results).to.have.property('seats');
             expect(res.body.results.seats).to.have.property('reserved').eql(round.seatsReserved);
-            expect(res.body.results.seats).to.have.property(seatsFullCapacity').eql(round.fullCapacity);
+            expect(res.body.results.seats).to.have.property('seatsFullCapacity').eql(round.fullCapacity);
             expect(res.body.results.seats).to.have.property('avaliable').eql(round.fullCapacity - round.seatsReserved);
             done();
           });
@@ -370,7 +370,7 @@ describe('API Rounds', () => {
           expect(res.body).to.have.property('results');
           expect(res.body.results).to.have.property('name').eq(change.name);
           expect(res.body.results).to.have.property('seats');
-          expect(res.body.results.seats).to.have.property(seatsFullCapacity').eq(change.fullCapacity);
+          expect(res.body.results.seats).to.have.property('seatsFullCapacity').eq(change.fullCapacity);
           expect(res.body.results.seats).to.have.property('avaliable').eq(change.fullCapacity - round.seats.reserved);
           done();
         });

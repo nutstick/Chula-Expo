@@ -1,11 +1,10 @@
 const express = require('express');
-const { Activity } = require('../../../models');
+const Activity = require('../../../models/Activity');
 const _ = require('lodash');
 const { RangeQuery } = require('../../../tools');
 const { isAuthenticatedByToken, isStaff } = require('../../../config/authenticate');
 
 const router = express.Router();
-
 /**
  * Get Activity list
  * Access at GET https://localhost:8080/api/activities
@@ -148,46 +147,50 @@ router.post('/', isAuthenticatedByToken, isStaff, (req, res) => {
     return res.sendError(4, 'No permission on creating activity outside your own zone');
   }
 
-  // Create a new instance of the User model
-  const activity = new Activity();
+  try {
+    // Create a new instance of the User model
+    const activity = new Activity();
 
-  // Set field value (comes from the request)
-  activity.name.en = req.body.nameEN;
-  activity.name.th = req.body.nameTH;
-  activity.thumbnail = req.body.thumbnail;
-  activity.banner = req.body.banner;
-  activity.shortDescription.en = req.body.shortDescriptionEN;
-  activity.shortDescription.th = req.body.shortDescriptionTH;
-  activity.description.en = req.body.descriptionEN;
-  activity.description.th = req.body.descriptionTH;
-  activity.contact = req.body.contact;
-  activity.pictures = req.body.pictures.split(',');
-  activity.video = req.body.video;
-  activity.pdf = req.body.pdf;
-  activity.link = req.body.link;
-  activity.isHighlight = req.body.isHighlight;
-  activity.tags = req.body.tags;
-  activity.location.place = req.body.locationPlace;
-  activity.location.floor = req.body.locationFloor;
-  activity.location.room = req.body.locationRoom;
-  activity.location.latitude = req.body.locationLat;
-  activity.location.longitude = req.body.locationLong;
-  activity.zone = req.body.zone;
-  activity.start = req.body.start;
-  activity.end = req.body.end;
+    // Set field value (comes from the request)
+    activity.name.en = req.body.nameEN;
+    activity.name.th = req.body.nameTH;
+    activity.thumbnail = req.body.thumbnail;
+    activity.banner = req.body.banner;
+    activity.shortDescription.en = req.body.shortDescriptionEN;
+    activity.shortDescription.th = req.body.shortDescriptionTH;
+    activity.description.en = req.body.descriptionEN;
+    activity.description.th = req.body.descriptionTH;
+    activity.contact = req.body.contact;
+    activity.pictures = req.body.pictures.split(',');
+    activity.video = req.body.video;
+    activity.pdf = req.body.pdf;
+    activity.link = req.body.link;
+    activity.isHighlight = req.body.isHighlight;
+    activity.tags = req.body.tags.split(',');
+    activity.location.place = req.body.locationPlace;
+    activity.location.floor = req.body.locationFloor;
+    activity.location.room = req.body.locationRoom;
+    activity.location.latitude = req.body.locationLat;
+    activity.location.longitude = req.body.locationLong;
+    activity.zone = req.body.zone;
+    activity.start = req.body.start;
+    activity.end = req.body.end;
 
-  // Save User and check for error
-  activity.save((err, _act) => {
-    if (err) {
+    // Save User and check for error
+    activity.save((err, _act) => {
       // Handle error from
-      return res.sendError(5, err);
-    }
+      if (err) {
+        return res.sendError(5, err);
+      }
 
-    res.status(200).json({
-      success: true,
-      results: _act
+      res.status(200).json({
+        success: true,
+        results: _act
+      });
     });
-  });
+  } catch(err) {
+    console.log(err);
+  }
 });
 
 /**
@@ -296,8 +299,8 @@ router.put('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
     activity.location.longitude = req.body.locationLong;
 
     activity.save((err, updatedAct) => {
+      // Handle error from save
       if (err) {
-        // Handle error from save
         return res.sendError(5, err);
       }
       res.status(200).json({
