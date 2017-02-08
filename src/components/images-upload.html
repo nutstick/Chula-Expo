@@ -82,7 +82,7 @@
       progress="{{progress}}"
     ></iron-request>
     <div class="horizontal">
-      <template id="images" is="dom-repeat" items="{{value}}">
+      <template id="images" is="dom-repeat" items="{{images}}">
         <div class="tile-loading">
           <s-circle-progress hidden$="[[item.complete]]" value="[[item.progress]]" max="100" stroke-width="5">
             [[item.progress]]%
@@ -126,11 +126,16 @@
           value: '',
           observer: '_srcChanged'
         },
+        images: {
+          type: Array,
+          value: [],
+        },
         value: {
           type: Array,
           value: [],
           notify: true,
         },
+        handleAs: String,
         headers: Object,
         formDataName: String,
         /*
@@ -165,13 +170,12 @@
           $this.animationConfig['enter'].nodes = Array.prototype.slice.call(nodeList);
           setTimeout(function() {
             $this.playAnimation('enter');
-            console.log($this.playAnimation);
           }, 1000);
         });
       },
       _srcChanged: function(src) {
-        if (this.value) {
-          this.push('value', {
+        if (this.images) {
+          this.push('images', {
             src: src,
             progress: 0,
             uploadProgress: 0,
@@ -179,30 +183,69 @@
           });
 
           var $this = this;
-          var i = this.value.length - 1;
+          var i = this.images.length - 1;
           var image = this.$.addImage.files[0];
           var xhr = new XMLHttpRequest();
           
           xhr.addEventListener('progress', function(e) {
             var done = e.position || e.loaded, total = e.totalSize || e.total;
-            $this.set('value.' + i + '.progress', Math.floor(done/total*1000)/10);
+            $this.set('images.' + i + '.progress', Math.floor(done/total*1000)/10);
           }, false);
           if ( xhr.upload ) {
             xhr.upload.onprogress = function(e) {
               var done = e.position || e.loaded, total = e.totalSize || e.total;
-              $this.set('value.' + i + '.uploadProgress', Math.floor(done/total*1000)/10);
+              $this.set('images.' + i + '.uploadProgress', Math.floor(done/total*1000)/10);
             };
           }
           xhr.onreadystatechange = function(e) {
             if ( 4 == this.readyState ) {
-              $this.set('value.' + i + '.complete', true);
+              $this.set('images.' + i + '.complete', true);
+              $this.push('value', $this._parseResponse(xhr));
             }
           };
           xhr.open('POST', this.uploadUrl, true);
+          this._parseHeader(xhr);
 
           var formData = new FormData();
           formData.append(this.formDataName, image);
           xhr.send(formData);
+        }
+      },
+      _parseHeader: function(xhr) {
+        var headers = this.headers || Object.create(null);
+        var newHeaders = Object.create(null);
+        for (var key in headers) {
+          newHeaders[key.toLowerCase()] = headers[key];
+        }
+        headers = newHeaders;
+
+        Object.keys(headers).forEach(function (requestHeader) {
+          if (/[A-Z]/.test(requestHeader)) {
+            Polymer.Base._error('Headers must be lower case, got', requestHeader);
+          }
+          xhr.setRequestHeader(
+            requestHeader,
+            headers[requestHeader]
+          );
+        }, this);
+      },
+      _parseResponse: function(xhr) {
+        switch (this.handleAs) {
+          case 'json':
+            return JSON.parse(xhr.responseText);
+            break;
+          case 'text':
+            return xhr.responseText;
+            break;
+          case 'xml':
+            return xhr.responseXML;
+            break;
+          case 'arraybuffer':
+          case 'blob':
+          case 'document':
+            return xhr.response;
+            break;
+          default: return null;
         }
       },
       choose: function() {

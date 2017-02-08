@@ -37,7 +37,7 @@ router.post('/banner', multer({ storage, limits: { fileSize: 4000000 } }).single
   return res.json({
     success: true,
     results: {
-      thumbnail: `/public/img/activity/${req.file.filename}`,
+      banner: `/public/img/activity/${req.file.filename}`,
     }
   });
 });
@@ -46,7 +46,7 @@ router.post('/picture', multer({ storage, limits: { fileSize: 4000000 } }).singl
   return res.json({
     success: true,
     results: {
-      thumbnail: `/public/img/activity/${req.file.filename}`,
+      picture: `/public/img/activity/${req.file.filename}`,
     }
   });
 });

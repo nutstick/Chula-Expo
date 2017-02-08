@@ -194,7 +194,7 @@
 						<div class="item">
               <label class="label --input">Contact</label>
               <div class="input-wrapper --width">
-                <paper-input type="text" name="contact" label="" no-label-float="true"></paper-input>
+                <paper-input type="text" name="contact" label="" no-label-float="true" placeholder="เบอร์ ์หรือสถานที่ติดต่อ"></paper-input>
               </div>
 						</div>
 
@@ -347,7 +347,8 @@
                     upload-url="/upload/img/activities/picture"
                     headers="{{headers}}"
                     method="POST"
-                    value="{{picture}}"
+                    value="{{pictures}}"
+                    handle-as="json"
                     form-data-name="picture"
                   ></images-upload>
 								</div>
@@ -412,8 +413,7 @@
           value: ['Chula Expo']
         },
         pictures: {
-          type: Set,
-          value: new Set()
+          type: Array
         },
         headers: {
           type: Object,
@@ -449,7 +449,7 @@
       _response: function(e) {
         if (e.detail.response.success) {
           this.$.form.reset();
-          window.location = '/activity';
+          window.location = '/activity/';
         }
       },
       _reset: function(event) {
@@ -458,10 +458,10 @@
       _presubmit: function(event) {
 					this.$.form.request.body.locationLat = this.latitude;
           this.$.form.request.body.locationLong = this.longitude;
-          this.$.form.request.body.pictures = [];
-          var dom = this;
-          this.pictures.forEach(function(key,value, Set) {
-            dom.$.form.request.body.pictures.push(key);
+          this.$.form.request.body.pictures = this.pictures.map(function(picture) {
+            if (picture.success)
+              return picture.results.picture;
+            return null;
           });
           this.$.form.request.body.tags = this.tags;
       }
