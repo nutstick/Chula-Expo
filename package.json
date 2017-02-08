@@ -1,6 +1,6 @@
 {
   "name": "chulaexpo",
-  "version": "0.0.0",
+  "version": "1.0.1",
   "description": "Chulalongkorn expo application",
   "main": "src/server.js",
   "engines": {
