@@ -79,7 +79,7 @@ const UserSchema = new mongoose.Schema({
   type: {
     type: String,
     required: true,
-    enum: ['Academic', 'Worker', 'Staff']
+    enum: ['Academic', 'Worker', 'Staff', 'Scanner']
   },
   academic: {
     level: {
@@ -121,11 +121,11 @@ const UserSchema = new mongoose.Schema({
     }]
   },
   activityLog: [ActivityLogSchema],
-  loveTags: [{
+  tags: [{
     type: ObjectId,
     ref: 'Tag'
   }],
-  loveFaculties: [{
+  faculties: [{
     type: ObjectId,
     ref: 'Zone'
   }],

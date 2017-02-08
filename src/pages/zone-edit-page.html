@@ -78,6 +78,7 @@
 			zone-id="{{zoneId}}"
 			fields=""
 			page="0"
+      headers="{{headers}}"
 			page-size="0"
 			zone="{{zone}}"
     ></zone-api>
@@ -126,7 +127,7 @@
 											รูปทัมเนล
 										</div>
 									</vaadin-upload>
-                  <input id="thumbnail" type="hidden" name="thumbnail" value="">
+                  <input id="thumbnail" type="hidden" name="thumbnail" value="{{zone.thumbnail}}">
 									<script>
 										var thumbnailUpload = document.querySelector('zone-edit-page').querySelector('vaadin-upload#thumbnailUpload')
 										thumbnailUpload.addEventListener("upload-response", function(event) {
@@ -162,7 +163,7 @@
 											แบรนเนอร์
 										</div>
 									</vaadin-upload>
-                  <input id="banner" type="hidden" name="banner" value="">
+                  <input id="banner" type="hidden" name="banner" value="{{zone.banner}}">
                   <script>
                     var bannerUpload = document.querySelector('zone-edit-page').querySelector('vaadin-upload#bannerUpload')
                     bannerUpload.addEventListener("upload-response", function(event) {
@@ -244,7 +245,13 @@
         },
 				zone: {
 					type: Object
-				}
+				},
+        headers: {
+          type: Object,
+          value: {
+            'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
+          }
+        }
       },
       generateRequest: function(){
         this.$.zoneAPI.generateRequest();
@@ -269,10 +276,10 @@
 				this.$.form.request.method = 'put';
 				this.$.form.request.body.locationLat = this.zone.location.latitude;
         this.$.form.request.body.locationLong = this.zone.location.longitude;
-        if(this.$.form.request.body.thumbnail == '')
-          this.$.form.request.body.thumbnail = this.zone.thumbnail;
-        if(this.$.form.request.body.banner == '')
-          this.$.form.request.body.banner = this.zone.banner;
+        if(!this.$.form.request.body.thumbnail)
+          this.$.form.request.body.thumbnail = '';
+        if(!this.$.form.request.body.banner)
+          this.$.form.request.body.banner = '';
       },
       _idChanged: function(id) {
         if (id) {
