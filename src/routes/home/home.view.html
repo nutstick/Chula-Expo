@@ -30,14 +30,24 @@
   <link rel="import" href="/public/lib/polymer/polymer.html">
 	<!-- Main Layout -->
   <link rel="import" href="/pages/chulaexpo-staff-app.html">
+  <link href="https://fonts.googleapis.com/css?family=Mitr:200,400,600" rel="stylesheet">
 
-  <style>
+  <style is="custom-style">
     html {
       height: 100%;
     }
+
+    :root {
+      --paper-font-common-base: {
+        font-family: 'Roboto', 'Mitr' sans-serif;
+        -webkit-font-smoothing: antialiased;
+      };
+    }
+
     body {
       margin: 0;
-      font-family: 'Roboto', 'Noto', sans-serif;
+      font-family: 'Roboto', 'Mitr', sans-serif;
+        -webkit-font-smoothing: antialiased;
       background-color: #fafafa;
       line-height: 1.5;
       height: 100%;

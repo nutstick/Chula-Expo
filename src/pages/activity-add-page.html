@@ -370,7 +370,7 @@
 					</div>
           <!-- Google Map -->
           <div class="item">
-            <google-map id="addActivityMaps" latitude="[[latitude]]" longitude="[[longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
+            <google-map latitude="[[latitude]]" longitude="[[longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o">
               <google-map-marker latitude="{{latitude}}" longitude="{{longitude}}" draggable="true"
                   title="Activity Location!" ></google-map-marker>
             </google-map>
@@ -421,9 +421,6 @@
             'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
           }
         }
-      },
-      attached: function(e) {
-        this.$.addActivityMaps.resize();
       },
       inputChanged: function(e) {
         var data = ['พระราชกรณียกิจ','Royal Duties','ไทยแลนด์ 4.0','Thailand 4.0','พลังงาน','Energy','สิ่งประดิษฐ์','Inventions','การออกแบบ','Design','ไอที','IT','การแพทย์','Medication','ร่างกาย','Body','จิตใจ','Mind','สิ่งแวดล้อม','Environment','สัตว์และพันธุ์พืช','Life','อาหารและน้ำ','Food &  Water','ความงาม','Beauty','คุณภาพชีวิต','Quality of Life','สังคมผู้สูงอายุ','Aging Society','เศรษฐกิจ','Economy','ชุมชน','Community','ปัญหาสังคม','Social Issues','การศึกษา','Education','การสื่อสาร','Communication','การขนส่ง','Transportation','ภูมิปัญญาไทย','Thai Wisdom','ศิลปวัฒนธรรม','Art & Culture','กฎหมาย','Law'];
