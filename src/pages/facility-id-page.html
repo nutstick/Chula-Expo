@@ -52,7 +52,9 @@
         var resolvedPageUrl = this.resolveUrl('facility-' + subpage + '-page.html');
         this.importHref(resolvedPageUrl, null, this._showPage404, true);
 
-        document.querySelector('facility-'+ subpage + '-page').generateRequest();
+        var page = document.querySelector('facility-'+ subpage + '-page');
+        if(typeof page.generateRequest === 'function')
+          page.generateRequest();
       },
       _showPage404: function() {
         this.page = '404-page'

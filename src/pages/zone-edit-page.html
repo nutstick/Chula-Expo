@@ -196,8 +196,8 @@
 						</div>
 						<paper-input type="text" label="ชื่อ" value="[[zone.name.th]]" name="nameTH" always-float-label required></paper-input>
 						<paper-input type="text" label="ชื่อย่อ" value="[[zone.shortName.th]]" name="shortNameTH" char-counter maxlength="10" always-float-label required></paper-input>
-						<paper-input type="text" label="ข้อความต้อนรับ" value="[[zone.welcomeMessage.th]]" name="welcomeMessageTH" char-counter maxlength="150" always-float-label></paper-input>
-						<paper-textarea label="รายละเอียด" value="[[zone.description.th]]" name="descriptionTH" rows="4" always-float-label></paper-textarea>
+						<paper-input type="text" label="ข้อความต้อนรับ" value="[[zone.welcomeMessage.th]]" name="welcomeMessageTH" char-counter maxlength="150" always-float-label required></paper-input>
+						<paper-textarea label="รายละเอียด" value="[[zone.description.th]]" name="descriptionTH" rows="4" always-float-label required></paper-textarea>
           </div>
 
           <div class="card-content">
@@ -208,8 +208,8 @@
 						</div>
 						<paper-input type="text" label="Zone name" value="[[zone.name.en]]" name="nameEN" always-float-label required></paper-input>
 						<paper-input type="text" label="Short name" value="[[zone.shortName.en]]" name="shortNameEN" char-counter maxlength="10" always-float-label required></paper-input>
-						<paper-input type="text" label="Welcome message" value="[[zone.welcomeMessage.en]]" name="welcomeMessageEN" char-counter maxlength="150" always-float-label></paper-input>
-						<paper-textarea label="Description" value="[[zone.description.en]]" name="descriptionEN" rows="4" always-float-label></paper-textarea>
+						<paper-input type="text" label="Welcome message" value="[[zone.welcomeMessage.en]]" name="welcomeMessageEN" char-counter maxlength="150" always-float-label required></paper-input>
+						<paper-textarea label="Description" value="[[zone.description.en]]" name="descriptionEN" rows="4" always-float-label required></paper-textarea>
 					</div>
 
 					<!-- Submit Button -->
@@ -269,7 +269,14 @@
       _response: function(e) {
 				if (e.detail.response.success) {
           this.$.form.reset();
-          window.location = '/zone/' + this.zoneId + '/show/';
+
+          var list = document.querySelector('zone-show-page')
+          if(typeof list.generateRequest === 'function'){
+            list.generateRequest();
+          }
+
+          window.history.pushState({}, null, '/zone/' + this.zoneId + '/show/');
+          window.dispatchEvent(new CustomEvent('location-changed'));
         }
 			},
       _presubmit: function(event) {
@@ -280,6 +287,13 @@
           this.$.form.request.body.thumbnail = '';
         if(!this.$.form.request.body.banner)
           this.$.form.request.body.banner = '';
+
+        for (field in this.$.form.request.body) {
+          if (!this.$.form.request.body[field]) {
+            delete this.$.form.request.body[field];
+          }
+        }
+
       },
       _idChanged: function(id) {
         if (id) {

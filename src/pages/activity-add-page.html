@@ -13,6 +13,10 @@
 <link rel="import" href="/public/lib/google-map/google-map.html">
 <link rel="import" href="/public/lib/google-map/google-map-marker.html">
 
+<link rel="import" href="/components/zone-api.html">
+<link rel="import" href="/components/place-api.html">
+<link rel="import" href="/components/room-api.html">
+
 <link rel="import" href="/components/shared-styles.html">
 <link rel="import" href="/components/images-upload.html">
 
@@ -24,7 +28,7 @@
         @apply(--layout-center-center);
         padding-top: 0px;
       }
-      @media (min-width: 600px) { 
+      @media (min-width: 600px) {
         :host {
           padding-top: 20px;
         }
@@ -174,7 +178,7 @@
                   bannerUpload.addEventListener("upload-response", function(event) {
                     if(event.detail.file.xhr.status == 200){
                       var name = JSON.parse(event.detail.xhr.responseText);
-                      document.querySelector('activity-add-page').querySelector('#banner').value = name.results.thumbnail;
+                      document.querySelector('activity-add-page').querySelector('#banner').value = name.results.banner;
                     }
                   });
                   bannerUpload.addEventListener("upload-abort", function(event) {
@@ -229,36 +233,24 @@
 							<div class="input-wrapper">
                 <vaadin-combo-box
                   name="zone"
+                  items="{{zones}}"
                   id="input-zone"
                   class="elements-box"
                   no-label-float="true"
-                  item-label-path="name"
-                  item-value-path="value"
+                  item-label-path="name.en"
+                  item-value-path="_id"
                   placeholder="เลือก zone ของกิจกรรม"
                   required
                 ></vaadin-combo-box>
+                <zone-api
+                  zones="{{zones}}"
+                  error="{{error}}"
+                  loading="{{zoneLoading}}"
+                  page="0"
+                  page-size="0"
+                  fields="_id,nameEN"
+                ></zone-api>
 							</div>
-              <script>
-                HTMLImports.whenReady(function() {
-                  var comboboxZone = document.querySelector('activity-add-page').querySelector('#input-zone');
-
-                  var url = '/api/zones';
-                  setTimeout(function () {
-                    var req = new XMLHttpRequest();
-                    req.open('GET',encodeURI(url));
-                    req.onload = function() {
-                      if (req.status === 200) {
-                        var data = JSON.parse(req.response);
-                        var arr = data.results.map(function(obj){
-                          return { name:obj.name.en, value:obj['_id'] };
-                        });
-                        comboboxZone.items = arr;
-                      }
-                    };
-                    req.send();
-                  }.bind(this), 500);
-                });
-              </script>
 						</div>
 
 						<!-- Location -->
@@ -267,73 +259,47 @@
               <div class="input-wrapper">
                 <vaadin-combo-box
                   name="locationPlace"
+                  items="{{places}}"
                   id="input-place"
                   class="elements-box"
                   no-label-float="true"
-                  item-label-path="name"
-                  item-value-path="value"
+                  item-label-path="name.en"
+                  item-value-path="_id"
                   required
                   placeholder="เลือกสถานที่"
                 ></vaadin-combo-box>
+                <place-api
+                  places="{{places}}"
+                  error="{{error}}"
+                  loading="{{placeLoading}}"
+                  page="0"
+                  page-size="0"
+                  fields="_id,nameEN"
+                ></place-api>
               </div>
-              <script>
-                HTMLImports.whenReady(function() {
-                  var comboboxPlace = document.querySelector('activity-add-page').querySelector('#input-place');
-
-                  var url = '/api/places?populate=zone';
-                  setTimeout(function () {
-                    var req = new XMLHttpRequest();
-                    req.open('GET',encodeURI(url));
-                    req.onload = function() {
-                      if (req.status === 200) {
-                        var data = JSON.parse(req.response);
-                        var arr = data.results.map(function(obj){
-                        //  var zone = JSON.parse(obj.zone);
-                        var zoneNameEn='';
-                        if(obj.zone != undefined ) zoneNameEn = "/" + obj.zone.name.en;
-                          return { name:obj.name.en+zoneNameEn, value:obj['_id'] };
-                        });
-                        comboboxPlace.items = arr;
-                      }
-                    };
-                    req.send();
-                  }.bind(this), 500);
-                });
-              </script>
 						</div>
             <div class="item">
               <label class="label --input">Room</label>
               <div class="input-wrapper">
                 <vaadin-combo-box
                   name="locationRoom"
+                  items="{{rooms}}"
                   id="input-room"
                   class="elements-box"
                   no-label-float="true"
-                  item-label-path="name"
-                  item-value-path="value"
+                  item-label-path="name.en"
+                  item-value-path="_id"
                   placeholder="เลือกห้อง"
                 ></vaadin-combo-box>
+                <room-api
+                  rooms="{{rooms}}"
+                  error="{{error}}"
+                  loading="{{roomLoading}}"
+                  page="0"
+                  page-size="0"
+                  fields="_id,nameEN"
+                ></room-api>
               </div>
-              <script>
-                HTMLImports.whenReady(function() {
-                  var comboboxRoom = document.querySelector('activity-add-page').querySelector('#input-room');
-                  var url = '/api/rooms';
-                  setTimeout(function () {
-                    var req = new XMLHttpRequest();
-                    req.open('GET',encodeURI(url));
-                    req.onload = function() {
-                      if (req.status === 200) {
-                      var data = JSON.parse(req.response);
-                        var arr = data.results.map(function(obj){
-                          return { name:obj.name.en/*+" - "+obj.place.name.en*/, value:obj['_id'] };
-                        });
-                        comboboxRoom.items = arr;
-                      }
-                    };
-                    req.send();
-                  }.bind(this), 500);
-                });
-              </script>
             </div>
             <!-- HighLight -->
 						<div class="item">
@@ -343,7 +309,7 @@
               </div>
 						</div>
 					</div>
-					
+
 					<div class="card-content">
 						<!-- Picture -->
 						<div class="item">
@@ -364,7 +330,7 @@
 						<div class="item">
               <label class="label --input">Tags</label>
               <div class="input-wrapper">
-                <paper-select 
+                <paper-select
                   multiple
                   label-field="tags"
                   bind-value="{{tags}}"
@@ -402,6 +368,15 @@
       properties: {
         token: {
           type: String,
+        },
+        zones: {
+          type: Array,
+        },
+        places: {
+          type: Array,
+        },
+        rooms: {
+          type: Array,
         },
         latitude: {
           type: Number,
@@ -446,14 +421,21 @@
         this.$.spinner.hidden = false;
         this.$.form.disabled = true;
         // Simulate a slow server response.
-        setTimeout(function() {
           form.submit();
+          setTimeout(function() {
         }, 1000);
       },
       _response: function(e) {
         if (e.detail.response.success) {
           this.$.form.reset();
-          window.location = '/activity/';
+
+          var list = document.querySelector('activity-list-page')
+          if(typeof list.generateRequest === 'function'){
+            list.generateRequest();
+          }
+
+          window.history.pushState({}, null, '/activity/');
+          window.dispatchEvent(new CustomEvent('location-changed'));
         }
       },
       _reset: function(event) {
@@ -468,6 +450,13 @@
             return null;
           });
           this.$.form.request.body.tags = this.tags;
+
+          for (field in this.$.form.request.body) {
+            if (!this.$.form.request.body[field]) {
+              delete this.$.form.request.body[field];
+            }
+          }
+
       }
     })
   </script>

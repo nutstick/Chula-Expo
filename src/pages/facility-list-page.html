@@ -29,6 +29,18 @@
         position: fixed;
         bottom: 20px;
       }
+      .empty-list {
+        height: 200px;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-center-justified);
+      }
+      .empty-list:before {
+        content: "ไม่มีข้อมูล";
+        font-style: italic;
+        color: #bbb;
+        font-weight: 200;
+      }
       #add-icon {
         position: absolute;
         bottom: 0px;
@@ -61,8 +73,12 @@
       }
     </style>
     <div class="container">
+      <template is="dom-if" if="{{_computeNoFacilities(facilities)}}">
+        <div class="empty-list"></div>
+      </template>
+
       <template is="dom-repeat" items="{{facilities}}">
-        <paper-card-item action image="https://www.polymer-project.org/images/logos/p-logo.png">
+        <paper-card-item action image="/public/img/thumbnail-default.jpg">
           <div class="card-item-header">
             {{item.name.en}}
           </div>
@@ -119,6 +135,9 @@
           type: String,
         },
       },
+      generateRequest: function(){
+        this.$.facilityAPI.generateRequest();
+      },
       _showClick: function(id) {
         var id = event.model.item['_id'];
         document.querySelector('chulaexpo-staff-app').set('route.path', '/facility/' + id + '/show/');
@@ -147,12 +166,15 @@
             req.setRequestHeader('Authorization', tokenJWT);
             req.onload = function() {
               if (req.status === 202) {
-                dom.$.facilityAPI.generateRequest();
+                dom.generateRequest();
               }
             };
             req.send();
           }.bind(this), 300);
         }
+      },
+      _computeNoFacilities: function(facilities) {
+        return !facilities.length;
       }
     })
   </script>
