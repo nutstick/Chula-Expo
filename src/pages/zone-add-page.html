@@ -73,7 +73,7 @@
     </style>
     <div class="container">
       <paper-card>
-				<form is="iron-form" id="form" method="post" class="card-content"
+				<form is="iron-form" id="form" method="post" class="card-content" headers="{{headers}}"
 					action="/api/zones" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
 					<div class="card-content">
 						<!-- type -->
@@ -232,6 +232,12 @@
         zoom: {
           type: Number,
           value: 16
+        },
+        headers: {
+          type: Object,
+          value: {
+            'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
+          }
         }
       },
       _delayedSubmit: function(event) {

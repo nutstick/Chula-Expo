@@ -32,6 +32,7 @@ const router = express.Router();
  */
 router.post('/', (req, res) => {
   // Reject `admin` field if not correct registration code
+
   if (req.body.type === 'Staff' && req.body.staff === 'Admin' && req.body.registrationCode !== process.env.ADMIN_REGISTRATION_CODE) {
     return res.sendError(11);
   }

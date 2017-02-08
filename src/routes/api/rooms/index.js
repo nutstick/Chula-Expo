@@ -3,6 +3,7 @@ const Room = require('../../../models/Room');
 const Place = require('../../../models/Place');
 const retrieveError = require('../../../tools/retrieveError');
   var ObjectId = require('mongoose').Types.ObjectId;
+const mongoose = require('mongoose');
 const router = express.Router();
 
 /**
@@ -67,10 +68,11 @@ router.get('/', (req, res) => {
     }, {});
   }
   //-------------
-  let populate;
-  if(req.query.populate)populate= req.query.populate
-//----------------------------------------------------------------
-  Room.find(filter)
+  let populate='';
+  if(req.query.populate)populate= req.query.populate;
+
+//-----------------------------
+  Room.find(filter).populate(populate,'name')
     .select(fields).sort(sort).skip(skip)
     .limit(limit)//.populate('place')
     .exec(
@@ -156,7 +158,7 @@ router.post('/', (req, res) => {
   room.floor= req.body.floor;
 
 
- room.place = req.body.place;
+ room.place = mongoose.Types.ObjectId(req.body.place);
   // Save room and check for error
   room.save((err, _room) => {
     if (err) {
@@ -174,17 +176,15 @@ router.post('/', (req, res) => {
      {
        _id:req.body.place
      },{
-       $addToSet:{rooms:_room._id}
+       $addToSet:{rooms: mongoose.Types.ObjectId(_room._id)}
      },function(err,rooms){
                          if(err){
                              return res.status(400).send({
                                  message:"Error add  room to place"
                              });
                          } else{
-
-                             }
-                      });
-
+                        }
+      });
 
     });
 
@@ -222,7 +222,7 @@ router.put('/:id', (req, res) => {
       room.location.floor= req.body.floor;
     }
     if (req.body.place) {
-      room.place = req.body.place;
+      room.place =  mongoose.Types.ObjectId(req.body.place);
     }
 
 
@@ -280,7 +280,7 @@ router.delete('/:id', (req, res) => {
               errors: retrieveError(5, err)
             });
           }
-}
+        }
      );
 
 

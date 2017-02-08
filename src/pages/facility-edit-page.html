@@ -85,6 +85,7 @@
 			facility-id="{{facilityId}}"
 			fields=""
 			page="0"
+      headers="{{headers}}"
 			page-size="0"
 			facility="{{facility}}"
     ></facility-api>
@@ -199,6 +200,12 @@
         },
         facility: {
           type: Object,
+        },
+        headers: {
+          type: Object,
+          value: {
+            'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
+          }
         }
       },
       generateRequest: function(){

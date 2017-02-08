@@ -74,7 +74,7 @@
     </style>
     <div class="container">
       <paper-card>
-				<form is="iron-form" id="form" method="post" class="card-content"
+				<form is="iron-form" id="form" method="post" class="card-content" headers="{{headers}}"
 					action="/api/places" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
 					<div class="card-content">
 
@@ -181,6 +181,12 @@
         tags_list: {
           type: Array,
           value: ['Chula Expo']
+        },
+        headers: {
+          type: Object,
+          value: {
+            'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
+          }
         }
       },
       _delayedSubmit: function(event) {

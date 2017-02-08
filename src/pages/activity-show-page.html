@@ -20,6 +20,7 @@
 <link rel="import" href="/components/round-api.html">
 <link rel="import" href="/components/place-api.html">
 <link rel="import" href="/components/zone-api.html">
+<link rel="import" href="/components/room-api.html">
 <link rel="import" href="/components/paper-card-dataitem.html">
 <link rel="import" href="/components/shared-styles.html">
 
@@ -192,15 +193,14 @@
 						</div>
 					</div>
 
-					<div class="item">
+          <div class="item">
 						<div>
-							<label class="label --input">Video Url</label>
+							<label class="label --input">QR code</label>
 							<div class="flex" style="display: inline-block">
-								{{activity.video}}<br>
-                <div id="qrcodeVideo" style="width:200px; height:200px; margin-bottom:15px; margin-top:4px;"></div>
+                <div id="qrcode" style="width:200px; height:200px; margin-bottom:15px; margin-top:4px;"></div>
                 <script type="text/javascript">
-                  var qrcode = new QRCode(document.getElementById("qrcodeVideo"), {
-                    text: "https://staffchulaexpo.com/api/activities/" + document.querySelector('activity-show-page').activityId + "/qrvideo",
+                  var qrcode = new QRCode(document.getElementById("qrcode"), {
+                    text: "staff.chulaexpo.com/api/activities/" + document.querySelector('activity-show-page').activityId + "/qrcode",
                     width: 200,
                     height: 200,
                     colorDark : "#ff69B4",
@@ -210,21 +210,19 @@
                 </script>
 							</div>
 						</div>
+          </div>
+
+					<div class="item">
+						<div>
+							<label class="label --input">Video Url</label>
+							<div class="flex" style="display: inline-block">
+								{{activity.video}}<br>
+							</div>
+						</div>
 						<div>
 							<label class="label --input">PDF Url</label>
 							<div class="flex" style="display: inline-block">
-								{{activity.pdf}}<br>
-                <div id="qrcodePDF" style="width:200px; height:200px; margin-bottom:15px; margin-top:4px;"></div>
-                <script type="text/javascript">
-                  var qrcode = new QRCode(document.getElementById("qrcodePDF"), {
-                    text: "https://staffchulaexpo.com/api/activities/" + document.querySelector('activity-show-page').activityId + "/qrpdf",
-                    width: 200,
-                    height: 200,
-                    colorDark : "#000000",
-                    colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.L
-                  });
-                </script>
+								{{activity.pdf}}
 							</div>
 						</div>
 						<div>
@@ -259,25 +257,27 @@
             </div>
             <place-api
               id="placeAPI"
-              zone-id="{{activity.place}}"
+              place-id="{{activity.location.place}}"
               fields="nameEN"
               page="0"
               page-size="0"
-              zone="{{place}}"
+              place="{{place}}"
             ></zone-api>
+          </div>
 
-						<div>
-							<label class="label --input">Floor</label>
-							<div class="flex" style="display: inline-block">
-								{{activity.location.floor}}
-							</div>
+					<div class="item">
+						<label class="label --input">Room</label>
+						<div class="flex" style="display: inline-block">
+							{{room.name.en}}
 						</div>
-						<div>
-							<label class="label --input">Room</label>
-							<div class="flex" style="display: inline-block">
-								{{activity.location.room}}
-							</div>
-						</div>
+            <room-api
+              id="roomAPI"
+              room-id="{{activity.location.room}}"
+              fields="nameEN"
+              page="0"
+              page-size="0"
+              room="{{room}}"
+            ></room-api>
 					</div>
 
 					<div class="item">
@@ -500,6 +500,7 @@
         this.$.activityAPI.generateRequest();
         this.$.zoneAPI.generateRequest();
         this.$.placeAPI.generateRequest();
+        this.$.roomAPI.generateRequest();
       },
       _convertToDate: function(dateTime) {
         return moment.utc(dateTime).format('MM-DD-YYYY HH:mm');

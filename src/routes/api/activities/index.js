@@ -1,6 +1,8 @@
 const express = require('express');
 const Activity = require('../../../models/Activity');
 const _ = require('lodash');
+var ObjectId = require('mongoose').Types.ObjectId;
+const mongoose = require('mongoose');
 const { RangeQuery } = require('../../../tools');
 const { isAuthenticatedByToken, isStaff } = require('../../../config/authenticate');
 
@@ -141,11 +143,13 @@ router.get('/', (req, res) => {
  * Create a new activity
  * Access at POST http://localhost:8080/api/activities
  */
-router.post('/', isAuthenticatedByToken, isStaff, (req, res) => {
+// router.post('/', isAuthenticatedByToken, isStaff, (req, res) => {
+router.post('/', (req, res) => {
   // Check match zone with User
-  if (req.user.staff.type === 'Staff' && req.user.staff.zone !== req.body.zone) {
+  /*
+  if (req.user.staff.type === 'Staff' && req.user.staff.staffType !== 'Admin' && req.user.staff.zone !== req.body.zone) {
     return res.sendError(4, 'No permission on creating activity outside your own zone');
-  }
+  }*/
 
   try {
     // Create a new instance of the User model
@@ -171,12 +175,14 @@ router.post('/', isAuthenticatedByToken, isStaff, (req, res) => {
     if (req.body.tags) {
       activity.tags = req.body.tags.split(',');
     }
-    activity.location.place = req.body.locationPlace;
-    activity.location.floor = req.body.locationFloor;
-    activity.location.room = req.body.locationRoom;
+    activity.location.place = mongoose.Types.ObjectId(req.body.locationPlace);
+    if (req.body.locationRoom) {
+      activity.location.room = mongoose.Types.ObjectId(req.body.locationRoom);
+    }
     activity.location.latitude = req.body.locationLat;
     activity.location.longitude = req.body.locationLong;
-    activity.zone = req.body.zone;
+    activity.zone = mongoose.Types.ObjectId(req.body.zone);
+
     activity.start = req.body.start;
     activity.end = req.body.end;
 
@@ -235,8 +241,9 @@ router.get('/:id', (req, res) => {
   });
 });
 
+
 // pdf redirect
-router.get('/:id/qrpdf', (req, res) => {
+router.get('/:id/qrcode', (req, res) => {
   Activity.findById(req.params.id, (err, act) => {
     if (err) {
       return res.sendError(5, err);
@@ -248,24 +255,12 @@ router.get('/:id/qrpdf', (req, res) => {
   });
 });
 
-// video redirect
-router.get('/:id/qrvideo', (req, res) => {
-  Activity.findById(req.params.id, (err, act) => {
-    if (err) {
-      return res.sendError(5, err);
-    }
-    res.writeHead(301, {
-      Location: act.video
-    });
-    res.end();
-  });
-});
-
 // Update an existing activity via PUT(JSON format)
 // ex. { "name","EditName"}
 // Access at PUT http://localhost:3000/api/activities/:id
-router.put('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
-  const updateFields = _.pick(req.body, ['thumbnail', 'banner', 'contact', 'video', 'pdf', 'link', 'isHighlight', 'tags', 'zone', 'start', 'end']);
+//router.put('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
+router.put('/:id', (req, res) => {
+  const updateFields = _.pick(req.body, ['thumbnail', 'banner', 'contact', 'video', 'pdf', 'link', 'isHighlight', 'zone', 'start', 'end']);
 
   if (updateFields.start) {
     updateFields.start = new Date(updateFields.start);
@@ -282,25 +277,36 @@ router.put('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
     if (!activity) {
       res.sendError(25);
     }
+
+    /*
     // Check match zone with User
-    if (req.user.staff.type === 'Staff' && req.user.staff.zone !== activity.zone) {
+    if (req.user.staff.type === 'Staff' && req.user.staff.staffType !== 'Admin' && req.user.staff.zone !== activity.zone) {
       return res.sendError(4, 'No permission on editing activity outside your own zone');
     }
+    */
+
     _.assignIn(activity, updateFields);
     activity.name.en = req.body.nameEN;
     activity.name.th = req.body.nameTH;
     if (req.body.pictures) {
       activity.pictures = req.body.pictures.split(',');
     }
+
     activity.shortDescription.en = req.body.shortDescriptionEN;
     activity.shortDescription.th = req.body.shortDescriptionTH;
     activity.description.en = req.body.descriptionEN;
     activity.description.th = req.body.descriptionTH;
-    activity.location.place = req.body.locationPlace;
-    activity.location.floor = req.body.locationFloor;
-    activity.location.room = req.body.locationRoom;
+    activity.location.place = mongoose.Types.ObjectId(req.body.locationPlace);
+    if (req.body.locationRoom) {
+      activity.location.room = mongoose.Types.ObjectId(req.body.locationRoom);
+    }
     activity.location.latitude = req.body.locationLat;
     activity.location.longitude = req.body.locationLong;
+    activity.zone = mongoose.Types.ObjectId(req.body.zone);
+    if (req.body.tags) {
+      activity.tags = req.body.tags.split(',');
+    }
+
 
     activity.save((err, updatedAct) => {
       // Handle error from save
@@ -317,7 +323,8 @@ router.put('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
 
 // Delete an existing activity via DEL.
 // Access at DEL http://localhost:3000/api/activities/:id
-router.delete('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
+// router.delete('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
+router.delete('/:id', (req, res) => {
   Activity.findById(req.params.id, (err, activity) => {
     // Handle error from User.findById
     if (err) {
@@ -325,12 +332,13 @@ router.delete('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
     }
     // Check for exist activity
     if (!activity) {
-      res.sendError(25);
+      return res.sendError(25);
     }
+    /*
     // Check match zone with User
-    if (req.user.staff.type === 'Staff' && req.user.staff.zone !== activity.zone) {
+    if (req.user.staff.type === 'Staff' && req.user.staff.staffType !== 'Admin' && req.user.staff.zone !== activity.zone) {
       return res.sendError(4, 'No permission on removing activity outside your own zone');
-    }
+    }*/
 
     activity.remove((err) => {
       // Handle error remove
