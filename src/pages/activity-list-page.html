@@ -32,6 +32,16 @@
         position: fixed;
         bottom: 20px;
       }
+      .empty-list {
+        height: 200px;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-center-justified);
+      }
+      .empty-list:before {
+        content: "ไม่มีข้อมูล";
+        font-style: italic;
+      }
       #add-icon {
         position: absolute;
         bottom: 0px;
@@ -60,7 +70,7 @@
 			paper-button > a {
         color: #000;
         text-decoration: none;
-        width: 100%;
+        width: 100%;  
       }
       #card-item-header {
         @apply(--layout-horizontal);
@@ -114,6 +124,9 @@
           </div>
         </div>
       </paper-card-item>
+      <template is="dom-if" if="{{_computeNoActivities(activities)}}">
+        <div class="empty-list"></div>
+      </template>
       <template is="dom-repeat" items="{{activities}}">
         <paper-card-item action image="https://www.polymer-project.org/images/logos/p-logo.png">
           <div class="card-item-header">
@@ -195,7 +208,11 @@
           var dom = this;
           setTimeout(function () {
             var req = new XMLHttpRequest();
-            req.open('DELETE',encodeURI(url));
+            var tokenJWT = 'JWT ' + document.querySelector('chulaexpo-staff-app').token
+
+            req.open('DELETE', encodeURI(url));
+            req.setRequestHeader('Authorization', tokenJWT);
+
             req.onload = function() {
               if (req.status === 202) {
                 dom.$.activityAPI.generateRequest();
@@ -204,6 +221,9 @@
             req.send();
           }.bind(this), 300);
         }
+      },
+      _computeNoActivities: function(activities) {
+        return !activities.length;
       }
     })
   </script>
