@@ -88,7 +88,7 @@
             [[item.progress]]%
           </s-circle-progress>
           <div class="overlay" hidden$="[[item.complete]]"></div>
-          <div class="remove overlay">
+          <div class="remove overlay" on-tap="_remove">
             <iron-icon icon="icons:close"></iron-icon>
           </div>
           <paper-tile
@@ -247,6 +247,14 @@
             break;
           default: return null;
         }
+      },
+      _remove: function(e) {
+        var tile = e.target.parentNode.parentNode.querySelector('paper-tile');
+        var index = this.images.findIndex(function(img) {
+          return img.src === tile.img;
+        });
+        this.splice('images', index, 1);
+        this.splice('value', index, 1);
       },
       choose: function() {
         this.$.addImage.choose();
