@@ -452,8 +452,9 @@
       },
       _response: function(e) {
         if (e.detail.response.success) {
-          this.$.form.reset();
-          window.location = '/activity/' + this.activityId + '/show/';
+          this.$.form.reset(); 
+          window.history.pushState({}, null, '/activity/' + this.activityId + '/show/');
+          window.dispatchEvent(new CustomEvent('location-changed'));
         }
       },
       _presubmit: function(event) {

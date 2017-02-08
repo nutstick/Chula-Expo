@@ -50,6 +50,8 @@
 				if (page !== 'list' && page !== 'add')
           page = 'id';
         var resolvedPageUrl = this.resolveUrl('place-' + page + '-page.html');
+        console.log(resolvedPageUrl)
+        console.log(this.importHref)
         this.importHref(resolvedPageUrl, null, null, true);
       }
     });

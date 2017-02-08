@@ -42,9 +42,8 @@
               document.querySelector('chulaexpo-staff-app').token = res.results.token;;
               document.getElementById('storage').save();
               
-              window.location = '/';
-              // window.history.pushState({}, null, '/');
-              // window.dispatchEvent(new CustomEvent('location-changed'));
+              window.history.pushState({}, null, '/');
+              window.dispatchEvent(new CustomEvent('location-changed'));
             } else if (res.code === 2) {
               window.history.pushState({}, null, '/signup?email=' + res.user.email
                 + '&name=' + res.user.name
