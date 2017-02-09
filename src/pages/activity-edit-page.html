@@ -449,7 +449,7 @@
             list.generateRequest();
           }
 
-          window.history.pushState({}, null, '/activity/' + this.activityId + '/show/');
+					window.history.pushState({}, null, '/activity/' + this.activityId + '/show/');
           window.dispatchEvent(new CustomEvent('location-changed'));
         }
       },
