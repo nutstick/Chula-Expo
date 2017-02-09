@@ -90,11 +90,12 @@ app.get('/auth/facebook/token', (req, res, next) => {
       return res.sendError(24);
     } else if (!user.id) {
       // No User Exist in Database
-      // req.session.user = user;
       return res.send({
         success: false,
-        code: 2,
-        message: 'First time Signup, need to provied more data',
+        errors: {
+          code: 2,
+          message: 'First time Signup, need to provied more data',
+        },
         user,
       });
     }
@@ -125,8 +126,10 @@ app.get('/auth/facebook/callback', (req, res, next) => {
       // req.session.user = user;
       return res.send(popupTools.popupResponse({
         success: false,
-        code: 2,
-        message: 'First time Signup, need to provied more data',
+        errors: {
+          code: 2,
+          message: 'First time Signup, need to provied more data',
+        },
         user,
       }));
     }
