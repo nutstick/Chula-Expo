@@ -184,8 +184,8 @@
 						</div>
 						<paper-input type="text" label="ชื่อ" name="nameTH" always-float-label required></paper-input>
 						<paper-input type="text" label="ชื่อย่อ" name="shortNameTH" char-counter maxlength="10" always-float-label required></paper-input>
-						<paper-input type="text" label="ข้อความต้อนรับ" name="welcomeMessageTH" char-counter maxlength="150" always-float-label></paper-input>
-						<paper-textarea label="รายละเอียด" name="descriptionTH" rows="4" always-float-label></paper-textarea>
+						<paper-input type="text" label="ข้อความต้อนรับ" name="welcomeMessageTH" char-counter maxlength="150" always-float-label required></paper-input>
+						<paper-textarea label="รายละเอียด" name="descriptionTH" rows="4" always-float-label required></paper-textarea>
           </div>
 
           <div class="card-content">
@@ -196,8 +196,8 @@
 						</div>
 						<paper-input type="text" label="Zone name" name="nameEN" always-float-label required></paper-input>
 						<paper-input type="text" label="Short name" name="shortNameEN" char-counter maxlength="10" always-float-label required></paper-input>
-						<paper-input type="text" label="Welcome message" name="welcomeMessageEN" char-counter maxlength="150" always-float-label></paper-input>
-						<paper-textarea label="Description" name="descriptionEN" rows="4" always-float-label></paper-textarea>
+						<paper-input type="text" label="Welcome message" name="welcomeMessageEN" char-counter maxlength="150" always-float-label required></paper-input>
+						<paper-textarea label="Description" name="descriptionEN" rows="4" always-float-label required></paper-textarea>
 					</div>
 
 					<!-- Submit Button -->
@@ -253,7 +253,14 @@
       _response: function(e) {
         if (e.detail.response.success) {
           this.$.form.reset();
-          window.location = '/zone/';
+
+          var list = document.querySelector('zone-list-page')
+          if(typeof list.generateRequest === 'function'){
+            list.generateRequest();
+          }
+
+          window.history.pushState({}, null, '/zone/');
+          window.dispatchEvent(new CustomEvent('location-changed'));
         }
       },
       _reset: function(event) {
@@ -262,6 +269,13 @@
       _presubmit: function(event) {
 				this.$.form.request.body.locationLat = this.latitude;
         this.$.form.request.body.locationLong = this.longitude;
+
+        for (field in this.$.form.request.body) {
+          if (!this.$.form.request.body[field]) {
+            delete this.$.form.request.body[field];
+          }
+        }
+
       }
     })
   </script>

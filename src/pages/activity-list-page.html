@@ -72,7 +72,7 @@
 			paper-button > a {
         color: #000;
         text-decoration: none;
-        width: 100%;  
+        width: 100%;
       }
       #card-item-header {
         @apply(--layout-horizontal);
@@ -130,7 +130,7 @@
         <div class="empty-list"></div>
       </template>
       <template is="dom-repeat" items="{{activities}}">
-        <paper-card-item action image="https://www.polymer-project.org/images/logos/p-logo.png">
+        <paper-card-item action image="/public/img/thumbnail-default.jpg">
           <div class="card-item-header">
             {{item.name.en}}
           </div>
@@ -187,6 +187,9 @@
           value: moment.locale('th')
         }
       },
+      generateRequest: function(){
+        this.$.activityAPI.generateRequest();
+      },
       _showClick: function(id) {
         var id = event.model.item['_id'];
         document.querySelector('chulaexpo-staff-app').set('route.path', '/activity/'+id+'/show/');
@@ -216,7 +219,7 @@
             req.setRequestHeader('Authorization', tokenJWT);
             req.onload = function() {
               if (req.status === 202) {
-                dom.$.activityAPI.generateRequest();
+                dom.generateRequest();
               }
             };
             req.send();

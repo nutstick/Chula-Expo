@@ -19,6 +19,7 @@
 <link rel="import" href="/public/lib/vaadin-combo-box/vaadin-combo-box.html">
 
 <link rel="import" href="/components/facility-api.html">
+<link rel="import" href="/components/place-api.html">
 
 <link rel="import" href="/components/shared-styles.html">
 
@@ -110,33 +111,31 @@
 							</div>
 						</div>
             <!-- Location -->
-						<div class="item">
-							<label class="label --input">Place</label>
-							<div class="" style="display: inline-block">
-                <vaadin-combo-box name="place" id="input-place" class="elements-box" no-label-float="true" item-label-path="name" item-value-path="value" value="{{facility.place}}" required></vaadin-combo-box>
-							</div>
-              <script>
-                HTMLImports.whenReady(function() {
-                  var combobox = document.querySelector('facility-edit-page').querySelector('#input-place');
-
-                  var url = '/api/places';
-  								setTimeout(function () {
-  									var req = new XMLHttpRequest();
-  									req.open('GET',encodeURI(url));
-  									req.onload = function() {
-  										if (req.status === 200) {
-  											var data = JSON.parse(req.response);
-  											var arr = data.results.map(function(obj){
-  												return { name:obj.name.en, value:obj['_id'] };
-  											});
-                        combobox.items = arr;
-  										}
-  									};
-  									req.send();
-  								}.bind(this), 500);
-                });
-
-              </script>
+            <div class="item">
+              <label class="label --input">Place</label>
+              <div class="flex" style="display: inline-block">
+                <vaadin-combo-box
+                  name="place"
+                  items="{{places}}"
+                  id="input-place"
+                  class="elements-box"
+                  no-label-float="true"
+                  item-label-path="name.en"
+                  item-value-path="_id"
+                  value="{{facility.place}}"
+                  required
+                  placeholder="เลือกสถานที่"
+                ></vaadin-combo-box>
+                <place-api
+                  id="placeAPI"
+                  places="{{places}}"
+                  error="{{error}}"
+                  loading="{{placeLoading}}"
+                  page="0"
+                  page-size="0"
+                  fields="_id,nameEN"
+                ></place-api>
+              </div>
 						</div>
 
 						<!-- Google Map -->
@@ -183,6 +182,9 @@
     Polymer({
       is: 'facility-edit-page',
       properties: {
+        places: {
+          type: Array
+        },
 				url: {
 					type: Object,
 					value: ''
@@ -210,6 +212,7 @@
       },
       generateRequest: function(){
         this.$.facilityAPI.generateRequest();
+        this.$.placeAPI.generateRequest();
       },
       _delayedSubmit: function(event) {
         var form = this.$.form;
@@ -224,13 +227,27 @@
       _response: function(e) {
         if (e.detail.response.success) {
           this.$.form.reset();
-          window.location = '/facility/' + this.facilityId + '/show/';
+
+          var list = document.querySelector('facility-show-page')
+          if(typeof list.generateRequest === 'function'){
+            list.generateRequest();
+          }
+
+          window.history.pushState({}, null, '/facility/' + this.facilityId + '/show/');
+          window.dispatchEvent(new CustomEvent('location-changed'));
         }
       },
       _presubmit: function(event) {
         this.$.form.request.method = 'put';
       	this.$.form.request.body.locationLat = this.facility.location.latitude;
 				this.$.form.request.body.locationLong = this.facility.location.longitude;
+
+        for (field in this.$.form.request.body) {
+          if (!this.$.form.request.body[field]) {
+            delete this.$.form.request.body[field];
+          }
+        }
+
       },
       _idChanged: function(id) {
         if (id) {

@@ -292,7 +292,7 @@
 					<!-- Google Map -->
 					<div class="item google-map">
 						<google-map latitude="[[activity.location.latitude]]" longitude="[[activity.location.longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o" fit>
-							<google-map-marker latitude="{{activity.location.latitude}}" longitude="{{activity.location.longitude}}" draggable="true"
+							<google-map-marker latitude="{{activity.location.latitude}}" longitude="{{activity.location.longitude}}" draggable="false"
 									title="Activity Location!" ></google-map-marker>
 						</google-map>
 					</div>
@@ -455,13 +455,6 @@
         </paper-card>
 			</div>
 		</div>
-    <paper-dialog id="dialog" on-iron-overlay-closed="_delete">
-      <h2>Are you sure?</h2>
-      <div class="buttons">
-        <paper-button dialog-dismiss>No</paper-button>
-        <paper-button dialog-confirm autofocus>Yes</paper-button>
-      </div>
-    </paper-dialog>
   </template>
   <script>
     Polymer({

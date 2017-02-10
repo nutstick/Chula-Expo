@@ -12,8 +12,10 @@
 <link rel="import" href="/public/lib/greenyouse-datetime-local-input/datetime-local-input.html">
 <link rel="import" href="/public/lib/google-map/google-map.html">
 <link rel="import" href="/public/lib/google-map/google-map-marker.html">
+<link rel="import" href="/public/lib/vaadin-combo-box/vaadin-combo-box.html">
 
 <link rel="import" href="/components/place-api.html">
+<link rel="import" href="/components/zone-api.html">
 
 <link rel="import" href="/components/shared-styles.html">
 
@@ -99,6 +101,33 @@
 							</div>
 						</div>
 
+            <div class="item">
+              <label class="label --input">Zone</label>
+              <div class="" style="display: inline-block">
+                <vaadin-combo-box
+                  name="zone"
+                  items="{{zones}}"
+                  id="input-zone"
+                  class="elements-box"
+                  no-label-float="true"
+                  value="{{place.zone}}"
+                  item-label-path="name.en"
+                  item-value-path="_id"
+                  placeholder="เลือก zone ของกิจกรรม"
+                  required
+                ></vaadin-combo-box>
+                <zone-api
+                  id="zoneAPI"
+                  zones="{{zones}}"
+                  error="{{error}}"
+                  loading="{{zoneLoading}}"
+                  page="0"
+                  page-size="0"
+                  fields="_id,nameEN"
+                ></zone-api>
+              </div>
+            </div>
+
 						<!-- Google Map -->
 						<div class="item google-map">
 							<google-map latitude="[[place.location.latitude]]" longitude="[[place.location.longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o" fit>
@@ -114,6 +143,9 @@
 							<div class="flex company">ภาษาไทย</div>
 						</div>
 						<paper-input type="text" label="ชื่อสถานที่" value="{{place.name.th}}" name="nameTH" always-float-label required></paper-input>
+          </div>
+
+          <div class="card-content">
 						<!-- English Language -->
 						<div class="flex-layout center">
 							<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
@@ -138,6 +170,9 @@
     Polymer({
       is: 'place-edit-page',
       properties: {
+        zones: {
+          type: Array
+        },
         url: {
           type: Object,
           value: ''
@@ -169,6 +204,7 @@
       },
       generateRequest: function(){
         this.$.placeAPI.generateRequest();
+        this.$.zoneAPI.generateRequest();
       },
       _delayedSubmit: function(event) {
         var form = this.$.form;
@@ -183,13 +219,27 @@
       _response: function(e) {
         if (e.detail.response.success) {
           this.$.form.reset();
-          window.location = '/place/' + this.placeId + '/show/';
+
+          var list = document.querySelector('place-show-page')
+          if(typeof list.generateRequest === 'function'){
+            list.generateRequest();
+          }
+
+          window.history.pushState({}, null, '/place/' + this.placeId + '/show/');
+          window.dispatchEvent(new CustomEvent('location-changed'));
         }
       },
       _presubmit: function(event) {
         this.$.form.request.method = 'put';
       	this.$.form.request.body.locationLat = this.place.location.latitude;
 				this.$.form.request.body.locationLong = this.place.location.longitude;
+
+        for (field in this.$.form.request.body) {
+          if (!this.$.form.request.body[field]) {
+            delete this.$.form.request.body[field];
+          }
+        }
+
       },
       _idChanged: function(id) {
         if (id) {
