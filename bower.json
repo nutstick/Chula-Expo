@@ -64,7 +64,7 @@
     "vaadin-combo-box": "^1.2.0",
     "mn-paper-datetime-picker": "^1.1.4",
     "paper-dialog": "^1.1.0",
-    "paper-date-picker-item": "^1.2.1",
+    "paper-date-picker-item": "https://github.com/nutstick/paper-date-picker-item.git#8538c067a49ef656945069b58d55499352da7dda",
     "paper-select": "^0.2.6",
     "qrcodejs": "^0.1.0",
     "iron-input-image": "^1.1.0",
