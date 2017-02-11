@@ -38,7 +38,7 @@
         */
         roomId: {
           type: String,
-          observer: '_idChanged'
+          observer: '_roomChanged'
         },
         page: {
           type: Number,
@@ -52,13 +52,9 @@
           type: String,
           value: ''
         },
-        start: {
+        placeId: {
           type: String,
-          value: ''
-        },
-        end: {
-          type: String,
-          value: ''
+          observer: '_placeChanged'
         },
         room: {
           type: String,
@@ -84,10 +80,11 @@
       },
 
       observers: [
-        'updateRequest(page,pageSize,fields,start,end,room)'
+        'updateRequest(page,pageSize,fields,start,end,room,placeId)'
       ],
 
-      updateRequest: function(page, pageSize, fields, start, end, room) {
+      updateRequest: function(page, pageSize, fields, start, end, room, placeId) {
+        console.log(place);
         if (pageSize === 0) {
           this.set('params.limit', null);
           this.set('params.skip', page);
@@ -114,14 +111,13 @@
           }
         }
       },
-      _idChanged: function(id) {
-        if (id && id!='show' && id!='edit' && id!='add' && id!='list') {
-          this.url = '/api/rooms/' + id;
-        } else if (id && id=='list'){
-          this.url = '/api/rooms';
-        } else {
-          this.url = '';
-        }
+      _placeChanged: function(id){
+        this.url = '/api/rooms?placeid=' + id;
+        this.generateRequest();
+      },
+      _roomChanged: function(id){
+        this.url = '/api/rooms/' + id;
+        this.generateRequest();
       }
     });
   </script>

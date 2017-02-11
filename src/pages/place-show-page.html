@@ -270,7 +270,7 @@
               </paper-card-dataitem>
             </div>
           </template>
-          <room-api id="roomAPI" url="[[urlRoom]]" rooms="{{rooms}}" error="{{error}}"></room-api>
+          <room-api id="roomAPI" place-id="{{placeId}}" rooms="{{rooms}}" error="{{error}}"></room-api>
         </paper-card>
       </div>
     </div>
@@ -350,11 +350,7 @@
         }.bind(this), 300);
       },
       _idChanged: function(id) {
-        if (id && id!='show' && id!='edit' && id!='add' && id!='list') {
-          this.urlRoom = '/api/rooms?placeid=' + id ;
-        } else {
-          this.urlRoom = '';
-        }
+        this.generateRequest();
       }
     })
   </script>

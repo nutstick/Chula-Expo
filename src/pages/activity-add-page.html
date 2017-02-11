@@ -265,6 +265,7 @@
                   no-label-float="true"
                   item-label-path="name.en"
                   item-value-path="_id"
+                  on-selected-item-changed="_computeRoom"
                   required
                   placeholder="เลือกสถานที่"
                 ></vaadin-combo-box>
@@ -292,7 +293,9 @@
                   placeholder="เลือกห้อง"
                 ></vaadin-combo-box>
                 <room-api
+                  id="roomAPI"
                   rooms="{{rooms}}"
+                  place-id="{{placeId}}"
                   error="{{error}}"
                   loading="{{roomLoading}}"
                   page="0"
@@ -374,6 +377,9 @@
         },
         places: {
           type: Array,
+        },
+        placeId: {
+          type: String
         },
         rooms: {
           type: Array,
@@ -457,6 +463,10 @@
             }
           }
 
+      },
+      _computeRoom: function(e) {
+        this.placeId = e.detail.value._id;
+        this.$.roomAPI.generateRequest();
       }
     })
   </script>

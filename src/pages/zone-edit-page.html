@@ -169,7 +169,7 @@
                     bannerUpload.addEventListener("upload-response", function(event) {
                       if(event.detail.file.xhr.status == 200){
                         var name = JSON.parse(event.detail.xhr.responseText);
-                        document.querySelector('zone-edit-page').querySelector('#banner').value = name.results.thumbnail;
+                        document.querySelector('zone-edit-page').querySelector('#banner').value = name.results.banner;
                       }
                     });
                     bannerUpload.addEventListener("upload-abort", function(event) {
