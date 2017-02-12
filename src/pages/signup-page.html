@@ -135,9 +135,9 @@
             <div class="item">
               <div class="input-label" id="gender">เพศ:</div>
               <paper-button-group selected="male">
-                <paper-button toggles active={{male}}>ชาย</paper-button>
-                <paper-button toggles active={{female}}>หญิง</paper-button>
-                <paper-button toggles>อื่นๆ</paper-button>
+                <paper-button name="male" toggles active={{male}}>ชาย</paper-button>
+                <paper-button name="female" toggles active={{female}}>หญิง</paper-button>
+                <paper-button name="other" toggles active={{other}}>อื่นๆ</paper-button>
               </paper-button-group>
             </div>
             <!-- Age -->
@@ -146,9 +146,9 @@
               <!-- Student/Worker -->
               <div class="input-label">ประเภท:</div>
               <paper-button-group selected="student">
-                <paper-button toggles active={{student}}>นักเรียน นิสิต</paper-button>
-                <paper-button toggles active={{worker}}>บุคคลทั่วๆ</paper-button>
-                <paper-button toggles active={{staff}}>สตาฟ</paper-button>
+                <paper-button name="student" toggles active={{student}}>นักเรียน นิสิต</paper-button>
+                <paper-button name="worker" toggles active={{worker}}>บุคคลทั่วๆ</paper-button>
+                <paper-button name="staff" toggles active={{staff}}>สตาฟ</paper-button>
               </paper-button-group>
               <!-- Student -->
               <fieldset class="field" hidden$="{{!student}}">
