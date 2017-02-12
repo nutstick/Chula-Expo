@@ -66,13 +66,17 @@ router.post('/', (req, res) => {
       year: req.body.academicYear,
       school: req.body.academicSchool
     };
-    user.tags = req.body.tags.split(',');
+    if (req.body.tags) {
+      user.tags = req.body.tags.split(',');
+    }
   }
   if (req.body.type === 'Worker' && req.body.workerJob) {
     user.worker = {
       job: req.body.workerJob
     };
-    user.tags = req.body.tags.split(',');
+    if (req.body.tags) {
+      user.tags = req.body.tags.split(',');
+    }
   }
   if (req.body.type === 'Staff' && req.body.staff) {
     if (req.body.staff !== 'Admin' && req.body.zone) {
