@@ -121,10 +121,7 @@ const UserSchema = new mongoose.Schema({
     }]
   },
   activityLog: [ActivityLogSchema],
-  tags: [{
-    type: ObjectId,
-    ref: 'Tag'
-  }],
+  tags: [String],
   faculties: [{
     type: ObjectId,
     ref: 'Zone'
