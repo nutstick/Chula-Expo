@@ -44,7 +44,7 @@
               
               window.history.pushState({}, null, '/');
               window.dispatchEvent(new CustomEvent('location-changed'));
-            } else if (res.code === 2) {
+            } else if (res.errors.code === 2) {
               window.history.pushState({}, null, '/signup?email=' + res.user.email
                 + '&name=' + res.user.name
                 + '&facebook=' + res.user.facebook

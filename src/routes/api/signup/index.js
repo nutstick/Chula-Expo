@@ -21,7 +21,8 @@ const router = express.Router();
  * @param {string} [academicYear] - Year of yor education (required with `academic` type).
  * @param {string} [academicSchool] - School name (required with `academic` type).
  * @param {string} [workerJob] - Job (required with `worker` type).
- * @param {string} [tags] - Interesting tags include interest faculty. In each tag seperate by `,`(`abc,bcd,cde`).
+ * @param {string} [tags] - Interesting tags include interest faculty.
+ *    In each tag seperate by `,`(`abc,bcd,cde`).
  * @param {string} [staff] - Staff Type, only allow [Staff, Scanner, Admin]
  *    (required with `staff` type).
  * @param {string} [registationCode] - Registation Code (needed when need grant user permission).
