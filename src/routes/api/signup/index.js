@@ -13,7 +13,7 @@ const router = express.Router();
  * @param {string} [google] - Google ID.
  * @param {[Object]} [token] - Array of token from provider
  * @param {string} name - Name.
- * @param {string} gender - Gender, only allow [Male, Female].
+ * @param {string} gender - Gender, only allow [Male, Female, Other].
  * @param {number} age - Age.
  * @param {string} profile - Prfile picture url.
  * @param {string} type - User type, only allow [Academic, Worker Staff].
