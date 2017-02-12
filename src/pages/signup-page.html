@@ -135,8 +135,9 @@
             <div class="item">
               <div class="input-label" id="gender">เพศ:</div>
               <paper-button-group selected="male">
-                <paper-button toggles name="male" active={{male}}>ชาย</paper-button>
-                <paper-button toggles name="female" active={{female}}>หญิง</paper-button>
+                <paper-button toggles active={{male}}>ชาย</paper-button>
+                <paper-button toggles active={{female}}>หญิง</paper-button>
+                <paper-button toggles>อื่นๆ</paper-button>
               </paper-button-group>
             </div>
             <!-- Age -->
@@ -145,9 +146,9 @@
               <!-- Student/Worker -->
               <div class="input-label">ประเภท:</div>
               <paper-button-group selected="student">
-                <paper-button toggles name="student" active={{student}}>นักเรียน นิสิต</paper-button>
-                <paper-button toggles name="worker" active={{worker}}>บุคคลทั่วๆ</paper-button>
-                <paper-button toggles name="staff" active={{staff}}>สตาฟ</paper-button>
+                <paper-button toggles active={{student}}>นักเรียน นิสิต</paper-button>
+                <paper-button toggles active={{worker}}>บุคคลทั่วๆ</paper-button>
+                <paper-button toggles active={{staff}}>สตาฟ</paper-button>
               </paper-button-group>
               <!-- Student -->
               <fieldset class="field" hidden$="{{!student}}">
@@ -296,7 +297,7 @@
           this.$.confirmPassword.invalid = true;
           return event.preventDefault();
         }
-        this.$.form.request.body.gender = this.male ? 'Male' : 'Female';
+        this.$.form.request.body.gender = this.male ? 'Male' : (this.female ? 'Female': 'Other');
         this.$.form.request.body.type = this.student ? 'Academic' : (this.worker ? 'Worker' : 'Staff');
         if (this.$.form.request.body.type === 'Staff') {
           this.$.form.request.body.staff = this.adminStaff ? 'Admin' : (this.scannerStaff ? 'Scanner' : 'Staff');
