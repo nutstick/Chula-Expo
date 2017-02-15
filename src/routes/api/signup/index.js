@@ -11,7 +11,7 @@ const router = express.Router();
  * @param {password} [password] - Password.
  * @param {string} [facebook] - Facebook ID.
  * @param {string} [google] - Google ID.
- * @param {[Object]} [token] - Array of token from provider
+ * @param {[Object]} [tokens] - Array of token from provider
  * @param {string} name - Name.
  * @param {string} gender - Gender, only allow [Male, Female, Other].
  * @param {number} age - Age.
