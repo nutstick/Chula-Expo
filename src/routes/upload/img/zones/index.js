@@ -37,7 +37,7 @@ router.post('/banner', multer({ storage, limits: { fileSize: 4000000 } }).single
   return res.json({
     success: true,
     results: {
-      thumbnail: `/public/img/zone/${req.file.filename}`,
+      banner: `/public/img/zone/${req.file.filename}`,
     }
   });
 });

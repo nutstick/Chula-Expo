@@ -67,14 +67,11 @@ router.get('/', (req, res) => {
       return prev;
     }, {});
   }
-  //-------------
-  let populate='';
-  if(req.query.populate)populate= req.query.populate;
 
 //-----------------------------
-  Room.find(filter).populate(populate,'name')
+  Room.find(filter)
     .select(fields).sort(sort).skip(skip)
-    .limit(limit)//.populate('place')
+    .limit(limit)
     .exec(
     (err, rooms) => {
       if (err) {
