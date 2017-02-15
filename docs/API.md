@@ -85,10 +85,10 @@ ticketId | ObjectId | false | Get by belong to ticket
 start | Date or RangeQuery(Date) | false | Get by start date
 end | Date or RangeQuery(Date) | false | Get by end date
 seatsAvaliable | number or RangeQuery(number) | false | Get by avaliable seats left
-sort | string | false | Sorted by field name (more of [sort](./api-helper.md#sort)
-fields | string | false | Get only specific fields (more of [sort](./api-helper.md#fields)
-limit | number | false | Number of item per query (more of [sort](./api-helper.md#limit)
-skip | number | false | Offset items after sorted (more of [sort](./api-helper.md#skip)
+sort | string | false | Sorted by field name (more of [sort](./api-helper.md#sort))
+fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
+limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit))
+skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#skip))
 ### Accessible fields
  * name
  * activityId
