@@ -65,14 +65,7 @@ results.token | string | *up to request* | JWT Token use to communicate with API
 
 
 ## Rounds
-```java
- * @return {boolean} success - Successful querying flag.
- * @return {Round[]} results - Result rounds for the query.
- * @return {Object} queryInfo - Metadat query information.
- * @return {number} queryInfo.total - Total numbers of documents in collection that matched.
- * @return {number} queryInfo.limit - Limit that was used.
- * @return {number} queryInfo.skip - Skip that was used.
- */
+```
 GET api/rounds
 ```
 
@@ -97,6 +90,16 @@ skip | number | false | Offset items after sorted (more of [skip](./api-helper.m
  * fullCapacity
  * seatsAvaliable
  * seatsReserved
+
+### Successful Results
+
+Name | Datatype | Value | Description
+-----|----------|-------|------------
+success | boolean | true | Success request
+results | Round[] | *up to request* | Result round from query
+queryInfo.total | number | *up to request* | Total numbers of items in query
+queryInfo.limit | number | *up to request* | Limit that was used
+queryInfo.skip | number | *up to request* | Skip that was used
 
 ```java
 /**
