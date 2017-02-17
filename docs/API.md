@@ -82,7 +82,7 @@ sort | string | false | Sorted by field name (more of [sort](./api-helper.md#sor
 fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
 limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit))
 skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#skip))
-### Accessible fields
+Accessible fields
  * name
  * activityId
  * start
