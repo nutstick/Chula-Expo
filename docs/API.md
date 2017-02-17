@@ -261,7 +261,7 @@ Name | Datatype | required | Description
 -----|----------|----------|------------
 name | string | false | Get by name
 type | string | false | Get by type
-shortName | String  | false Get by zone
+shortName | String  | false | Get by zone
 sort | string | false | Sorted by field name (more of [sort](./api-helper.md#sort))
 fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
 limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit))
