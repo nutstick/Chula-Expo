@@ -63,6 +63,142 @@ success | boolean | true | Success request
 message | string | User sign up successfull! | Successful message
 results.token | string | *up to request* | JWT Token use to communicate with API
 
+## Activity
+```
+GET api/activities
+```
+Name | Datatype | required | Description
+-----|----------|----------|------------
+name | string | false Get by name
+tags | string | false Get by tags
+zone | ObjectId | false Get by zone
+start | Date or RangeQuery<Date> | false | Get by start time
+end | Date or RangeQuery<Date> | false | Get by start end
+location | string | false | Get by location name
+sort | string | false | Sorted by field name (more of [sort](./api-helper.md#sort))
+fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
+limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit))
+skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#skip))
+Accessible fields
+ * nameEN - string
+ * [nameTH] - string
+ * thumbnail - Url
+ * banner - Url
+ * shortDescriptionEN
+ * [shortDescriptionTH]
+ * descriptionEN
+ * [descriptionTH]
+ * contact - string
+ * pictures - Url[]
+ * video
+ * pdf  - Url
+ * link - Url
+ * isHighlight - boolean
+ * tags - string[]
+ * locationPlace
+ * locationFloor
+ * locationRoom
+ * locationLat
+ * locationLong
+ * zone - Zone's Object
+ * start - Date
+ * end - Date
+
+### Successful Results
+
+Name | Datatype | Value | Description
+-----|----------|-------|------------
+success | boolean | true | Success request
+results | Activity[] | *up to request* | Result activities from query
+queryInfo.total | number | *up to request* | Total numbers of items in query
+queryInfo.limit | number | *up to request* | Limit that was used
+queryInfo.skip | number | *up to request* | Skip that was used
+
+
+```
+GET api/activities/:aid
+```
+Name | Datatype | required | Description
+-----|----------|----------|------------
+fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
+Accessible fields
+ * nameEN - string
+ * [nameTH] - string
+ * thumbnail - Url
+ * banner - Url
+ * shortDescriptionEN
+ * [shortDescriptionTH]
+ * descriptionEN
+ * [descriptionTH]
+ * contact - string
+ * pictures - Url[]
+ * video
+ * pdf  - Url
+ * link - Url
+ * isHighlight - boolean
+ * tags - string[]
+ * locationPlace
+ * locationFloor
+ * locationRoom
+ * locationLat
+ * locationLong
+ * zone - Zone's Object
+ * start - Date
+ * end - Date
+
+### Successful Results
+
+Name | Datatype | Value | Description
+-----|----------|-------|------------
+success | boolean | true | Success request
+results | Activity | *up to request* | Result activity from query
+
+
+## Activity's Round
+```
+GET api/activities/:aid/rounds
+```
+Name | Datatype | required | Description
+-----|----------|----------|------------
+name | string | false | Get by name
+start | Date or RangeQuery(Date) | false | Get by start date
+end | Date or RangeQuery(Date) | false | Get by end date
+seatsAvaliable | number or RangeQuery(number) | false | Get by avaliable seats left
+sort | string | false | Sorted by field name (more of [sort](./api-helper.md#sort))
+fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
+limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit))
+skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#skip))
+Accessible fields
+ * nameTH
+ * nameEN
+ * start
+ * end
+ * seatsFulCapacity
+ * seatsReserved
+ * seatsAvaliable
+
+### Successful Results
+
+Name | Datatype | Value | Description
+-----|----------|-------|------------
+success | boolean | true | Success request
+results | Round[] | *up to request* | Result rounds from query
+queryInfo.total | number | *up to request* | Total numbers of items in query
+queryInfo.limit | number | *up to request* | Limit that was used
+queryInfo.skip | number | *up to request* | Skip that was used
+
+```
+POST api/activities/:aid/rounds/:rid/reserve
+```
+**This method required token in header ((more of [Authorization](./api-helper.md#authorization)))**
+
+### Successful Results
+
+Name | Datatype | Value | Description
+-----|----------|-------|------------
+success | boolean | true | Success request
+message | string | Create Ticket Successful | Successful message
+results | Ticket | *up to request* | Result ticket that create by reserve action
 
 ## Rounds
 ```
