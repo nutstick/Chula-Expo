@@ -69,9 +69,9 @@ GET api/activities
 ```
 Name | Datatype | required | Description
 -----|----------|----------|------------
-name | string | false Get by name
-tags | string | false Get by tags
-zone | ObjectId | false Get by zone
+name | string | false | Get by name
+tags | string | false | Get by tags
+zone | ObjectId | false | Get by zone
 start | Date or RangeQuery<Date> | false | Get by start time
 end | Date or RangeQuery<Date> | false | Get by start end
 location | string | false | Get by location name
@@ -252,3 +252,179 @@ queryInfo.skip | number | *up to request* | Skip that was used
  */
  POST api/rounds
 ```
+
+## Zone
+```
+GET api/zones
+```
+Name | Datatype | required | Description
+-----|----------|----------|------------
+name | string | false | Get by name
+type | string | false | Get by type
+shortName | String  | false Get by zone
+sort | string | false | Sorted by field name (more of [sort](./api-helper.md#sort))
+fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
+limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit))
+skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#skip))
+Accessible fields
+ * nameEN - string
+ * [nameTH] - string
+ * shortNameEN - string
+ * [shortNameTH] - string
+ * thumbnail - Url
+ * banner - Url
+ * descriptionEN - string
+ * [descriptionTH] - string
+ * welcomeMessageEN - string
+ * [welcomeMessageTH] - string
+ * type - string
+ * website - string
+ * locationLat
+ * locationLong
+
+### Successful Results
+
+Name | Datatype | Value | Description
+-----|----------|-------|------------
+success | boolean | true | Success request
+results | Zone[] | *up to request* | Result zones from query
+queryInfo.total | number | *up to request* | Total numbers of items in query
+queryInfo.limit | number | *up to request* | Limit that was used
+queryInfo.skip | number | *up to request* | Skip that was used
+
+
+```
+GET api/zones/:zid
+```
+Name | Datatype | required | Description
+-----|----------|----------|------------
+fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
+Accessible fields
+* nameEN - string
+* [nameTH] - string
+* shortNameEN - string
+* [shortNameTH] - string
+* thumbnail - Url
+* banner - Url
+* descriptionEN - string
+* [descriptionTH] - string
+* welcomeMessageEN - string
+* [welcomeMessageTH] - string
+* type - string
+* website - string
+* locationLat
+* locationLong
+
+### Successful Results
+
+Name | Datatype | Value | Description
+-----|----------|-------|------------
+success | boolean | true | Success request
+results | Zone | *up to request* | Result zone from query
+
+## Facility
+```
+GET api/facilities
+```
+Name | Datatype | required | Description
+-----|----------|----------|------------
+name | string | false | Get by name
+type | string | false | Get by type
+place | ObjectId | false | Get by place
+sort | string | false | Sorted by field name (more of [sort](./api-helper.md#sort))
+fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
+limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit))
+skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#skip))
+Accessible fields
+ * nameEN - string
+ * [nameTH] - string
+ * descriptionEN - string
+ * [descriptionTH] - string
+ * type - string
+ * place - Place's Object
+ * locationLat
+ * locationLong
+
+### Successful Results
+
+Name | Datatype | Value | Description
+-----|----------|-------|------------
+success | boolean | true | Success request
+results | Facility[] | *up to request* | Result facilities from query
+queryInfo.total | number | *up to request* | Total numbers of items in query
+queryInfo.limit | number | *up to request* | Limit that was used
+queryInfo.skip | number | *up to request* | Skip that was used
+
+
+```
+GET api/facilities/:fid
+```
+Name | Datatype | required | Description
+-----|----------|----------|------------
+fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
+Accessible fields
+ * nameEN - string
+ * [nameTH] - string
+ * descriptionEN - string
+ * [descriptionTH] - string
+ * type - string
+ * place - Place's Object
+ * locationLat
+ * locationLong
+
+### Successful Results
+
+Name | Datatype | Value | Description
+-----|----------|-------|------------
+success | boolean | true | Success request
+results | Facility | *up to request* | Result facility from query
+
+## Place
+```
+GET api/places
+```
+Name | Datatype | required | Description
+-----|----------|----------|------------
+name | string | false | Get by name
+code | string | false | Get by code
+sort | string | false | Sorted by field name (more of [sort](./api-helper.md#sort))
+fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
+limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit))
+skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#skip))
+Accessible fields
+ * nameEN - string
+ * [nameTH] - string
+ * code - string
+ * locationLat
+ * locationLong
+
+### Successful Results
+
+Name | Datatype | Value | Description
+-----|----------|-------|------------
+success | boolean | true | Success request
+results | Place[] | *up to request* | Result places from query
+queryInfo.total | number | *up to request* | Total numbers of items in query
+queryInfo.limit | number | *up to request* | Limit that was used
+queryInfo.skip | number | *up to request* | Skip that was used
+
+
+```
+GET api/places/:pid
+```
+Name | Datatype | required | Description
+-----|----------|----------|------------
+fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
+Accessible fields
+ * nameEN - string
+ * [nameTH] - string
+ * code - string
+ * locationLat
+ * locationLong
+
+### Successful Results
+
+Name | Datatype | Value | Description
+-----|----------|-------|------------
+success | boolean | true | Success request
+results | Place | *up to request* | Result place from query

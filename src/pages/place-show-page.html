@@ -11,6 +11,7 @@
 <link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="/public/lib/greenyouse-datetime-local-input/datetime-local-input.html">
 <link rel="import" href="/public/lib/google-map/google-map.html">
+<link rel="import" href="/public/lib/paper-dialog/paper-dialog.html">
 <link rel="import" href="/public/lib/google-map/google-map-marker.html">
 
 <link rel="import" href="/components/place-api.html">
@@ -274,6 +275,13 @@
         </paper-card>
       </div>
     </div>
+    <paper-dialog id="dialog" on-iron-overlay-closed="_delete">
+      <h2>Are you sure?</h2>
+      <div class="buttons">
+        <paper-button dialog-dismiss>No</paper-button>
+        <paper-button dialog-confirm autofocus>Yes</paper-button>
+      </div>
+    </paper-dialog>
   </template>
   <script>
     Polymer({
@@ -303,7 +311,10 @@
         urlRoom: {
           type: String,
           value: ''
-        }
+        },
+        deleteId: {
+          type: String,
+        },
       },
       generateRequest: function(){
         this.$.placeAPI.generateRequest();
@@ -332,22 +343,27 @@
       _reset: function(event) {
         this.$.form.reset();
       },
-
       _deleteClick: function(event) {
-        var id = event.model.item['_id'];
-        var url = '/api/rooms/' + id;
+        this.deleteId = event.model.item['_id'];
+        this.$.dialog.open();
+      },
+      _delete: function(event) {
+        if(event.detail.confirmed) {
+          var id = this.deleteId;
+          var url = '/api/rooms/' + id;
 
-        var dom = this;
-        setTimeout(function () {
-          var req = new XMLHttpRequest();
-          req.open('DELETE',encodeURI(url));
-          req.onload = function() {
-            if (req.status === 202) {
-              dom.$.roomAPI.generateRequest();
-            }
-          };
-          req.send();
-        }.bind(this), 300);
+          var dom = this;
+          setTimeout(function () {
+            var req = new XMLHttpRequest();
+            req.open('DELETE',encodeURI(url));
+            req.onload = function() {
+              if (req.status === 202) {
+                dom.$.roomAPI.generateRequest();
+              }
+            };
+            req.send();
+          }.bind(this), 300);
+        }
       },
       _idChanged: function(id) {
         this.generateRequest();

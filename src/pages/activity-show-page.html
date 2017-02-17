@@ -11,6 +11,7 @@
 <link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="/public/lib/greenyouse-datetime-local-input/datetime-local-input.html">
 <link rel="import" href="/public/lib/google-map/google-map.html">
+<link rel="import" href="/public/lib/paper-dialog/paper-dialog.html">
 <link rel="import" href="/public/lib/google-map/google-map-marker.html">
 
 <script type="text/javascript" src="/public/js/jquery.min.js"></script>
@@ -455,6 +456,13 @@
         </paper-card>
 			</div>
 		</div>
+    <paper-dialog id="dialog" on-iron-overlay-closed="_delete">
+      <h2>Are you sure?</h2>
+      <div class="buttons">
+        <paper-button dialog-dismiss>No</paper-button>
+        <paper-button dialog-confirm autofocus>Yes</paper-button>
+      </div>
+    </paper-dialog>
   </template>
   <script>
     Polymer({
