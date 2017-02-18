@@ -17,9 +17,9 @@ describe('Facility Model', () => {
 
 
   it('should create a new Facility', (done) => {
-    const typeNumber = casual.integer(from = 0, to = 4);
+    const typeNumber = casual.integer(from = 0, to = 4); // eslint-disable-line no-undef
     let typeName = '';
-    switch(typeNumber) {
+    switch (typeNumber) {
       case 0:
         typeName = 'toilet';
         break;
@@ -48,8 +48,8 @@ describe('Facility Model', () => {
       type: typeName,
       place: ObjectId(),
       location: {
-        latitude: casual.double(from = -10, to = 10),
-        longitude: casual.double(from = -10, to = 10)
+        latitude: casual.double(from = -10, to = 10), // eslint-disable-line no-undef
+        longitude: casual.double(from = -10, to = 10) // eslint-disable-line no-undef
       },
     });
 

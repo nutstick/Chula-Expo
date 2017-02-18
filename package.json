@@ -9,6 +9,9 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "./node_modules/.bin/nodemon src/server.js",
+    "lint": "npm run lint:js",
+    "lint:js": "eslint --ignore-path .gitignore --ignore-pattern src/public -- . ",
+    "lint:watch": "npm run lint --watch",
     "test": "cross-env NODE_ENV=test \"./node_modules/.bin/mocha\" --reporter spec --recursive \"./src/**/*.test.js\"",
     "test:debug": "./node_modules/.bin/mocha --reporter spec --recursive \"./src/**/*.test.js\"",
     "build": "node script/build.js"

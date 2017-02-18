@@ -1,6 +1,5 @@
 const express = require('express');
 const passport = require('passport');
-const { retrieveError } = require('../../../tools/retrieveError');
 
 const router = express.Router();
 

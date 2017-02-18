@@ -2,7 +2,7 @@ const express = require('express');
 const { Activity, Round } = require('../../../models');
 const { isAuthenticatedByToken } = require('../../../config/authenticate');
 const retrieveError = require('../../../tools/retrieveError');
-const RangeQuery = require('../../../tools/RangeQuery');
+// const RangeQuery = require('../../../tools/RangeQuery');
 
 const router = express.Router({ mergeParams: true });
 

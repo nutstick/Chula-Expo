@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+
 const ObjectId = mongoose.Schema.Types.ObjectId;
 
 /**
@@ -21,11 +22,10 @@ const PlaceSchema = new mongoose.Schema({
     type: ObjectId,
     ref: 'Room'
   }],
-  zone:{
-     type: ObjectId,
-     ref: 'Zone'
-
-    }
+  zone: {
+    type: ObjectId,
+    ref: 'Zone'
+  }
 });
 
 const Place = mongoose.model('Place', PlaceSchema);

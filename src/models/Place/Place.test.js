@@ -22,8 +22,8 @@ describe('Place Model', () => {
         en: casual.title
       },
       location: {
-        latitude: casual.double(from = -10, to = 10),
-        longitude: casual.double(from = -10, to = 10)
+        latitude: casual.double(from = -10, to = 10), // eslint-disable-line no-undef
+        longitude: casual.double(from = -10, to = 10) // eslint-disable-line no-undef
       },
     });
 

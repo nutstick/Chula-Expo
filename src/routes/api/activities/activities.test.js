@@ -81,7 +81,6 @@ describe('API Activities', () => {
           .send(activity)
           .end((err, res) => {
             expect(err).to.be.null;
-            console.log(err)
             expect(res.body).to.have.property('success').eq(true);
             expect(res.body).to.have.property('results');
             done();
