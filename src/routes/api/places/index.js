@@ -46,6 +46,7 @@ router.get('/', (req, res) => {
   if (req.query.zoneid) {
     filter.zone = req.query.zoneid;
   }
+
   //----------------------------------------------------------------
   // initial limit
   let limit;

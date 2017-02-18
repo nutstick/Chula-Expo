@@ -247,6 +247,7 @@
                   item-label-path="name.en"
                   item-value-path="_id"
                   placeholder="เลือก zone ของกิจกรรม"
+                  on-selected-item-changed="_computePlace"
                   required
                 ></vaadin-combo-box>
                 <zone-api
@@ -281,6 +282,7 @@
                 <place-api
                   id="placeAPI"
                   places="{{places}}"
+                  zone-id="{{zoneId}}"
                   error="{{error}}"
                   loading="{{placeLoading}}"
                   page="0"
@@ -391,6 +393,9 @@
           type: Number,
           value: 16
         },
+        zoneId: {
+          type: String
+        },
         placeId: {
           type: String
         },
@@ -486,6 +491,10 @@
         } else {
           this.url = '';
         }
+      },
+      _computePlace: function(e) {
+        this.zoneId = e.detail.value._id;
+        this.$.roomAPI.generateRequest();
       },
       _computeRoom: function(e) {
         this.placeId = e.detail.value._id;

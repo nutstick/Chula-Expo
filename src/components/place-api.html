@@ -76,6 +76,10 @@
           type: Object,
           notify: true,
         },
+        zoneId: {
+          type: String,
+          observer: '_zoneChanged'
+        },
         loading: Boolean,
         error: {
           type: Object,
@@ -84,10 +88,10 @@
       },
 
       observers: [
-        'updateRequest(page,pageSize,fields)'
+        'updateRequest(page,pageSize,fields,zoneId)'
       ],
 
-      updateRequest: function(page, pageSize, fields) {
+      updateRequest: function(page, pageSize, fields, zoneId) {
         if (pageSize === 0) {
           this.set('params.limit', null);
           this.set('params.skip', page);
@@ -113,6 +117,10 @@
             this.error = event.detail.response.errors;
           }
         }
+      },
+      _zoneChanged: function(id){
+        this.url = '/api/places?zoneid=' + id;
+        this.generateRequest();
       },
       _idChanged: function(id) {
         if (id && id!='show' && id!='edit' && id!='add' && id!='list') {
