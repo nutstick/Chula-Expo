@@ -65,10 +65,20 @@ router.get('/', (req, res) => {
   // RangeQuery of start and end
   // Activities's start time range query
   if (req.query.start) {
-    filter.start = RangeQuery(JSON.parse(req.query.start), 'Date');
+    try {
+      req.query.start = JSON.parse(req.query.start);
+    } catch (err) {
+      console.log(err);
+    }
+    filter.start = RangeQuery(req.query.start, 'Date');
   }
   // Activities's end time range query
   if (req.query.end) {
+    try {
+      req.query.end = JSON.parse(req.query.end);
+    } catch (err) {
+      console.log(err);
+    }
     filter.end = RangeQuery(JSON.parse(req.query.end), 'Date');
   }
 
