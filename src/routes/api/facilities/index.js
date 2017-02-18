@@ -1,6 +1,5 @@
 const express = require('express');
 const Facility = require('../../../models/Facility');
-const Place = require('../../../models/Place');
 const retrieveError = require('../../../tools/retrieveError');
 
 const router = express.Router();
@@ -174,6 +173,9 @@ router.put('/:id', (req, res) => {
     }
     if (req.body.descriptionEN) {
       fac.description.en = req.body.descriptionEN;
+    }
+    if (req.body.type) {
+      fac.type = req.body.type;
     }
     if (req.body.place) {
       fac.place = req.body.place;

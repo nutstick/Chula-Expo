@@ -98,7 +98,13 @@ router.get('/', (req, res) => {
       }
       res.status(200).json({
         success: true,
-        results: zones
+        results: zones,
+        queryInfo: {
+          total: 1,
+          limit,
+          skip,
+          user: req.user,
+        }
       });
     });
 });
