@@ -1,12 +1,13 @@
 const { isString, isNumber } = require('util');
+const moment = require('moment');
 
 module.exports = (queryInput, type = 'string') => {
   if (type === 'Date') {
     // Standard equals query
     if (isString(queryInput)) {
       // Validate Date parsing
-      if (!Number.isNaN(Date.parse(queryInput.eq))) {
-        return new Date(queryInput.eq);
+      if (moment(queryInput).isValid()) {
+        return moment(queryInput);
       }
       return null;
     }
