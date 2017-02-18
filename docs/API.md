@@ -237,22 +237,6 @@ queryInfo.total | number | *up to request* | Total numbers of items in query
 queryInfo.limit | number | *up to request* | Limit that was used
 queryInfo.skip | number | *up to request* | Skip that was used
 
-```java
-/**
- * Create Round
- * @param {string} name - Round name.
- * @param {ObjectId} activityId - Related activity id.
- * @param {Date} start - Start time of round.
- * @param {Date} end - End time of round.
- * @param {number} [seatsReserved] - Number of reserved seats.
- * @param {number} fullCapacity - Number of full capacity seats.
- *
- * @return {boolean} success - Successful querying flag.
- * @return {Object} round - Created Round.
- */
- POST api/rounds
-```
-
 ## Zone
 ```
 GET api/zones
