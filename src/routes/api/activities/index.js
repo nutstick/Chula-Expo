@@ -3,7 +3,7 @@ const Activity = require('../../../models/Activity');
 const _ = require('lodash');
 const mongoose = require('mongoose');
 const { RangeQuery } = require('../../../tools');
-// const { isAuthenticatedByToken, isStaff } = require('../../../config/authenticate');
+const { isAuthenticatedByToken, isStaff } = require('../../../config/authenticate');
 
 const router = express.Router();
 /**
@@ -68,7 +68,7 @@ router.get('/', (req, res) => {
     try {
       req.query.start = JSON.parse(req.query.start);
     } catch (err) {
-      console.log(err);
+      // return res.sendError(5, err);
     }
     filter.start = RangeQuery(req.query.start, 'Date');
   }
@@ -77,9 +77,9 @@ router.get('/', (req, res) => {
     try {
       req.query.end = JSON.parse(req.query.end);
     } catch (err) {
-      console.log(err);
+      // return res.sendError(5, err);
     }
-    filter.end = RangeQuery(JSON.parse(req.query.end), 'Date');
+    filter.end = RangeQuery(req.query.end, 'Date');
   }
 
   // Name Query
@@ -152,8 +152,8 @@ router.get('/', (req, res) => {
  * Create a new activity
  * Access at POST http://localhost:8080/api/activities
  */
-// router.post('/', isAuthenticatedByToken, isStaff, (req, res) => {
-router.post('/', (req, res) => {
+// router.post('/', (req, res) => {
+router.post('/', isAuthenticatedByToken, isStaff, (req, res) => {
   // Check match zone with User
   /*
   if (req.user.staff.type === 'Staff' && req.user.staff.staffType !== 'Admin'
@@ -268,8 +268,8 @@ router.get('/:id/qrcode', (req, res) => {
 // Update an existing activity via PUT(JSON format)
 // ex. { "name","EditName"}
 // Access at PUT http://localhost:3000/api/activities/:id
-// router.put('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
-router.put('/:id', (req, res) => {
+// router.put('/:id', (req, res) => {
+router.put('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
   const updateFields = _.pick(req.body, ['thumbnail', 'banner', 'contact', 'video', 'pdf', 'link', 'isHighlight', 'zone', 'start', 'end']);
 
   if (updateFields.start) {
@@ -334,8 +334,8 @@ router.put('/:id', (req, res) => {
 
 // Delete an existing activity via DEL.
 // Access at DEL http://localhost:3000/api/activities/:id
-// router.delete('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
-router.delete('/:id', (req, res) => {
+// router.delete('/:id', (req, res) => {
+router.delete('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
   Activity.findById(req.params.id, (err, activity) => {
     // Handle error from User.findById
     if (err) {

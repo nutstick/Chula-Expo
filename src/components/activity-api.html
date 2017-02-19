@@ -97,8 +97,16 @@
         }
 
         this.set('params.fields', fields)
-        this.set('params.start', start);
-        this.set('params.end', end);
+        if (start) {
+          var startQuery = { gte: start };
+          this.set('params.start', JSON.stringify(startQuery));
+          this.set('params.skip', 0);
+        }
+        if (end) {
+          var endQuery = { lte: end };
+          this.set('params.end', JSON.stringify(endQuery));
+          this.set('params.skip', 0);
+        }
         this.set('params.zone', zone);
       },
       generateRequest: function() {
