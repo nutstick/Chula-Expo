@@ -141,7 +141,7 @@
           </app-toolbar>
           <app-toolbar class="tabs-bar" hidden$="{{!displayTab}}">
             <!-- Nav on desktop: tabs -->
-            <paper-tabs selected="[[page]]" attr-for-selected="name">
+            <paper-tabs id="navigation" selected="[[page]]" attr-for-selected="name">
               <paper-tab name="home"><a href="/" horizontal center-center layout>Home</a></paper-tab>
               <paper-tab name="signup"><a href="/signup/" horizontal center-center layout>Sign Up</a></paper-tab>
               <paper-tab hidden$="[[!isAuthenticate]]" name="zone"><a href="/zone/" horizontal center-center layout>Zone</a></paper-tab>
