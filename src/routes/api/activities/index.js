@@ -68,7 +68,7 @@ router.get('/', (req, res) => {
     try {
       req.query.start = JSON.parse(req.query.start);
     } catch (err) {
-      console.log(err);
+      // return res.sendError(5, err);
     }
     filter.start = RangeQuery(req.query.start, 'Date');
   }
@@ -77,9 +77,9 @@ router.get('/', (req, res) => {
     try {
       req.query.end = JSON.parse(req.query.end);
     } catch (err) {
-      console.log(err);
+      // return res.sendError(5, err);
     }
-    filter.end = RangeQuery(JSON.parse(req.query.end), 'Date');
+    filter.end = RangeQuery(req.query.end, 'Date');
   }
 
   // Name Query
