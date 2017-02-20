@@ -125,7 +125,7 @@ router.post('/', (req, res) => {
 
   user.name = req.body.name;
   user.gender = req.body.gender;
-  user.age = req.body.age;
+  user.age = Number.parseInt(req.body.age, 10);
   user.profile = req.body.profile;
   user.type = req.body.type;
   if (req.body.type === 'Academic' && req.body.academicLevel && req.body.academicYear && req.body.academicSchool) {
@@ -204,7 +204,7 @@ router.put('/:id', (req, res) => {
     user.gender = req.body.gender;
   }
   if (req.body.age) {
-    user.age = req.body.age;
+    user.age = Number.parseInt(req.body.age, 10);
   }
   if (req.body.profile) {
     user.profile = req.body.profile;

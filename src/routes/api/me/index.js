@@ -48,16 +48,21 @@ router.get('/', (req, res) => {
 
 /**
  * Update token owner user infomation
- * Access at GET http://localhost:8080/api/me
- * @param {string} [name]
- * @param {string} [email]
- * @param {number} [age]
- * @param {string} [gender]
- * @param {string} [picture]
- * @param {string} [type]
- * @param {number} [ัyear]
- * @param {string} [ัschool]
- * @param {string} [ัcompony]
+ * Access at PUT http://localhost:8080/api/me
+ * @param {email} email - Email.
+ * @param {password} [password] - Password.
+ * @param {string} name - Name.
+ * @param {string} gender - Gender, only allow [Male, Female].
+ * @param {number} age - Age.
+ * @param {string} profile - Prfile picture url.
+ * @param {string} type - User type, only allow [Academic, Worker Staff].
+ * @param {string} [academicLevel] - Academic Level (required with `academic` type).
+ * @param {string} [academicYear] - Year of yor education (required with `academic` type).
+ * @param {string} [academicSchool] - School name (required with `academic` type).
+ * @param {string} [workerJob] - Job (required with `worker` type).
+ * @param {string} [staff] - Staff Type, only allow [Staff, Scanner, Admin]
+ *    (required with `staff` type).
+ * @param {ObjectId} [zone] - Staff's Zone (required with `staff` type and `Scanner` or `Staff`).
  *
  * @return {boolean} success - Successful request.
  * @return {string} message - Successful message.
@@ -76,34 +81,34 @@ router.put('/', (req, res) => {
   if (req.body.gender) {
     req.user.gender = req.body.gender;
   }
-  if (req.body.picture) {
-    req.user.picture = req.body.picture;
+  if (req.body.profile) {
+    req.user.profile = req.body.profile;
   }
   if (req.body.type) {
     req.user.type = req.body.type;
   }
-  if (req.user.type === 'Academic') {
-    if (req.body.year) {
-      req.user.academic.year = Number.parseInt(req.body.year, 10);
-    }
-    if (req.body.school) {
-      req.user.academic.school = req.body.school;
-    }
-    if (!req.user.academic.school || !req.user.academic.year) {
-      return res.status(403).json({
-        success: false,
-        errors: retrieveError(27, 'Missing Academic infomation (year, school) of tager user.'),
-      });
-    }
-  } else if (req.user.type === 'Worker') {
-    if (req.body.company) {
-      req.user.worker.company = req.body.company;
-    }
-    if (!req.user.worker.company) {
-      return res.status(403).json({
-        success: false,
-        errors: retrieveError(27, 'Missing Work infomation (company) of target user.'),
-      });
+  if (req.body.type === 'Academic' && req.body.academicLevel && req.body.academicYear && req.body.academicSchool) {
+    req.user.academic = {
+      level: req.body.academicLevel,
+      year: req.body.academicYear,
+      school: req.body.academicSchool
+    };
+  }
+  if (req.body.type === 'Worker' && req.body.workerJob) {
+    req.user.worker = {
+      job: req.body.workerJob
+    };
+  }
+  if (req.body.type === 'Staff' && req.body.staffT) {
+    if (req.body.staff !== 'Admin' && req.body.zone) {
+      req.user.staff = {
+        staffType: req.body.staff,
+        zone: req.body.zone
+      };
+    } else {
+      req.user.staff = {
+        staffType: req.body.staff
+      };
     }
   }
 
@@ -138,9 +143,9 @@ router.get('/account', (req, res) => {
   res.json({
     success: true,
     results: {
-      admin: req.user.admin,
       email: req.user.email,
       facebook: req.user.facebook,
+      google: req.user.google,
     },
   });
 });

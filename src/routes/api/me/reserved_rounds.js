@@ -134,11 +134,8 @@ router.get('/', (req, res) => {
  * @return {boolean} success - Successful querying flag.
  * @return {Round[] + check} results - Result rounds for the query.
  * @return {Object} queryInfo - Metadata query information.
- * @return {number} queryInfo.total - Total numbers of documents in collection that match the query.
- * @return {number} queryInfo.limit - Limit that was used.
- * @return {number} queryInfo.skip - Skip that was used.
- * @return {number} queryInfo.user - User's used to query.
- * @return {number} queryInfo.round - Round's used to query.
+ * @return {ObjectId} queryInfo.user - User's used to query.
+ * @return {ObjectId} queryInfo.round - Round's used to query.
  */
 router.get('/:rid', (req, res) => {
   let fields;
