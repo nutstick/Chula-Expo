@@ -16,7 +16,7 @@
 
 ## API query details
 
-### Field
+### Fields
 
 ใช้กำหนดว่าต้องการข้อมูลอะไรบ้างใน request นั้น เช่น `/api/activities` สำหรับหน้า
 แรกที่ต้องการแค่ `ชื่อ(nameTH),รูป(thumbnail),เวลาเริ่ม(start),เวลาจบ(end)` สามารถใช้ field ในการรับข้อมูลแค่บางส่วนได้

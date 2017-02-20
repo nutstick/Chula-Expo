@@ -77,8 +77,8 @@ end | Date or RangeQuery<Date> | false | Get by start end
 location | string | false | Get by location name
 sort | string | false | Sorted by field name (more of [sort](./api-helper.md#sort))
 fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
-limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit))
-skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#skip))
+limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit-skip))
+skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#limit-skip))
 Accessible fields
  * nameEN - string
  * [nameTH] - string
@@ -166,8 +166,8 @@ end | Date or RangeQuery(Date) | false | Get by end date
 seatsAvaliable | number or RangeQuery(number) | false | Get by avaliable seats left
 sort | string | false | Sorted by field name (more of [sort](./api-helper.md#sort))
 fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
-limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit))
-skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#skip))
+limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit-skip))
+skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#limit-skip))
 Accessible fields
  * nameTH
  * nameEN
@@ -190,7 +190,7 @@ queryInfo.skip | number | *up to request* | Skip that was used
 ```
 POST api/activities/:aid/rounds/:rid/reserve
 ```
-**This method required token in header ((more of [Authorization](./api-helper.md#authorization)))**
+**This method required token in header ((more of [Authorization](./api-helper.md#header-authorization)))**
 
 ### Successful Results
 
@@ -216,8 +216,8 @@ end | Date or RangeQuery(Date) | false | Get by end date
 seatsAvaliable | number or RangeQuery(number) | false | Get by avaliable seats left
 sort | string | false | Sorted by field name (more of [sort](./api-helper.md#sort))
 fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
-limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit))
-skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#skip))
+limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit-skip))
+skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#limit-skip))
 Accessible fields
  * name
  * activityId
@@ -248,8 +248,8 @@ type | string | false | Get by type
 shortName | String  | false | Get by zone
 sort | string | false | Sorted by field name (more of [sort](./api-helper.md#sort))
 fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
-limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit))
-skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#skip))
+limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit-skip))
+skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#limit-skip))
 Accessible fields
  * nameEN - string
  * [nameTH] - string
@@ -317,8 +317,8 @@ type | string | false | Get by type
 place | ObjectId | false | Get by place
 sort | string | false | Sorted by field name (more of [sort](./api-helper.md#sort))
 fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
-limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit))
-skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#skip))
+limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit-skip))
+skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#limit-skip))
 Accessible fields
  * nameEN - string
  * [nameTH] - string
@@ -373,8 +373,8 @@ name | string | false | Get by name
 code | string | false | Get by code
 sort | string | false | Sorted by field name (more of [sort](./api-helper.md#sort))
 fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
-limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit))
-skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#skip))
+limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit-skip))
+skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#limit-skip))
 Accessible fields
  * nameEN - string
  * [nameTH] - string
