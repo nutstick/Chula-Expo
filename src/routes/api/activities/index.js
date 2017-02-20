@@ -15,7 +15,7 @@ const router = express.Router();
  * @param {Date | RangeQuery<Date>} [start] - Get by start time.
  * @param {Date | RangeQuery<Date>} [end] - Get by end time.
  * @param {string} [location] - Get by Location name.
- * @param {string} [sort] - Sort fields (ex. "-start,+createAt").
+ * @param {string} [sort] - Sort fields (ex. "-start,createAt").
  * @param {string} [fields] - Fields selected (ex. "name,location").
  * @param {number} [limit] - Number of limit per query.
  * @param {number} [skip=0] - Offset documents.

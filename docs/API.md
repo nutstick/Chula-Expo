@@ -1,5 +1,7 @@
 # API Docs
 
+### [API helper faqs เบื้้องต้นก่อนใช้ API](./api-helper.md)
+
 ## Log in with facebook (Web)
 ```
 GET api/auth/facebook
@@ -63,6 +65,128 @@ success | boolean | true | Success request
 message | string | User sign up successfull! | Successful message
 results.token | string | *up to request* | JWT Token use to communicate with API
 
+## Me
+
+**All methods below (`/me`) required token in header (more of [Authorization](./api-helper.md#header-authorization))**
+```
+GET api/me
+```
+Name | Datatype | required | Description
+-----|----------|----------|------------
+fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
+Accessible fields
+ * _id
+ * name
+ * email
+ * age
+ * gender
+ * profile
+ * type 
+ * academic (You can select this field even data doesn't exist)
+ * worker (You can select this field even data doesn't exist)
+ * staff (You can select this field even data doesn't exist)
+
+### Successful Results
+
+Name | Datatype | Value | Description
+-----|----------|-------|------------
+success | boolean | true | Success request
+results | User | *up to request* | Result user detail from query
+
+<p></p><hr></hr>
+
+```
+PUT api/me
+```
+Name | Datatype | required | Description
+-----|----------|----------|------------
+email | string  | true | Email
+name | string | true | Name
+string | string | true | Gender [Male/Female/Other]
+age | number | true | Age
+profile | string | true | Profile picture URL (full-url if frome facebook.com)
+type | string | true | User Type [Academic/Worker/Staff]
+academicLevel | string | isAcademic? | Academic Level
+academicYear | string | isAcademic? | Year of yor education
+academicSchool | string | isAcademic? | School name
+workerJob | string | isWorker? | Job
+staff | string | isStaff? | Staff Type [Staff/Scanner/Admin]
+registationCode | string | isStaff? | Registation Code
+zone | ObjectId | isStaff? | Staff's zone
+
+### Successful Results
+
+Name | Datatype | Value | Description
+-----|----------|-------|------------
+success | boolean | true | Success request
+message | string | Update user infomation successfull | Success request message
+results | User | *up to request* | Result user detail from query
+
+<p></p><hr></hr>
+
+```
+GET api/me/reserved_rounds
+```
+Name | Datatype | required | Description
+-----|----------|----------|------------
+name | string | false | Get by rounds's name
+start | [Date](./api-helper.md#date) or [RangeQuery(Date)](./api-helper.md#rangequery) | false | Get by start date
+end | [Date](./api-helper.md#date) or [RangeQuery(Date)](./api-helper.md#rangequery) | false | Get by end date
+sort | string | false | Sorted by field name (more of [sort](./api-helper.md#sort))
+fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
+limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit-skip))
+skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#limit-skip))
+Accessible fields
+ * name
+ * activityId
+ * start
+ * end
+ * fullCapacity
+ * seatsAvaliable
+ * seatsReserved
+
+### Successful Results
+
+Name | Datatype | Value | Description
+-----|----------|-------|------------
+success | boolean | true | Success request
+results | Round[] | *up to request* | Result round from query
+queryInfo.total | number | *up to request* | Total numbers of items in query
+queryInfo.limit | number | *up to request* | Limit that was used
+queryInfo.skip | number | *up to request* | Skip that was used
+queryInfo.user | ObjectId | *up to request* | User's used to query
+
+<p></p><hr></hr>
+
+```
+GET api/me/reserved_rounds/:rid
+```
+Name | Datatype | required | Description
+-----|----------|----------|------------
+fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
+
+### Successful Results
+
+Name | Datatype | Value | Description
+-----|----------|-------|------------
+success | boolean | true | Success request
+results | Round[] | *up to request* | Result round from query
+queryInfo.user | ObjectId | *up to request* | User's used to query
+queryInfo.round | ObjectId | *up to request* | Round's used to query
+
+<p></p><hr></hr>
+
+```
+DELETE api/me/reserved_rounds/:rid
+```
+
+### Successful Results
+
+Name | Datatype | Value | Description
+-----|----------|-------|------------
+success | boolean | true | Successful request
+message | string | Successfully cancel reserved round | Successful message
+
 ## Activity
 ```
 GET api/activities
@@ -72,13 +196,13 @@ Name | Datatype | required | Description
 name | string | false | Get by name
 tags | string | false | Get by tags
 zone | ObjectId | false | Get by zone
-start | Date or RangeQuery<Date> | false | Get by start time
-end | Date or RangeQuery<Date> | false | Get by start end
+start | [Date](./api-helper.md#date) or [RangeQuery(Date)](./api-helper.md#rangequery) | false | Get by start time
+end | [Date](./api-helper.md#date) or [RangeQuery(Date)](./api-helper.md#rangequery) | false | Get by start end
 location | string | false | Get by location name
 sort | string | false | Sorted by field name (more of [sort](./api-helper.md#sort))
 fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
-limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit))
-skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#skip))
+limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit-skip))
+skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#limit-skip))
 Accessible fields
  * nameEN - string
  * [nameTH] - string
@@ -114,6 +238,7 @@ queryInfo.total | number | *up to request* | Total numbers of items in query
 queryInfo.limit | number | *up to request* | Limit that was used
 queryInfo.skip | number | *up to request* | Skip that was used
 
+<p></p><hr></hr>
 
 ```
 GET api/activities/:aid
@@ -161,13 +286,13 @@ GET api/activities/:aid/rounds
 Name | Datatype | required | Description
 -----|----------|----------|------------
 name | string | false | Get by name
-start | Date or RangeQuery(Date) | false | Get by start date
-end | Date or RangeQuery(Date) | false | Get by end date
-seatsAvaliable | number or RangeQuery(number) | false | Get by avaliable seats left
+start | [Date](./api-helper.md#date) or [RangeQuery(Date)](./api-helper.md#rangequery) | false | Get by start date
+end | [Date](./api-helper.md#date) or [RangeQuery(Date)](./api-helper.md#rangequery)) | false | Get by end date
+seatsAvaliable | number or [RangeQuery(number)](./api-helper.md#rangequery) | false | Get by avaliable seats left
 sort | string | false | Sorted by field name (more of [sort](./api-helper.md#sort))
 fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
-limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit))
-skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#skip))
+limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit-skip))
+skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#limit-skip))
 Accessible fields
  * nameTH
  * nameEN
@@ -187,10 +312,12 @@ queryInfo.total | number | *up to request* | Total numbers of items in query
 queryInfo.limit | number | *up to request* | Limit that was used
 queryInfo.skip | number | *up to request* | Skip that was used
 
+<p></p><hr></hr>
+
 ```
 POST api/activities/:aid/rounds/:rid/reserve
 ```
-**This method required token in header ((more of [Authorization](./api-helper.md#authorization)))**
+**This method required token in header (more of [Authorization](./api-helper.md#header-authorization))**
 
 ### Successful Results
 
@@ -211,13 +338,13 @@ name | string | false | Get by rounds's name
 activityId | ObjectId | false | Get by belong to activty
 userId | ObjectId | false | Get by belong to user
 ticketId | ObjectId | false | Get by belong to ticket
-start | Date or RangeQuery(Date) | false | Get by start date
-end | Date or RangeQuery(Date) | false | Get by end date
-seatsAvaliable | number or RangeQuery(number) | false | Get by avaliable seats left
+start | [Date](./api-helper.md#date) or [RangeQuery(Date)](./api-helper.md#rangequery) | false | Get by start date
+end | [Date](./api-helper.md#date) or [RangeQuery(Date)](./api-helper.md#rangequery) | false | Get by end date
+seatsAvaliable | number or [RangeQuery(number)](./api-helper.md#rangequery) | false | Get by avaliable seats left
 sort | string | false | Sorted by field name (more of [sort](./api-helper.md#sort))
 fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
-limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit))
-skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#skip))
+limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit-skip))
+skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#limit-skip))
 Accessible fields
  * name
  * activityId
@@ -248,8 +375,8 @@ type | string | false | Get by type
 shortName | String  | false | Get by zone
 sort | string | false | Sorted by field name (more of [sort](./api-helper.md#sort))
 fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
-limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit))
-skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#skip))
+limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit-skip))
+skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#limit-skip))
 Accessible fields
  * nameEN - string
  * [nameTH] - string
@@ -276,6 +403,7 @@ queryInfo.total | number | *up to request* | Total numbers of items in query
 queryInfo.limit | number | *up to request* | Limit that was used
 queryInfo.skip | number | *up to request* | Skip that was used
 
+<p></p><hr></hr>
 
 ```
 GET api/zones/:zid
@@ -317,8 +445,8 @@ type | string | false | Get by type
 place | ObjectId | false | Get by place
 sort | string | false | Sorted by field name (more of [sort](./api-helper.md#sort))
 fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
-limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit))
-skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#skip))
+limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit-skip))
+skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#limit-skip))
 Accessible fields
  * nameEN - string
  * [nameTH] - string
@@ -339,6 +467,7 @@ queryInfo.total | number | *up to request* | Total numbers of items in query
 queryInfo.limit | number | *up to request* | Limit that was used
 queryInfo.skip | number | *up to request* | Skip that was used
 
+<p></p><hr></hr>
 
 ```
 GET api/facilities/:fid
@@ -373,8 +502,8 @@ name | string | false | Get by name
 code | string | false | Get by code
 sort | string | false | Sorted by field name (more of [sort](./api-helper.md#sort))
 fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
-limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit))
-skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#skip))
+limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit-skip))
+skip | number | false | Offset items after sorted (more of [skip](./api-helper.md#limit-skip))
 Accessible fields
  * nameEN - string
  * [nameTH] - string
@@ -392,6 +521,7 @@ queryInfo.total | number | *up to request* | Total numbers of items in query
 queryInfo.limit | number | *up to request* | Limit that was used
 queryInfo.skip | number | *up to request* | Skip that was used
 
+<p></p><hr></hr>
 
 ```
 GET api/places/:pid
