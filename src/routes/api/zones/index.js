@@ -57,6 +57,10 @@ router.get('/', (req, res) => {
     filter['name.en'] = { $regex: req.query.nameEN };
   }
 
+  if (req.query.type) {
+    filter.type = req.query.type;
+  }
+
 //----------------------------------------------------------------
 // initial limit
   let limit;
