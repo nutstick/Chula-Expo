@@ -1,7 +1,6 @@
 # API Docs
 
-### API helper
-faqs เบื้้องต้นก่อนใช้ API
+### [API helper faqs เบื้้องต้นก่อนใช้ API](./api-helper.md)
 
 ## Log in with facebook (Web)
 ```
