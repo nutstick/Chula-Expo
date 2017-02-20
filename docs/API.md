@@ -1,5 +1,8 @@
 # API Docs
 
+### API helper
+faqs เบื้้องต้นก่อนใช้ API
+
 ## Log in with facebook (Web)
 ```
 GET api/auth/facebook
@@ -72,8 +75,8 @@ Name | Datatype | required | Description
 name | string | false | Get by name
 tags | string | false | Get by tags
 zone | ObjectId | false | Get by zone
-start | Date or RangeQuery<Date> | false | Get by start time
-end | Date or RangeQuery<Date> | false | Get by start end
+start | [Date](./api-helper.md#date) or [RangeQuery(Date)](./api-helper.md#rangequery) | false | Get by start time
+end | [Date](./api-helper.md#date) or [RangeQuery(Date)](./api-helper.md#rangequery) | false | Get by start end
 location | string | false | Get by location name
 sort | string | false | Sorted by field name (more of [sort](./api-helper.md#sort))
 fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
@@ -161,9 +164,9 @@ GET api/activities/:aid/rounds
 Name | Datatype | required | Description
 -----|----------|----------|------------
 name | string | false | Get by name
-start | Date or RangeQuery(Date) | false | Get by start date
-end | Date or RangeQuery(Date) | false | Get by end date
-seatsAvaliable | number or RangeQuery(number) | false | Get by avaliable seats left
+start | [Date](./api-helper.md#date) or [RangeQuery(Date)](./api-helper.md#rangequery) | false | Get by start date
+end | [Date](./api-helper.md#date) or [RangeQuery(Date)](./api-helper.md#rangequery)) | false | Get by end date
+seatsAvaliable | number or [RangeQuery(number)](./api-helper.md#rangequery) | false | Get by avaliable seats left
 sort | string | false | Sorted by field name (more of [sort](./api-helper.md#sort))
 fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
 limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit-skip))
@@ -211,9 +214,9 @@ name | string | false | Get by rounds's name
 activityId | ObjectId | false | Get by belong to activty
 userId | ObjectId | false | Get by belong to user
 ticketId | ObjectId | false | Get by belong to ticket
-start | Date or RangeQuery(Date) | false | Get by start date
-end | Date or RangeQuery(Date) | false | Get by end date
-seatsAvaliable | number or RangeQuery(number) | false | Get by avaliable seats left
+start | [Date](./api-helper.md#date) or [RangeQuery(Date)](./api-helper.md#rangequery) | false | Get by start date
+end | [Date](./api-helper.md#date) or [RangeQuery(Date)](./api-helper.md#rangequery) | false | Get by end date
+seatsAvaliable | number or [RangeQuery(number)](./api-helper.md#rangequery) | false | Get by avaliable seats left
 sort | string | false | Sorted by field name (more of [sort](./api-helper.md#sort))
 fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
 limit | number | false | Number of item per query (more of [limit](./api-helper.md#limit-skip))

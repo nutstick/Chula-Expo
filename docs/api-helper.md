@@ -16,6 +16,28 @@
 
 ## API query details
 
+### Date
+Date แนะนำให้ส่งมาในรูปของ ISODateFormat `2017-02-14T01:00:00+07:00` และถ้า filter อะไรเกี่ยวกับ Date แนะนำให้ส่งมาในรูป [RangeQuery](./api-helper.md#rangequery)
+เพราะ กันการผิดพลาดในหน่วยวินาที เช่น ต้องการหา activities ที่ start ในวันที่ `2017-02-14` เท่านั้นให้ใช้ เป็น range ของ ตั้งแต่เริ่มวัน ถึงเที่ยงคืนของวันนั้นแทน
+เช่น `{"gte": 2017-02-14T00:00:00+07:00, "lte": 2017-02-14T23.59.59+07:00}` แทน
+
+### Range Query
+
+ใช้สำหรับการ filter response ว่าต้องการค่าอยู่ในช่วงไหน โดย type จะมีบอกอยู่ใน RangeQuery(type) ได้แก่ number, Date, string 
+โดย มี options ได้ตามนี้
+- eq  = equals
+- gt  = greater than
+- gte = greater than or equals
+- lt  = lower than
+- lte = lower than or equals
+
+โดยให้ทำการส่งในรูป JSON Object แล้ว parse ให้เป็น string (stringify) แล้วใส่มาใน fields ที่จะfilterเลย เช่น
+<pre>
+  <code>
+  <i style="color: #6cdfea">request_url</i>?avaliableSeats={"gte": 12, "lte": 15}
+  </code>
+</pre>
+
 ### Fields
 
 ใช้กำหนดว่าต้องการข้อมูลอะไรบ้างใน request นั้น เช่น `/api/activities` สำหรับหน้า
