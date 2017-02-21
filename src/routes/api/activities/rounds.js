@@ -28,7 +28,7 @@ const router = express.Router({ mergeParams: true });
  * @return {ObjectId} queryInfo.activity - Owning activity ID.
  */
 router.get('/', (req, res) => {
-  const filter = { activityId: req.params.aid };
+  const filter = { activityId: req.params.id };
   let sort = {};
   let limit;
   let skip = 0;
