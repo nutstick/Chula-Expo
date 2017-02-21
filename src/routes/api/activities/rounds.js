@@ -226,7 +226,7 @@ router.get('/:rid', (req, res) => {
       return res.sendError(26);
     }
     // Round is not belong to Activity
-    if (round.activityId !== req.params.id) {
+    if (round.activityId.toString() !== req.params.id) {
       return res.sendError(26);
     }
 
@@ -308,7 +308,7 @@ router.delete('/:rid', (req, res) => {
       return res.sendError(26);
     }
     // Round is not belong to Activity
-    if (round.activityId !== req.params.id) {
+    if (round.activityId.toString() !== req.params.id) {
       return res.sendError(26);
     }
     // Remove the round
@@ -345,7 +345,7 @@ router.post('/:rid/reserve', isAuthenticatedByToken, (req, res) => {
       return res.sendError(26);
     }
     // Round is not belong to Activity
-    if (round.activityId !== req.params.id) {
+    if (round.activityId.toString() !== req.params.id) {
       return res.sendError(26);
     }
 
@@ -382,7 +382,7 @@ router.delete('/:rid/reserve', isAuthenticatedByToken, (req, res) => {
       return res.sendError(26);
     }
     // Round is not belong to Activity
-    if (round.activityId !== req.param.id) {
+    if (round.activityId.toString() !== req.param.id) {
       return res.sendError(26);
     }
 
