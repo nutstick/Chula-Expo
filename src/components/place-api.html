@@ -88,10 +88,10 @@
       },
 
       observers: [
-        'updateRequest(page,pageSize,fields,zoneId)'
+        'updateRequest(page,pageSize,fields)'
       ],
 
-      updateRequest: function(page, pageSize, fields, zoneId) {
+      updateRequest: function(page, pageSize, fields) {
         if (pageSize === 0) {
           this.set('params.limit', null);
           this.set('params.skip', page);

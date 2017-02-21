@@ -472,11 +472,11 @@
       },
       _computeRoom: function(e) {
         this.placeId = e.detail.value._id;
-        this.$.placeAPI.generateRequest();
+        this.$.roomAPI.generateRequest();
       },
       _computePlace: function(e) {
         this.zoneId = e.detail.value._id;
-        this.$.roomAPI.generateRequest();
+        this.$.placeAPI.generateRequest();
       }
     })
   </script>
