@@ -180,18 +180,17 @@ module.exports = {
       secretOrKey: process.env.JWT_SECRET,
       jwtFromRequest: ExtractJwt.fromAuthHeader(),
     }, (jwtPayload, done) => {
-      console.log('P2');
       process.nextTick(() => {
-        console.log('P3');
         User.findById(jwtPayload.sub, (err, user) => {
-          console.log('P4');
-          if (err) {
-            return done(err, false);
-          } else if (user) {
-            done(null, user);
-          } else {
-            done(false, false);
-          }
+          setTimeout(() => {
+            if (err) {
+              return done(err, false);
+            } else if (user) {
+              done(null, user);
+            } else {
+              done(false, false);
+            }
+          }, 5000);
         });
       });
     }));

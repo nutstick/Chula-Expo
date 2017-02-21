@@ -19,7 +19,7 @@ module.exports = {
       }
       req.logIn(user, { session: false }, (err) => {
         if (err) {
-          return next(err);
+          return res.sendError(5, err);
         }
         return next();
       });
@@ -45,19 +45,21 @@ module.exports = {
 
   isAdmin: (req, res, next) => {
     if (req.user && req.user.type === 'Staff' && req.user.staff.staffType === 'Admin') {
-      next();
-    } else {
-      res.sendError(4);
+      return next();
     }
+    res.sendError(4);
   },
 
   isStaff: (req, res, next) => {
+    console.log('S1');
     if (req.user && req.user.type === 'Staff' && req.user.staff.staffType === 'Staff') {
-      next();
-    } if (req.user && req.user.type === 'Staff' && req.user.staff.staffType === 'Admin') {
-      next();
-    } else {
-      res.sendError(4);
+      console.log('S2');
+      return next();
+    } else if (req.user && req.user.type === 'Staff' && req.user.staff.staffType === 'Admin') {
+      console.log('S3');
+      return next();
     }
+    console.log('S4');
+    return res.sendError(4);
   },
 };
