@@ -201,10 +201,7 @@ router.delete('/:rid', (req, res) => {
     }
     // Round isn't exist
     if (!round) {
-      return res.status(403).json({
-        success: false,
-        errors: retrieveError(26)
-      });
+      return res.sendError(26);
     }
     round.cancelReservedSeat(req.user.id)
       .then(() => (
@@ -213,13 +210,7 @@ router.delete('/:rid', (req, res) => {
           message: `Successfully cancel reserved round ${req.params.id}.`,
         })
       ))
-      .catch(err => (err.code ? res.status(retrieveError(err.code)).json({
-        success: false,
-        errors: retrieveError(err.code),
-      }) : res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      })));
+      .catch(err => (err.code ? res.sendError(err.code) : res.sendError(5, err)));
   });
 });
 

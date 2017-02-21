@@ -361,4 +361,40 @@ router.post('/:rid/reserve', isAuthenticatedByToken, (req, res) => {
   });
 });
 
+/**
+ * Reserve round
+ * Access at POST http://localhost:8080/api/activities/:id/rounds/:rid/reserve
+ * Authenticate: JWT token
+ *
+ * @return {boolean} success - Successful querying flag.
+ * @return {string} message - Creating ticket message.
+ * @return {Round} results - Ticket.
+ */
+router.delete('/:rid/reserve', isAuthenticatedByToken, (req, res) => {
+  // Get round from instance round model by ID
+  Round.findById(req.params.rid, (err, round) => {
+    // Handle error from Round.findById
+    if (err) {
+      return res.sendError(5, err);
+    }
+    // Round isn't exist.
+    if (!round) {
+      return res.sendError(26);
+    }
+    // Round is not belong to Activity
+    if (round.activityId !== req.param.id) {
+      return res.sendError(26);
+    }
+
+    round.cancelReservedSeat(req.user.id)
+      .then(() => (
+        res.status(201).json({
+          success: true,
+          message: 'Successfully cancel reserved round ${req.params.id}.'
+        })
+      ))
+      .catch(err => (err.code ? res.sendError(err.code) : res.sendError(5, err)));
+  });
+});
+
 module.exports = router;
