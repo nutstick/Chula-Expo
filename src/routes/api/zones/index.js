@@ -1,4 +1,4 @@
-const express = require('express');
+  const express = require('express');
 const Zone = require('../../../models/Zone');
 
 const retrieveError = require('../../../tools/retrieveError');
@@ -55,6 +55,10 @@ router.get('/', (req, res) => {
 
   if (req.query.nameEN) {
     filter['name.en'] = { $regex: req.query.nameEN };
+  }
+
+  if (req.query.type) {
+    filter.type = req.query.type;
   }
 
 //----------------------------------------------------------------

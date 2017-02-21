@@ -28,17 +28,19 @@ module.exports = {
      * Sign in using Email and Password.
      */
     passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, done) => {
-      User.findOne({ email: email.toLowerCase() }, (err, user) => {
-        if (err) { return done(err); }
-        if (!user) {
-          return done(null, false, { msg: `Email ${email} not found.` });
-        }
-        user.comparePassword(password, (err, isMatch) => {
+      process.nextTick(() => {
+        User.findOne({ email: email.toLowerCase() }, (err, user) => {
           if (err) { return done(err); }
-          if (isMatch) {
-            return done(null, user);
+          if (!user) {
+            return done(null, false, { msg: `Email ${email} not found.` });
           }
-          return done(null, false, { msg: 'Invalid email or password.' });
+          user.comparePassword(password, (err, isMatch) => {
+            if (err) { return done(err); }
+            if (isMatch) {
+              return done(null, user);
+            }
+            return done(null, false, { msg: 'Invalid email or password.' });
+          });
         });
       });
     }));
@@ -69,46 +71,50 @@ module.exports = {
       passReqToCallback: true
     }, (req, accessToken, refreshToken, profile, done) => {
       if (req.user) {
-        User.findOne({ facebook: profile.id }, (err, existingUser) => {
-          if (err) { return done(err); }
-          if (existingUser) {
-            done(null, req.user);
-          } else {
-            User.findById(req.user.id, (err, user) => {
-              if (err) { return done(err); }
-              user.facebook = profile.id;
-              user.tokens.push({ kind: 'facebook', accessToken });
-              user.name = user.name || `${profile.name.givenName} ${profile.name.familyName}`;
-              user.gender = user.gender || profile._json.gender;
-              user.profile = JSON.stringify(user.profile ||
-                `https://graph.facebook.com/${profile.id}/picture?type=large`);
-              user.save((err) => {
-                done(err, user);
+        process.nextTick(() => {
+          User.findOne({ facebook: profile.id }, (err, existingUser) => {
+            if (err) { return done(err); }
+            if (existingUser) {
+              done(null, req.user);
+            } else {
+              User.findById(req.user.id, (err, user) => {
+                if (err) { return done(err); }
+                user.facebook = profile.id;
+                user.tokens.push({ kind: 'facebook', accessToken });
+                user.name = user.name || `${profile.name.givenName} ${profile.name.familyName}`;
+                user.gender = user.gender || profile._json.gender;
+                user.profile = JSON.stringify(user.profile ||
+                  `https://graph.facebook.com/${profile.id}/picture?type=large`);
+                user.save((err) => {
+                  done(err, user);
+                });
               });
-            });
-          }
+            }
+          });
         });
       } else {
-        User.findOne({ facebook: profile.id }, (err, existingUser) => {
-          if (err) { return done(err); }
-          if (existingUser) {
-            return done(null, existingUser);
-          }
-          User.findOne({ email: profile._json.email }, (err, existingEmailUser) => {
+        process.nextTick(() => {
+          User.findOne({ facebook: profile.id }, (err, existingUser) => {
             if (err) { return done(err); }
-            if (existingEmailUser) {
-              done(retrieveError(1));
-            } else {
-              const user = {};
-              user.email = profile._json.email;
-              user.facebook = profile.id;
-              user.tokens = [{ kind: 'facebook', accessToken }];
-              user.name = `${profile.name.givenName} ${profile.name.familyName}`;
-              user.gender = profile._json.gender;
-              user.profile = JSON.stringify(user.profile ||
-                `https://graph.facebook.com/${profile.id}/picture?type=large`);
-              done(err, user);
+            if (existingUser) {
+              return done(null, existingUser);
             }
+            User.findOne({ email: profile._json.email }, (err, existingEmailUser) => {
+              if (err) { return done(err); }
+              if (existingEmailUser) {
+                done(retrieveError(1));
+              } else {
+                const user = {};
+                user.email = profile._json.email;
+                user.facebook = profile.id;
+                user.tokens = [{ kind: 'facebook', accessToken }];
+                user.name = `${profile.name.givenName} ${profile.name.familyName}`;
+                user.gender = profile._json.gender;
+                user.profile = JSON.stringify(user.profile ||
+                  `https://graph.facebook.com/${profile.id}/picture?type=large`);
+                done(err, user);
+              }
+            });
           });
         });
       }
@@ -120,44 +126,48 @@ module.exports = {
       passReqToCallback: true
     }, (req, accessToken, refreshToken, profile, done) => {
       if (req.user) {
-        User.findOne({ facebook: profile.id }, (err, existingUser) => {
-          if (err) { return done(err); }
-          if (existingUser) {
-            done(null, req.user);
-          } else {
-            User.findById(req.user.id, (err, user) => {
-              if (err) { return done(err); }
-              user.facebook = profile.id;
-              user.tokens.push({ kind: 'facebook', accessToken });
-              user.name = user.name || `${profile.name.givenName} ${profile.name.familyName}`;
-              user.gender = user.gender || profile._json.gender;
-              user.profile = JSON.stringify(user.profile || `https://graph.facebook.com/${profile.id}/picture?type=large`);
-              user.save((err) => {
-                done(err, user);
+        process.nextTick(() => {
+          User.findOne({ facebook: profile.id }, (err, existingUser) => {
+            if (err) { return done(err); }
+            if (existingUser) {
+              done(null, req.user);
+            } else {
+              User.findById(req.user.id, (err, user) => {
+                if (err) { return done(err); }
+                user.facebook = profile.id;
+                user.tokens.push({ kind: 'facebook', accessToken });
+                user.name = user.name || `${profile.name.givenName} ${profile.name.familyName}`;
+                user.gender = user.gender || profile._json.gender;
+                user.profile = JSON.stringify(user.profile || `https://graph.facebook.com/${profile.id}/picture?type=large`);
+                user.save((err) => {
+                  done(err, user);
+                });
               });
-            });
-          }
+            }
+          });
         });
       } else {
-        User.findOne({ facebook: profile.id }, (err, existingUser) => {
-          if (err) { return done(err); }
-          if (existingUser) {
-            return done(null, existingUser);
-          }
-          User.findOne({ email: profile._json.email }, (err, existingEmailUser) => {
+        process.nextTick(() => {
+          User.findOne({ facebook: profile.id }, (err, existingUser) => {
             if (err) { return done(err); }
-            if (existingEmailUser) {
-              done(retrieveError(1));
-            } else {
-              const user = {};
-              user.email = profile._json.email;
-              user.facebook = profile.id;
-              user.tokens = [{ kind: 'facebook', accessToken }];
-              user.name = `${profile.name.givenName} ${profile.name.familyName}`;
-              user.gender = profile._json.gender;
-              user.profile = JSON.stringify(user.profile || `https://graph.facebook.com/${profile.id}/picture?type=large`);
-              done(err, user);
+            if (existingUser) {
+              return done(null, existingUser);
             }
+            User.findOne({ email: profile._json.email }, (err, existingEmailUser) => {
+              if (err) { return done(err); }
+              if (existingEmailUser) {
+                done(retrieveError(1));
+              } else {
+                const user = {};
+                user.email = profile._json.email;
+                user.facebook = profile.id;
+                user.tokens = [{ kind: 'facebook', accessToken }];
+                user.name = `${profile.name.givenName} ${profile.name.familyName}`;
+                user.gender = profile._json.gender;
+                user.profile = JSON.stringify(user.profile || `https://graph.facebook.com/${profile.id}/picture?type=large`);
+                done(err, user);
+              }
+            });
           });
         });
       }
@@ -170,14 +180,19 @@ module.exports = {
       secretOrKey: process.env.JWT_SECRET,
       jwtFromRequest: ExtractJwt.fromAuthHeader(),
     }, (jwtPayload, done) => {
-      User.findById(jwtPayload.sub, (err, user) => {
-        if (err) {
-          return done(err, false);
-        } else if (user) {
-          done(null, user);
-        } else {
-          done(false, false);
-        }
+      console.log('P2');
+      process.nextTick(() => {
+        console.log('P3');
+        User.findById(jwtPayload.sub, (err, user) => {
+          console.log('P4');
+          if (err) {
+            return done(err, false);
+          } else if (user) {
+            done(null, user);
+          } else {
+            done(false, false);
+          }
+        });
       });
     }));
 
@@ -191,44 +206,48 @@ module.exports = {
       passReqToCallback: true
     }, (req, accessToken, refreshToken, profile, done) => {
       if (req.user) {
-        User.findOne({ google: profile.id }, (err, existingUser) => {
-          if (err) { return done(err); }
-          if (existingUser) {
-            done(null, req.user);
-          } else {
-            User.findById(req.user.id, (err, user) => {
-              if (err) { return done(err); }
-              user.facebook = profile.id;
-              user.tokens.push({ kind: 'google', accessToken });
-              user.name = user.name || profile.displayName;
-              user.gender = user.gender || profile._json.gender;
-              user.profile = user.profile || profile._json.image.url;
-              user.save((err) => {
-                done(err, user);
+        process.nextTick(() => {
+          User.findOne({ google: profile.id }, (err, existingUser) => {
+            if (err) { return done(err); }
+            if (existingUser) {
+              done(null, req.user);
+            } else {
+              User.findById(req.user.id, (err, user) => {
+                if (err) { return done(err); }
+                user.facebook = profile.id;
+                user.tokens.push({ kind: 'google', accessToken });
+                user.name = user.name || profile.displayName;
+                user.gender = user.gender || profile._json.gender;
+                user.profile = user.profile || profile._json.image.url;
+                user.save((err) => {
+                  done(err, user);
+                });
               });
-            });
-          }
+            }
+          });
         });
       } else {
-        User.findOne({ google: profile.id }, (err, existingUser) => {
-          if (err) { return done(err); }
-          if (existingUser) {
-            return done(null, existingUser);
-          }
-          User.findOne({ email: profile.emails[0].value }, (err, existingEmailUser) => {
+        process.nextTick(() => {
+          User.findOne({ google: profile.id }, (err, existingUser) => {
             if (err) { return done(err); }
-            if (existingEmailUser) {
-              done(retrieveError(1));
-            } else {
-              const user = {};
-              user.email = profile.emails[0].value;
-              user.facebook = profile.id;
-              user.tokens.push({ kind: 'google', accessToken });
-              user.name = profile.displayName;
-              user.gender = profile._json.gender;
-              user.profile = profile._json.image.url;
-              done(err, user);
+            if (existingUser) {
+              return done(null, existingUser);
             }
+            User.findOne({ email: profile.emails[0].value }, (err, existingEmailUser) => {
+              if (err) { return done(err); }
+              if (existingEmailUser) {
+                done(retrieveError(1));
+              } else {
+                const user = {};
+                user.email = profile.emails[0].value;
+                user.facebook = profile.id;
+                user.tokens.push({ kind: 'google', accessToken });
+                user.name = profile.displayName;
+                user.gender = profile._json.gender;
+                user.profile = profile._json.image.url;
+                done(err, user);
+              }
+            });
           });
         });
       }

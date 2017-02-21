@@ -139,6 +139,11 @@
         float: right;
         cursor: pointer;
       }
+
+      .fitdiv {
+        display: inline;
+        word-wrap: break-word;
+      }
     </style>
     <activity-api
 			id="activityAPI"
@@ -173,13 +178,13 @@
 					<div class="item">
 						<div>
 							<label class="label --input">Start Time</label>
-							<div class="flex" style="display: inline-block">
+							<div class="flex fitdiv">
 								{{_convertToDate(activity.start)}}
 							</div>
 						</div>
 						<div>
 							<label class="label --input">End Time</label>
-							<div class="flex" style="display: inline-block">
+							<div class="flex fitdiv">
 								{{_convertToDate(activity.end)}}
 							</div>
 						</div>
@@ -188,7 +193,7 @@
 					<div class="item">
 						<div>
 							<label class="label --input">Contact</label>
-							<div class="flex" style="display: inline-block">
+							<div class="flex fitdiv">
 								{{activity.contact}}
 							</div>
 						</div>
@@ -197,11 +202,11 @@
           <div class="item">
 						<div>
 							<label class="label --input">QR code</label>
-							<div class="flex" style="display: inline-block">
+							<div class="flex fitdiv">
                 <div id="qrcode" style="width:200px; height:200px; margin-bottom:15px; margin-top:4px;"></div>
                 <script type="text/javascript">
                   var qrcode = new QRCode(document.getElementById("qrcode"), {
-                    text: "staff.chulaexpo.com/api/activities/" + document.querySelector('activity-show-page').activityId + "/qrcode",
+                    text: "http://staff.chulaexpo.com/api/activities/" + document.querySelector('activity-show-page').activityId + "/qrcode",
                     width: 200,
                     height: 200,
                     colorDark : "#ff69B4",
@@ -216,19 +221,19 @@
 					<div class="item">
 						<div>
 							<label class="label --input">Video Url</label>
-							<div class="flex" style="display: inline-block">
+							<div class="flex fitdiv">
 								{{activity.video}}<br>
 							</div>
 						</div>
 						<div>
 							<label class="label --input">PDF Url</label>
-							<div class="flex" style="display: inline-block">
+							<div class="flex fitdiv">
 								{{activity.pdf}}
 							</div>
 						</div>
 						<div>
 							<label class="label --input">Link</label>
-							<div class="flex" style="display: inline-block">
+							<div class="flex fitdiv">
 								{{activity.link}}
 							</div>
 						</div>
@@ -237,7 +242,7 @@
 					<!-- Zone -->
 					<div class="item">
 						<label class="label --upload">Zone</label>
-						<div class="flex" style="display: inline-block">
+						<div class="flex fitdiv">
               {{zone.name.en}}
 						</div>
             <zone-api
@@ -253,7 +258,7 @@
 					<!-- Location -->
 					<div class="item">
 						<label class="label --input">Place</label>
-						<div class="" style="display: inline-block">
+						<div class="" style="display: inline; word-wrap: break-word;">
               {{place.name.en}}
             </div>
             <place-api
@@ -268,7 +273,7 @@
 
 					<div class="item">
 						<label class="label --input">Room</label>
-						<div class="flex" style="display: inline-block">
+						<div class="flex fitdiv">
 							{{room.name.en}}
 						</div>
             <room-api
@@ -284,7 +289,7 @@
 					<div class="item">
 						<div>
 							<label class="label --input">HighLight</label>
-							<div class="flex" style="display: inline-block">
+							<div class="flex fitdiv">
                 {{activity.isHighlight}}
 							</div>
 						</div>
@@ -307,19 +312,19 @@
 
 					<div class="item">
 						<label class="label --input">ชื่อกิจกรรม</label>
-						<div class="flex" style="display: inline-block">
+						<div class="flex fitdiv">
 							{{activity.name.th}}
 						</div>
 					</div>
 					<div class="item">
 						<label class="label --input">รายละเอียดย่อ</label>
-						<div class="flex" style="display: inline-block">
+						<div class="flex fitdiv">
 							{{activity.shortDescription.th}}
 						</div>
 					</div>
 					<div class="item">
 						<label class="label --input">รายละเอียด</label>
-						<div class="flex" style="display: inline-block">
+						<div class="flex fitdiv">
 							{{activity.description.th}}
 						</div>
 					</div>
@@ -334,19 +339,19 @@
 
 					<div class="item">
 						<label class="label --input">activity name</label>
-						<div class="flex" style="display: inline-block">
+						<div class="flex fitdiv">
 							{{activity.name.en}}
 						</div>
 					</div>
 					<div class="item">
 						<label class="label --input">short description</label>
-						<div class="flex" style="display: inline-block">
+						<div class="flex fitdiv">
 							{{activity.shortDescription.en}}
 						</div>
 					</div>
 					<div class="item">
 						<label class="label --input">description</label>
-						<div class="flex" style="display: inline-block">
+						<div class="flex fitdiv">
 							{{activity.description.en}}
 						</div>
 					</div>
@@ -362,7 +367,7 @@
           <!-- Tags -->
           <div class="item">
             <label class="label --input">Tags</label>
-            <div class="flex" style="display: inline-block">
+            <div class="flex fitdiv">
               {{activity.tags}}
             </div>
           </div>
@@ -378,13 +383,13 @@
               <div class="item">
   							<div>
   								<label class="label --input">Start Time</label>
-  								<div class="flex" style="display: inline-block">
+  								<div class="flex fitdiv">
   									<datetime-local-input name="start" label="" no-label-float="true" required></datetime-local-input>
   								</div>
   							</div>
   							<div>
   								<label class="label --input">End Time</label>
-  								<div class="flex" style="display: inline-block">
+  								<div class="flex fitdiv">
   									<datetime-local-input name="end" label="" no-label-float="true" required></datetime-local-input>
   								</div>
   							</div>
@@ -394,13 +399,13 @@
   						<div class="item">
                 <div>
   								<label class="label --input">Reserved</label>
-  								<div class="flex" style="display: inline-block">
+  								<div class="flex fitdiv">
   									<paper-input type="number" name="seatsReserved" label="" no-label-float="true" required></paper-input>
   								</div>
   							</div>
                 <div>
   								<label class="label --input">Seats</label>
-  								<div class="flex" style="display: inline-block">
+  								<div class="flex fitdiv">
   									<paper-input type="number" name="seatsFullCapacity" label="" no-label-float="true" required></paper-input>
   								</div>
   							</div>
@@ -410,13 +415,13 @@
   						<div class="item">
                 <div>
                   <label class="label --input">ชื่อ (ไทย)</label>
-                  <div class="flex" style="display: inline-block">
+                  <div class="flex fitdiv">
                     <paper-input type="text" name="nameTH" label="" no-label-float="true" required></paper-input>
                   </div>
                 </div>
                 <div>
                   <label class="label --input">Name (English)</label>
-                  <div class="flex" style="display: inline-block">
+                  <div class="flex fitdiv">
                     <paper-input type="text" name="nameEN" label="" no-label-float="true" required></paper-input>
                   </div>
                 </div>

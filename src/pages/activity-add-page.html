@@ -239,6 +239,7 @@
                   no-label-float="true"
                   item-label-path="name.en"
                   item-value-path="_id"
+                  on-selected-item-changed="_computePlace"
                   placeholder="เลือก zone ของกิจกรรม"
                   required
                 ></vaadin-combo-box>
@@ -270,7 +271,9 @@
                   placeholder="เลือกสถานที่"
                 ></vaadin-combo-box>
                 <place-api
+                  id="placeAPI"
                   places="{{places}}"
+                  zone-id="{{zoneId}}"
                   error="{{error}}"
                   loading="{{placeLoading}}"
                   page="0"
@@ -378,6 +381,9 @@
         places: {
           type: Array,
         },
+        zoneId: {
+          type: String
+        },
         placeId: {
           type: String
         },
@@ -411,7 +417,7 @@
         }
       },
       inputChanged: function(e) {
-        var data = ['พระราชกรณียกิจ','Royal Duties','ไทยแลนด์ 4.0','Thailand 4.0','พลังงาน','Energy','สิ่งประดิษฐ์','Inventions','การออกแบบ','Design','ไอที','IT','การแพทย์','Medication','ร่างกาย','Body','จิตใจ','Mind','สิ่งแวดล้อม','Environment','สัตว์และพันธุ์พืช','Life','อาหารและน้ำ','Food &  Water','ความงาม','Beauty','คุณภาพชีวิต','Quality of Life','สังคมผู้สูงอายุ','Aging Society','เศรษฐกิจ','Economy','ชุมชน','Community','ปัญหาสังคม','Social Issues','การศึกษา','Education','การสื่อสาร','Communication','การขนส่ง','Transportation','ภูมิปัญญาไทย','Thai Wisdom','ศิลปวัฒนธรรม','Art & Culture','กฎหมาย','Law'];
+        var data = ["Energy","Ageing Society","Body","Mind","Social Issues","Invention","Quality of Life","Food & Water","Community","Art & Culture","Medication","Economy","Transportation","IT","Environment","Thai Wisdom","Design","Law","Education","Royal Duties","Beauty","Life","Communication","Sport"];
         var input = (e.detail.value || '').trim().toLowerCase();
         if (input) {
           e.target.options = data.filter(function(item) {
@@ -466,6 +472,10 @@
       },
       _computeRoom: function(e) {
         this.placeId = e.detail.value._id;
+        this.$.placeAPI.generateRequest();
+      },
+      _computePlace: function(e) {
+        this.zoneId = e.detail.value._id;
         this.$.roomAPI.generateRequest();
       }
     })

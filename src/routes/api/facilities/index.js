@@ -10,6 +10,10 @@ router.get('/', (req, res) => {
     filter['name.en'] = { $regex: req.query.nameEN };
   }
 
+  if (req.query.type) {
+    filter.type = req.query.type;
+  }
+
   //  http://localhost:3000/?sort=createAt,-startDate
   let sort = {};
   if (req.query.sort) {

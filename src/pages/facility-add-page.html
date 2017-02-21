@@ -78,6 +78,11 @@
         margin-top: 10px;
       }
 
+      .fitdiv {
+        display: inline;
+        word-wrap: break-word;
+      }
+
     </style>
     <div class="container">
       <paper-card>
@@ -88,7 +93,7 @@
 						<!-- type -->
 						<div class="item">
 							<label class="label --input">Type</label>
-							<div class="flex" style="display: inline-block">
+							<div class="flex fitdiv">
 								<paper-dropdown-menu label="" no-label-float="true" name="type" required>
 									<paper-listbox class="dropdown-content">
 										<paper-item value="Toilet">Toilet</paper-item>
@@ -104,7 +109,7 @@
 						<!-- Location -->
             <div class="item">
               <label class="label --input">Place</label>
-              <div class="flex" style="display: inline-block">
+              <div class="flex fitdiv">
                 <vaadin-combo-box
                   name="place"
                   items="{{places}}"

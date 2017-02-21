@@ -72,6 +72,11 @@
         @apply(--layout-end-justified);
         margin-top: 10px;
       }
+
+      .fitdiv {
+        display: inline;
+        word-wrap: break-word;
+      }
     </style>
     <zone-api
       id="zoneAPI"
@@ -90,7 +95,7 @@
 						<!-- type -->
 						<div class="item">
 							<label class="label --input">Type</label>
-							<div class="flex" style="display: inline-block">
+							<div class="flex fitdiv">
 								<paper-dropdown-menu label="" no-label-float="true" name="type" required>
 									<paper-menu class="dropdown-content" selected="{{zone.type}}" attr-for-selected="value">
 										<paper-item value="Faculty">Faculty</paper-item>
@@ -103,7 +108,7 @@
 						<!-- websiteUrl -->
 						<div class="item">
 							<label class="label --input">Website URL</label>
-							<div class="flex" style="display: inline-block">
+							<div class="flex fitdiv">
 								<paper-input type="text" label="" value="[[zone.website]]" no-label-float="true" name="website" always-float-label></paper-input>
 							</div>
 						</div>

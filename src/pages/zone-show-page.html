@@ -129,6 +129,11 @@
       float: right;
       cursor: pointer;
     }
+
+    .fitdiv {
+      display: inline;
+      word-wrap: break-word;
+    }
   </style>
 		<zone-api
 			id="zoneAPI"
@@ -144,14 +149,14 @@
 					<!-- type -->
 					<div class="item">
 						<label class="label --input">Type</label>
-						<div class="flex" style="display: inline-block">
+						<div class="flex fitdiv">
               {{zone.type}}
 						</div>
 					</div>
 					<!-- websiteUrl -->
 					<div class="item">
 						<label class="label --input">Website URL</label>
-						<div class="flex" style="display: inline-block">
+						<div class="flex fitdiv">
               {{zone.website}}
 						</div>
 					</div>
@@ -160,7 +165,7 @@
 					<div class="item">
 						<div class="flex-layout">
 							<label class="label --upload">Thumbnail</label>
-							<div class="flex" style="display: inline-block">
+							<div class="flex fitdiv">
                 <iron-image style="width:140px; height:80px;" sizing="cover" preload fade src="{{zone.thumbnail}}"></iron-image>
 							</div>
 						</div>
@@ -169,7 +174,7 @@
 					<div class="item">
 						<div class="flex-layout">
 							<label class="label --upload">Banner</label>
-              <div class="flex" style="display: inline-block">
+              <div class="flex fitdiv">
                 <iron-image style="width:200px; height:150px;" sizing="cover" preload fade src="{{zone.banner}}"></iron-image>
 							</div>
 						</div>
@@ -192,25 +197,25 @@
 
 					<div class="item">
             <label class="label --input">ชื่อ</label>
-            <div class="flex" style="display: inline-block">
+            <div class="flex fitdiv">
               {{zone.name.th}}
 						</div>
           </div>
 					<div class="item">
             <label class="label --input">ชื่อย่อ</label>
-            <div class="flex" style="display: inline-block">
+            <div class="flex fitdiv">
               {{zone.shortName.th}}
 						</div>
           </div>
 					<div class="item">
             <label class="label --input">ข้อความต้อนรับ</label>
-            <div class="flex" style="display: inline-block">
+            <div class="flex fitdiv">
               {{zone.welcomeMessage.th}}
 						</div>
           </div>
 					<div class="item">
             <label class="label --input">รายละเอียด</label>
-            <div class="flex" style="display: inline-block">
+            <div class="flex fitdiv">
               {{zone.description.th}}
 						</div>
           </div>
@@ -224,25 +229,25 @@
 
 					<div class="item">
             <label class="label --input">name</label>
-            <div class="flex" style="display: inline-block">
+            <div class="flex fitdiv">
               {{zone.name.en}}
 						</div>
           </div>
 					<div class="item">
             <label class="label --input">shortname</label>
-            <div class="flex" style="display: inline-block">
+            <div class="flex fitdiv">
               {{zone.shortName.en}}
 						</div>
           </div>
 					<div class="item">
             <label class="label --input">welcome message</label>
-            <div class="flex" style="display: inline-block">
+            <div class="flex fitdiv">
               {{zone.welcomeMessage.en}}
 						</div>
           </div>
 					<div class="item">
             <label class="label --input">description</label>
-            <div class="flex" style="display: inline-block">
+            <div class="flex fitdiv">
               {{zone.description.en}}
 						</div>
           </div>

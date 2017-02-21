@@ -134,6 +134,11 @@
       float: right;
       cursor: pointer;
     }
+
+    .fitdiv {
+      display: inline;
+      word-wrap: break-word;
+    }
   </style>
 		<place-api
 			id="placeAPI"
@@ -150,7 +155,7 @@
 					<div class="item">
 						<div>
 							<label class="label --input">Code</label>
-							<div class="flex" style="display: inline-block">
+							<div class="flex fitdiv">
 								{{place.code}}
 							</div>
 						</div>
@@ -159,7 +164,7 @@
           <div class="item">
             <div>
               <label class="label --input">Zone</label>
-              <div class="flex" style="display: inline-block">
+              <div class="flex fitdiv">
                 {{zone.name.en}}
               </div>
               <zone-api
@@ -189,7 +194,7 @@
 
 					<div class="item">
 						<label class="label --input">ชื่อ</label>
-						<div class="flex" style="display: inline-block">
+						<div class="flex fitdiv">
 							{{place.name.th}}
 						</div>
 					</div>
@@ -204,7 +209,7 @@
 
 					<div class="item">
 						<label class="label --input">name</label>
-						<div class="flex" style="display: inline-block">
+						<div class="flex fitdiv">
 							{{place.name.en}}
 						</div>
 					</div>
@@ -221,19 +226,19 @@
               <div class="item">
                 <div>
                   <label class="label --input">ชื่อ (ไทย)</label>
-                  <div class="flex" style="display: inline-block">
+                  <div class="flex fitdiv">
                     <paper-input type="text" name="nameTH" label="" no-label-float="true" required></paper-input>
                   </div>
                 </div>
                 <div>
                   <label class="label --input">Name (English)</label>
-                  <div class="flex" style="display: inline-block">
+                  <div class="flex fitdiv">
                     <paper-input type="text" name="nameEN" label="" no-label-float="true" required></paper-input>
                   </div>
                 </div>
                 <div>
                   <label class="label --input">Floor</label>
-                  <div class="flex" style="display: inline-block">
+                  <div class="flex fitdiv">
                     <paper-input type="number" name="floor" label="" no-label-float="true" required></paper-input>
                   </div>
                 </div>

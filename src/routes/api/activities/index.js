@@ -97,6 +97,10 @@ router.get('/', (req, res) => {
   if (req.query.zone) {
     filter.zone = req.query.zone;
   }
+	
+	if (req.query.highlight) {
+		filter.isHighlight = req.query.highlight;
+	}
 
   // field selector
   // http://localhost:3000/?fields=name,faculty

@@ -74,6 +74,11 @@
         @apply(--layout-end-justified);
         margin-top: 10px;
       }
+
+      .fitdiv {
+        display: inline;
+        word-wrap: break-word;
+      }
     </style>
     <div class="container">
       <paper-card>
@@ -85,7 +90,7 @@
 						<div class="item">
 							<div>
 								<label class="label --input">Code</label>
-								<div class="flex" style="display: inline-block">
+								<div class="flex fitdiv">
 									<paper-input type="text" name="code" label="" no-label-float="true" required></paper-input>
 								</div>
 							</div>
@@ -93,7 +98,7 @@
             <!-- Location -->
             <div class="item">
               <label class="label --input">Zone</label>
-              <div class="" style="display: inline-block">
+              <div class="" style="display: inline; word-wrap: break-word;">
                 <vaadin-combo-box
                   name="zone"
                   items="{{zones}}"
