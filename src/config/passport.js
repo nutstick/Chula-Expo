@@ -182,15 +182,13 @@ module.exports = {
     }, (jwtPayload, done) => {
       process.nextTick(() => {
         User.findById(jwtPayload.sub, (err, user) => {
-          setTimeout(() => {
-            if (err) {
-              return done(err, false);
-            } else if (user) {
-              done(null, user);
-            } else {
-              done(false, false);
-            }
-          }, 5000);
+          if (err) {
+            return done(err, false);
+          } else if (user) {
+            done(null, user);
+          } else {
+            done(false, false);
+          }
         });
       });
     }));
