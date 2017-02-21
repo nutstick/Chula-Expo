@@ -57,7 +57,7 @@ staff | string | isStaff? | Staff Type [Staff/Scanner/Admin]
 registationCode | string | isStaff? | Registation Code
 zone | ObjectId | isStaff? | Staff's zone
 
-### Successful Results
+Successful Results
 
 Name | Datatype | Value | Description
 -----|----------|-------|------------
@@ -86,7 +86,7 @@ Accessible fields
  * worker (You can select this field even data doesn't exist)
  * staff (You can select this field even data doesn't exist)
 
-### Successful Results
+Successful Results
 
 Name | Datatype | Value | Description
 -----|----------|-------|------------
@@ -114,7 +114,7 @@ staff | string | isStaff? | Staff Type [Staff/Scanner/Admin]
 registationCode | string | isStaff? | Registation Code
 zone | ObjectId | isStaff? | Staff's zone
 
-### Successful Results
+Successful Results
 
 Name | Datatype | Value | Description
 -----|----------|-------|------------
@@ -145,7 +145,7 @@ Accessible fields
  * seatsAvaliable
  * seatsReserved
 
-### Successful Results
+Successful Results
 
 Name | Datatype | Value | Description
 -----|----------|-------|------------
@@ -165,7 +165,7 @@ Name | Datatype | required | Description
 -----|----------|----------|------------
 fields | string | false | Get only specific fields (more of [fields](./api-helper.md#fields))
 
-### Successful Results
+Successful Results
 
 Name | Datatype | Value | Description
 -----|----------|-------|------------
@@ -180,7 +180,7 @@ queryInfo.round | ObjectId | *up to request* | Round's used to query
 DELETE api/me/reserved_rounds/:rid
 ```
 
-### Successful Results
+Successful Results
 
 Name | Datatype | Value | Description
 -----|----------|-------|------------
@@ -228,7 +228,7 @@ Accessible fields
  * start - Date
  * end - Date
 
-### Successful Results
+Successful Results
 
 Name | Datatype | Value | Description
 -----|----------|-------|------------
@@ -271,7 +271,7 @@ Accessible fields
  * start - Date
  * end - Date
 
-### Successful Results
+Successful Results
 
 Name | Datatype | Value | Description
 -----|----------|-------|------------
@@ -302,7 +302,7 @@ Accessible fields
  * seatsReserved
  * seatsAvaliable
 
-### Successful Results
+Successful Results
 
 Name | Datatype | Value | Description
 -----|----------|-------|------------
@@ -319,13 +319,25 @@ POST api/activities/:aid/rounds/:rid/reserve
 ```
 **This method required token in header (more of [Authorization](./api-helper.md#header-authorization))**
 
-### Successful Results
+Successful Results
 
 Name | Datatype | Value | Description
 -----|----------|-------|------------
 success | boolean | true | Success request
 message | string | Create Ticket Successful | Successful message
 results | Ticket | *up to request* | Result ticket that create by reserve action
+
+```
+DELETE api/activities/:aid/rounds/:rid/reserve
+```
+**This method required token in header (more of [Authorization](./api-helper.md#header-authorization))**
+
+Successful Results
+
+Name | Datatype | Value | Description
+-----|----------|-------|------------
+success | boolean | true | Success request
+message | string | Successfully cancel reserved round. | Successful message
 
 ## Rounds
 ```
@@ -354,7 +366,7 @@ Accessible fields
  * seatsAvaliable
  * seatsReserved
 
-### Successful Results
+Successful Results
 
 Name | Datatype | Value | Description
 -----|----------|-------|------------
@@ -393,7 +405,7 @@ Accessible fields
  * locationLat
  * locationLong
 
-### Successful Results
+Successful Results
 
 Name | Datatype | Value | Description
 -----|----------|-------|------------
@@ -427,7 +439,7 @@ Accessible fields
 * locationLat
 * locationLong
 
-### Successful Results
+Successful Results
 
 Name | Datatype | Value | Description
 -----|----------|-------|------------
@@ -457,7 +469,7 @@ Accessible fields
  * locationLat
  * locationLong
 
-### Successful Results
+Successful Results
 
 Name | Datatype | Value | Description
 -----|----------|-------|------------
@@ -485,7 +497,7 @@ Accessible fields
  * locationLat
  * locationLong
 
-### Successful Results
+Successful Results
 
 Name | Datatype | Value | Description
 -----|----------|-------|------------
@@ -511,7 +523,7 @@ Accessible fields
  * locationLat
  * locationLong
 
-### Successful Results
+Successful Results
 
 Name | Datatype | Value | Description
 -----|----------|-------|------------
@@ -536,7 +548,7 @@ Accessible fields
  * locationLat
  * locationLong
 
-### Successful Results
+Successful Results
 
 Name | Datatype | Value | Description
 -----|----------|-------|------------
