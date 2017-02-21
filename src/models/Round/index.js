@@ -54,8 +54,8 @@ RoundSchema.pre('save', function save(next) {
 /**
  * Find and reserve method
  */
-RoundSchema.method.reserve = userId => new Promise((resolve, reject) => {
-  Ticket.findOne({ user: userId, round: this.id }, (err, ticket) => {
+RoundSchema.methods.reserve = (userId, round) => new Promise((resolve, reject) => {
+  Ticket.findOne({ user: userId, round: round.id }, (err, ticket) => {
     if (err) {
       return reject(err);
     }
@@ -71,23 +71,23 @@ RoundSchema.method.reserve = userId => new Promise((resolve, reject) => {
         return reject({ code: 24 });
       }
       // Fully booked seats
-      if (this.seatsReserved + 1 > this.seatsAvaliable) {
+      if (round.seatsReserved + 1 > round.seatsAvaliable) {
         return reject({ code: 30 });
       }
 
-      const ticket = new Ticket({ userId, roundId: user.id, });
+      const ticket = new Ticket({ user: userId, round: round.id, });
 
-      this.seats.reserved++;
+      round.seats.reserved++;
       // this.tickets.push(ticket);
 
       user.reservedActivity.push({
-        roundId: this.id,
+        roundId: round.id,
         ticket: ticket.id,
         reservedAt: new Date(),
       });
 
       Promise.all([
-        this.save(),
+        round.save(),
         user.save(),
         ticket.save(),
       ]).then((results) => {
@@ -97,38 +97,39 @@ RoundSchema.method.reserve = userId => new Promise((resolve, reject) => {
   });
 });
 
-RoundSchema.method.cancelReservedSeat = (userId, forceRemove) => new Promise((resolve, reject) => {
-  User.findById(userId, (err, user) => {
-    Ticket.findOne({ user: userId, round: this.id }, (err, ticket) => {
-      if (err) {
-        return reject(err);
-      }
-      // Ticket isn't exist
-      if (!ticket) {
-        return reject({ code: 27 });
-      }
-      // Already checked in ticket
-      if (ticket.checked && !forceRemove) {
-        return reject({ code: 31 });
-      }
-      // Number of reserved seats is incorrect
-      if (this.seats.reserved <= 0 && !forceRemove) {
-        return reject({ code: 0 });
-      }
-      // Decease reseaved seats by 1 and bound by zero
-      this.seats.reserved = Math.max(this.seats.reserved - 1, 0);
-      // Filter out User's reseved activity
-      user.reservedActivity.filter(activity => activity.ticket !== ticket.id);
+RoundSchema.methods.cancelReservedSeat = (userId, round, forceRemove) =>
+  new Promise((resolve, reject) => {
+    User.findById(userId, (err, user) => {
+      Ticket.findOne({ user: userId, round: round.id }, (err, ticket) => {
+        if (err) {
+          return reject(err);
+        }
+        // Ticket isn't exist
+        if (!ticket) {
+          return reject({ code: 27 });
+        }
+        // Already checked in ticket
+        if (ticket.checked && !forceRemove) {
+          return reject({ code: 31 });
+        }
+        // Number of reserved seats is incorrect
+        if (round.seats.reserved <= 0 && !forceRemove) {
+          return reject({ code: 0 });
+        }
+        // Decease reseaved seats by 1 and bound by zero
+        round.seats.reserved = Math.max(round.seats.reserved - 1, 0);
+        // Filter out User's reseved activity
+        user.reservedActivity.filter(activity => activity.ticket !== ticket.id);
 
-      Promise.all([
-        this.save(),
-        user.save(),
-        ticket.remove(),
-      ]).then(() => resolve())
-        .catch(reject);
+        Promise.all([
+          round.save(),
+          user.save(),
+          ticket.remove(),
+        ]).then(() => resolve())
+          .catch(reject);
+      });
     });
   });
-});
 
 const Round = mongoose.model('Round', RoundSchema);
 

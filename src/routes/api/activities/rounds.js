@@ -349,7 +349,7 @@ router.post('/:rid/reserve', isAuthenticatedByToken, (req, res) => {
       return res.sendError(26);
     }
 
-    round.reserve(req.user.id)
+    round.reserve(req.user.id, round)
       .then(results => (
         res.status(201).json({
           success: true,
@@ -382,15 +382,15 @@ router.delete('/:rid/reserve', isAuthenticatedByToken, (req, res) => {
       return res.sendError(26);
     }
     // Round is not belong to Activity
-    if (round.activityId.toString() !== req.param.id) {
+    if (round.activityId.toString() !== req.params.id) {
       return res.sendError(26);
     }
 
-    round.cancelReservedSeat(req.user.id)
+    round.cancelReservedSeat(req.user.id, round)
       .then(() => (
         res.status(201).json({
           success: true,
-          message: 'Successfully cancel reserved round ${req.params.id}.'
+          message: `Successfully cancel reserved round ${req.params.rid}.`,
         })
       ))
       .catch(err => (err.code ? res.sendError(err.code) : res.sendError(5, err)));
