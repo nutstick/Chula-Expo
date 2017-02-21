@@ -200,6 +200,8 @@ router.post('/', isAuthenticatedByToken, isStaff, (req, res) => {
     activity.start = req.body.start;
     activity.end = req.body.end;
 
+    activity.createBy = req.user.id;
+
     // Save User and check for error
     activity.save((err, _act) => {
       // Handle error from
@@ -255,7 +257,6 @@ router.get('/:id', (req, res) => {
   });
 });
 
-
 // pdf redirect
 router.get('/:id/qrcode', (req, res) => {
   Activity.findById(req.params.id, (err, act) => {
@@ -264,6 +265,19 @@ router.get('/:id/qrcode', (req, res) => {
     }
     res.writeHead(301, {
       Location: act.pdf
+    });
+    res.end();
+  });
+});
+
+// video redirect
+router.get('/:id/qrvideo', (req, res) => {
+  Activity.findById(req.params.id, (err, act) => {
+    if (err) {
+      return res.sendError(5, err);
+    }
+    res.writeHead(301, {
+      Location: act.video
     });
     res.end();
   });
@@ -321,6 +335,8 @@ router.put('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
     if (req.body.tags) {
       activity.tags = req.body.tags.split(',');
     }
+
+    activity.updateAt = new Date();
 
 
     activity.save((err, updatedAct) => {

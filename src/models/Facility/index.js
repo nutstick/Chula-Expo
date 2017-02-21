@@ -24,7 +24,14 @@ const FacilitySchema = new mongoose.Schema({
   location: {
     latitude: { type: Number, required: true },
     longitude: { type: Number, required: true }
-  }
+  },
+  createAt: { type: Date, default: new Date() },
+  updateAt: { type: Date, default: new Date() },
+  createBy: {
+    type: ObjectId,
+    ref: 'User'
+  },
+
 
 });
 

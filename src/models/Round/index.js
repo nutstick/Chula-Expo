@@ -33,6 +33,10 @@ const RoundSchema = new mongoose.Schema({
 
   createAt: { type: Date, default: new Date() },
   updateAt: { type: Date, default: new Date() },
+  createBy: {
+    type: ObjectId,
+    ref: 'User'
+  },
 });
 
 RoundSchema.index({ avaliable: -1, start: 1, end: 1, activityId: 1 });

@@ -199,10 +199,29 @@
 						</div>
 					</div>
 
-          <div class="item">
+					<div class="item">
 						<div>
-							<label class="label --input">QR code</label>
+							<label class="label --input">Video Url</label>
 							<div class="flex fitdiv">
+								{{activity.video}}
+                <div id="qrvideo" style="width:200px; height:200px; margin-bottom:15px; margin-top:4px;"></div>
+                <script type="text/javascript">
+                  var qrcode = new QRCode(document.getElementById("qrvideo"), {
+                    text: "http://staff.chulaexpo.com/api/activities/" + document.querySelector('activity-show-page').activityId + "/qrvideo",
+                    width: 200,
+                    height: 200,
+                    colorDark : "#000000",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.L
+                  });
+                </script>
+
+							</div>
+						</div>
+						<div>
+							<label class="label --input">PDF Url</label>
+							<div class="flex fitdiv">
+								{{activity.pdf}}
                 <div id="qrcode" style="width:200px; height:200px; margin-bottom:15px; margin-top:4px;"></div>
                 <script type="text/javascript">
                   var qrcode = new QRCode(document.getElementById("qrcode"), {
@@ -214,21 +233,7 @@
                     correctLevel : QRCode.CorrectLevel.L
                   });
                 </script>
-							</div>
-						</div>
-          </div>
 
-					<div class="item">
-						<div>
-							<label class="label --input">Video Url</label>
-							<div class="flex fitdiv">
-								{{activity.video}}<br>
-							</div>
-						</div>
-						<div>
-							<label class="label --input">PDF Url</label>
-							<div class="flex fitdiv">
-								{{activity.pdf}}
 							</div>
 						</div>
 						<div>
