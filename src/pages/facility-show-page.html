@@ -79,6 +79,11 @@
         @apply(--layout-end-justified);
         margin-top: 10px;
       }
+
+      .fitdiv {
+        display: inline;
+        word-wrap: break-word;
+      }
     </style>
 		<facility-api
 			id="facilityAPI"
@@ -94,7 +99,7 @@
 					<!-- type -->
 					<div class="item">
 						<label class="label --input">Type</label>
-						<div class="flex" style="display: inline-block">
+						<div class="flex fitdiv">
               {{facility.type}}
 						</div>
 					</div>
@@ -102,7 +107,7 @@
 					<!-- Location -->
 					<div class="item">
 						<label class="label --input">Place</label>
-            <div class="flex" style="display: inline-block">
+            <div class="flex fitdiv">
               {{place.name.en}}
 						</div>
             <place-api
@@ -131,13 +136,13 @@
 					</div>
           <div class="item">
             <label class="label --input">ชื่อ</label>
-            <div class="flex" style="display: inline-block">
+            <div class="flex fitdiv">
               {{facility.name.th}}
 						</div>
           </div>
           <div class="item">
             <label class="label --input">รายละเอียด</label>
-            <div class="flex" style="display: inline-block">
+            <div class="flex fitdiv">
               {{facility.description.th}}
 						</div>
 					</div>
@@ -152,13 +157,13 @@
 
           <div class="item">
             <label class="label --input">name</label>
-            <div class="flex" style="display: inline-block">
+            <div class="flex fitdiv">
               {{facility.name.en}}
             </div>
           </div>
           <div class="item">
             <label class="label --input">description</label>
-            <div class="flex" style="display: inline-block">
+            <div class="flex fitdiv">
               {{facility.description.en}}
             </div>
   				</div>

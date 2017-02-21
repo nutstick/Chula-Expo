@@ -80,6 +80,11 @@
         @apply(--layout-end-justified);
         margin-top: 10px;
       }
+
+      .fitdiv {
+        display: inline;
+        word-wrap: break-word;
+      }
     </style>
     <facility-api
       id="facilityAPI"
@@ -99,7 +104,7 @@
 						<!-- type -->
 						<div class="item">
 							<label class="label --input">Type</label>
-							<div class="flex" style="display: inline-block">
+							<div class="flex fitdiv">
 								<paper-dropdown-menu label="" no-label-float="true" name="type" required>
 									<paper-menu class="dropdown-content" selected="{{facility.type}}" attr-for-selected="value">
 										<paper-item value="Toilet">Toilet</paper-item>
@@ -114,7 +119,7 @@
             <!-- Location -->
             <div class="item">
               <label class="label --input">Place</label>
-              <div class="flex" style="display: inline-block">
+              <div class="flex fitdiv">
                 <vaadin-combo-box
                   name="place"
                   items="{{places}}"
