@@ -28,7 +28,7 @@ const router = express.Router({ mergeParams: true });
  * @return {ObjectId} queryInfo.activity - Owning activity ID.
  */
 router.get('/', (req, res) => {
-  const filter = { activityId: req.params.aid };
+  const filter = { activityId: req.params.id };
   let sort = {};
   let limit;
   let skip = 0;
@@ -226,7 +226,7 @@ router.get('/:rid', (req, res) => {
       return res.sendError(26);
     }
     // Round is not belong to Activity
-    if (round.activityId !== req.param.id) {
+    if (round.activityId !== req.params.id) {
       return res.sendError(26);
     }
 
@@ -260,7 +260,7 @@ router.put('/:rid', (req, res) => {
       return res.sendError(26);
     }
     // Round is not belong to Activity
-    if (round.activityId !== req.param.id) {
+    if (round.activityId !== req.params.id) {
       return res.sendError(26);
     }
 
@@ -308,7 +308,7 @@ router.delete('/:rid', (req, res) => {
       return res.sendError(26);
     }
     // Round is not belong to Activity
-    if (round.activityId !== req.param.id) {
+    if (round.activityId !== req.params.id) {
       return res.sendError(26);
     }
     // Remove the round
@@ -345,7 +345,7 @@ router.post('/:rid/reserve', isAuthenticatedByToken, (req, res) => {
       return res.sendError(26);
     }
     // Round is not belong to Activity
-    if (round.activityId !== req.param.id) {
+    if (round.activityId !== req.params.id) {
       return res.sendError(26);
     }
 
