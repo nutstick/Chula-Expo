@@ -1,8 +1,7 @@
 const express = require('express');
 const { Activity, Round } = require('../../../models');
 const { isAuthenticatedByToken } = require('../../../config/authenticate');
-const retrieveError = require('../../../tools/retrieveError');
-// const RangeQuery = require('../../../tools/RangeQuery');
+const RangeQuery = require('../../../tools/RangeQuery');
 
 const router = express.Router({ mergeParams: true });
 
@@ -29,20 +28,34 @@ const router = express.Router({ mergeParams: true });
  * @return {ObjectId} queryInfo.activity - Owning activity ID.
  */
 router.get('/', (req, res) => {
-  const filter = {};
-
+  const filter = { activityId: req.params.aid };
+  let sort = {};
+  let limit;
+  let skip = 0;
+  let fields;
+  // Round's name
+  if (req.query.name) {
+    filter.name = req.query.name;
+  }
+  // Activity ID
+  // Round's start time range query
+  if (req.query.start) {
+    filter.start = RangeQuery(JSON.parse(req.query.start), 'Date');
+  }
+  // Round's end time range query
+  if (req.query.end) {
+    filter.end = RangeQuery(JSON.parse(req.query.end), 'Date');
+  }
+  // Avaliable seats range query
+  if (req.query.seatsAvaliable) {
+    filter['seats.avaliable'] = RangeQuery(JSON.parse(req.query.seatsAvaliable), 'number');
+  }
   // Sorting query
   if (req.query.sort) {
-    filter.sort = req.query.sort.split(',').reduce((prev, sortQuery) => {
-      let sortFields = sortQuery.substr(1);
-      if (sortFields === 'nameEN') {
-        sortFields = 'name.en';
-      }
-      if (sortFields === 'nameTH') {
-        sortFields = 'name.th';
-      }
+    sort = req.query.sort.split(',').reduce((prev, sortQuery) => {
+      let sortFields = sortQuery[0] === '-' ? sortQuery.substr(1) : sortQuery;
       if (sortFields === 'seatsFullCapacity') {
-        sortFields = 'seats.fullCapacity';
+        sortFields = 'seats.FullCapacity';
       }
       if (sortFields === 'seatsReserved') {
         sortFields = 'seats.reserved';
@@ -53,24 +66,26 @@ router.get('/', (req, res) => {
 
       if (sortQuery[0] === '-') {
         prev[sortFields] = -1;
-      } else if (sortQuery[0] === '+') {
+      } else {
         prev[sortFields] = 1;
       }
+
       return prev;
     }, {});
   }
-
+  // Limit query
+  if (req.query.limit) {
+    limit = Number.parseInt(req.query.limit, 10);
+  }
+  // Skip query
+  if (req.query.skip) {
+    skip = Number.parseInt(req.query.skip, 10);
+  }
   // Fields selecting query
   if (req.query.fields) {
-    filter.fields = req.query.fields.split(',').map((field) => {
-      if (field === 'nameTH') {
-        return 'name.th';
-      }
-      if (field === 'nameEN') {
-        return 'name.en';
-      }
+    fields = req.query.fields.split(',').map((field) => {
       if (field === 'seatsFullCapacity') {
-        return 'seats.fullCapacity';
+        return 'seats.FullCapacity';
       }
       if (field === 'seatsReserved') {
         return 'seats.reserved';
@@ -82,19 +97,35 @@ router.get('/', (req, res) => {
     }).join(' ');
   }
 
-  filter.find = {};
-  filter.find.activityId = req.params.id;
-  Round.find(filter.find).select(filter.fields).exec((err, rounds) => {
+  // Create query from filter
+  let query = Round.find(filter);
+  // Counting all results
+  query.count().exec((err, count) => {
     if (err) {
-      // Handle error from User.findById
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err)
-      });
+      return res.sendError(5, err);
     }
-    return res.status(200).json({
-      success: true,
-      results: rounds
+
+    // Custom query by input filter, fields, sort, skip ,limit
+    query = Round.find(filter)
+      .select(fields)
+      .sort(sort)
+      .skip(skip)
+      .limit(limit);
+    // Execute query
+    query.exec((err, rounds) => {
+      if (err) {
+        return res.sendError(5, err);
+      }
+
+      res.status(200).json({
+        success: true,
+        results: rounds,
+        queryInfo: {
+          total: count,
+          limit,
+          skip,
+        }
+      });
     });
   });
 });
@@ -121,17 +152,11 @@ router.post('/', (req, res) => {
     Activity.findById(req.params.id, (err, activitiy) => {
       // Handle error from Activity.findById
       if (err) {
-        return res.status(500).json({
-          success: false,
-          errors: retrieveError(5, err),
-        });
+        return res.sendError(5, err);
       }
       // Related activity not found
       if (!activitiy) {
-        return res.status(403).json({
-          success: false,
-          errors: retrieveError(25),
-        });
+        return res.sendError(25, err);
       }
 
       // Set field value (comes from the request)
@@ -150,13 +175,10 @@ router.post('/', (req, res) => {
       round.save((err, _round) => {
         // Handle error from save
         if (err) {
-          return res.status(500).json({
-            success: false,
-            errors: retrieveError(5, err),
-          });
+          return res.sendError(5, err);
         }
 
-        res.status(201).json({
+        return res.status(201).json({
           success: true,
           message: 'Create Round successfull',
           results: _round,
@@ -164,10 +186,7 @@ router.post('/', (req, res) => {
       });
     });
   } else {
-    res.status(500).json({
-      success: false,
-      errors: retrieveError(5, 'Missing required field.'),
-    });
+    return res.sendError(5, 'Missing required field.');
   }
 });
 
@@ -200,24 +219,15 @@ router.get('/:rid', (req, res) => {
   Round.findById(req.params.rid, fields, (err, round) => {
     // Handle error from Round.findById
     if (err) {
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
     // Round isn't exist.
     if (!round) {
-      return res.status(403).json({
-        success: false,
-        errors: retrieveError(26),
-      });
+      return res.sendError(26);
     }
     // Round is not belong to Activity
     if (round.activityId !== req.param.id) {
-      return res.status(403).json({
-        success: false,
-        errors: retrieveError(26),
-      });
+      return res.sendError(26);
     }
 
     res.json({
@@ -243,24 +253,15 @@ router.put('/:rid', (req, res) => {
   Round.findById(req.params.id, (err, round) => {
     // Handle error from Round.findById
     if (err) {
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
     // Round isn't exist.
     if (!round) {
-      return res.status(403).json({
-        success: false,
-        errors: retrieveError(26),
-      });
+      return res.sendError(26);
     }
     // Round is not belong to Activity
     if (round.activityId !== req.param.id) {
-      return res.status(403).json({
-        success: false,
-        errors: retrieveError(26),
-      });
+      return res.sendError(26);
     }
 
     if (req.body.name) {
@@ -278,10 +279,7 @@ router.put('/:rid', (req, res) => {
 
     round.save((err, _round) => {
       if (err) {
-        return res.status(500).json({
-          success: false,
-          errors: retrieveError(5, err),
-        });
+        return res.sendError(5, err);
       }
       res.status(202).json({
         success: true,
@@ -303,32 +301,20 @@ router.delete('/:rid', (req, res) => {
   Round.findByIdA(req.params.rid, (err, round) => {
     // Handle error from Round.findById
     if (err) {
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
     // Round isn't exist.
     if (!round) {
-      return res.status(403).json({
-        success: false,
-        errors: retrieveError(26),
-      });
+      return res.sendError(26);
     }
     // Round is not belong to Activity
     if (round.activityId !== req.param.id) {
-      return res.status(403).json({
-        success: false,
-        errors: retrieveError(26),
-      });
+      return res.sendError(26);
     }
     // Remove the round
     round.remove((err) => {
       if (err) {
-        return res.status(500).json({
-          success: false,
-          errors: retrieveError(5, err),
-        });
+        return res.sendError(5, err);
       }
       res.status(202).json({
         success: true,
@@ -352,24 +338,15 @@ router.post('/:rid/reserve', isAuthenticatedByToken, (req, res) => {
   Round.findById(req.params.rid, (err, round) => {
     // Handle error from Round.findById
     if (err) {
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
     // Round isn't exist.
     if (!round) {
-      return res.status(403).json({
-        success: false,
-        errors: retrieveError(26),
-      });
+      return res.sendError(26);
     }
     // Round is not belong to Activity
     if (round.activityId !== req.param.id) {
-      return res.status(403).json({
-        success: false,
-        errors: retrieveError(26),
-      });
+      return res.sendError(26);
     }
 
     round.reserve(req.user.id)
@@ -380,13 +357,7 @@ router.post('/:rid/reserve', isAuthenticatedByToken, (req, res) => {
           results,
         })
       ))
-      .catch(err => (err.code ? res.status(retrieveError(err.code)).json({
-        success: false,
-        errors: retrieveError(err.code),
-      }) : res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      })));
+      .catch(err => (err.code ? res.sendError(err.code) : res.sendError(5, err)));
   });
 });
 
