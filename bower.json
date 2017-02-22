@@ -69,6 +69,7 @@
     "qrcodejs": "^0.1.0",
     "iron-input-image": "^1.1.0",
     "paper-tile": "^1.1.1",
-    "s-circle-progress": "^0.1.0"
+    "s-circle-progress": "^0.1.0",
+    "iron-list": "^1.4.1"
   }
 }

@@ -9,6 +9,7 @@
 <link rel="import" href="/public/lib/paper-tags-input/paper-tags-input.html">
 <link rel="import" href="/public/lib/paper-input/paper-textarea.html">
 <link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="/public/lib/iron-list/iron-list.html">
 <link rel="import" href="/public/lib/greenyouse-datetime-local-input/datetime-local-input.html">
 <link rel="import" href="/public/lib/google-map/google-map.html">
 <link rel="import" href="/public/lib/paper-dialog/paper-dialog.html">
@@ -442,8 +443,8 @@
         </paper-card>
         <paper-card class="card">
   				<h3>Round</h3>
-          <template is="dom-repeat" items="{{rounds}}">
-            <div class="block">
+          <iron-list items="[[rounds]]">
+            <template>
               <paper-card-dataitem action image="https://www.polymer-project.org/images/logos/p-logo.png">
                 <div class="card-item-header">
                   {{item.name.en}} ({{item.seats.reserved}}/{{item.seats.fullCapacity}})
@@ -455,8 +456,8 @@
                   {{_convertToDate(item.start)}}<br>{{_convertToDate(item.end)}}
                 </div>
               </paper-card-dataitem>
-            </div>
-          </template>
+            </template>
+          </iron-list>
           <round-api id="roundAPI" url="[[urlRound]]" rounds="{{rounds}}" error="{{error}}"></round-api>
         </paper-card>
 			</div>
