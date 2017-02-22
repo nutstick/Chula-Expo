@@ -53,3 +53,5 @@ router.delete('/:tid', (req, res) => {
       return res.sendError(5, err);
     });
 });
+
+module.exports = router;

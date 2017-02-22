@@ -174,7 +174,8 @@
         });
       },
       _srcChanged: function(src) {
-        if (this.images) {
+        console.log(src)
+        if (src && this.images) {
           this.push('images', {
             src: src,
             progress: 0,
@@ -209,6 +210,9 @@
           var formData = new FormData();
           formData.append(this.formDataName, image);
           xhr.send(formData);
+
+          // Clear image src data for prevent same image upload bug
+          this.$.addImage.set('value', null);
         }
       },
       _parseHeader: function(xhr) {

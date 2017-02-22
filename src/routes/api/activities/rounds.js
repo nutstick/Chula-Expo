@@ -1,7 +1,7 @@
 const express = require('express');
 const { Activity, Round } = require('../../../models');
-const { isAuthenticatedByToken } = require('../../../config/authenticate');
 const RangeQuery = require('../../../tools/RangeQuery');
+const { isAuthenticatedByToken, isStaff } = require('../../../config/authenticate');
 
 const router = express.Router({ mergeParams: true });
 
@@ -142,7 +142,7 @@ router.get('/', (req, res) => {
  * @return {boolean} success - Successful querying flag.
  * @return {Round} results - Created Round.
  */
-router.post('/', (req, res) => {
+router.post('/', isAuthenticatedByToken, isStaff, (req, res) => {
   // Create a new instance of the User model
   const round = new Round();
   // Validate required field from body
@@ -249,7 +249,7 @@ router.get('/:rid', (req, res) => {
  * @return {boolean} success - Successful updating flag.
  * @return {Round} results - Updated Round.
  */
-router.put('/:rid', (req, res) => {
+router.put('/:rid', isAuthenticatedByToken, isStaff, (req, res) => {
   Round.findById(req.params.id, (err, round) => {
     // Handle error from Round.findById
     if (err) {
@@ -297,7 +297,7 @@ router.put('/:rid', (req, res) => {
  * @return {boolean} success - Successful removing flag.
  * @return {string} message - Remove message.
  */
-router.delete('/:rid', (req, res) => {
+router.delete('/:rid', isAuthenticatedByToken, isStaff, (req, res) => {
   Round.findByIdA(req.params.rid, (err, round) => {
     // Handle error from Round.findById
     if (err) {
@@ -328,12 +328,18 @@ router.delete('/:rid', (req, res) => {
  * Reserve round
  * Access at POST http://localhost:8080/api/activities/:id/rounds/:rid/reserve
  * Authenticate: JWT token
+ * @param {seats} count - Number of reserving seats
  *
  * @return {boolean} success - Successful querying flag.
  * @return {string} message - Creating ticket message.
  * @return {Round} results - Ticket.
  */
 router.post('/:rid/reserve', isAuthenticatedByToken, (req, res) => {
+  let seats = 1;
+  if (req.user.type === 'Staff') {
+    seats = req.body.seats;
+  }
+
   // Get round from instance round model by ID
   Round.findById(req.params.rid, (err, round) => {
     // Handle error from Round.findById
@@ -349,7 +355,7 @@ router.post('/:rid/reserve', isAuthenticatedByToken, (req, res) => {
       return res.sendError(26);
     }
 
-    round.reserve(req.user.id, round)
+    round.reserve(req.user.id, round, seats)
       .then(results => (
         res.status(201).json({
           success: true,
@@ -396,5 +402,7 @@ router.delete('/:rid/reserve', isAuthenticatedByToken, (req, res) => {
       .catch(err => (err.code ? res.sendError(err.code) : res.sendError(5, err)));
   });
 });
+
+router.use('/:rid/tickets', require('./tickets'));
 
 module.exports = router;

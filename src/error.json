@@ -61,8 +61,8 @@
   },
   "28": {
     "status": "403",
-    "message": "Custom validate before saving fails",
-    "code": "27"
+    "message": "Ticket already create, can't reserve same round",
+    "code": "28"
   },
   "29": {
     "status": "400",
