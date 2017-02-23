@@ -112,7 +112,9 @@ router.get('/', (req, res) => {
 
         res.json({
           success: true,
-          results: results.map(res => Object.assign({ check: res.check }, res.round)),
+          results: results.map(result =>
+            Object.assign({ checked: result.checked, size: result.size },
+            (result.round && result.round._doc) || {})),
           queryInfo: {
             total: count,
             limit,
