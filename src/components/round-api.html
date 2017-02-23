@@ -6,11 +6,10 @@
 <dom-module id="round-api">
   <template>
     <iron-ajax
-      auto
       id="roundResource"
-      url="{{url}}"
-      headers="{{headers}}"
-      params="{{params}}"
+      url="[[url]]"
+      headers="[[headers]]"
+      params="[[params]]"
       on-response="_handleResponse"
       handle-as="json"
     ></iron-ajax>
@@ -29,9 +28,11 @@
         },
         headers: {
           type: Object,
-          value: {
-            'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
-          }
+          value: function() {
+            return {
+              'Authorization': 'JWT ' + window.token,
+            }
+          },
         },
         /*
           Input Data
@@ -84,10 +85,23 @@
       },
 
       observers: [
-        'updateRequest(page,pageSize,fields,start,end,zone)'
+        '_updateRequest(url, page,pageSize,fields,start,end,zone)'
       ],
 
-      updateRequest: function(page, pageSize, fields, start, end, zone) {
+      ready: function(){
+        document.addEventListener('token', function(e) {
+          var token = e.detail.token;
+          if (!token) {
+            return;
+          }
+          
+          this.headers = {
+            'Authorization': 'JWT ' + token
+          };
+          this.generateRequest();
+        });
+      },
+      _updateRequest: function(url, page, pageSize, fields, start, end, zone) {
         if (pageSize === 0) {
           this.set('params.limit', null);
           this.set('params.skip', page);
@@ -97,6 +111,8 @@
         }
 
         this.set('params.fields', fields)
+
+        this.generateRequest();
       },
       generateRequest: function() {
         this.$.roundResource.generateRequest();

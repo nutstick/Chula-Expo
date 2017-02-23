@@ -71,7 +71,7 @@ RoundSchema.methods.reserve = (userId, round, seats = 1) => new Promise((resolve
         return reject({ code: 24 });
       }
       // Fully booked seats
-      if (round.seats.reserved + 1 > round.seats.avaliable) {
+      if (round.seats.reserved + 1 > round.seats.fullCapacity) {
         return reject({ code: 30 });
       }
 

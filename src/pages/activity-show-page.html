@@ -9,7 +9,6 @@
 <link rel="import" href="/public/lib/paper-tags-input/paper-tags-input.html">
 <link rel="import" href="/public/lib/paper-input/paper-textarea.html">
 <link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="/public/lib/iron-list/iron-list.html">
 <link rel="import" href="/public/lib/greenyouse-datetime-local-input/datetime-local-input.html">
 <link rel="import" href="/public/lib/google-map/google-map.html">
 <link rel="import" href="/public/lib/paper-dialog/paper-dialog.html">
@@ -19,12 +18,12 @@
 <script type="text/javascript" src="/public/js/qrcode.min.js"></script>
 
 <link rel="import" href="/components/activity-api.html">
-<link rel="import" href="/components/round-api.html">
 <link rel="import" href="/components/place-api.html">
 <link rel="import" href="/components/zone-api.html">
 <link rel="import" href="/components/room-api.html">
 <link rel="import" href="/components/paper-card-dataitem.html">
 <link rel="import" href="/components/shared-styles.html">
+<link rel="import" href="/components/rounds-list.html">
 
 <dom-module id="activity-show-page">
   <template>
@@ -33,6 +32,7 @@
         @apply(--layout-vertical);
         @apply(--layout-center-center);
         padding-top: 20px;
+				margin-bottom: 40px;
       }
 
 			paper-card {
@@ -375,116 +375,15 @@
         </div>
 			</paper-card>
 			<div id="right">
-        <paper-card class="card">
-          <form is="iron-form" id="form" method="post" class="card-content"
-  					action="{{urlRound}}" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
-  					<div class="card-content">
-
-              <!-- time -->
-              <div class="item">
-  							<div>
-  								<label class="label --input">Start Time</label>
-  								<div class="flex fitdiv">
-  									<datetime-local-input name="start" label="" no-label-float="true" required></datetime-local-input>
-  								</div>
-  							</div>
-  							<div>
-  								<label class="label --input">End Time</label>
-  								<div class="flex fitdiv">
-  									<datetime-local-input name="end" label="" no-label-float="true" required></datetime-local-input>
-  								</div>
-  							</div>
-  						</div>
-
-              <!-- Seat -->
-  						<div class="item">
-                <div>
-  								<label class="label --input">Reserved</label>
-  								<div class="flex fitdiv">
-  									<paper-input type="number" name="seatsReserved" label="" no-label-float="true" required></paper-input>
-  								</div>
-  							</div>
-                <div>
-  								<label class="label --input">Seats</label>
-  								<div class="flex fitdiv">
-  									<paper-input type="number" name="seatsFullCapacity" label="" no-label-float="true" required></paper-input>
-  								</div>
-  							</div>
-  						</div>
-
-  						<!-- name -->
-  						<div class="item">
-                <div>
-                  <label class="label --input">ชื่อ (ไทย)</label>
-                  <div class="flex fitdiv">
-                    <paper-input type="text" name="nameTH" label="" no-label-float="true" required></paper-input>
-                  </div>
-                </div>
-                <div>
-                  <label class="label --input">Name (English)</label>
-                  <div class="flex fitdiv">
-                    <paper-input type="text" name="nameEN" label="" no-label-float="true" required></paper-input>
-                  </div>
-                </div>
-  						</div>
-  					</div>
-
-  					<!-- Submit Button -->
-  					<div class="card-actions">
-  						<div class="button-holder">
-  							<paper-button on-click="_delayedSubmit">
-  								<paper-spinner id="spinner" hidden></paper-spinner>Submit
-  							</paper-button>
-  							<!-- Reset Button -->
-  							<paper-button on-click="_reset">Reset</paper-button>
-  						</div>
-  					</div>
-  				</form>
-        </paper-card>
-        <paper-card class="card">
-  				<h3>Round</h3>
-          <iron-list items="[[rounds]]">
-            <template>
-              <paper-card-dataitem action image="https://www.polymer-project.org/images/logos/p-logo.png">
-                <div class="card-item-header">
-                  {{item.name.en}} ({{item.seats.reserved}}/{{item.seats.fullCapacity}})
-                  <div class="deleteBtn" on-tap="_deleteClick">
-                    <iron-icon icon="icons:close"></iron-icon>
-                  </div>
-                </div>
-                <div class="card-item-content">
-                  {{_convertToDate(item.start)}}<br>{{_convertToDate(item.end)}}
-                </div>
-              </paper-card-dataitem>
-            </template>
-          </iron-list>
-          <round-api id="roundAPI" url="[[urlRound]]" rounds="{{rounds}}" error="{{error}}"></round-api>
-        </paper-card>
+        <rounds-list activity-id="[[activityId]]"></rounds-list>
 			</div>
 		</div>
-    <paper-dialog id="dialog" on-iron-overlay-closed="_delete">
-      <h2>Are you sure?</h2>
-      <div class="buttons">
-        <paper-button dialog-dismiss>No</paper-button>
-        <paper-button dialog-confirm autofocus>Yes</paper-button>
-      </div>
-    </paper-dialog>
   </template>
   <script>
     Polymer({
       is: 'activity-show-page',
       properties: {
-        activityId: {
-          type: String,
-          observer: '_idChanged'
-        },
-        urlRound: {
-          type: String,
-          value: ''
-        },
-        token: {
-          type: String,
-        },
+        activityId: String,
         zoom: {
           type: Number,
           value: 16
@@ -494,10 +393,6 @@
         },
         error: {
           type: Object,
-        },
-        rounds: {
-          type: Array,
-          value: [],
         },
         deleteId: {
           type: String,
@@ -509,30 +404,6 @@
         this.$.placeAPI.generateRequest();
         this.$.roomAPI.generateRequest();
       },
-      _convertToDate: function(dateTime) {
-        return moment.utc(dateTime).format('MM-DD-YYYY HH:mm');
-      },
-      _delayedSubmit: function(event) {
-        var form = this.$.form;
-        this.$.spinner.active = true;
-        this.$.spinner.hidden = false;
-        this.$.form.disabled = true;
-        // Simulate a slow server response.
-        setTimeout(function() {
-          form.submit();
-        }, 1000);
-      },
-      _response: function(e) {
-        if (e.detail.response.success) {
-          this.$.form.reset();
-          this.$.roundAPI.generateRequest();
-        }
-      },
-      _reset: function(event) {
-        this.$.form.reset();
-      },
-      _presubmit: function(event) {
-      },
       _handleResponse: function(event) {
         if (event.detail.response.success) {
           this.activity = event.detail.response.results;
@@ -540,35 +411,9 @@
           this.error = event.detail.response.errors;
         }
       },
-      _deleteClick: function(event) {
-        this.deleteId = event.model.item['_id'];
-        this.$.dialog.open();
+      _convertToDate: function(dateTime) {
+        return moment.utc(dateTime).format('MM-DD-YYYY HH:mm');
       },
-      _delete: function(event) {
-        if(event.detail.confirmed) {
-          var id = this.deleteId;
-          var url = '/api/rounds/' + id;
-
-          var dom = this;
-          setTimeout(function () {
-            var req = new XMLHttpRequest();
-            req.open('DELETE',encodeURI(url));
-            req.onload = function() {
-              if (req.status === 202) {
-                dom.$.roundAPI.generateRequest();
-              }
-            };
-            req.send();
-          }.bind(this), 300);
-        }
-      },
-      _idChanged: function(id) {
-        if (id && id!='show' && id!='edit' && id!='add' && id!='list') {
-          this.urlRound = '/api/activities/' + id + '/rounds';
-        } else {
-          this.urlRound = '';
-        }
-      }
     })
   </script>
 </dom-module>

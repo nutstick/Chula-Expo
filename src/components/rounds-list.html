@@ -1,0 +1,239 @@
+<!-- Libery -->
+<link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="/public/lib/iron-list/iron-list.html">
+<link rel="import" href="/public/lib/paper-ripple/paper-ripple.html">
+<link rel="import" href="/components/round-api.html">
+<dom-module id="rounds-list">
+  <template>
+    <style>
+      .card {
+        width: 100%;
+        padding-bottom: 20px;
+        margin: 4px;
+      }
+      #remove {
+        position: absolute;
+        right: 20px;
+        top: 20px;
+      }
+      .item {
+        @apply(--layout-horizontal);
+        padding: 0px 16px;
+        background-color: white;
+        cursor: pointer;
+				min-height: 48px;
+      }
+      .avatar {
+        height: 40px;
+        width: 40px;
+        border-radius: 20px;
+        box-sizing: border-box;
+        background-color: #DDD;
+      }
+      .pad {
+        padding: 0 16px;
+        @apply(--layout-flex);
+        @apply(--layout-vertical);
+        position: relative;
+        overflow: hidden;
+      }
+      .primary {
+        font-size: 16px;
+        font-weight: bold;
+        white-space: nowrap;
+      }
+      .shortText, .longText {
+        font-size: 14px;
+        white-space: nowrap;
+      }
+      .longText {
+        color: gray;
+        display: none;
+      }
+    </style>
+    <round-api id="api" url="[[_url]]" rounds="{{rounds}}" error="{{error}}"></round-api>
+    <paper-card class="card">
+      <iron-pages
+        selected="[[_state]]"
+        attr-for-selected="name">
+        <div name="lists">
+          <div class="card-content">
+            <span style="line-height: 40px;display: inline-flex;">Round</span>
+            <paper-icon-button id="remove" icon="add-circle-outline"></paper-icon-button>
+          </div>
+          <div>
+            <iron-list items="[[rounds]]" selection-enabled multi-selection>
+              <template>
+                <div class$="[[_getClassForItem(item, selected)]]" tabindex$="[[tabIndex]]">
+                  <paper-ripple></paper-ripple>
+                  <div class="pad">
+                    <div class="primary">[[item.name.en]] ([[item.seats.reserved]]/[[item.seats.fullCapacity]])</div>
+                    <div class="shortText">[[_convertToDate(item.start)]] - [[_convertToDate(item.end)]]</div>
+                    <div class="longText">[[item.longText]]</div>
+                  </div>
+                  <iron-icon icon$="icons:close"></iron-icon>
+                  <div class="deleteBtn" on-tap="_deleteClick">
+                    <iron-icon icon="icons:more-vert"></iron-icon>
+                  </div>
+                </div>
+              </template>
+            </iron-list>
+          </div>
+        </div>
+        <div name="create">
+          <form is="iron-form" id="form" method="post" class="card-content"
+            action="{{_url}}" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
+            <div class="card-content">
+              <!-- time -->
+              <div class="item">
+                <div>
+                  <label class="label --input">Start Time</label>
+                  <div class="flex fitdiv">
+                    <datetime-local-input name="start" label="" no-label-float="true" required></datetime-local-input>
+                  </div>
+                </div>
+                <div>
+                  <label class="label --input">End Time</label>
+                  <div class="flex fitdiv">
+                    <datetime-local-input name="end" label="" no-label-float="true" required></datetime-local-input>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Seat -->
+              <div class="item">
+                <div>
+                  <label class="label --input">Reserved</label>
+                  <div class="flex fitdiv">
+                    <paper-input type="number" name="seatsReserved" label="" no-label-float="true" required></paper-input>
+                  </div>
+                </div>
+                <div>
+                  <label class="label --input">Seats</label>
+                  <div class="flex fitdiv">
+                    <paper-input type="number" name="seatsFullCapacity" label="" no-label-float="true" required></paper-input>
+                  </div>
+                </div>
+              </div>
+
+              <!-- name -->
+              <div class="item">
+                <div>
+                  <label class="label --input">ชื่อ (ไทย)</label>
+                  <div class="flex fitdiv">
+                    <paper-input type="text" name="nameTH" label="" no-label-float="true" required></paper-input>
+                  </div>
+                </div>
+                <div>
+                  <label class="label --input">Name (English)</label>
+                  <div class="flex fitdiv">
+                    <paper-input type="text" name="nameEN" label="" no-label-float="true" required></paper-input>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="card-actions">
+              <div class="button-holder">
+                <paper-button on-click="_delayedSubmit">
+                  <paper-spinner id="spinner" hidden></paper-spinner>Submit
+                </paper-button>
+                <!-- Reset Button -->
+                <paper-button on-click="_reset">Reset</paper-button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </iron-pages>
+    </paper-card>
+    <paper-dialog id="dialog" on-iron-overlay-closed="_delete">
+      <h2>Are you sure?</h2>
+      <div class="buttons">
+        <paper-button dialog-dismiss>No</paper-button>
+        <paper-button dialog-confirm autofocus>Yes</paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+  <script>
+    Polymer({
+      is: 'rounds-list',
+      properties: {
+        _state: {
+          type: String,
+          value: 'lists',
+        },
+        activityId: {
+          type: String,
+          observer: '_idChanged'
+        },
+        rounds: {
+          type: Array,
+          value: [],
+        },
+        error: {
+          type: Array,
+          value: [],
+        },
+        _url: String,
+      },
+
+      _getClassForItem: function(item, selected) {
+        return selected ? 'item expanded' : 'item';
+      },
+      _delayedSubmit: function(event) {
+        var form = this.$.form;
+        this.$.spinner.active = true;
+        this.$.spinner.hidden = false;
+        this.$.form.disabled = true;
+        // Simulate a slow server response.
+        setTimeout(function() {
+          form.submit();
+        }, 1000);
+      },
+      _response: function(e) {
+        if (e.detail.response.success) {
+          this.$.form.reset();
+          this.$.api.generateRequest();
+        }
+      },
+      _reset: function(event) {
+        this.$.form.reset();
+      },
+      _presubmit: function(event) {},
+      _deleteClick: function(event) {
+        this.deleteId = event.model.item['_id'];
+        this.$.dialog.open();
+      },
+      _delete: function(event) {
+        if(event.detail.confirmed) {
+          var id = this.deleteId;
+          var url = '/api/rounds/' + id;
+
+          var dom = this;
+          setTimeout(function () {
+            var req = new XMLHttpRequest();
+            req.open('DELETE',encodeURI(url));
+            req.onload = function() {
+              if (req.status === 202) {
+                dom.$.roundAPI.generateRequest();
+              }
+            };
+            req.send();
+          }.bind(this), 300);
+        }
+      },
+      _idChanged: function(id) {
+          if (id && id!='show' && id!='edit' && id!='add' && id!='list') {
+          this._url = '/api/activities/' + id + '/rounds';
+        } else {
+          this._url = '';
+        }
+      },
+      _convertToDate: function(dateTime) {
+        return moment.utc(dateTime).format('D MMM YY hh:mm:ss');
+      },
+    });
+  </script>
+</dom-module>
