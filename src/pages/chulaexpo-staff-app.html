@@ -1,5 +1,6 @@
 <!-- Libery -->
 <link rel="import" href="/public/lib/polymer/polymer.html">
+<link rel="import" href="/public/lib/moment/min/moment-with-locales.min.js">
 <!-- Route -->
 <link rel="import" href="/public/lib/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="/public/lib/app-layout/app-drawer-layout/app-drawer-layout.html">
@@ -185,7 +186,8 @@
         },
         token: {
           type: String,
-          value: null
+          value: null,
+          observer: '_uppdateToken',
         },
         loggedIn: {
           type: Boolean,
@@ -217,6 +219,11 @@
         '_routePageChanged(routeData.page)',
       ],
 
+      _uppdateToken: function(token) {
+        window.token = token;
+        var event = new CustomEvent('token', { token: token });
+        document.dispatchEvent(event)
+      },
       _routePageChanged: function(page) {
         this.page = page || 'home';
 

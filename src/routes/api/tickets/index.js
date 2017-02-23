@@ -1,7 +1,6 @@
 const express = require('express');
 const { Ticket } = require('../../../models');
 const { isAuthenticatedByToken, isStaff } = require('../../../config/authenticate');
-const { retrieveError } = require('../../../tools/retrieveError');
 
 const router = express.Router();
 
@@ -10,16 +9,10 @@ router.use(isAuthenticatedByToken, isStaff);
 router.get('/:tid', (req, res) => {
   Ticket.findById(req.param.tid, (err, ticket) => {
     if (err) {
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
     if (!ticket) {
-      return res.status(403).json({
-        success: false,
-        error: retrieveError(27),
-      });
+      return res.sendError(27);
     }
     res.json({
       success: true,
@@ -41,23 +34,12 @@ router.delete('/:tid', (req, res) => {
         message: `Successfully removed ticket ${req.params.tid}.`,
       });
     })
-    .catch((err) => {
-      if (err.code) {
-        return res.status(retrieveError(err.code).status).json({
-          success: false,
-          errors: retrieveError(err.code),
-        });
-      }
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
-    });
+      .catch(err => (err.code ? res.sendError(err.code) : res.sendError(5, err)));
 });
 
 router.post('/:tid/check', (req, res) => {
   Ticket.findById(req.param.tid, (err, ticket) => {
-    ticket.checkIn()
+    ticket.checkIn(ticket._id)
       .then(() => (
         res.status(201).json({
           success: true,
@@ -68,13 +50,7 @@ router.post('/:tid/check', (req, res) => {
           }
         })
       ))
-      .catch(err => (err.code ? res.status(retrieveError(err.code)).json({
-        success: false,
-        errors: retrieveError(err.code),
-      }) : res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      })));
+      .catch(err => (err.code ? res.sendError(err.code) : res.sendError(5, err)));
   });
 });
 

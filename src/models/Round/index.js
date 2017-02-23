@@ -45,11 +45,11 @@ RoundSchema.index({ avaliable: -1, start: 1, end: 1, activityId: 1 });
  * Pre-save method
  */
 RoundSchema.pre('save', function save(next) {
-  const round = this;
-  if (!round.isModified('password')) {
-    // Correcting Avaliable Seats
-    this.seats.avaliable = this.seats.fullCapacity - this.seats.reserved;
-  }
+  // const round = this;
+  // if (!round.isModified('password')) {
+  // Correcting Avaliable Seats
+  this.seats.avaliable = this.seats.fullCapacity - this.seats.reserved;
+  // }
   // Update at updated
   this.updateAt = new Date();
   next();
@@ -58,7 +58,7 @@ RoundSchema.pre('save', function save(next) {
 /**
  * Find and reserve method
  */
-RoundSchema.methods.reserve = (userId, round) => new Promise((resolve, reject) => {
+RoundSchema.methods.reserve = (userId, round, seats = 1) => new Promise((resolve, reject) => {
   Ticket.findOne({ user: userId, round: round.id }, (err, ticket) => {
     if (err) {
       return reject(err);
@@ -75,14 +75,13 @@ RoundSchema.methods.reserve = (userId, round) => new Promise((resolve, reject) =
         return reject({ code: 24 });
       }
       // Fully booked seats
-      if (round.seats.reserved + 1 > round.seats.avaliable) {
+      if (round.seats.reserved + 1 > round.seats.fullCapacity) {
         return reject({ code: 30 });
       }
 
-      const ticket = new Ticket({ user: userId, round: round.id, });
+      const ticket = new Ticket({ user: userId, round: round.id, size: seats });
 
-      round.seats.reserved++;
-      // this.tickets.push(ticket);
+      round.seats.reserved += seats;
 
       user.reservedActivity.push({
         roundId: round.id,
@@ -121,7 +120,7 @@ RoundSchema.methods.cancelReservedSeat = (userId, round, forceRemove) =>
           return reject({ code: 0 });
         }
         // Decease reseaved seats by 1 and bound by zero
-        round.seats.reserved = Math.max(round.seats.reserved - 1, 0);
+        round.seats.reserved = Math.max(round.seats.reserved - ticket.size, 0);
         // Filter out User's reseved activity
         user.reservedActivity.filter(activity => activity.ticket !== ticket.id);
 
