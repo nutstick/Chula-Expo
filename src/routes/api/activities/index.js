@@ -81,6 +81,16 @@ router.get('/', (req, res) => {
     }
     filter.end = RangeQuery(req.query.end, 'Date');
   }
+  // Activities's updateAt range query
+  if (req.query.update) {
+    try {
+      req.query.update = JSON.parse(req.query.update);
+    } catch (err) {
+      // return res.sendError(5, err);
+    }
+    filter.updateAt = RangeQuery(req.query.update, 'Date');
+  }
+
 
   // Name Query
   // http://localhost:3000/?name=John
@@ -100,6 +110,10 @@ router.get('/', (req, res) => {
 
   if (req.query.highlight) {
     filter.isHighlight = req.query.highlight;
+  }
+
+  if (req.query.createBy) {
+    filter.createBy = req.query.createBy;
   }
 
   // field selector
@@ -132,22 +146,37 @@ router.get('/', (req, res) => {
   }
   // limiter on each query
   // http://localhost:3000/?limit=10
+  let limit;
   if (req.query.limit) {
-    query = query.limit(Number.parseInt(req.query.limit, 10));
+    limit = Number.parseInt(req.query.limit, 10);
+    query = query.limit(limit);
   }
   // Offset of a query data
   // http://localhost:3000/?skip=10
+  let skip;
   if (req.query.skip) {
-    query = query.skip(Number.parseInt(req.query.skip, 10));
+    skip = Number.parseInt(req.query.skip, 10);
+    query = query.skip(skip);
   }
 
-  query.exec((err, _act) => {
+
+  Activity.find(filter).count((err, total) => {
     if (err) {
       res.sendError(5, err);
     }
-    res.status(200).json({
-      success: true,
-      results: _act
+    query.exec((err, _act) => {
+      if (err) {
+        res.sendError(5, err);
+      }
+      res.status(200).json({
+        success: true,
+        results: _act,
+        queryInfo: {
+          total,
+          limit,
+          skip,
+        }
+      });
     });
   });
 });

@@ -56,19 +56,37 @@ router.get('/', (req, res) => {
   }
   // limiter on each query
   // http://localhost:3000/?limit=10
+  let limit;
   if (req.query.limit) {
-    query = query.limit(Number.parseInt(req.query.limit, 10));
+    limit = Number.parseInt(req.query.limit, 10);
+    query = query.limit(limit);
   }
   // Offset of a query data
   // http://localhost:3000/?skip=10
+  let skip;
   if (req.query.skip) {
-    query = query.skip(Number.parseInt(req.query.skip, 10));
+    skip = Number.parseInt(req.query.skip, 10);
+    query = query.skip(skip);
   }
 
-  query.exec((err, _fac) => {
-    res.status(200).json({
-      success: true,
-      results: _fac
+
+  Facility.find(filter).count((err, total) => {
+    if (err) {
+      res.sendError(5, err);
+    }
+    query.exec((err, _fac) => {
+      if (err) {
+        res.sendError(5, err);
+      }
+      res.status(200).json({
+        success: true,
+        results: _fac,
+        queryInfo: {
+          total,
+          limit,
+          skip,
+        }
+      });
     });
   });
 });

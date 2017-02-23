@@ -88,29 +88,30 @@ router.get('/', (req, res) => {
     }, {});
   }
 
-//----------------------------------------------------------------
-  Zone.find(filter)
-    .select(fieldwant).sort(sort).skip(skip)
-    .limit(limit)
-  .exec(
-    (err, zones) => {
-      if (err) {
-        return res.status(500).send({
-          success: false,
-          errors: retrieveError(5, err)
-        });
-      }
-      res.status(200).json({
-        success: true,
-        results: zones,
-        queryInfo: {
-          total: 1,
-          limit,
-          skip,
-          user: req.user,
+  //----------------------------------------------------------------
+  Zone.find(filter).count((err, total) => {
+    if (err) {
+      res.sendError(5, err);
+    }
+    Zone.find(filter)
+      .select(fieldwant).sort(sort).skip(skip)
+      .limit(limit)
+      .exec((err, zones) => {
+        if (err) {
+          res.sendError(5, err);
         }
+
+        res.status(200).json({
+          success: true,
+          results: zones,
+          queryInfo: {
+            total,
+            limit,
+            skip,
+          }
+        });
       });
-    });
+  });
 });
  //----------------------------------------------------------------
  //----------------------------------------------------------------

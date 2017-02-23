@@ -75,29 +75,29 @@ router.get('/', (req, res) => {
     }, {});
   }
 //----------------------------------------------------------------
-  Place.find(filter)
-    .select(fields).sort(sort).skip(skip)
-    .limit(limit)
-    .exec(
-    (err, places) => {
-      if (err) {
-        return res.status(500).send({
-          success: false,
-          errors: retrieveError(5, err)
-        });
-      }
-
-      res.status(200).json({
-        success: true,
-        results: places,
-        queryInfo: {
-          total: 1,
-          limit,
-          skip,
-          user: req.user,
+  Place.find(filter).count((err, total) => {
+    if (err) {
+      res.sendError(5, err);
+    }
+    Place.find(filter)
+      .select(fields).sort(sort).skip(skip)
+      .limit(limit)
+      .exec((err, places) => {
+        if (err) {
+          res.sendError(5, err);
         }
+
+        res.status(200).json({
+          success: true,
+          results: places,
+          queryInfo: {
+            total,
+            limit,
+            skip,
+          }
+        });
       });
-    });
+  });
 });
 
 /**
