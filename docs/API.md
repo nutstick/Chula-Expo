@@ -144,13 +144,15 @@ Accessible fields
  * fullCapacity
  * seatsAvaliable
  * seatsReserved
+ * checked
+ * sized
 
 Successful Results
 
 Name | Datatype | Value | Description
 -----|----------|-------|------------
 success | boolean | true | Success request
-results | Round[] | *up to request* | Result round from query
+results | Round[] | *up to request* | Result round + checked flag and reserve size from query
 queryInfo.total | number | *up to request* | Total numbers of items in query
 queryInfo.limit | number | *up to request* | Limit that was used
 queryInfo.skip | number | *up to request* | Skip that was used

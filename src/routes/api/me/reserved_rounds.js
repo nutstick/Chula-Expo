@@ -5,7 +5,7 @@ const { retrieveError, RangeQuery } = require('../../../tools/retrieveError');
 
 const router = express.Router();
 
-const accessibleFields = ['name', 'activityId', 'start', 'end', 'seatsFullCapacity', 'seats.avaliable', 'seats.reserved'];
+const accessibleFields = ['checked', 'size', 'name', 'activityId', 'start', 'end', 'seatsFullCapacity', 'seats.avaliable', 'seats.reserved'];
 /**
  * Get all reserved reservable activities's rounds
  * Access at GET http://localhost:8080/api/me/reserved_rounds
@@ -100,7 +100,7 @@ router.get('/', (req, res) => {
       });
     }
 
-    Ticket.find({ user: req.user.id })
+    Ticket.find({ user: req.user.id }, fields)
       .populate('round', fields, filter, { sort, skip, limit })
       .exec((err, results) => {
         if (err) {
