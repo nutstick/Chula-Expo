@@ -81,7 +81,7 @@ router.get('/', (req, res) => {
         });
       }
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         results: rooms
       });
@@ -165,7 +165,7 @@ router.post('/', (req, res) => {
         errors: retrieveError(5, err),
       });
     }
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       results: _room
     });
@@ -216,35 +216,31 @@ router.put('/:id', (req, res) => {
     }
 
     if (req.body.floor) {
-      room.location.floor= req.body.floor;
+      room.location.floor = req.body.floor;
     }
     if (req.body.place) {
-      room.place =  mongoose.Types.ObjectId(req.body.place);
+      room.place = mongoose.Types.ObjectId(req.body.place);
     }
 
-
-
-      room.save((err, _room) => {
-        if (err) {
-          return res.status(500).json({
-            success: false,
-            errors: retrieveError(5, err)
-          });
-        }
-        res.status(202).json({
-          success: true,
-          message: 'Update room successful',
-          results: _room
+    room.save((err, _room) => {
+      if (err) {
+        return res.status(500).json({
+          success: false,
+          errors: retrieveError(5, err)
         });
+      }
+      return res.status(202).json({
+        success: true,
+        message: 'Update room successful',
+        results: _room
       });
-
+    });
   });
 });
 
 // Delete an existing room via DEL.
 // Access at DEL http://localhost:3000/api/en/rooms/:id
 router.delete('/:id', (req, res) => {
-
   Room.findByIdAndRemove(req.params.id).exec((err, room) => {
     if (err) {
        // Handle error from User.findById
@@ -261,15 +257,15 @@ router.delete('/:id', (req, res) => {
       });
     }
 
-    res.status(202).json({
+    return res.status(202).json({
       success: true,
       message: `An Room with id ${req.params.id} was removed.`
     });
 
     Place.update(
-        { _id :  new ObjectId(room.place) },
-        { '$pull': { rooms: new ObjectId(req.params.id) } },function(err, obj) {
-          //do something smart
+        { _id: new ObjectId(room.place) },
+        { '$pull': { rooms: new ObjectId(req.params.id) } }, (err, obj) => {
+          // do something smart
           if (err) {
              // Handle error from User.findById
             return res.status(500).json({
@@ -279,8 +275,6 @@ router.delete('/:id', (req, res) => {
           }
         }
      );
-
-
   });
 });
 

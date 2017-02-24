@@ -162,13 +162,13 @@ router.get('/', (req, res) => {
 
   Activity.find(filter).count((err, total) => {
     if (err) {
-      res.sendError(5, err);
+      return res.sendError(5, err);
     }
     query.exec((err, _act) => {
       if (err) {
-        res.sendError(5, err);
+        return res.sendError(5, err);
       }
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         results: _act,
         queryInfo: {
@@ -238,7 +238,7 @@ router.post('/', isAuthenticatedByToken, isStaff, (req, res) => {
         return res.sendError(5, err);
       }
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         results: _act
       });
@@ -373,7 +373,7 @@ router.put('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
       if (err) {
         return res.sendError(5, err);
       }
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         results: updatedAct
       });
@@ -406,7 +406,7 @@ router.delete('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
       if (err) {
         return res.sendError(5, err);
       }
-      res.status(202).json({
+      return res.status(202).json({
         success: true,
         message: `An Activity with id ${req.params.id} was removed.`,
       });

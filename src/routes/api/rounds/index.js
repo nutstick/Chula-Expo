@@ -107,7 +107,7 @@ router.get('/', (req, res) => {
   if (req.query.userId) {
     Ticket.find({ user: req.query.userId }).count().exec((err, count) => {
       if (err) {
-        res.status(500).json({
+        return res.status(500).json({
           success: false,
           errors: retrieveError(5, err),
         });
@@ -123,7 +123,7 @@ router.get('/', (req, res) => {
             });
           }
 
-          res.status(200).json({
+          return res.status(200).json({
             success: true,
             results: results.map(res => res.round),
             queryInfo: {
@@ -151,7 +151,7 @@ router.get('/', (req, res) => {
           });
         }
 
-        res.status(200).json({
+        return res.status(200).json({
           success: true,
           results: result.round,
           queryInfo: {
@@ -189,7 +189,7 @@ router.get('/', (req, res) => {
           });
         }
 
-        res.status(200).json({
+        return res.status(200).json({
           success: true,
           results: rounds,
           queryInfo: {
@@ -263,7 +263,7 @@ router.post('/', (req, res) => {
           });
         }
 
-        res.status(201).json({
+        return res.status(201).json({
           success: true,
           message: 'Create Round successful',
           results: _round,
@@ -271,7 +271,7 @@ router.post('/', (req, res) => {
       });
     });
   } else {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       errors: retrieveError(5, 'Missing required field.'),
     });
@@ -321,7 +321,7 @@ router.get('/:id', (req, res) => {
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       results: round,
     });
@@ -383,7 +383,7 @@ router.put('/:id', (req, res) => {
           errors: retrieveError(5, err),
         });
       }
-      res.status(202).json({
+      return res.status(202).json({
         success: true,
         message: 'Update round successful',
         results: _round,
@@ -407,7 +407,7 @@ router.delete('/:id', (req, res) => {
         errors: retrieveError(5, err),
       });
     }
-    res.status(202).json({
+    return res.status(202).json({
       success: true,
       message: `Round id ${req.params.id} was removed.`,
     });

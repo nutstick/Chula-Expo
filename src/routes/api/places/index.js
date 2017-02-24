@@ -87,7 +87,7 @@ router.get('/', (req, res) => {
           res.sendError(5, err);
         }
 
-        res.status(200).json({
+        return res.status(200).json({
           success: true,
           results: places,
           queryInfo: {
@@ -183,7 +183,7 @@ router.post('/', (req, res) => {
         errors: retrieveError(5, err),
       });
     }
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       results: _place
     });

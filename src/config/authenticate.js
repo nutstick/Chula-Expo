@@ -47,7 +47,7 @@ module.exports = {
     if (req.user && req.user.type === 'Staff' && req.user.staff.staffType === 'Admin') {
       return next();
     }
-    res.sendError(4);
+    return res.sendError(4);
   },
 
   isStaff: (req, res, next) => {
