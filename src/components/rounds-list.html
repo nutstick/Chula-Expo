@@ -220,7 +220,7 @@
         form.addEventListener('change', function(event) {
           // Validate the entire form to see if we should enable the `Submit` button.
           this.$.submit.disabled = !this.$.form.validate();
-        }).bind(this);
+        });
         
         document.addEventListener('token', function(e) {
           var token = e.detail.token;
@@ -233,7 +233,7 @@
           };
 
 					this.$.roundAPI.generateRequest();
-        }).bind(this);
+        });
       },
       _getClassForItem: function(item, selected) {
         return selected ? 'item expanded' : 'item';
