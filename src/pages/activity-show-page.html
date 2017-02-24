@@ -206,18 +206,6 @@
 							<div class="flex fitdiv">
 								{{activity.video}}
                 <div id="qrvideo" style="width:200px; height:200px; margin-bottom:15px; margin-top:4px;"></div>
-                <script type="text/javascript">
-                  var div_qrvideo = document.getElementById("qrvideo");
-                  div_qrvideo.innerHTML = "";
-                  var qrcode = new QRCode(div_qrvideo, {
-                    text: "http://staff.chulaexpo.com/api/activities/" + document.querySelector('activity-show-page').activityId + "/qrvideo",
-                    width: 200,
-                    height: 200,
-                    colorDark : "#000000",
-                    colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.L
-                  });
-                </script>
 
 							</div>
 						</div>
@@ -226,18 +214,6 @@
 							<div class="flex fitdiv">
 								{{activity.pdf}}
                 <div id="qrcode" style="width:200px; height:200px; margin-bottom:15px; margin-top:4px;"></div>
-                <script type="text/javascript">
-                  var div_qrcode = document.getElementById("qrcode");
-                  div_qrcode.innerHTML = "";
-                  var qrcode = new QRCode(div_qrcode, {
-                    text: "http://staff.chulaexpo.com/api/activities/" + document.querySelector('activity-show-page').activityId + "/qrcode",
-                    width: 200,
-                    height: 200,
-                    colorDark : "#ff69B4",
-                    colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.L
-                  });
-                </script>
 
 							</div>
 						</div>
@@ -408,10 +384,33 @@
         },
       },
       generateRequest: function(){
+			
         this.$.activityAPI.generateRequest();
         this.$.zoneAPI.generateRequest();
         this.$.placeAPI.generateRequest();
         this.$.roomAPI.generateRequest();
+				
+				var div_qrcode = document.getElementById("qrcode");
+				div_qrcode.innerHTML = "";
+				var qrcode = new QRCode(div_qrcode, {
+					text: "http://staff.chulaexpo.com/api/activities/" + document.querySelector('activity-show-page').activityId + "/qrcode",
+					width: 200,
+					height: 200,
+					colorDark : "#ff69B4",
+					colorLight : "#ffffff",
+					correctLevel : QRCode.CorrectLevel.L
+				});
+
+				var div_qrvideo = document.getElementById("qrvideo");
+				div_qrvideo.innerHTML = "";
+				var qrcode = new QRCode(div_qrvideo, {
+					text: "http://staff.chulaexpo.com/api/activities/" + document.querySelector('activity-show-page').activityId + "/qrvideo",
+					width: 200,
+					height: 200,
+					colorDark : "#000000",
+					colorLight : "#ffffff",
+					correctLevel : QRCode.CorrectLevel.L
+				});
       },
       _handleResponse: function(event) {
         if (event.detail.response.success) {

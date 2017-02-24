@@ -84,7 +84,7 @@ router.get('/', (req, res) => {
       .limit(limit)
       .exec((err, places) => {
         if (err) {
-          res.sendError(5, err);
+          return res.sendError(5, err);
         }
 
         return res.status(200).json({
