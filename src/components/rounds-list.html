@@ -217,9 +217,11 @@
       },
 
       ready: function() {
+        var form = this.$.form;
+        var submit = this.$.submit;
         form.addEventListener('change', function(event) {
           // Validate the entire form to see if we should enable the `Submit` button.
-          this.$.submit.disabled = !this.$.form.validate();
+          submit.disabled = !form.validate();
         });
         
         document.addEventListener('token', function(e) {
