@@ -291,12 +291,12 @@ router.get('/:id/qrcode', (req, res) => {
   Activity.findById(req.params.id, (err, act) => {
     if (err) {
       return res.sendError(5, err);
+    } else if (!act.pdf) {
+      return res.sendError(5, err);
     }
-		else if(!act.pdf) {
-		  return res.sendError(5, err);
-    }
+
     res.writeHead(301, {
-      Location: act.pdf
+      Location: encodeURI(act.pdf)
     });
     res.end();
   });
@@ -307,12 +307,11 @@ router.get('/:id/qrvideo', (req, res) => {
   Activity.findById(req.params.id, (err, act) => {
     if (err) {
       return res.sendError(5, err);
-    }
-		else if(!act.video) {
-		  return res.sendError(5, err);
+    } else if (!act.video) {
+      return res.sendError(5, err);
     }
     res.writeHead(301, {
-      Location: act.video
+      Location: encodeURI(act.video)
     });
     res.end();
   });
