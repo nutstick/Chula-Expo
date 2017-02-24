@@ -5,7 +5,8 @@ const { retrieveError, RangeQuery } = require('../../../tools/retrieveError');
 
 const router = express.Router();
 
-const accessibleFields = ['checked', 'size', 'name', 'activityId', 'start', 'end', 'seatsFullCapacity', 'seats.avaliable', 'seats.reserved'];
+const accessibleFields = ['_id', 'id', 'name', 'activityId', 'start', 'end', 'seats.fullCapacity', 'seats.avaliable', 'seats.reserved'];
+const roundAccessibleFields = ['checked', 'size'];
 /**
  * Get all reserved reservable activities's rounds
  * Access at GET http://localhost:8080/api/me/reserved_rounds
@@ -34,6 +35,7 @@ router.get('/', (req, res) => {
   let limit;
   let skip = 0;
   let fields;
+  let roundFields;
   // Round's name
   if (req.query.name) {
     filter.name = req.query.name;
@@ -90,6 +92,8 @@ router.get('/', (req, res) => {
       }
       return field;
     }), accessibleFields).join(' ');
+
+    roundFields = _.intersection(req.query.fields.split(','), roundAccessibleFields).concat(['round']).join(' ');
   }
 
   Ticket.find({ user: req.user.id }).count().exec((err, count) => {
@@ -100,7 +104,7 @@ router.get('/', (req, res) => {
       });
     }
 
-    Ticket.find({ user: req.user.id }, fields)
+    Ticket.find({ user: req.user.id }, roundFields)
       .populate('round', fields, filter, { sort, skip, limit })
       .exec((err, results) => {
         if (err) {
