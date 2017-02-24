@@ -217,13 +217,11 @@
       },
 
       ready: function() {
-        var form = this.$.form;
-        var submit = this.$.submit;
         form.addEventListener('change', function(event) {
           // Validate the entire form to see if we should enable the `Submit` button.
-          submit.disabled = !form.validate();
-        });
-
+          this.$.submit.disabled = !this.$.form.validate();
+        }).bind(this);
+        
         document.addEventListener('token', function(e) {
           var token = e.detail.token;
           if (!token) {
@@ -233,13 +231,17 @@
           this._headers = {
             'Authorization': 'JWT ' + token
           };
-          this.$.roundAPI.generateRequest();
-        });
+
+					this.$.roundAPI.generateRequest();
+        }).bind(this);
       },
       _getClassForItem: function(item, selected) {
         return selected ? 'item expanded' : 'item';
       },
       _delayedSubmit: function(event) {
+        if (!this.start || !this.end) {
+          return event.preventDefault();
+        }
         var form = this.$.form;
         this.$.spinner.active = true;
         this.$.spinner.hidden = false;
@@ -264,7 +266,6 @@
         this.$.submit.disabled = false;
       },
       _presubmit: function(event) {
-        console.log(this.start, this.end)
         if (!this.start || !this.end) {
           return event.preventDefault();
         }
