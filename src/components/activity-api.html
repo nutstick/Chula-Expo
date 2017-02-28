@@ -123,7 +123,7 @@
         this.set('params.zone', zone);
       },
       generateRequest: function() {
-
+        this.updateRequest(this.page,this.pageSize,this.fields,this.start,this.end,this.zone,this.me);
         this.$.activityResource.generateRequest();
       },
       _handleResponse: function(event) {
@@ -140,7 +140,6 @@
         }
       },
       _idChanged: function(id) {
-        console.log(id);
         if (id && id!='show' && id!='edit' && id!='add' && id!='list') {
           this.url = '/api/activities/' + id;
         } else if (id && id=='list'){

@@ -330,7 +330,6 @@
       },
       _idChanged: function(id) {
         if (id && id!='show' && id!='edit' && id!='add' && id!='list') {
-          console.log(id);
           this.urlPlace = '/api/places?zoneid=' + id ;
         } else {
           this.urlPlace = '';
