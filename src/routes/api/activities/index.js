@@ -344,13 +344,11 @@ router.put('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
       res.sendError(25);
     }
 
-    /*
-    // Check match zone with User
-    if (req.user.staff.type === 'Staff' && req.user.staff.staffType !== 'Admin'
-      && req.user.staff.zone !== activity.zone) {
-      return res.sendError(4, 'No permission on editing activity outside your own zone');
+    // Check activity match with User
+    if (req.user.type !== 'Staff' || (req.user.type === 'Staff' && req.user.staff.staffType !== 'Admin'
+      && req.user.id !== String(activity.createBy))) {
+      return res.sendError(4, 'No permission on editing activity outside your own activity');
     }
-    */
 
     _.assignIn(activity, updateFields);
     activity.name.en = req.body.nameEN;
@@ -403,12 +401,12 @@ router.delete('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
     if (!activity) {
       return res.sendError(25);
     }
-    /*
-    // Check match zone with User
-    if (req.user.staff.type === 'Staff' && req.user.staff.staffType !== 'Admin'
-      && req.user.staff.zone !== activity.zone) {
-      return res.sendError(4, 'No permission on removing activity outside your own zone');
-    }*/
+
+    // Check activity match with User
+    if (req.user.type !== 'Staff' || (req.user.type === 'Staff' && req.user.staff.staffType !== 'Admin'
+      && req.user.id !== String(activity.createBy))) {
+      return res.sendError(4, 'No permission on deleting activity outside your own activity');
+    }
 
     activity.remove((err) => {
       // Handle error remove
