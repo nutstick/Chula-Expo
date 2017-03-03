@@ -48,6 +48,11 @@ router.use('/tickets', require('./tickets'));
 router.use('/facilities', require('./facilities'));
 
 /**
+ * Comment API
+*/
+router.use('/comments', require('./comments'));
+
+/**
  * place API
 */
 router.use('/places', require('./places'));

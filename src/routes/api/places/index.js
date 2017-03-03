@@ -77,7 +77,7 @@ router.get('/', (req, res) => {
 //----------------------------------------------------------------
   Place.find(filter).count((err, total) => {
     if (err) {
-      res.sendError(5, err);
+      return res.sendError(5, err);
     }
     Place.find(filter)
       .select(fields).sort(sort).skip(skip)
