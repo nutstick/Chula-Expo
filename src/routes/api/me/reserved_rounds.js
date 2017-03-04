@@ -98,7 +98,7 @@ router.get('/', (req, res) => {
 
   Ticket.find({ user: req.user.id }).count().exec((err, count) => {
     if (err) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         errors: retrieveError(5, err),
       });
@@ -166,7 +166,7 @@ router.get('/:rid', (req, res) => {
     .exec((err, results) => {
       // Handle error from Ticket.findOne
       if (err) {
-        res.status(500).json({
+        return res.status(500).json({
           success: false,
           errors: retrieveError(5, err),
         });

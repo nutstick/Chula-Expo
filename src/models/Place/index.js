@@ -25,7 +25,14 @@ const PlaceSchema = new mongoose.Schema({
   zone: {
     type: ObjectId,
     ref: 'Zone'
-  }
+  },
+  createAt: { type: Date, default: new Date() },
+  updateAt: { type: Date, default: new Date() },
+  createBy: {
+    type: ObjectId,
+    ref: 'User'
+  },
+
 });
 
 const Place = mongoose.model('Place', PlaceSchema);

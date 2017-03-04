@@ -69,10 +69,6 @@ const ActivitySchema = new mongoose.Schema({
     required: true,
     index: true
   },
-  rounds: [{
-    type: ObjectId,
-    ref: 'Round'
-  }],
   start: {
     type: Date,
     required: true,
@@ -82,7 +78,14 @@ const ActivitySchema = new mongoose.Schema({
     type: Date,
     required: true,
     index: true
-  }
+  },
+  createAt: { type: Date, default: new Date() },
+  updateAt: { type: Date, default: new Date() },
+  createBy: {
+    type: ObjectId,
+    ref: 'User'
+  },
+
 });
 
 ActivitySchema.index({

@@ -56,19 +56,37 @@ router.get('/', (req, res) => {
   }
   // limiter on each query
   // http://localhost:3000/?limit=10
+  let limit;
   if (req.query.limit) {
-    query = query.limit(Number.parseInt(req.query.limit, 10));
+    limit = Number.parseInt(req.query.limit, 10);
+    query = query.limit(limit);
   }
   // Offset of a query data
   // http://localhost:3000/?skip=10
+  let skip;
   if (req.query.skip) {
-    query = query.skip(Number.parseInt(req.query.skip, 10));
+    skip = Number.parseInt(req.query.skip, 10);
+    query = query.skip(skip);
   }
 
-  query.exec((err, _fac) => {
-    res.status(200).json({
-      success: true,
-      results: _fac
+
+  Facility.find(filter).count((err, total) => {
+    if (err) {
+      return res.sendError(5, err);
+    }
+    query.exec((err, _fac) => {
+      if (err) {
+        return res.sendError(5, err);
+      }
+      return res.status(200).json({
+        success: true,
+        results: _fac,
+        queryInfo: {
+          total,
+          limit,
+          skip,
+        }
+      });
     });
   });
 });
@@ -109,7 +127,7 @@ router.get('/:id', (req, res) => {
         errors: retrieveError(32),
       });
     }
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       results: fac
     });
@@ -142,7 +160,7 @@ router.post('/', (req, res) => {
       });
     }
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       results: _act
     });
@@ -193,12 +211,12 @@ router.put('/:id', (req, res) => {
     fac.save((err, updatedFac) => {
       if (err) {
       // Handle error from save
-        res.status(500).json({
+        return res.status(500).json({
           success: false,
           errors: retrieveError(5, err)
         });
       }
-      res.status(202).json({
+      return res.status(202).json({
         success: true,
         results: updatedFac
       });
@@ -216,7 +234,7 @@ router.delete('/:id', (req, res) => {
         errors: retrieveError(5, err),
       });
     }
-    res.status(202).json({
+    return res.status(202).json({
       success: true,
       message: `An Facility with id ${req.params.id} was removed.`,
     });

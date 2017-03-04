@@ -92,7 +92,7 @@
         background: transparent;
       }
     </style>
-    <round-api id="api" url="[[_url]]" rounds="{{rounds}}" error="{{error}}"></round-api>
+    <round-api id="roundAPI" url="[[_url]]" rounds="{{rounds}}" error="{{error}}"></round-api>
     <paper-card class="card">
       <app-header fixed style="height: 48px;">
         <app-toolbar>
@@ -146,11 +146,11 @@
               <!-- time -->
               <paper-input-container class="timeinput" always-float-label>
                 <label>เวลาเริ่ม</label>
-                <paper-datetime-picker-item icon="icons:alarm" date={{start}} is="iron-input" placeholder="เลือกเวลาเริ่ม"></paper-datetime-picker-item>
+                <paper-datetime-picker-item icon="icons:alarm" date={{start}} is="iron-input" placeholder="เลือกเวลาเริ่ม" required></paper-datetime-picker-item>
               </paper-input-container>
               <paper-input-container class="timeinput" always-float-label>
                 <label>เวลาจบ</label>
-                <paper-datetime-picker-item icon="icons:alarm" date={{end}} is="iron-input" placeholder="เลือกเวลาจบ"></paper-datetime-picker-item>
+                <paper-datetime-picker-item icon="icons:alarm" date={{end}} is="iron-input" placeholder="เลือกเวลาจบ" required></paper-datetime-picker-item>
               </paper-input-container>
               <div class="seats">
                 <paper-input type="number" label="จองแล้ว" name="seatsReserved" always-float-label required>
@@ -227,7 +227,7 @@
           if (!token) {
             return;
           }
-          
+
           this._headers = {
             'Authorization': 'JWT ' + token
           };
@@ -251,12 +251,11 @@
       _response: function(e) {
         if (e.detail.response.success) {
           this.$.form.reset();
-          this.$.api.generateRequest();
+          this.$.roundAPI.generateRequest();
           this._state = 'list';
         }
       },
       _reset: function(event) {
-        t
         this.$.form.reset();
       },
       _submit: function(event) {

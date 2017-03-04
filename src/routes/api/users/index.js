@@ -75,16 +75,16 @@ router.get('/', (req, res) => {
     }
     query.exec((err, users) => {
       if (err) {
-        res.sendError(5, err);
+        return res.sendError(5, err);
       } else {
-        res.json({
+        return res.json({
           success: true,
           results: users,
         });
       }
     });
   } catch (error) {
-    res.sendError(5, error);
+    return res.sendError(5, error);
   }
 });
 
@@ -159,7 +159,7 @@ router.post('/', (req, res) => {
       return res.sendError(5, err);
     }
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       results: _user
     });
@@ -246,7 +246,7 @@ router.put('/:id', (req, res) => {
       });
     }
 
-    res.status(202).json({
+    return res.status(202).json({
       success: true,
       results: user,
     });
@@ -266,7 +266,7 @@ router.delete('/:id', (req, res) => {
       });
     }
 
-    res.status(202).json({
+    return res.status(202).json({
       success: true,
       message: `User id ${req.params.id} was removed.`,
     });

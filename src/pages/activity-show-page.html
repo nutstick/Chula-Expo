@@ -200,36 +200,21 @@
 						</div>
 					</div>
 
-          <div class="item">
-						<div>
-							<label class="label --input">QR code</label>
-							<div class="flex fitdiv">
-                <div id="qrcode" style="width:200px; height:200px; margin-bottom:15px; margin-top:4px;"></div>
-                <script type="text/javascript">
-                  var qrcode = new QRCode(document.getElementById("qrcode"), {
-                    text: "http://staff.chulaexpo.com/api/activities/" + document.querySelector('activity-show-page').activityId + "/qrcode",
-                    width: 200,
-                    height: 200,
-                    colorDark : "#ff69B4",
-                    colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.L
-                  });
-                </script>
-							</div>
-						</div>
-          </div>
-
 					<div class="item">
 						<div>
 							<label class="label --input">Video Url</label>
 							<div class="flex fitdiv">
-								{{activity.video}}<br>
+								{{activity.video}}
+                <div id="qrvideo" style="width:200px; height:200px; margin-bottom:15px; margin-top:4px;"></div>
+
 							</div>
 						</div>
 						<div>
 							<label class="label --input">PDF Url</label>
 							<div class="flex fitdiv">
 								{{activity.pdf}}
+                <div id="qrcode" style="width:200px; height:200px; margin-bottom:15px; margin-top:4px;"></div>
+
 							</div>
 						</div>
 						<div>
@@ -383,12 +368,15 @@
     Polymer({
       is: 'activity-show-page',
       properties: {
+        activityId: {
+          type: String,
+          observer: '_idChanged'
+        },
 				activated: {
 					type: Boolean,
 					value: false,
 					observer: '_activatedChanged'
 				},
-        activityId: String,
         zoom: {
           type: Number,
           value: 16
@@ -402,6 +390,34 @@
         deleteId: {
           type: String,
         },
+      },
+      _idChanged: function(id){
+        var div_qrcode = document.getElementById("qrcode");
+        if(div_qrcode){
+  				div_qrcode.innerHTML = "";
+  				var qrcode = new QRCode(div_qrcode, {
+  					text: "http://staff.chulaexpo.com/api/activities/" + document.querySelector('activity-show-page').activityId + "/qrcode",
+  					width: 200,
+  					height: 200,
+  					colorDark : "#ff69B4",
+  					colorLight : "#ffffff",
+  					correctLevel : QRCode.CorrectLevel.L
+  				});
+        }
+
+				var div_qrvideo = document.getElementById("qrvideo");
+        if(div_qrvideo) {
+          div_qrvideo.innerHTML = "";
+  				var qrcode = new QRCode(div_qrvideo, {
+  					text: "http://staff.chulaexpo.com/api/activities/" + document.querySelector('activity-show-page').activityId + "/qrvideo",
+  					width: 200,
+  					height: 200,
+  					colorDark : "#000000",
+  					colorLight : "#ffffff",
+  					correctLevel : QRCode.CorrectLevel.L
+  				});
+        }
+        
       },
       _activatedChanged: function(activated) {
 				if (activated) {

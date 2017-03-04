@@ -117,7 +117,7 @@ router.get('/', (req, res) => {
         return res.sendError(5, err);
       }
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         results: rounds,
         queryInfo: {
@@ -281,7 +281,7 @@ router.put('/:rid', isAuthenticatedByToken, isStaff, (req, res) => {
       if (err) {
         return res.sendError(5, err);
       }
-      res.status(202).json({
+      return res.status(202).json({
         success: true,
         message: 'Update round successfull',
         results: _round,
@@ -316,7 +316,7 @@ router.delete('/:rid', isAuthenticatedByToken, isStaff, (req, res) => {
       if (err) {
         return res.sendError(5, err);
       }
-      res.status(202).json({
+      return res.status(202).json({
         success: true,
         message: `Round id ${req.params.rid} was removed.`,
       });

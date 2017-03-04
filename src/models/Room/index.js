@@ -17,8 +17,13 @@ const RoomSchema = new mongoose.Schema({
     type: ObjectId,
     required: true,
     ref: 'Place'
-  }
-
+  },
+  createAt: { type: Date, default: new Date() },
+  updateAt: { type: Date, default: new Date() },
+  createBy: {
+    type: ObjectId,
+    ref: 'User'
+  },
 
 });
 

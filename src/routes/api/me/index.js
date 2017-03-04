@@ -122,7 +122,7 @@ router.put('/', (req, res) => {
       });
     }
 
-    res.status(202).json({
+    return res.status(202).json({
       success: true,
       message: 'Update user infomation successfull',
       results: _user,

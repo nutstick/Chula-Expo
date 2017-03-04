@@ -84,7 +84,7 @@ router.get('/:id/place/', (req, res) => {
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       results: places
     });
@@ -121,7 +121,7 @@ router.post('/:id/place/', (req, res, next) => {
       // Handle error from save
       next(err);
     }
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       results: _place
     });
