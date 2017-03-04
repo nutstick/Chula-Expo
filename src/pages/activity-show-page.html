@@ -386,7 +386,6 @@
 				activated: {
 					type: Boolean,
 					value: false,
-					observer: '_activatedChanged'
 				},
         activityId: String,
         zoom: {
@@ -403,7 +402,10 @@
           type: String,
         },
       },
-      _activatedChanged: function(activated) {
+      observers: [
+        '_activatedChanged(activated, activityId)',
+      ],
+      _activatedChanged: function(activated, activityId) {
 				if (activated) {
 					this.$.activityAPI.generateRequest();
 					this.$.zoneAPI.generateRequest();

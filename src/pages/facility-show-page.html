@@ -178,7 +178,6 @@
 				activated: {
 					type: Boolean,
 					value: false,
-					observer: '_activatedChanged'
 				},
         facilityId: {
           type: Object,
@@ -194,7 +193,10 @@
           type: Object,
         }
       },
-      _activatedChanged: function(activated) {
+      observers: [
+        '_activatedChanged(activated, facilityId)',
+      ],
+      _activatedChanged: function(activated, facilityId) {
 				if (activated) {
           this.$.facilityAPI.generateRequest();
           this.$.placeAPI.generateRequest();
