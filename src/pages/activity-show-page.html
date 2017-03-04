@@ -417,9 +417,10 @@
   					correctLevel : QRCode.CorrectLevel.L
   				});
         }
-        
+
       },
       _activatedChanged: function(activated) {
+        console.log("kuy" + activated);
 				if (activated) {
 					this.$.activityAPI.generateRequest();
 					this.$.zoneAPI.generateRequest();

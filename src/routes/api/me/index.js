@@ -7,7 +7,7 @@ const router = express.Router();
 
 const avaliableFields = ['_id', 'name', 'email', 'age', 'gender', 'profile', 'type', 'academic', 'worker', 'staff'];
 
-router.use(isAuthenticatedByToken);
+//router.use(isAuthenticatedByToken);
 
 /**
  * Get user by token
@@ -44,6 +44,19 @@ router.get('/', (req, res) => {
         results: me,
       });
     });
+});
+
+
+router.get('/where', (req, res) => {
+  res.json({
+    success: true,
+    results: {
+      zone: {
+        th: 'faculty of engineering',
+        en: 'คณะวิศวกรรมศาสตร์'
+      }
+    },
+  });
 });
 
 /**
