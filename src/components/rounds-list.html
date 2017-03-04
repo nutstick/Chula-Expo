@@ -81,7 +81,7 @@
         background: transparent;
       }
     </style>
-    <round-api id="api" url="[[_url]]" rounds="{{rounds}}" error="{{error}}"></round-api>
+    <round-api id="roundAPI" url="[[_url]]" rounds="{{rounds}}" error="{{error}}"></round-api>
     <paper-card class="card">
       <app-header fixed style="height: 48px;">
         <app-toolbar>
@@ -223,7 +223,7 @@
           if (!token) {
             return;
           }
-          
+
           this._headers = {
             'Authorization': 'JWT ' + token
           };
@@ -247,12 +247,11 @@
       _response: function(e) {
         if (e.detail.response.success) {
           this.$.form.reset();
-          this.$.api.generateRequest();
+          this.$.roundAPI.generateRequest();
           this._state = 'list';
         }
       },
       _reset: function(event) {
-        t
         this.$.form.reset();
       },
       _submit: function(event) {

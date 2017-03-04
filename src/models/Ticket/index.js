@@ -25,6 +25,13 @@ const TicketSchema = new mongoose.Schema({
     type: Number,
     default: 1,
   },
+  createAt: { type: Date, default: new Date() },
+  updateAt: { type: Date, default: new Date() },
+  createBy: {
+    type: ObjectId,
+    ref: 'User'
+  },
+
 });
 
 TicketSchema.index({ user: 1, round: 1 }, { unique: true });

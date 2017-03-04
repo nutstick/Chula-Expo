@@ -79,14 +79,20 @@
         error: {
           type: Object,
           value: {}
+        },
+        createBy: {
+          type: String
+        },
+        me: {
+          type: Object,
+          value: {}
         }
       },
 
       observers: [
-        'updateRequest(page,pageSize,fields,start,end,zone)'
+        'updateRequest(page,pageSize,fields,start,end,zone,me)'
       ],
-
-      updateRequest: function(page, pageSize, fields, start, end, zone) {
+      updateRequest: function(page, pageSize, fields, start, end, zone, me) {
         if (pageSize === 0) {
           this.set('params.limit', null);
           this.set('params.skip', page);
@@ -106,6 +112,13 @@
           this.set('params.end', JSON.stringify(endQuery));
           this.set('params.skip', 0);
         }
+
+        if(me.type == 'Staff' && me.staff.staffType != 'Admin')
+          this.set('params.createBy', me._id);
+        else
+          delete this.params.createBy;
+
+
         this.set('params.zone', zone);
       },
       generateRequest: function() {

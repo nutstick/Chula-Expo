@@ -84,7 +84,6 @@
       ],
 
       updateRequest: function(page, pageSize, fields, start, end, room, placeId) {
-        console.log(place);
         if (pageSize === 0) {
           this.set('params.limit', null);
           this.set('params.skip', page);

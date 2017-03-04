@@ -81,6 +81,16 @@ router.get('/', (req, res) => {
     }
     filter.end = RangeQuery(req.query.end, 'Date');
   }
+  // Activities's updateAt range query
+  if (req.query.update) {
+    try {
+      req.query.update = JSON.parse(req.query.update);
+    } catch (err) {
+      // return res.sendError(5, err);
+    }
+    filter.updateAt = RangeQuery(req.query.update, 'Date');
+  }
+
 
   // Name Query
   // http://localhost:3000/?name=John
@@ -100,6 +110,10 @@ router.get('/', (req, res) => {
 
   if (req.query.highlight) {
     filter.isHighlight = req.query.highlight;
+  }
+
+  if (req.query.createBy) {
+    filter.createBy = req.query.createBy;
   }
 
   // field selector
@@ -132,22 +146,37 @@ router.get('/', (req, res) => {
   }
   // limiter on each query
   // http://localhost:3000/?limit=10
+  let limit;
   if (req.query.limit) {
-    query = query.limit(Number.parseInt(req.query.limit, 10));
+    limit = Number.parseInt(req.query.limit, 10);
+    query = query.limit(limit);
   }
   // Offset of a query data
   // http://localhost:3000/?skip=10
+  let skip;
   if (req.query.skip) {
-    query = query.skip(Number.parseInt(req.query.skip, 10));
+    skip = Number.parseInt(req.query.skip, 10);
+    query = query.skip(skip);
   }
 
-  query.exec((err, _act) => {
+
+  Activity.find(filter).count((err, total) => {
     if (err) {
-      res.sendError(5, err);
+      return res.sendError(5, err);
     }
-    res.status(200).json({
-      success: true,
-      results: _act
+    query.exec((err, _act) => {
+      if (err) {
+        return res.sendError(5, err);
+      }
+      return res.status(200).json({
+        success: true,
+        results: _act,
+        queryInfo: {
+          total,
+          limit,
+          skip,
+        }
+      });
     });
   });
 });
@@ -200,6 +229,8 @@ router.post('/', isAuthenticatedByToken, isStaff, (req, res) => {
     activity.start = req.body.start;
     activity.end = req.body.end;
 
+    activity.createBy = req.user.id;
+
     // Save User and check for error
     activity.save((err, _act) => {
       // Handle error from
@@ -207,7 +238,7 @@ router.post('/', isAuthenticatedByToken, isStaff, (req, res) => {
         return res.sendError(5, err);
       }
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         results: _act
       });
@@ -255,15 +286,36 @@ router.get('/:id', (req, res) => {
   });
 });
 
-
 // pdf redirect
 router.get('/:id/qrcode', (req, res) => {
   Activity.findById(req.params.id, (err, act) => {
     if (err) {
       return res.sendError(5, err);
+    } else if(!act) {
+		  return res.sendError(5, err);
+		} else if (!act.pdf) {
+      return res.sendError(5, err);
+    }
+
+    res.writeHead(301, {
+      Location: encodeURI(act.pdf)
+    });
+    res.end();
+  });
+});
+
+// video redirect
+router.get('/:id/qrvideo', (req, res) => {
+  Activity.findById(req.params.id, (err, act) => {
+    if (err) {
+      return res.sendError(5, err);
+    } else if(!act) {
+		  return res.sendError(5, err);
+		}  else if (!act.video) {
+      return res.sendError(5, err);
     }
     res.writeHead(301, {
-      Location: act.pdf
+      Location: encodeURI(act.video)
     });
     res.end();
   });
@@ -292,13 +344,11 @@ router.put('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
       res.sendError(25);
     }
 
-    /*
-    // Check match zone with User
-    if (req.user.staff.type === 'Staff' && req.user.staff.staffType !== 'Admin'
-      && req.user.staff.zone !== activity.zone) {
-      return res.sendError(4, 'No permission on editing activity outside your own zone');
+    // Check activity match with User
+    if (req.user.type !== 'Staff' || (req.user.type === 'Staff' && req.user.staff.staffType !== 'Admin'
+      && req.user.id !== String(activity.createBy))) {
+      return res.sendError(4, 'No permission on editing activity outside your own activity');
     }
-    */
 
     _.assignIn(activity, updateFields);
     activity.name.en = req.body.nameEN;
@@ -322,13 +372,15 @@ router.put('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
       activity.tags = req.body.tags.split(',');
     }
 
+    activity.updateAt = new Date();
+
 
     activity.save((err, updatedAct) => {
       // Handle error from save
       if (err) {
         return res.sendError(5, err);
       }
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         results: updatedAct
       });
@@ -349,19 +401,19 @@ router.delete('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
     if (!activity) {
       return res.sendError(25);
     }
-    /*
-    // Check match zone with User
-    if (req.user.staff.type === 'Staff' && req.user.staff.staffType !== 'Admin'
-      && req.user.staff.zone !== activity.zone) {
-      return res.sendError(4, 'No permission on removing activity outside your own zone');
-    }*/
+
+    // Check activity match with User
+    if (req.user.type !== 'Staff' || (req.user.type === 'Staff' && req.user.staff.staffType !== 'Admin'
+      && req.user.id !== String(activity.createBy))) {
+      return res.sendError(4, 'No permission on deleting activity outside your own activity');
+    }
 
     activity.remove((err) => {
       // Handle error remove
       if (err) {
         return res.sendError(5, err);
       }
-      res.status(202).json({
+      return res.status(202).json({
         success: true,
         message: `An Activity with id ${req.params.id} was removed.`,
       });
