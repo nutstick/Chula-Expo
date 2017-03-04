@@ -102,7 +102,7 @@
         this.set('params.fields', fields)
       },
       generateRequest: function() {
-        this.$.placeResource.generateRequest();
+        return this.$.placeResource.generateRequest();
       },
       _handleResponse: function(event) {
         if(event.detail.response) {

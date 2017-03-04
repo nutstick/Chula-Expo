@@ -109,7 +109,7 @@
         this.set('params.zone', zone);
       },
       generateRequest: function() {
-        this.$.activityResource.generateRequest();
+        return this.$.activityResource.generateRequest();
       },
       _handleResponse: function(event) {
         if(event.detail.response) {
@@ -122,6 +122,7 @@
           } else {
             this.error = event.detail.response.errors;
           }
+
         }
       },
       _idChanged: function(id) {
