@@ -114,6 +114,11 @@
     Polymer({
       is: 'zone-list-page',
       properties: {
+				activated: {
+					type: Boolean,
+					value: false,
+					observer: '_activatedChanged'
+				},
         page: {
           type: Number,
         },
@@ -131,8 +136,10 @@
           value: [],
         }
       },
-      generateRequest: function(){
-        this.$.zoneAPI.generateRequest();
+      _activatedChanged: function(activated) {
+				if (activated) {
+          this.$.zoneAPI.generateRequest();
+        }
       },
       _showClick: function(id) {
         var id = event.model.item['_id'];

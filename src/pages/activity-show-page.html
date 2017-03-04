@@ -372,6 +372,11 @@
           type: String,
           observer: '_idChanged'
         },
+				activated: {
+					type: Boolean,
+					value: false,
+					observer: '_activatedChanged'
+				},
         zoom: {
           type: Number,
           value: 16
@@ -414,13 +419,13 @@
         }
         
       },
-      generateRequest: function(){
-
-        this.$.activityAPI.generateRequest();
-        this.$.zoneAPI.generateRequest();
-        this.$.placeAPI.generateRequest();
-        this.$.roomAPI.generateRequest();
-
+      _activatedChanged: function(activated) {
+				if (activated) {
+					this.$.activityAPI.generateRequest();
+					this.$.zoneAPI.generateRequest();
+					this.$.placeAPI.generateRequest();
+					this.$.roomAPI.generateRequest();
+				}
       },
       _handleResponse: function(event) {
         if (event.detail.response.success) {

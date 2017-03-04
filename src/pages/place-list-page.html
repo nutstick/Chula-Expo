@@ -115,6 +115,11 @@
     Polymer({
       is: 'place-list-page',
       properties: {
+				activated: {
+					type: Boolean,
+					value: false,
+					observer: '_activatedChanged'
+				},
         page: {
           type: Number,
         },
@@ -132,8 +137,10 @@
           value: [],
         },
       },
-      generateRequest: function(){
-        this.$.placeAPI.generateRequest();
+      _activatedChanged: function(activated) {
+				if (activated) {
+          this.$.placeAPI.generateRequest();
+        }
       },
       _showClick: function(id) {
         var id = event.model.item['_id'];

@@ -175,6 +175,11 @@
     Polymer({
       is: 'place-edit-page',
       properties: {
+				activated: {
+					type: Boolean,
+					value: false,
+					observer: '_activatedChanged'
+				},
         zones: {
           type: Array
         },
@@ -207,9 +212,11 @@
           }
         }
       },
-      generateRequest: function(){
-        this.$.placeAPI.generateRequest();
-        this.$.zoneAPI.generateRequest();
+      _activatedChanged: function(activated) {
+				if (activated) {
+          this.$.placeAPI.generateRequest();
+          this.$.zoneAPI.generateRequest();
+        }
       },
       _delayedSubmit: function(event) {
         var form = this.$.form;

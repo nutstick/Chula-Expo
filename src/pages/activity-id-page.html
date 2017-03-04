@@ -4,9 +4,6 @@
 <link rel="import" href="/public/lib/app-route/app-route.html">
 <link rel="import" href="/public/lib/iron-pages/iron-pages.html">
 
-<link rel="import" href="/pages/activity-show-page.html">
-<link rel="import" href="/pages/activity-edit-page.html">
-
 <dom-module id="activity-id-page">
   <template>
     <app-route
@@ -19,6 +16,7 @@
       selected="[[subpage]]"
       attr-for-selected="name"
       fallback-selection="id"
+      selected-attribute="activated"
       role="main">
       <activity-edit-page activity-id="[[activityId]]" name="edit"></activity-edit-page>
       <activity-show-page activity-id="[[activityId]]" name="show"></activity-show-page>
@@ -34,7 +32,6 @@
         },
         subpage: {
           type: String,
-          // reflectToAttribute: true,
           observer: '_pageChanged',
         },
         activityId: {
@@ -53,10 +50,6 @@
       _pageChanged: function(subpage) {
         var resolvedPageUrl = this.resolveUrl('activity-' + subpage + '-page.html');
         this.importHref(resolvedPageUrl, null, this._showPage404, true);
-
-        var page = document.querySelector('activity-'+ subpage + '-page');
-        if(typeof page.generateRequest === 'function')
-          page.generateRequest();
       },
       _showPage404: function() {
         this.page = '404-page'

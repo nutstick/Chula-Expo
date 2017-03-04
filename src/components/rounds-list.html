@@ -217,12 +217,10 @@
       },
 
       ready: function() {
-        var form = this.$.form;
-        var submit = this.$.submit;
-        form.addEventListener('change', function(event) {
+        this.$.form.addEventListener('change', function(event) {
           // Validate the entire form to see if we should enable the `Submit` button.
-          submit.disabled = !form.validate();
-        });
+          this.$.submit.disabled = !this.$.form.validate();
+        }.bind(this));
         
         document.addEventListener('token', function(e) {
           var token = e.detail.token;
@@ -233,9 +231,8 @@
           this._headers = {
             'Authorization': 'JWT ' + token
           };
-
-					this.$.roundAPI.generateRequest();
-        });
+          this.generateRequest();
+        }.bind(this));
       },
       _getClassForItem: function(item, selected) {
         return selected ? 'item expanded' : 'item';
@@ -283,15 +280,14 @@
           var id = this.deleteId;
           var url = '/api/rounds/' + id;
 
-          var dom = this;
           setTimeout(function () {
             var req = new XMLHttpRequest();
-            req.open('DELETE',encodeURI(url));
+            req.open('DELETE', encodeURI(url));
             req.onload = function() {
               if (req.status === 202) {
-                dom.$.roundAPI.generateRequest();
+                this.$.api.generateRequest();
               }
-            };
+            }.bind(this);
             req.send();
           }.bind(this), 300);
         }
