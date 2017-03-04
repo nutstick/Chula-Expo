@@ -7,7 +7,7 @@ const router = express.Router();
 
 const avaliableFields = ['_id', 'name', 'email', 'age', 'gender', 'profile', 'type', 'academic', 'worker', 'staff'];
 
-//router.use(isAuthenticatedByToken);
+router.use(isAuthenticatedByToken);
 
 /**
  * Get user by token
