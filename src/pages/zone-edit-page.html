@@ -233,6 +233,11 @@
     Polymer({
       is: 'zone-edit-page',
       properties: {
+				activated: {
+					type: Boolean,
+					value: false,
+					observer: '_activatedChanged'
+				},
 				url: {
           type: Object,
           value: ''
@@ -258,8 +263,10 @@
           }
         }
       },
-      generateRequest: function(){
-        this.$.zoneAPI.generateRequest();
+      _activatedChanged: function(activated) {
+				if (activated) {
+          this.$.zoneAPI.generateRequest();
+        }
       },
       _delayedSubmit: function(event) {
         var form = this.$.form;

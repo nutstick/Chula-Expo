@@ -175,6 +175,11 @@
     Polymer({
       is: 'facility-show-page',
       properties: {
+				activated: {
+					type: Boolean,
+					value: false,
+					observer: '_activatedChanged'
+				},
         facilityId: {
           type: Object,
         },
@@ -189,9 +194,11 @@
           type: Object,
         }
       },
-      generateRequest: function(){
-        this.$.facilityAPI.generateRequest();
-        this.$.placeAPI.generateRequest();
+      _activatedChanged: function(activated) {
+				if (activated) {
+          this.$.facilityAPI.generateRequest();
+          this.$.placeAPI.generateRequest();
+        }
       }
     })
   </script>

@@ -292,9 +292,12 @@
     Polymer({
       is: 'place-show-page',
       properties: {
+				activated: {
+					type: Boolean,
+					value: false
+				},
         placeId: {
-          type: Object,
-          observer: '_idChanged'
+          type: String
         },
 				token: {
           type: String,
@@ -321,10 +324,16 @@
           type: String,
         },
       },
-      generateRequest: function(){
-        this.$.placeAPI.generateRequest();
-        this.$.zoneAPI.generateRequest();
-        this.$.roomAPI.generateRequest();
+      observers: [
+        '_activatedChanged(activated, placeId)',
+      ],
+      _activatedChanged: function(activated, placeId) {
+        console.log(activated)
+				if (activated) {
+          this.$.placeAPI.generateRequest();
+          this.$.zoneAPI.generateRequest();
+          this.$.roomAPI.generateRequest();
+        }
       },
       _presubmit: function(event) {
         	this.$.form.request.body.place= this.placeId;
@@ -370,9 +379,6 @@
           }.bind(this), 300);
         }
       },
-      _idChanged: function(id) {
-        this.generateRequest();
-      }
     })
   </script>
 </dom-module>

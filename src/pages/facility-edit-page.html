@@ -188,6 +188,11 @@
     Polymer({
       is: 'facility-edit-page',
       properties: {
+        activated: {
+          type: Boolean,
+          value: false,
+          observer: '_activatedChanged'
+        },
         places: {
           type: Array
         },
@@ -212,13 +217,15 @@
         headers: {
           type: Object,
           value: {
-            'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
+            'Authorization': 'JWT ' + window.token
           }
         }
       },
-      generateRequest: function(){
-        this.$.facilityAPI.generateRequest();
-        this.$.placeAPI.generateRequest();
+      _activatedChanged: function(activated) {
+        if (activated) {
+          this.$.facilityAPI.generateRequest();
+          this.$.placeAPI.generateRequest();
+        }
       },
       _delayedSubmit: function(event) {
         var form = this.$.form;

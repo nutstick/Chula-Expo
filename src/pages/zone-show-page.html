@@ -276,6 +276,11 @@
     Polymer({
       is: 'zone-show-page',
       properties: {
+				activated: {
+					type: Boolean,
+					value: false,
+					observer: '_activatedChanged'
+				},
 				zoneId: {
           type: String,
           observer: '_idChanged'
@@ -302,9 +307,11 @@
           value: ''
         }
       },
-      generateRequest: function(){
-        this.$.zoneAPI.generateRequest();
-        this.$.placeAPI.generateRequest();
+      _activatedChanged: function(activated) {
+				if (activated) {
+          this.$.zoneAPI.generateRequest();
+          this.$.placeAPI.generateRequest();
+        }
       },
       _response: function(e) {
         if (e.detail.response.success) {
@@ -330,11 +337,11 @@
       },
       _idChanged: function(id) {
         if (id && id!='show' && id!='edit' && id!='add' && id!='list') {
-          console.log(id);
           this.urlPlace = '/api/places?zoneid=' + id ;
         } else {
           this.urlPlace = '';
         }
+        this.$.placeAPI.generateRequest();
       }
     })
   </script>

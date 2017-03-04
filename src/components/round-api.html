@@ -110,9 +110,7 @@
           this.set('params.skip', (page - 1) * pageSize);
         }
 
-        this.set('params.fields', fields)
-
-        this.generateRequest();
+        this.set('params.fields', fields);
       },
       generateRequest: function() {
         this.$.roundResource.generateRequest();

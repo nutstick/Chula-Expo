@@ -386,6 +386,11 @@
     Polymer({
       is: 'activity-edit-page',
       properties: {
+        activated: {
+          type: Boolean,
+          value: false,
+          observer: '_activatedChanged'
+        },
         url: {
           type: Object,
           value: ''
@@ -417,7 +422,7 @@
         headers: {
           type: Object,
           value: {
-            'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
+            'Authorization': 'JWT ' + window.token
           }
         }
       },
@@ -432,11 +437,13 @@
           e.target.options = [];
         }
       },
-      generateRequest: function(){
-        this.$.activityAPI.generateRequest();
-        this.$.zoneAPI.generateRequest();
-        this.$.placeAPI.generateRequest();
-        this.$.roomAPI.generateRequest();
+      _activatedChanged: function(activated) {
+        if (activated) {
+          this.$.activityAPI.generateRequest();
+          this.$.zoneAPI.generateRequest();
+          this.$.placeAPI.generateRequest();
+          this.$.roomAPI.generateRequest();
+        }
       },
       _convertToDate: function(dateTime) {
         return moment.utc(dateTime).format('YYYY-MM-DDThh:mm');
@@ -494,12 +501,16 @@
         }
       },
       _computePlace: function(e) {
-        this.zoneId = e.detail.value._id;
-        this.$.placeAPI.generateRequest();
+        if (e.detail.value) {
+          this.zoneId = e.detail.value._id;
+          this.$.placeAPI.generateRequest();
+        }
       },
       _computeRoom: function(e) {
-        this.placeId = e.detail.value._id;
-        this.$.roomAPI.generateRequest();
+        if (e.detail.value) {
+          this.placeId = e.detail.value._id;
+          this.$.roomAPI.generateRequest();
+        }
       }
     })
   </script>

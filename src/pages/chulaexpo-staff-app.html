@@ -160,6 +160,7 @@
         <iron-pages
           selected="[[page]]"
           attr-for-selected="name"
+          selected-attribute="activated"
           fallback-selection="view404"
           role="main"
           hidden$="{{!loggedIn}}">
@@ -234,10 +235,6 @@
       _pageChanged: function(page) {
         var resolvedPageUrl = this.resolveUrl(page + '-page.html');
         this.importHref(resolvedPageUrl, null, this._showPage404, true);
-
-        var api = document.querySelector( page + '-list-page');
-        if(!!api)
-          api.generateRequest();
       },
       _showPage404: function() {
         this.page = '404-page'

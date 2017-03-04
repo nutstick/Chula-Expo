@@ -115,6 +115,11 @@
     Polymer({
       is: 'facility-list-page',
       properties: {
+        activated: {
+          type: Boolean,
+          value: false,
+          observer: '_activatedChanged'
+        },
         page: {
           type: Number,
         },
@@ -135,8 +140,10 @@
           type: String,
         },
       },
-      generateRequest: function(){
-        this.$.facilityAPI.generateRequest();
+      _activatedChanged: function(activated) {
+        if (activated) {
+          this.$.facilityAPI.generateRequest();
+        }
       },
       _showClick: function(id) {
         var id = event.model.item['_id'];

@@ -383,6 +383,11 @@
     Polymer({
       is: 'activity-show-page',
       properties: {
+				activated: {
+					type: Boolean,
+					value: false,
+					observer: '_activatedChanged'
+				},
         activityId: String,
         zoom: {
           type: Number,
@@ -398,11 +403,13 @@
           type: String,
         },
       },
-      generateRequest: function(){
-        this.$.activityAPI.generateRequest();
-        this.$.zoneAPI.generateRequest();
-        this.$.placeAPI.generateRequest();
-        this.$.roomAPI.generateRequest();
+      _activatedChanged: function(activated) {
+				if (activated) {
+					this.$.activityAPI.generateRequest();
+					this.$.zoneAPI.generateRequest();
+					this.$.placeAPI.generateRequest();
+					this.$.roomAPI.generateRequest();
+				}
       },
       _handleResponse: function(event) {
         if (event.detail.response.success) {
