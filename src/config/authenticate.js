@@ -58,4 +58,15 @@ module.exports = {
     }
     return res.sendError(4);
   },
+
+  isScanner: (req, res, next) => {
+    if (req.user && req.user.type === 'Staff' && req.user.staff.staffType === 'Staff') {
+      return next();
+    } else if (req.user && req.user.type === 'Staff' && req.user.staff.staffType === 'Admin') {
+      return next();
+    } else if (req.user && req.user.type === 'Staff' && req.user.staff.staffType === 'Scanner') {
+      return next();
+    }
+    return res.sendError(4);
+  }
 };
