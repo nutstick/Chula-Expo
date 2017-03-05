@@ -1,5 +1,6 @@
 const express = require('express');
 const Facility = require('../../../models/Facility');
+const { RangeQuery } = require('../../../tools');
 const retrieveError = require('../../../tools/retrieveError');
 
 const router = express.Router();
@@ -13,6 +14,17 @@ router.get('/', (req, res) => {
   if (req.query.type) {
     filter.type = req.query.type;
   }
+
+  // Facilities's updateAt range query
+  if (req.query.update) {
+    try {
+      req.query.update = JSON.parse(req.query.update);
+    } catch (err) {
+      // return res.sendError(5, err);
+    }
+    filter.updateAt = RangeQuery(req.query.update, 'Date');
+  }
+
 
   //  http://localhost:3000/?sort=createAt,-startDate
   let sort = {};

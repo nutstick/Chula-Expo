@@ -244,6 +244,7 @@
                   required
                 ></vaadin-combo-box>
                 <zone-api
+                  id="zoneAPI"
                   zones="{{zones}}"
                   error="{{error}}"
                   loading="{{zoneLoading}}"
@@ -372,6 +373,11 @@
     Polymer({
       is: 'activity-add-page',
       properties: {
+        activated: {
+          type: Boolean,
+          value: false,
+          observer: '_activatedChanged'
+        },
         token: {
           type: String,
         },
@@ -415,6 +421,13 @@
             'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
           }
         }
+      },
+      _activatedChanged: function(activated) {
+				if (activated) {
+					this.$.zoneAPI.generateRequest();
+					this.$.placeAPI.generateRequest();
+					this.$.roomAPI.generateRequest();
+				}
       },
       inputChanged: function(e) {
         var data = ["Energy","Ageing Society","Body","Mind","Social Issues","Invention","Quality of Life","Food & Agriculture","Community","Art & Culture","Medication","Economy","Transportation","Technology","Environment","Thai Wisdom","Design","Law","Education","Royal Duties","Beauty","Life","Communication","Sport","Science","Entertainment","International Issue"];

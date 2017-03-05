@@ -198,8 +198,10 @@
       ],
       _activatedChanged: function(activated, facilityId) {
 				if (activated) {
-          this.$.facilityAPI.generateRequest();
-          this.$.placeAPI.generateRequest();
+					var facilityRequest = this.$.facilityAPI.generateRequest();
+					facilityRequest.completes.then(function() {
+						this.$.placeAPI.generateRequest();
+					}.bind(this));
         }
       }
     })

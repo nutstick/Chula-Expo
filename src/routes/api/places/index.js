@@ -2,6 +2,7 @@ const express = require('express');
 const Place = require('../../../models/Place');
 const Room = require('../../../models/Room');
 const Zone = require('../../../models/Zone');
+const { RangeQuery } = require('../../../tools');
 const retrieveError = require('../../../tools/retrieveError');
 const ObjectId = require('mongoose').Types.ObjectId;
 const mongoose = require('mongoose');
@@ -45,6 +46,16 @@ router.get('/', (req, res) => {
 
   if (req.query.zoneid) {
     filter.zone = req.query.zoneid;
+  }
+
+  // Places's updateAt range query
+  if (req.query.update) {
+    try {
+      req.query.update = JSON.parse(req.query.update);
+    } catch (err) {
+      // return res.sendError(5, err);
+    }
+    filter.updateAt = RangeQuery(req.query.update, 'Date');
   }
 
   //----------------------------------------------------------------

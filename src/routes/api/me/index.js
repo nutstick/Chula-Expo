@@ -46,6 +46,19 @@ router.get('/', (req, res) => {
     });
 });
 
+
+router.get('/where', (req, res) => {
+  res.json({
+    success: true,
+    results: {
+      zone: {
+        en: 'faculty of engineering',
+        th: 'คณะวิศวกรรมศาสตร์'
+      }
+    },
+  });
+});
+
 /**
  * Update token owner user infomation
  * Access at PUT http://localhost:8080/api/me

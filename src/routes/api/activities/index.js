@@ -27,94 +27,168 @@ const router = express.Router();
  * @return {number} queryInfo.limit - Limit that was used.
  * @return {number} queryInfo.skip - Skip that was used.
  */
-router.get('/', (req, res) => {
-  // filtering tag with a tags query.
-  // http://localhost:3000/?tags=prize,rewards
+ router.get('/', (req, res) => {
+   // filtering tag with a tags query.
+   // http://localhost:3000/?tags=prize,rewards
+   const filter = {};
+   if (req.query.tags) {
+     filter.tags = { $in: req.query.tags.split(',') };
+   }
+
+   //  http://localhost:3000/?sort=createAt,-startDate
+   let sort = {};
+   if (req.query.sort) {
+     sort = req.query.sort.split(',').reduce((prev, sortQuery) => {
+       let sortFields = sortQuery[0] === '-' ? sortQuery.substr(1) : sortQuery;
+
+       if (sortFields === 'nameEN') {
+         sortFields = 'name.en';
+       } else if (sortFields === 'shortDescriptionEN') {
+         sortFields = 'shortDescription.en';
+       } else if (sortFields === 'descriptionEN') {
+         sortFields = 'description.en';
+       } else if (sortFields === 'locationLat') {
+         sortFields = 'location.latitude';
+       } else if (sortFields === 'locationLong') {
+         sortFields = 'location.longitude';
+       }
+
+       if (sortQuery[0] === '-') {
+         prev[sortFields] = -1;
+       } else {
+         prev[sortFields] = 1;
+       }
+       return prev;
+     }, {});
+   }
+
+   // RangeQuery of start and end
+   // Activities's start time range query
+   if (req.query.start) {
+     try {
+       req.query.start = JSON.parse(req.query.start);
+     } catch (err) {
+       // return res.sendError(5, err);
+     }
+     filter.start = RangeQuery(req.query.start, 'Date');
+   }
+   // Activities's end time range query
+   if (req.query.end) {
+     try {
+       req.query.end = JSON.parse(req.query.end);
+     } catch (err) {
+       // return res.sendError(5, err);
+     }
+     filter.end = RangeQuery(req.query.end, 'Date');
+   }
+   // Activities's updateAt range query
+   if (req.query.update) {
+     try {
+       req.query.update = JSON.parse(req.query.update);
+     } catch (err) {
+       // return res.sendError(5, err);
+     }
+     filter.updateAt = RangeQuery(req.query.update, 'Date');
+   }
+
+
+   // Name Query
+   // http://localhost:3000/?name=John
+   if (req.query.nameEN) {
+     filter['name.en'] = { $regex: req.query.nameEN };
+   }
+
+   // Location description query
+   // http://localhost:3000/?location=Larngear
+   if (req.query.location) {
+     filter.location = { desc: req.query.location };
+   }
+
+   if (req.query.zone) {
+     filter.zone = req.query.zone;
+   }
+
+   if (req.query.highlight) {
+     filter.isHighlight = req.query.highlight;
+   }
+
+   if (req.query.createBy) {
+     filter.createBy = req.query.createBy;
+   }
+
+   // field selector
+   // http://localhost:3000/?fields=name,faculty
+   let fields;
+   if (req.query.fields) {
+     fields = req.query.fields.replace(/,/g, ' ');
+     fields = fields.replace(/nameEN/g, 'name.en');
+     fields = fields.replace(/shortDescriptionEN/g, 'shortDescription.en');
+     fields = fields.replace(/descriptionEN/g, 'description.en');
+     fields = fields.replace(/locationPlace/g, 'location.place');
+     fields = fields.replace(/locationFloor/g, 'location.floor');
+     fields = fields.replace(/locationRoom/g, 'location.room');
+     fields = fields.replace(/locationLat/g, 'location.latitude');
+     fields = fields.replace(/locationLong/g, 'location.longitude');
+   }
+
+   // Text search engine
+   // http://localhost:3000/?search=searchString
+   if (req.query.search) {
+     filter.$text = { $search: req.query.search };
+   }
+   let query = Activity.find(filter);
+
+   if (sort) {
+     query.sort(sort);
+   }
+   if (fields) {
+     query.select(fields);
+   }
+   // limiter on each query
+   // http://localhost:3000/?limit=10
+   let limit;
+   if (req.query.limit) {
+     limit = Number.parseInt(req.query.limit, 10);
+     query = query.limit(limit);
+   }
+   // Offset of a query data
+   // http://localhost:3000/?skip=10
+   let skip;
+   if (req.query.skip) {
+     skip = Number.parseInt(req.query.skip, 10);
+     query = query.skip(skip);
+   }
+
+
+   Activity.find(filter).count((err, total) => {
+     if (err) {
+       return res.sendError(5, err);
+     }
+     query.exec((err, _act) => {
+       if (err) {
+         return res.sendError(5, err);
+       }
+       return res.status(200).json({
+         success: true,
+         results: _act,
+         queryInfo: {
+           total,
+           limit,
+           skip,
+         }
+       });
+     });
+   });
+ });
+
+// TODO - recommend from aj.nuttawut
+router.get('/recommend', (req, res) => {
   const filter = {};
-  if (req.query.tags) {
-    filter.tags = { $in: req.query.tags.split(',') };
-  }
 
   //  http://localhost:3000/?sort=createAt,-startDate
   let sort = {};
-  if (req.query.sort) {
-    sort = req.query.sort.split(',').reduce((prev, sortQuery) => {
-      let sortFields = sortQuery[0] === '-' ? sortQuery.substr(1) : sortQuery;
-
-      if (sortFields === 'nameEN') {
-        sortFields = 'name.en';
-      } else if (sortFields === 'shortDescriptionEN') {
-        sortFields = 'shortDescription.en';
-      } else if (sortFields === 'descriptionEN') {
-        sortFields = 'description.en';
-      } else if (sortFields === 'locationLat') {
-        sortFields = 'location.latitude';
-      } else if (sortFields === 'locationLong') {
-        sortFields = 'location.longitude';
-      }
-
-      if (sortQuery[0] === '-') {
-        prev[sortFields] = -1;
-      } else {
-        prev[sortFields] = 1;
-      }
-      return prev;
-    }, {});
-  }
-
-  // RangeQuery of start and end
-  // Activities's start time range query
-  if (req.query.start) {
-    try {
-      req.query.start = JSON.parse(req.query.start);
-    } catch (err) {
-      // return res.sendError(5, err);
-    }
-    filter.start = RangeQuery(req.query.start, 'Date');
-  }
-  // Activities's end time range query
-  if (req.query.end) {
-    try {
-      req.query.end = JSON.parse(req.query.end);
-    } catch (err) {
-      // return res.sendError(5, err);
-    }
-    filter.end = RangeQuery(req.query.end, 'Date');
-  }
-  // Activities's updateAt range query
-  if (req.query.update) {
-    try {
-      req.query.update = JSON.parse(req.query.update);
-    } catch (err) {
-      // return res.sendError(5, err);
-    }
-    filter.updateAt = RangeQuery(req.query.update, 'Date');
-  }
-
-
-  // Name Query
-  // http://localhost:3000/?name=John
-  if (req.query.nameEN) {
-    filter['name.en'] = { $regex: req.query.nameEN };
-  }
-
-  // Location description query
-  // http://localhost:3000/?location=Larngear
-  if (req.query.location) {
-    filter.location = { desc: req.query.location };
-  }
-
-  if (req.query.zone) {
-    filter.zone = req.query.zone;
-  }
-
-  if (req.query.highlight) {
-    filter.isHighlight = req.query.highlight;
-  }
-
-  if (req.query.createBy) {
-    filter.createBy = req.query.createBy;
-  }
+  sort = 'start';
+  filter.start = RangeQuery({ gt: new Date() }, 'Date');
 
   // field selector
   // http://localhost:3000/?fields=name,faculty
@@ -131,11 +205,6 @@ router.get('/', (req, res) => {
     fields = fields.replace(/locationLong/g, 'location.longitude');
   }
 
-  // Text search engine
-  // http://localhost:3000/?search=searchString
-  if (req.query.search) {
-    filter.$text = { $search: req.query.search };
-  }
   let query = Activity.find(filter);
 
   if (sort) {
@@ -146,18 +215,7 @@ router.get('/', (req, res) => {
   }
   // limiter on each query
   // http://localhost:3000/?limit=10
-  let limit;
-  if (req.query.limit) {
-    limit = Number.parseInt(req.query.limit, 10);
-    query = query.limit(limit);
-  }
-  // Offset of a query data
-  // http://localhost:3000/?skip=10
-  let skip;
-  if (req.query.skip) {
-    skip = Number.parseInt(req.query.skip, 10);
-    query = query.skip(skip);
-  }
+  query = query.limit(20);
 
 
   Activity.find(filter).count((err, total) => {
@@ -173,8 +231,62 @@ router.get('/', (req, res) => {
         results: _act,
         queryInfo: {
           total,
-          limit,
-          skip,
+        }
+      });
+    });
+  });
+});
+
+// TODO - nearby from aj.nuttawut
+router.get('/nearby', (req, res) => {
+  const filter = {};
+
+  //  http://localhost:3000/?sort=createAt,-startDate
+  let sort = {};
+  sort = 'start';
+  filter.start = RangeQuery({ gt: new Date() }, 'Date');
+
+  // field selector
+  // http://localhost:3000/?fields=name,faculty
+  let fields;
+  if (req.query.fields) {
+    fields = req.query.fields.replace(/,/g, ' ');
+    fields = fields.replace(/nameEN/g, 'name.en');
+    fields = fields.replace(/shortDescriptionEN/g, 'shortDescription.en');
+    fields = fields.replace(/descriptionEN/g, 'description.en');
+    fields = fields.replace(/locationPlace/g, 'location.place');
+    fields = fields.replace(/locationFloor/g, 'location.floor');
+    fields = fields.replace(/locationRoom/g, 'location.room');
+    fields = fields.replace(/locationLat/g, 'location.latitude');
+    fields = fields.replace(/locationLong/g, 'location.longitude');
+  }
+
+  let query = Activity.find(filter);
+
+  if (sort) {
+    query.sort(sort);
+  }
+  if (fields) {
+    query.select(fields);
+  }
+  // limiter on each query
+  // http://localhost:3000/?limit=10
+  query = query.limit(20);
+
+
+  Activity.find(filter).count((err, total) => {
+    if (err) {
+      return res.sendError(5, err);
+    }
+    query.exec((err, _act) => {
+      if (err) {
+        return res.sendError(5, err);
+      }
+      return res.status(200).json({
+        success: true,
+        results: _act,
+        queryInfo: {
+          total,
         }
       });
     });
