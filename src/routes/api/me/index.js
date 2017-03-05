@@ -18,6 +18,7 @@ const avaliableFields = ['_id', 'name', 'email', 'age', 'gender', 'profile', 'ty
  * @return {User} results - Token owner results.
  */
 router.get('/', isAuthenticatedByToken, (req, res) => {
+  console.log(req.query);
   let fields = [];
   // Fields selecting query
   if (req.query.fields) {
@@ -122,6 +123,7 @@ router.put('/', isAuthenticatedByToken, (req, res) => {
       };
     }
   }
+  console.log(req.user);
 
   // Save User and check for error
   req.user.save((err, _user) => {
