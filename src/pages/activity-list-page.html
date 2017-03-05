@@ -163,10 +163,12 @@
           observer: '_activatedChanged'
         },
         page: {
-          type: Number
+          type: Number,
+          observer: '_pageChange'
         },
         pageSize: {
-          type: Number
+          type: Number,
+          observer: '_pageChange'
         },
         totalPages: {
           type: Number,
@@ -191,6 +193,9 @@
           computed: '_computeAdmin(me)'
         }
       },
+      _pageChange(page){
+        this.generateRequest();
+      },
       _computeImage(thumbnail){
         if(thumbnail)
           return thumbnail;
@@ -199,9 +204,12 @@
       },
       _activatedChanged: function(activated) {
         if (activated) {
-          this.$.activityAPI.generateRequest();
-          this.$.zoneAPI.generateRequest();
+          this.generateRequest();
         }
+      },
+      generateRequest: function() {
+        this.$.activityAPI.generateRequest();
+        this.$.zoneAPI.generateRequest();
       },
       _showClick: function(id) {
         var id = event.model.item['_id'];

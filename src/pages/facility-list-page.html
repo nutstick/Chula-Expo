@@ -122,9 +122,11 @@
         },
         page: {
           type: Number,
+          observer: '_pageChange'
         },
         pageSize: {
           type: Number,
+          observer: '_pageChange'
         },
         totalPages: {
           type: Number,
@@ -140,10 +142,16 @@
           type: String,
         },
       },
+      _pageChange(page){
+        this.generateRequest();
+      },
       _activatedChanged: function(activated) {
         if (activated) {
-          this.$.facilityAPI.generateRequest();
+          this.generateRequest();
         }
+      },
+      generateRequest: function() {
+        this.$.facilityAPI.generateRequest();
       },
       _showClick: function(id) {
         var id = event.model.item['_id'];

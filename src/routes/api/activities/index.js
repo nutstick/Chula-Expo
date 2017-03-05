@@ -6,6 +6,8 @@ const { RangeQuery } = require('../../../tools');
 const { isAuthenticatedByToken, isStaff } = require('../../../config/authenticate');
 
 const router = express.Router();
+
+
 /**
  * Get Activity list
  * Access at GET https://localhost:8080/api/activities
