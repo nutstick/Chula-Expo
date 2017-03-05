@@ -69,22 +69,10 @@
       paper-button {
         font-size: 12px;
       }
-			paper-button > a {
+      paper-button > a {
         color: #000;
         text-decoration: none;
         width: 100%;
-      }
-      #card-item-header {
-        @apply(--layout-horizontal);
-        @apply(--layout-justified);
-      }
-      #card-item-header > .right,
-      #card-item-header > .left {
-        @apply(--layout-horizontal);
-      }
-      .text-between {
-        margin: 0 6px;
-        line-height: 48px;
       }
     </style>
     <div class="container">
@@ -101,6 +89,7 @@
         totalPages="{{totalPages}}"
       ></activity-api>
       <zone-api
+        id="zoneAPI"
         zones="{{zones}}"
         error="{{error}}"
         loading="{{zoneLoading}}"
@@ -131,7 +120,7 @@
         <div class="empty-list"></div>
       </template>
       <template is="dom-repeat" items="{{activities}}">
-        <paper-card-item action image="/public/img/thumbnail-default.jpg">
+        <paper-card-item action image="{{_computeImage(item.thumbnail)}}">
           <div class="card-item-header">
             {{item.name.en}}
           </div>
@@ -201,6 +190,12 @@
           type: Boolean,
           computed: '_computeAdmin(me)'
         }
+      },
+      _computeImage(thumbnail){
+        if(thumbnail)
+          return thumbnail;
+        else
+          return '/public/img/thumbnail-default.jpg';
       },
       _activatedChanged: function(activated) {
         if (activated) {

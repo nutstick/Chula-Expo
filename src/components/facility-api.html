@@ -98,7 +98,7 @@
         this.set('params.fields', fields)
       },
       generateRequest: function() {
-        this.$.facilityResource.generateRequest();
+        return this.$.facilityResource.generateRequest();
       },
       _handleResponse: function(event) {
         if(event.detail.response) {
