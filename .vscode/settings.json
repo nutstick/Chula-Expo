@@ -1,3 +1,9 @@
 {
-  "eslint.enable": true
+  "eslint.enable": true,
+  "css.validate": false,
+  "vsicons.presets.angular": false,
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/lib": true
+  }
 }

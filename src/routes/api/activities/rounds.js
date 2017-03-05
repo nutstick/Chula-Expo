@@ -1,5 +1,5 @@
 const express = require('express');
-const { Activity, Round } = require('../../../models');
+const { Activity, Round, Ticket } = require('../../../models');
 const RangeQuery = require('../../../tools/RangeQuery');
 const { isAuthenticatedByToken, isStaff } = require('../../../config/authenticate');
 
@@ -400,6 +400,31 @@ router.delete('/:rid/reserve', isAuthenticatedByToken, (req, res) => {
         })
       ))
       .catch(err => (err.code ? res.sendError(err.code) : res.sendError(5, err)));
+  });
+});
+
+router.post('/:rid/checkin', isAuthenticatedByToken, isStaff, (req, res) => {
+  const rid = req.params.rid;
+  const userId = req.query.user;
+  if (req.user.staff.type !== 'Admin') {
+    Activity.find({ zone: req.user.staff.zone }, (err) => {
+      if (err) {
+        res.status(4, err);
+      }
+    });
+  }
+  Ticket.find({ round: rid, user: userId }, (err, ticket) => {
+    if (err) {
+      res.status(5, err);
+    }
+    ticket.checkIn(ticket._id)
+    .then(() => (
+      res.status(201).json({
+        success: true,
+        message: `Successfully check in ticket ${ticket._id} to ${req.params.rid}.`,
+      })
+    ))
+    .catch(err => (err.code ? res.sendError(err.code) : res.sendError(5, err)));
   });
 });
 
