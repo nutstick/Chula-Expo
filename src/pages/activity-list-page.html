@@ -126,7 +126,7 @@
             {{item.name.en}}
           </div>
           <div class="card-item-content">
-            {{item.shortDescription.en}}
+          	{{_convertToDate(item.start)}} - {{_convertToDate(item.start)}}<br>{{_subString(item.shortDescription.en)}}
           </div>
           <div class="card-item-actions">
             <div class="horizontal justified">
@@ -262,6 +262,14 @@
         if (!me || !me.staff)
           return false;
         return me.staff.staffType === 'Admin';
+      },
+      _convertToDate: function(dateTime) {
+        return moment.utc(dateTime).format('MM-DD-YYYY HH:mm');
+      },
+      _subString: function(string) {
+        if(string.length>40)
+          return string.substring(0,40) + '...';
+        else return string;
       }
     })
   </script>
