@@ -166,7 +166,7 @@ router.post('/', (req, res) => {
   room.name.en = req.body.nameEN;
   room.name.th = req.body.nameTH;
 
-  room.floor= req.body.floor;
+  room.floor = req.body.floor;
 
 
  room.place = mongoose.Types.ObjectId(req.body.place);
@@ -183,6 +183,7 @@ router.post('/', (req, res) => {
       success: true,
       results: _room
     });
+    /*
         Place.findOneAndUpdate(
      {
        _id:req.body.place
@@ -198,7 +199,7 @@ router.post('/', (req, res) => {
       });
 
     });
-
+*/
 });
 
 // Update an existing room via PUT(JSON format)
@@ -235,6 +236,7 @@ router.put('/:id', (req, res) => {
     if (req.body.place) {
       room.place = mongoose.Types.ObjectId(req.body.place);
     }
+    room.updateAt = new Date();
 
     room.save((err, _room) => {
       if (err) {

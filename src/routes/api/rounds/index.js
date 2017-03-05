@@ -387,6 +387,8 @@ router.put('/:id', (req, res) => {
       round.seats.avaliable = req.body.seatsAvaliable;
     }
 
+    round.updateAt = new Date();
+
     round.save((err, _round) => {
       if (err) {
         return res.status(500).json({

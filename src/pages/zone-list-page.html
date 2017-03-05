@@ -77,7 +77,7 @@
       </template>
 
       <template is="dom-repeat" items="{{zones}}">
-        <paper-card-item action image="/public/img/thumbnail-default.jpg">
+        <paper-card-item action image="{{_computeImage(item.thumbnail)}}">
           <div class="card-item-header">
             {{item.type}}: {{item.name.en}}
           </div>
@@ -135,6 +135,13 @@
           type: Array,
           value: [],
         }
+      },
+      _computeImage(thumbnail){
+        console.log(thumbnail);
+        if(thumbnail)
+          return thumbnail;
+        else
+          return '/public/img/thumbnail-default.jpg';
       },
       _activatedChanged: function(activated) {
 				if (activated) {

@@ -255,6 +255,7 @@ router.put('/:id', (req, res) => {
       place.zone = mongoose.Types.ObjectId(req.body.zone);
     }
 
+    place.updateAt = new Date();
 
     place.save((err, _place) => {
       if (err) {
