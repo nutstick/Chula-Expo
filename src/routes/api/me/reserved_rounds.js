@@ -144,7 +144,7 @@ router.get('/', isAuthenticatedByToken, (req, res) => {
  * @return {ObjectId} queryInfo.user - User's used to query.
  * @return {ObjectId} queryInfo.round - Round's used to query.
  */
-router.get('/:rid', isAuthenticatedByToken,, (req, res) => {
+router.get('/:rid', isAuthenticatedByToken, (req, res) => {
   let fields;
   // Fields selecting query
   if (req.query.fields) {
