@@ -140,6 +140,7 @@
           </div>
           <div class="card-item-actions">
             <div class="horizontal justified">
+              <paper-button on-tap="_scanClick">Scan</paper-button>
               <paper-button on-tap="_showClick">Show</paper-button>
               <paper-button on-tap="_editClick">Edit</paper-button>
               <paper-button on-tap="_deleteClick">Delete</paper-button>
@@ -216,6 +217,10 @@
 			},
       _addClick: function() {
         document.querySelector('chulaexpo-staff-app').set('route.path', '/activity/add/');
+      },
+      _scanClick: function(id) {
+        var id = event.model.item['_id'];
+        document.querySelector('chulaexpo-staff-app').set('route.path', '/activity/'+id+'/scan/');
       },
       _deleteClick: function(event) {
         this.deleteId = event.model.item['_id'];

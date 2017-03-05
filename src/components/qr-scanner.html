@@ -1,0 +1,38 @@
+<!-- Libery -->
+<link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="/public/lib/iron-ajax/iron-ajax.html">
+
+<script type="text/javascript" src="/public/js/instascan.min.js"></script>
+<dom-module id="qr-scanner">
+  <template>
+		<video id="preview"></video>
+    <script type="text/javascript">
+      let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
+      scanner.addListener('scan', function (content) {
+        console.log(content);
+      });
+      Instascan.Camera.getCameras().then(function (cameras) {
+        if (cameras.length > 0) {
+          scanner.start(cameras[0]);
+        } else {
+          console.error('No cameras found.');
+        }
+      }).catch(function (e) {
+        console.error(e);
+      });
+    </script>
+  </template>
+
+	<script>
+    Polymer({
+      is: 'qr-scanner',
+      properties: {
+      },
+
+      observers: [
+      ],
+
+    });
+  </script>
+</dom-module>
