@@ -71,6 +71,7 @@
     "paper-tile": "^1.1.1",
     "s-circle-progress": "^0.1.0",
     "iron-list": "^1.4.1",
-    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.24"
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.24",
+    "bottom-button": "greenyouse/bottom-button#^0.1.3"
   }
 }

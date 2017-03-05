@@ -14,6 +14,7 @@
 <link rel="import" href="/public/lib/paper-collapse-item/paper-collapse-item.html">
 <link rel="import" href="/public/lib/paper-collapse-item/paper-collapse-group.html">
 <link rel="import" href="/components/round-api.html">
+<link rel="import" href="/components/qr-scanner.html">
 <dom-module id="rounds-list">
   <template>
     <style is="custom-style">
@@ -110,7 +111,7 @@
                       <iron-icon icon="icons:event" item-icon></iron-icon>
                       [[_convertToDate(item.start)]] - [[_convertToDate(item.end)]]
                     </paper-icon-item>
-                    <paper-icon-item>
+                    <paper-icon-item on-tap="_launchQRScanner">
                       <paper-ripple></paper-ripple>
                       <iron-icon icon="image:photo-camera" item-icon></iron-icon>
                       Open QRCode Scanner
@@ -304,6 +305,10 @@
       },
       _gotoAdd: function(e) {
         this._state = 'create';
+      },
+      _launchQRScanner: function() {
+        var qr = document.createElement('qr-scanner');
+        qr.open();
       },
       _computeNoRounds: function(rounds) {
         return !rounds.length;
