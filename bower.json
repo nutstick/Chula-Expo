@@ -55,7 +55,7 @@
     "iron-grid": "*",
     "paper-button-group": "Protoss78/paper-button-group#^0.0.1",
     "paper-fab": "PolymerElements/paper-fab#^1.2.1",
-    "app-route": "PolymerElements/app-route#^0.9.3",
+    "app-route": "*",
     "paper-datatable": "^0.9.8",
     "polymer": "Polymer/polymer#^1.7.1",
     "iron-elements": "PolymerElements/iron-elements#^1.0.10",
@@ -72,6 +72,9 @@
     "s-circle-progress": "^0.1.0",
     "iron-list": "^1.4.1",
     "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.24",
-    "bottom-button": "greenyouse/bottom-button#^0.1.3"
+    "bottom-button": "greenyouse/bottom-button#^0.1.3",
+    "paper-collapse-item": "^1.1.4",
+    "paper-spinner": "^1.2.1",
+    "app-localize-behavior": "^0.10.1"
   }
 }

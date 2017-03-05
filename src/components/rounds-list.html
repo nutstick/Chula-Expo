@@ -308,6 +308,7 @@
       },
       _launchQRScanner: function() {
         var qr = document.createElement('qr-scanner');
+        qr.url = _url + '/' + event.model.item['_id'] + '/checkin';
         qr.open();
       },
       _computeNoRounds: function(rounds) {

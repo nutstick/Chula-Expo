@@ -19,6 +19,7 @@
       paper-dialog.size {
         margin-left: -50%;
         max-width: none !important;
+        background: transparent;
       }
       @media (min-width: 600px) { 
         paper-dialog.size {
@@ -46,6 +47,14 @@
         --bottom-button-background-color: #F44336;
       }
     </style>
+    <iron-ajax
+      id="ajax"
+      url="[[url]]"
+      method="POST"
+      headers="{{headers}}"
+      on-response="_handleResponse"
+      handle-as="json"
+    ></iron-ajax>
 		<paper-dialog id="dialog" class="container size" modal on-iron-overlay-closed="_onClosed">
 		  <video id="preview"></video>
       <bottom-button on-tap="_onClosed">CLOSE</bottom-button>
@@ -71,6 +80,14 @@
     Polymer({
       is: 'qr-scanner',
       properties: {
+        url: String,
+        headers: {
+          type: Object,
+          value: {
+            'Authorization': 'JWT ' + window.token
+          }
+        },
+        error: Object,
       },
 
       observers: [
@@ -88,6 +105,20 @@
       _onClosed: function(e, detail) {
         // Remove the dialog from the DOM once the exit animation is finished
         Polymer.dom(this.parentNode).removeChild(this);
+      },
+      _handleResponse: function(event) {
+        if(event.detail.response) {
+          if (event.detail.response.success) {
+            // TODO
+          }
+        }
+      },
+      _handleError: function(event) {
+        if(event.detail.response) {
+          if (!event.detail.response.success) {
+            this.error = event.detail.response.errors;
+          }
+        }
       }
     });
   </script>
