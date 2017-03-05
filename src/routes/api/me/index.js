@@ -52,8 +52,8 @@ router.get('/where', (req, res) => {
     success: true,
     results: {
       zone: {
-        th: 'faculty of engineering',
-        en: 'คณะวิศวกรรมศาสตร์'
+        en: 'faculty of engineering',
+        th: 'คณะวิศวกรรมศาสตร์'
       }
     },
   });
