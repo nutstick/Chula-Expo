@@ -71,6 +71,9 @@ TicketSchema.static.cancelReserved = ticketId => new Promise((resolve, reject) =
 
 TicketSchema.methods.checkIn = ticketId => new Promise((resolve, reject) => {
   TicketSchema.findbyId(ticketId, (err, ticket) => {
+    if (ticket.checked) {
+      return reject(35);
+    }
     ticket.checked = true;
     ticket.save(err => (err ? resolve() : reject(err)));
   });

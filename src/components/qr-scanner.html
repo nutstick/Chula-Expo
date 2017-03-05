@@ -9,14 +9,14 @@
 <dom-module id="qr-scanner">
   <template>
     <style is="custom-style" include="shared-styles">
-      paper-dialog.size {
+      paper-dialog#dialog.size {
         margin: 0;
         position: fixed;
         top: 6px;
         left: 50%;
         overflow: auto;
       }
-      paper-dialog.size {
+      paper-dialog#dialog.size {
         margin-left: -50%;
         max-width: none !important;
         background: transparent;
@@ -36,9 +36,15 @@
           margin-left: -480px;
         }
       }
-      paper-dialog > *:first-child {
+      paper-dialog#dialog > *:first-child {
         padding: 0;
         margin: 0;
+      }
+      paper-dialog#alert {
+        position: fixed;
+        bottom: 40px;
+        background: rgba(1.0, 1.0, 1.0, 0.5);
+        color: #fff;
       }
       video {
         width: 100%;
@@ -53,8 +59,14 @@
       method="POST"
       headers="{{headers}}"
       on-response="_handleResponse"
+      on-error="_handleError"
       handle-as="json"
+      debounce-duration="300"
     ></iron-ajax>
+		<paper-dialog id="alert" on-iron-overlay-closed="_onClosedAlert">
+      Success
+		</paper-dialog>
+
 		<paper-dialog id="dialog" class="container size" modal on-iron-overlay-closed="_onClosed">
 		  <video id="preview"></video>
       <bottom-button on-tap="_onClosed">CLOSE</bottom-button>
