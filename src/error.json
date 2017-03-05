@@ -93,5 +93,10 @@
     "status": "403",
     "message": "Zone is not exist",
     "code": "34"
-  }
+  },
+  "35": {
+      "status": "403",
+      "message": "Checkin is not exist",
+      "code": "35"
+    }
 }
