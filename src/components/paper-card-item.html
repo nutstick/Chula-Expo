@@ -7,6 +7,7 @@
   <template>
     <style>
       :host {
+        overflow: hidden;
         box-sizing: border-box;
         position: relative;
         margin-bottom: 12px;
@@ -22,15 +23,15 @@
       }
       :host iron-image {
         @apply(--layout-flex);
-        width: 133px;
-        height: 100px;
         display: initial;
         overflow: visited;
-        --iron-image-width: 133px;
-        --iron-image-height: 100px;
+        width: var(--card-item-image-width, 110px);
+        height: var(--card-item-image-width, 110px);
+        --iron-image-width: var(--paper-card-item-image-width, 110px);
+        --iron-image-height: var(--paper-card-item-image-width, 110px);
       }
       .header {
-        margin-right: 16px;
+        margin-right: 10px;
       }
       .container {
         @apply(--layout);
@@ -39,14 +40,14 @@
         padding: 5px 30px 5px 5px;
       }
       :host([action]) .container {
-        padding-bottom: 0px;
+        padding: 0px;
       }
       :host .container ::content .card-item-header {
         font-size: 20px;
         font-weight: 400;
         color: var(--paper-card-item-header-color, #000);
       }
-      :host .container ::content .card-item-content {
+      :host .container ::content > .card-item-content {
         font-size: 14px;
         font-weight: 400;
         color: var(--paper-card-item-content-color, #666);
@@ -67,13 +68,13 @@
     </style>
     <div class="header">
       <iron-image
-          hidden$="[[!image]]"
-          aria-hidden$="[[_isHidden(image)]]"
-          src="[[image]]"
-          alt="[[alt]]"
-          placeholder="[[placeholderImage]]"
-          preload="[[preloadImage]]"
-          fade="[[fadeImage]]"></iron-image>
+        hidden$="[[!image]]"
+        aria-hidden$="[[_isHidden(image)]]"
+        src="[[image]]"
+        alt="[[alt]]"
+        placeholder="[[placeholderImage]]"
+        preload="[[preloadImage]]"
+        fade="[[fadeImage]]"></iron-image>
       <div hidden$="[[!heading]]" class$="title-text [[_computeHeadingClass(image)]]">[[heading]]</div>
     </div>
     <div class="container">

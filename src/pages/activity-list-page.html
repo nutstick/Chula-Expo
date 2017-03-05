@@ -63,16 +63,25 @@
         display:block;
         content: "";
       }
-      paper-card-item {
-        width: 100%;
+      .activity-item .card-item-content {
+        @apply(--layout-flex);
       }
-      paper-button {
+      .activity-item .card-item-actions paper-tabs {
+        height: 34px;
+      }
+      .activity-item .card-item-actions paper-tab {
+        --paper-tab-ink: #eee;
         font-size: 12px;
-      }
-			paper-button > a {
         color: #000;
-        text-decoration: none;
-        width: 100%;
+        --paper-tab-content: {
+          text-decoration: none;
+          padding: 0.7em 0.57em;
+          cursor: pointer;
+          user-select: none;
+          text-transform: uppercase;
+          font-weight: 100!important;
+          font: inherit;
+        };
       }
       #card-item-header {
         @apply(--layout-horizontal);
@@ -131,7 +140,7 @@
         <div class="empty-list"></div>
       </template>
       <template is="dom-repeat" items="{{activities}}">
-        <paper-card-item action image="/public/img/thumbnail-default.jpg">
+        <paper-card-item class="activity-item" action image="/public/img/thumbnail-default.jpg">
           <div class="card-item-header">
             {{item.name.en}}
           </div>
@@ -139,12 +148,16 @@
             {{item.shortDescription.en}}
           </div>
           <div class="card-item-actions">
-            <div class="horizontal justified">
+            <!--<div class="horizontal justified">-->
+            <paper-tabs scrollable fit-container no-bar hide-scroll-buttons>
               <!--<paper-button on-tap="_scanClick">Scan</paper-button>-->
-              <paper-button on-tap="_showClick">Show</paper-button>
-              <paper-button on-tap="_editClick">Edit</paper-button>
-              <paper-button on-tap="_deleteClick">Delete</paper-button>
-            </div>
+              <!--<paper-button on-tap="_editClick">Edit</paper-button>
+              <paper-button on-tap="_deleteClick">Delete</paper-button>-->
+              <paper-tab on-tap="_showClick">Show</paper-tab>
+              <paper-tab on-tap="_editClick">Edit</paper-tab>
+              <paper-tab on-tap="_deleteClick">Delete</paper-tab>
+            </paper-tabs>
+            <!--</div>-->
           </div>
         </paper-card-item>
       </template>
