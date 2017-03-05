@@ -4,30 +4,59 @@
 <link rel="import" href="/public/lib/iron-ajax/iron-ajax.html">
 <link rel="import" href="/public/lib/bottom-button/bottom-button.html">
 
+<link rel="import" href="/components/shared-styles.html">
 <script type="text/javascript" src="/public/js/instascan.min.js"></script>
 <dom-module id="qr-scanner">
   <template>
-    <style>
-      video {
-        width: 100%;
-      }
-      paper-dialog {
+    <style is="custom-style" include="shared-styles">
+      paper-dialog.size {
         margin: 0;
+        position: fixed;
+        top: 6px;
+        left: 50%;
+        overflow: auto;
+      }
+      paper-dialog.size {
+        margin-left: -50%;
+        max-width: none !important;
+        background: transparent;
+      }
+      @media (min-width: 600px) { 
+        paper-dialog.size {
+          margin-left: -270px;
+        }
+      }
+      @media (min-width: 768px) {
+        paper-dialog.size {
+          margin-left: -360px;
+        }
+      }
+      @media (min-width: 992px) {
+        paper-dialog.size {
+          margin-left: -480px;
+        }
       }
       paper-dialog > *:first-child {
         padding: 0;
         margin: 0;
       }
       video {
-        width: 480px;
+        width: 100%;
       }
-      bottom-button: {
+      bottom-button {
         --bottom-button-background-color: #F44336;
       }
     </style>
-		<paper-dialog id="dialog" modal on-iron-overlay-closed="_onClosed">
+    <iron-ajax
+      id="ajax"
+      url="[[url]]"
+      method="POST"
+      headers="{{headers}}"
+      on-response="_handleResponse"
+      handle-as="json"
+    ></iron-ajax>
+		<paper-dialog id="dialog" class="container size" modal on-iron-overlay-closed="_onClosed">
 		  <video id="preview"></video>
-      
       <bottom-button on-tap="_onClosed">CLOSE</bottom-button>
 		</paper-dialog>
     <script type="text/javascript">
@@ -51,6 +80,14 @@
     Polymer({
       is: 'qr-scanner',
       properties: {
+        url: String,
+        headers: {
+          type: Object,
+          value: {
+            'Authorization': 'JWT ' + window.token
+          }
+        },
+        error: Object,
       },
 
       observers: [
@@ -68,6 +105,20 @@
       _onClosed: function(e, detail) {
         // Remove the dialog from the DOM once the exit animation is finished
         Polymer.dom(this.parentNode).removeChild(this);
+      },
+      _handleResponse: function(event) {
+        if(event.detail.response) {
+          if (event.detail.response.success) {
+            // TODO
+          }
+        }
+      },
+      _handleError: function(event) {
+        if(event.detail.response) {
+          if (!event.detail.response.success) {
+            this.error = event.detail.response.errors;
+          }
+        }
       }
     });
   </script>
