@@ -102,7 +102,7 @@ router.get('/', (req, res) => {
   if (req.query.fields) {
     fields = req.query.fields.split(',').map((field) => {
       if (field === 'seatsFullCapacity') {
-        return 'seats.FullCapacity';
+        return 'seats.fullCapacity';
       }
       if (field === 'seatsReserved') {
         return 'seats.reserved';
