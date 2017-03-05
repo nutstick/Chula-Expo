@@ -125,6 +125,7 @@
                   placeholder="เลือกสถานที่"
                 ></vaadin-combo-box>
                 <place-api
+                  id="placeAPI"
                   places="{{places}}"
                   error="{{error}}"
                   loading="{{placeLoading}}"
@@ -181,34 +182,44 @@
         Polymer({
             is: 'facility-add-page',
             properties: {
-                places: {
-                  type: Array
-                },
-                token: {
-                    type: String,
-                },
-                latitude: {
-                    type: Number,
-                    value: 13.7383777
-                },
-                longitude: {
-                    type: Number,
-                    value: 100.53205279999997
-                },
-                zoom: {
-                    type: Number,
-                    value: 16
-                },
-                tags_list: {
-                    type: Array,
-                    value: ['Chula Expo']
-                },
-                headers: {
-                  type: Object,
-                  value: {
-                    'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
-                  }
+              activated: {
+                type: Boolean,
+                value: false,
+                observer: '_activatedChanged'
+              },
+              places: {
+                type: Array
+              },
+              token: {
+                  type: String,
+              },
+              latitude: {
+                  type: Number,
+                  value: 13.7383777
+              },
+              longitude: {
+                  type: Number,
+                  value: 100.53205279999997
+              },
+              zoom: {
+                  type: Number,
+                  value: 16
+              },
+              tags_list: {
+                  type: Array,
+                  value: ['Chula Expo']
+              },
+              headers: {
+                type: Object,
+                value: {
+                  'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
                 }
+              }
+            },
+            _activatedChanged: function(activated) {
+              if (activated) {
+                this.$.placeAPI.generateRequest();
+              }
             },
             _delayedSubmit: function(event) {
                 var form = this.$.form;

@@ -114,7 +114,7 @@
         /* Return them to document order */
             order: 0;
         }
-				
+
         #main > #left, #main > #right {
             min-height: 50px;
         }
@@ -328,12 +328,13 @@
         '_activatedChanged(activated, placeId)',
       ],
       _activatedChanged: function(activated, placeId) {
-        console.log(activated)
-				if (activated) {
-          this.$.placeAPI.generateRequest();
-          this.$.zoneAPI.generateRequest();
-          this.$.roomAPI.generateRequest();
-        }
+        if (activated) {
+					var placeRequest = this.$.placeAPI.generateRequest();
+					placeRequest.completes.then(function() {
+						this.$.zoneAPI.generateRequest();
+						this.$.roomAPI.generateRequest();
+					}.bind(this));
+				}
       },
       _presubmit: function(event) {
         	this.$.form.request.body.place= this.placeId;

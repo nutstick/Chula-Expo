@@ -95,7 +95,7 @@
         this.set('params.fields', fields)
       },
       generateRequest: function() {
-        this.$.roomResource.generateRequest();
+        return this.$.roomResource.generateRequest();
       },
       _handleResponse: function(event) {
         if(event.detail.response) {

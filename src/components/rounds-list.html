@@ -1,7 +1,9 @@
 <!-- Libery -->
 <link rel="import" href="/public/lib/polymer/polymer.html">
 <!-- Web Component -->
-<link rel="import" href="/public/lib/iron-list/iron-list.html">
+<link rel="import" href="/public/lib/iron-icons/iron-icons.html">
+<link rel="import" href="/public/lib/iron-icons/maps-icons.html">
+<link rel="import" href="/public/lib/iron-icons/image-icons.html">
 <link rel="import" href="/public/lib/paper-ripple/paper-ripple.html">
 <link rel="import" href="/public/lib/paper-input/paper-input.html">
 <link rel="import" href="/public/lib/paper-input/paper-input-container.html">
@@ -9,10 +11,12 @@
 <link rel="import" href="/public/lib/paper-spinner/paper-spinner.html">
 <link rel="import" href="/public/lib/app-toolbar/app-toolbar.html">
 <link rel="import" href="/public/lib/app-header/app-header.html">
+<link rel="import" href="/public/lib/paper-collapse-item/paper-collapse-item.html">
+<link rel="import" href="/public/lib/paper-collapse-item/paper-collapse-group.html">
 <link rel="import" href="/components/round-api.html">
 <dom-module id="rounds-list">
   <template>
-    <style>
+    <style is="custom-style">
       app-header {
         width: 100%;
         color: #222;
@@ -31,16 +35,20 @@
         color: #bbb;
         font-weight: 200;
       }
+
       .card {
         width: 100%;
         margin: 4px;
       }
-      .item {
-        @apply(--layout-horizontal);
-        padding: 0px 16px;
-        background-color: white;
-        cursor: pointer;
-				min-height: 48px;
+      paper-collapse-item {
+        border-bottom: 1px solid #222;
+      }
+      .item-styles /deep/ paper-item:focus:before {
+        opacity: 0;
+      }
+      .--red {
+        background-color: #F44336;
+        color: #fff;
       }
       .seats {
         @apply(--layout-horizontal);
@@ -56,12 +64,6 @@
         box-sizing: border-box;
         background-color: #DDD;
       }
-      .pad {
-        @apply(--layout-flex);
-        @apply(--layout-vertical);
-        position: relative;
-        overflow: hidden;
-      }
       div[name="list"] {
         padding-bottom: 20px;
         margin-top: 12px;
@@ -69,19 +71,6 @@
       #spinner {
         height: 22px;
         width: 22px;
-      }
-      .primary {
-        font-size: 16px;
-        font-weight: bold;
-        white-space: nowrap;
-      }
-      .shortText, .longText {
-        font-size: 14px;
-        white-space: nowrap;
-      }
-      .longText {
-        color: gray;
-        display: none;
       }
       .timeinput {
         --paper-input-container-underline: {
@@ -92,7 +81,7 @@
         background: transparent;
       }
     </style>
-    <round-api id="roundAPI" url="[[_url]]" rounds="{{rounds}}" error="{{error}}"></round-api>
+    <round-api id="api" url="[[_url]]" rounds="{{rounds}}" error="{{error}}"></round-api>
     <paper-card class="card">
       <app-header fixed style="height: 48px;">
         <app-toolbar>
@@ -109,27 +98,32 @@
             <template is="dom-if" if="[[_computeNoRounds(rounds)]]">
               <div class="empty-list"></div>
             </template>
-            <iron-list items="[[rounds]]" selection-enabled multi-selection>
-              <template>
-                <div class$="[[_getClassForItem(item, selected)]]" tabindex$="[[tabIndex]]">
-                  <paper-ripple></paper-ripple>
-                  <div class="pad">
-                    <div class="primary">[[item.name.en]] <span style="font-weight: 300">([[item.seats.reserved]]/[[item.seats.fullCapacity]])</span></div>
-                    <div class="shortText">[[_convertToDate(item.start)]] - [[_convertToDate(item.end)]]</div>
-                    <div class="longText">[[item.longText]]</div>
+            <paper-collapse-group>
+              <template is="dom-repeat" items="[[rounds]]">
+                <paper-collapse-item class="item-styles" icon="maps:local-offer" header="[[item.name.en]]" tabindex$="[[tabIndex]]">
+                  <div role="listbox">
+                    <paper-icon-item>
+                      <iron-icon icon="icons:event-seat" item-icon></iron-icon>
+                      [[item.seats.reserved]]/[[item.seats.fullCapacity]]
+                    </paper-icon-item>
+                    <paper-icon-item>
+                      <iron-icon icon="icons:event" item-icon></iron-icon>
+                      [[_convertToDate(item.start)]] - [[_convertToDate(item.end)]]
+                    </paper-icon-item>
+                    <paper-icon-item>
+                      <paper-ripple></paper-ripple>
+                      <iron-icon icon="image:photo-camera" item-icon></iron-icon>
+                      Open QRCode Scanner
+                    </paper-icon-item>
+                    <paper-icon-item class="delete --red" on-tap="_deleteClick">
+                      <paper-ripple></paper-ripple>
+                      <iron-icon icon="icons:delete" item-icon></iron-icon>
+                      Delete
+                    </paper-icon-item>
                   </div>
-                  <!--<paper-menu-button>
-                    <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
-                    <paper-menu class="dropdown-content">
-                      <paper-item>Edit</paper-item>
-                      <paper-item>Remove</paper-item>
-                      <paper-item>Help</paper-item>
-                    </paper-menu>
-                  </paper-menu-button>-->
-                  <paper-icon-button on-tap="_deleteClick" icon="icons:clear"></paper-icon-button>
-                </div>
+                </paper-collapse-item>
               </template>
-            </iron-list>
+            </paper-collapse-group>
           </div>
         </div>
         <div name="create">
@@ -146,11 +140,13 @@
               <!-- time -->
               <paper-input-container class="timeinput" always-float-label>
                 <label>เวลาเริ่ม</label>
-                <paper-datetime-picker-item icon="icons:alarm" date={{start}} is="iron-input" placeholder="เลือกเวลาเริ่ม" required></paper-datetime-picker-item>
+                <paper-datetime-picker-item icon="icons:alarm" value={{start}} is="iron-input" placeholder="เลือกเวลาเริ่ม"></paper-datetime-picker-item>
+                <input type="hidden"></input>
               </paper-input-container>
               <paper-input-container class="timeinput" always-float-label>
                 <label>เวลาจบ</label>
-                <paper-datetime-picker-item icon="icons:alarm" date={{end}} is="iron-input" placeholder="เลือกเวลาจบ" required></paper-datetime-picker-item>
+                <paper-datetime-picker-item icon="icons:alarm" value={{end}} is="iron-input" placeholder="เลือกเวลาจบ"></paper-datetime-picker-item>
+                <input type="hidden"></input>
               </paper-input-container>
               <div class="seats">
                 <paper-input type="number" label="จองแล้ว" name="seatsReserved" always-float-label required>
@@ -231,7 +227,7 @@
           this._headers = {
             'Authorization': 'JWT ' + token
           };
-          this.generateRequest();
+          this.$.api.generateRequest();
         }.bind(this));
       },
       _getClassForItem: function(item, selected) {
@@ -293,8 +289,9 @@
         }
       },
       _idChanged: function(id) {
-          if (id && id!='show' && id!='edit' && id!='add' && id!='list') {
+        if (id && id!='show' && id!='edit' && id!='add' && id!='list') {
           this._url = '/api/activities/' + id + '/rounds';
+          this.$.api.generateRequest();
         } else {
           this._url = '';
         }

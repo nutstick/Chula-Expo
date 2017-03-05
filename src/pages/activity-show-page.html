@@ -374,8 +374,7 @@
         },
 				activated: {
 					type: Boolean,
-					value: false,
-					observer: '_activatedChanged'
+					value: false
 				},
         zoom: {
           type: Number,
@@ -391,6 +390,9 @@
           type: String,
         },
       },
+      observers: [
+        '_activatedChanged(activated, activityId)',
+      ],
       _idChanged: function(id){
         var div_qrcode = document.getElementById("qrcode");
         if(div_qrcode){
@@ -419,13 +421,14 @@
         }
 
       },
-      _activatedChanged: function(activated) {
-        console.log("kuy" + activated);
+      _activatedChanged: function(activated, activityId) {
 				if (activated) {
-					this.$.activityAPI.generateRequest();
-					this.$.zoneAPI.generateRequest();
-					this.$.placeAPI.generateRequest();
-					this.$.roomAPI.generateRequest();
+					var activityRequest = this.$.activityAPI.generateRequest();
+					activityRequest.completes.then(function() {
+						this.$.zoneAPI.generateRequest();
+						this.$.placeAPI.generateRequest();
+						this.$.roomAPI.generateRequest();
+					}.bind(this));
 				}
       },
       _handleResponse: function(event) {

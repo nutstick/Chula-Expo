@@ -111,6 +111,7 @@
                   required
                 ></vaadin-combo-box>
                 <zone-api
+                  id="zoneAPI"
                   zones="{{zones}}"
                   error="{{error}}"
                   loading="{{zoneLoading}}"
@@ -167,6 +168,11 @@
     Polymer({
       is: 'place-add-page',
       properties: {
+        activated: {
+          type: Boolean,
+          value: false,
+          observer: '_activatedChanged'
+        },
         zones: {
           type: Array
         },
@@ -194,6 +200,11 @@
           value: {
             'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
           }
+        }
+      },
+      _activatedChanged: function(activated) {
+        if (activated) {
+          this.$.zoneAPI.generateRequest();
         }
       },
       _delayedSubmit: function(event) {

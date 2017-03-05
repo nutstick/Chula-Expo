@@ -113,7 +113,7 @@
         this.set('params.fields', fields);
       },
       generateRequest: function() {
-        this.$.roundResource.generateRequest();
+        return this.$.roundResource.generateRequest();
       },
       _handleResponse: function(event) {
         if(event.detail.response) {
