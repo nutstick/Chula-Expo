@@ -75,17 +75,26 @@
           type: Object,
           notify: true,
         },
-        loading: Boolean,
+        loading: {
+          type: Boolean,
+          notify: true,
+        },
         error: {
           type: Object,
-          value: {}
+          value: {},
+          notify: true,
         },
         createBy: {
           type: String
         },
         me: {
           type: Object,
-          value: {}
+          value: {},
+          notify: true,
+        },
+        totalPages: {
+          type: Number,
+          notify: true,
         }
       },
 
@@ -128,9 +137,11 @@
         if(event.detail.response) {
           if (event.detail.response.success) {
             if (this.activityId) {
+              // Specific id query
               this.activity = event.detail.response.results;
             } else {
               this.activities = event.detail.response.results;
+              this.set('totalPages', Math.ceil(event.detail.response.queryInfo.total / this.pageSize));
             }
           } else {
             this.error = event.detail.response.errors;

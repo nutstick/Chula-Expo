@@ -93,5 +93,10 @@
     "status": "403",
     "message": "Zone is not exist",
     "code": "34"
+  },
+  "35": {
+    "status": "400",
+    "message": "Can't use used ticket.",
+    "code": "35"
   }
 }

@@ -63,16 +63,25 @@
         display:block;
         content: "";
       }
-      paper-card-item {
-        width: 100%;
+      .activity-item .card-item-content {
+        @apply(--layout-flex);
       }
-      paper-button {
+      .activity-item .card-item-actions paper-tabs {
+        height: 34px;
+      }
+      .activity-item .card-item-actions paper-tab {
+        --paper-tab-ink: #eee;
         font-size: 12px;
-      }
-      paper-button > a {
         color: #000;
-        text-decoration: none;
-        width: 100%;
+        --paper-tab-content: {
+          text-decoration: none;
+          padding: 0.7em 0.57em;
+          cursor: pointer;
+          user-select: none;
+          text-transform: uppercase;
+          font-weight: 100!important;
+          font: inherit;
+        };
       }
     </style>
     <div class="container">
@@ -86,7 +95,7 @@
         page="[[page]]"
         me="[[me]]"
         page-size="[[pageSize]]"
-        totalPages="{{totalPages}}"
+        total-pages="{{totalPages}}"
       ></activity-api>
       <zone-api
         id="zoneAPI"
@@ -128,16 +137,15 @@
           	{{_convertToDate(item.start)}} - {{_convertToDate(item.end)}}<br>{{_subString(item.shortDescription.en)}}
           </div>
           <div class="card-item-actions">
-            <div class="horizontal justified">
-              <!--<paper-button on-tap="_scanClick">Scan</paper-button>-->
-              <paper-button on-tap="_showClick">Show</paper-button>
-              <paper-button on-tap="_editClick">Edit</paper-button>
-              <paper-button on-tap="_deleteClick">Delete</paper-button>
-            </div>
+            <paper-tabs scrollable fit-container no-bar hide-scroll-buttons>
+              <paper-tab on-tap="_showClick">Show</paper-tab>
+              <paper-tab on-tap="_editClick">Edit</paper-tab>
+              <paper-tab on-tap="_deleteClick">Delete</paper-tab>
+            </paper-tabs>
           </div>
         </paper-card-item>
       </template>
-      <paper-card-item-pagination page="{{page}}" page-size="{{pageSize}}" totalPages="[[totalPages]]"></paper-card-item-pagination>
+      <paper-card-item-pagination page="{{page}}" page-size="{{pageSize}}" total-pages="[[totalPages]]"></paper-card-item-pagination>
       <div class="fixed-bottom">
         <div class="container">
           <paper-fab id="add-icon" icon="add" on-tap="_addClick"></paper-fab>
@@ -164,19 +172,14 @@
         },
         page: {
           type: Number,
-          observer: '_pageChange'
         },
         pageSize: {
           type: Number,
-          observer: '_pageChange'
         },
         zone: {
           type: String,
-          observer: '_pageChange'
         },
-        totalPages: {
-          type: Number,
-        },
+        totalPages: Number,
         error: {
           type: Object,
         },
@@ -197,14 +200,17 @@
           computed: '_computeAdmin(me)'
         }
       },
-      _pageChange(page){
-        this.generateRequest();
-      },
-      _computeImage(thumbnail){
+      observers: [
+        '_changeAcitvityParams(page, pageSize, zone)'
+      ],
+      _computeImage(thumbnail) {
         if(thumbnail)
           return thumbnail;
         else
           return '/public/img/thumbnail-default.jpg';
+      },
+      _changeAcitvityParams: function(page, pageSize) {
+        this.$.activityAPI.generateRequest();
       },
       _activatedChanged: function(activated) {
         if (activated) {
@@ -254,9 +260,6 @@
             req.send();
           }.bind(this), 300);
         }
-      },
-      _zoneChanged: function(zone){
-        this.$.activityAPI.generateRequest();
       },
       _computeNoActivities: function(activities) {
         return !activities.length;
