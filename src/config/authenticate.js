@@ -1,5 +1,6 @@
 // let passport = null;
 const passport = require('passport');
+const jwt = require('json-web-token');
 
 module.exports = {
   isAuthenticated: (req, res, next) => {
@@ -27,20 +28,19 @@ module.exports = {
   },
 
   deserializeToken: (req, res, next) => {
-    passport.authenticate('jwt', (err, user) => {
-      if (err) {
-        return res.sendError(5, err);
-      }
-      if (!user) {
-        return next();
-      }
-      req.logIn(user, { session: false }, (err) => {
+    const extractHeader = req.headers.Authorization.split(' ');
+    if (extractHeader[0] === 'JWT') {
+      jwt.decode(process.env.JWT_SECRET, extractHeader[1], (err, decodedPayload, decodedHeader) => {
         if (err) {
-          return next(err);
+          next(err);
+        } else {
+          req.user = decodedPayload.sub;
+          next();
         }
-        return next();
-      });
-    })(req, res, next);
+      })
+    } else {
+      next();
+    }
   },
 
   isAdmin: (req, res, next) => {
