@@ -52,6 +52,17 @@ router.get('/', (req, res) => {
   if (req.query.end) {
     filter.end = RangeQuery(JSON.parse(req.query.end), 'Date');
   }
+
+  // rounds's updateAt range query
+  if (req.query.update) {
+    try {
+      req.query.update = JSON.parse(req.query.update);
+    } catch (err) {
+      // return res.sendError(5, err);
+    }
+    filter.updateAt = RangeQuery(req.query.update, 'Date');
+  }
+
   // Avaliable seats range query
   if (req.query.seatsAvaliable) {
     filter['seats.avaliable'] = RangeQuery(JSON.parse(req.query.seatsAvaliable), 'number');

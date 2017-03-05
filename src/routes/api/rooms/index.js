@@ -2,7 +2,8 @@ const express = require('express');
 const Room = require('../../../models/Room');
 const Place = require('../../../models/Place');
 const retrieveError = require('../../../tools/retrieveError');
-  var ObjectId = require('mongoose').Types.ObjectId;
+const { RangeQuery } = require('../../../tools');
+var ObjectId = require('mongoose').Types.ObjectId;
 const mongoose = require('mongoose');
 const router = express.Router();
 
@@ -39,7 +40,20 @@ router.get('/', (req, res) => {
     filter['name.en'] = { $regex: req.query.nameEN };
   }
 
-  if(req.query.placeid)filter.place = req.query.placeid;
+  if (req.query.placeid) {
+    filter.place = req.query.placeid;
+  }
+
+  // Rooms's updateAt range query
+  if (req.query.update) {
+    try {
+      req.query.update = JSON.parse(req.query.update);
+    } catch (err) {
+      // return res.sendError(5, err);
+    }
+    filter.updateAt = RangeQuery(req.query.update, 'Date');
+  }
+
 //----------------------------------------------------------------
 // initial limit
   let limit;
