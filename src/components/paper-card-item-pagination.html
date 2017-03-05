@@ -92,8 +92,9 @@
       _nextPageTap: function() {
         if (this.totalPages) {
           this.page = Math.min(this.page+1, this.totalPages);
+        } else {
+          this.page = this.page+1;
         }
-        this.page = this.page+1;
       },
       _prevPageTap: function() {
         this.page = Math.max(this.page-1, 1);

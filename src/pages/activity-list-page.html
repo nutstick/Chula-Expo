@@ -107,7 +107,7 @@
         page="[[page]]"
         me="[[me]]"
         page-size="[[pageSize]]"
-        totalPages="{{totalPages}}"
+        total-pages="{{totalPages}}"
       ></activity-api>
       <zone-api
         zones="{{zones}}"
@@ -148,20 +148,15 @@
             {{item.shortDescription.en}}
           </div>
           <div class="card-item-actions">
-            <!--<div class="horizontal justified">-->
             <paper-tabs scrollable fit-container no-bar hide-scroll-buttons>
-              <!--<paper-button on-tap="_scanClick">Scan</paper-button>-->
-              <!--<paper-button on-tap="_editClick">Edit</paper-button>
-              <paper-button on-tap="_deleteClick">Delete</paper-button>-->
               <paper-tab on-tap="_showClick">Show</paper-tab>
               <paper-tab on-tap="_editClick">Edit</paper-tab>
               <paper-tab on-tap="_deleteClick">Delete</paper-tab>
             </paper-tabs>
-            <!--</div>-->
           </div>
         </paper-card-item>
       </template>
-      <paper-card-item-pagination page="{{page}}" page-size="{{pageSize}}" totalPages="[[totalPages]]"></paper-card-item-pagination>
+      <paper-card-item-pagination page="{{page}}" page-size="{{pageSize}}" total-pages="[[totalPages]]"></paper-card-item-pagination>
       <div class="fixed-bottom">
         <div class="container">
           <paper-fab id="add-icon" icon="add" on-tap="_addClick"></paper-fab>
@@ -192,9 +187,7 @@
         pageSize: {
           type: Number
         },
-        totalPages: {
-          type: Number,
-        },
+        totalPages: Number,
         error: {
           type: Object,
         },
@@ -214,6 +207,12 @@
           type: Boolean,
           computed: '_computeAdmin(me)'
         }
+      },
+      observers: [
+        '_changeAcitvityParams(page, pageSize)'
+      ],
+      _changeAcitvityParams: function(page, pageSize) {
+        this.$.activityAPI.generateRequest();
       },
       _activatedChanged: function(activated) {
         if (activated) {
