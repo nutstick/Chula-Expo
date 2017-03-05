@@ -105,7 +105,6 @@
               items="{{zones}}"
               item-value-path="_id"
               item-label-path="name.en"
-              on-selected-item-changed="_computeActivity"
               value="{{zone}}"
               always-float-label
             ></vaadin-combo-box>
@@ -169,6 +168,10 @@
         },
         pageSize: {
           type: Number,
+          observer: '_pageChange'
+        },
+        zone: {
+          type: String,
           observer: '_pageChange'
         },
         totalPages: {
@@ -252,7 +255,7 @@
           }.bind(this), 300);
         }
       },
-      _computeActivity: function(e) {
+      _zoneChanged: function(zone){
         this.$.activityAPI.generateRequest();
       },
       _computeNoActivities: function(activities) {
