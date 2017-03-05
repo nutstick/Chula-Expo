@@ -1,0 +1,260 @@
+<!-- Libery -->
+<link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="/public/lib/paper-card/paper-card.html">
+<link rel="import" href="/public/lib/paper-fab/paper-fab.html">
+<link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="/public/lib/paper-date-picker-item/paper-datetime-picker-item.html">
+<link rel="import" href="/public/lib/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="/public/lib/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="/public/lib/paper-menu/paper-menu.html">
+<link rel="import" href="/public/lib/paper-item/paper-item.html">
+<link rel="import" href="/public/lib/paper-styles/shadow.html">
+<link rel="import" href="/public/lib/paper-dialog/paper-dialog.html">
+<link rel="import" href="/public/lib/vaadin-combo-box/vaadin-combo-box.html">
+
+<link rel="import" href="/components/activity-api.html">
+<link rel="import" href="/components/zone-api.html">
+<link rel="import" href="/components/paper-card-item.html">
+<link rel="import" href="/components/paper-card-item-pagination.html">
+<link rel="import" href="/components/shared-styles.html">
+
+<script src="/public/lib/moment/locale/th.js"></script>
+<dom-module id="activity-list-page">
+  <template>
+    <style is="custom-style" include="shared-styles">
+      :host {
+        @apply(--layout-vertical);
+        @apply(--layout-center-center);
+        padding-top: 20px;
+      }
+      .fixed-bottom {
+        position: fixed;
+        bottom: 20px;
+      }
+      .empty-list {
+        height: 200px;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-center-justified);
+      }
+      .empty-list:before {
+        content: "ไม่มีข้อมูล";
+        font-style: italic;
+        color: #bbb;
+        font-weight: 200;
+      }
+      #add-icon {
+        position: absolute;
+        bottom: 0px;
+        right: -20px;
+        @apply(--shadow-elevation-8dp);
+      }
+      @media (max-width: 600px) {
+        .fixed-bottom {
+          right: 20px;
+        }
+        #add-icon {
+          right: 0px;
+        }
+      }
+      .clearfix:after {
+        clear:both;
+        display:block;
+        content: "";
+      }
+      paper-card-item {
+        width: 100%;
+      }
+      paper-button {
+        font-size: 12px;
+      }
+			paper-button > a {
+        color: #000;
+        text-decoration: none;
+        width: 100%;
+      }
+      #card-item-header {
+        @apply(--layout-horizontal);
+        @apply(--layout-justified);
+      }
+      #card-item-header > .right,
+      #card-item-header > .left {
+        @apply(--layout-horizontal);
+      }
+      .text-between {
+        margin: 0 6px;
+        line-height: 48px;
+      }
+    </style>
+    <div class="container">
+      <activity-api
+        id="activityAPI"
+        activities="{{activities}}"
+        error="{{error}}"
+        zone="{{zone}}"
+        start="{{start}}"
+        end="{{end}}"
+        page="[[page]]"
+        me="[[me]]"
+        page-size="[[pageSize]]"
+        totalPages="{{totalPages}}"
+      ></activity-api>
+      <zone-api
+        zones="{{zones}}"
+        error="{{error}}"
+        loading="{{zoneLoading}}"
+        page="0"
+        page-size="0"
+        fields="_id,nameEN"
+      ></zone-api>
+      <paper-card-item hidden$="[[!isAdmin]]"  action>
+        <div id="card-item-header" class="card-item-content">
+          <div class="left">
+            <vaadin-combo-box
+              label="สังกัด"
+              items="{{zones}}"
+              item-value-path="_id"
+              item-label-path="name.en"
+              value="{{zone}}"
+              always-float-label
+            ></vaadin-combo-box>
+          </div>
+          <div class="right">
+            <paper-datetime-picker-item locale="[[locale]]" placeholder="เวลาเริ่ม" value={{start}} defaultTime="08:00"></paper-datetime-picker-item>
+            <div class="text-between">-</div>
+            <paper-datetime-picker-item locale="[[locale]]" placeholder="เวลาจบ" value={{end}} defaultTime="08:00"></paper-datetime-picker-item>
+          </div>
+        </div>
+      </paper-card-item>
+      <template is="dom-if" if="{{_computeNoActivities(activities)}}">
+        <div class="empty-list"></div>
+      </template>
+      <template is="dom-repeat" items="{{activities}}">
+        <paper-card-item action image="/public/img/thumbnail-default.jpg">
+          <div class="card-item-header">
+            {{item.name.en}}
+          </div>
+          <div class="card-item-content">
+            {{item.shortDescription.en}}
+          </div>
+          <div class="card-item-actions">
+            <div class="horizontal justified">
+              <!--<paper-button on-tap="_scanClick">Scan</paper-button>-->
+              <paper-button on-tap="_showClick">Show</paper-button>
+              <paper-button on-tap="_editClick">Edit</paper-button>
+              <paper-button on-tap="_deleteClick">Delete</paper-button>
+            </div>
+          </div>
+        </paper-card-item>
+      </template>
+      <paper-card-item-pagination page="{{page}}" page-size="{{pageSize}}" totalPages="[[totalPages]]"></paper-card-item-pagination>
+      <div class="fixed-bottom">
+        <div class="container">
+          <paper-fab id="add-icon" icon="add" on-tap="_addClick"></paper-fab>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+    </div>
+    <paper-dialog id="dialog" on-iron-overlay-closed="_delete">
+      <h2>Are you sure?</h2>
+      <div class="buttons">
+        <paper-button dialog-dismiss>No</paper-button>
+        <paper-button dialog-confirm autofocus>Yes</paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+  <script>
+    Polymer({
+      is: 'activity-list-page',
+      properties: {
+        activated: {
+          type: Boolean,
+          value: false,
+          observer: '_activatedChanged'
+        },
+        page: {
+          type: Number
+        },
+        pageSize: {
+          type: Number
+        },
+        totalPages: {
+          type: Number,
+        },
+        error: {
+          type: Object,
+        },
+        activities: {
+          type: Array,
+          value: [],
+        },
+        locale: {
+          type: String,
+          value: moment.locale('th')
+        },
+        me: {
+          type: Object,
+          value: {}
+        },
+        isAdmin: {
+          type: Boolean,
+          computed: '_computeAdmin(me)'
+        }
+      },
+      _activatedChanged: function(activated) {
+        if (activated) {
+          this.$.activityAPI.generateRequest();
+        }
+      },
+      _showClick: function(id) {
+        var id = event.model.item['_id'];
+        document.querySelector('chulaexpo-staff-app').set('route.path', '/activity/'+id+'/show/');
+			},
+      _editClick: function(id) {
+        var id = event.model.item['_id'];
+        document.querySelector('chulaexpo-staff-app').set('route.path', '/activity/'+id+'/edit/');
+			},
+      _addClick: function() {
+        document.querySelector('chulaexpo-staff-app').set('route.path', '/activity/add/');
+      },
+      _scanClick: function(id) {
+        var id = event.model.item['_id'];
+        document.querySelector('chulaexpo-staff-app').set('route.path', '/activity/'+id+'/scan/');
+      },
+      _deleteClick: function(event) {
+        this.deleteId = event.model.item['_id'];
+        this.$.dialog.open();
+      },
+      _delete: function(event) {
+        if(event.detail.confirmed) {
+          var id = this.deleteId;
+          var url = '/api/activities/' + id;
+
+          var dom = this;
+          setTimeout(function () {
+            var req = new XMLHttpRequest();
+            var tokenJWT = 'JWT ' + document.querySelector('chulaexpo-staff-app').token
+
+            req.open('DELETE', encodeURI(url));
+            req.setRequestHeader('Authorization', tokenJWT);
+            req.onload = function() {
+              if (req.status === 202) {
+                dom.generateRequest();
+              }
+            };
+            req.send();
+          }.bind(this), 300);
+        }
+      },
+      _computeNoActivities: function(activities) {
+        return !activities.length;
+      },
+      _computeAdmin: function(me) {
+        if (!me || !me.staff)
+          return false;
+        return me.staff.staffType === 'Admin';
+      }
+    })
+  </script>
+</dom-module>

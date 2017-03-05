@@ -1,0 +1,58 @@
+<!-- Libery -->
+<link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="/public/lib/app-route/app-route.html">
+<link rel="import" href="/public/lib/iron-pages/iron-pages.html">
+
+<dom-module id="facility-id-page">
+  <template>
+    <app-route
+      route="{{route}}"
+      pattern="/:subpage"
+      data="{{routeData}}"
+      tail="{{subroute}}"
+    ></app-route>
+    <iron-pages
+      selected="[[subpage]]"
+      attr-for-selected="name"
+      fallback-selection="id"
+      selected-attribute="activated"
+      role="main">
+      <facility-edit-page facility-id="[[facilityId]]" name="edit"></facility-edit-page>
+      <facility-show-page facility-id="[[facilityId]]" name="show"></facility-show-page>
+    </iron-pages>
+  </template>
+  <script>
+    Polymer({
+      is: 'facility-id-page',
+      properties: {
+        route: {
+          type: String,
+        },
+        subpage: {
+          type: String,
+          observer: '_pageChanged',
+        },
+        facilityId: {
+          type: String,
+          reflectToAttribute: true,
+        }
+      },
+
+      observers: [
+        '_routePageChanged(routeData.subpage)',
+      ],
+
+      _routePageChanged: function(subpage) {
+        this.subpage = subpage || 'show';
+      },
+      _pageChanged: function(subpage) {
+        var resolvedPageUrl = this.resolveUrl('facility-' + subpage + '-page.html');
+        this.importHref(resolvedPageUrl, null, this._showPage404, true);
+      },
+      _showPage404: function() {
+        this.page = '404-page'
+      },
+    });
+  </script>
+</dom-module>

@@ -3,29 +3,89 @@ const _ = require('lodash');
 const { Round } = require('../');
 
 const ObjectId = mongoose.Schema.Types.ObjectId;
+
 /**
  * Activity Schema
  */
 const ActivitySchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  thumbnialsUrl: String,
-  shortDescription: { type: String, required: true },
-  description: { type: String, required: true },
-  imgUrl: [String],
-  videoUrl: [String],
-  tags: [{ type: String, index: true }],
-  location: {
-    desc: { type: String, required: true, index: true },
-    latitute: Number,
-    longtitute: Number
+  name: {
+    th: {
+      type: String,
+      required: true
+    },
+    en: {
+      type: String,
+      required: true
+    }
   },
-  // faculty: { type: String, required: true, index: true },
-  reservable: [{
-    type: ObjectId,
-    ref: 'Round'
+  thumbnail: String,
+  banner: String,
+  shortDescription: {
+    th: {
+      type: String,
+      required: true
+    },
+    en: {
+      type: String,
+      required: true
+    }
+  },
+  description: {
+    th: {
+      type: String,
+      required: true
+    },
+    en: {
+      type: String,
+      required: true
+    }
+  },
+  contact: String,
+  pictures: [String],
+  video: String,
+  pdf: String,
+  link: [String],
+  isHighlight: Boolean,
+  tags: [{
+    type: String,
+    index: true
   }],
-  startTime: { type: Date, required: true, index: true },
-  endTime: { type: Date, required: true, index: true }
+  location: {
+    place: {
+      type: ObjectId,
+      ref: 'Place',
+      required: true
+    },
+    room: {
+      type: ObjectId,
+      ref: 'Room'
+    },
+    latitude: Number,
+    longitude: Number
+  },
+  zone: {
+    type: ObjectId,
+    ref: 'Zone',
+    required: true,
+    index: true
+  },
+  start: {
+    type: Date,
+    required: true,
+    index: true
+  },
+  end: {
+    type: Date,
+    required: true,
+    index: true
+  },
+  createAt: { type: Date, default: new Date() },
+  updateAt: { type: Date, default: new Date() },
+  createBy: {
+    type: ObjectId,
+    ref: 'User'
+  },
+
 });
 
 ActivitySchema.index({
@@ -34,7 +94,11 @@ ActivitySchema.index({
   shortDescription: 'text'
 }, {
   name: 'Activities Text Indexing',
-  weights: { name: 10, shortDescription: 4, description: 2 }
+  weights: {
+    name: 10,
+    shortDescription: 4,
+    description: 2
+  }
 });
 
 /**
@@ -44,7 +108,7 @@ ActivitySchema.index({
  * @param {string} [options.name] - Get matched round's name.
  * @param {Date | RangeQuery<Date>} [options.start] - Get by start time.
  * @param {Date | RangeQuery<Date>} [options.end] - Get by end time.
- * @param {number | RangeQuery<number>} [options.avaliableSeats] - Get by avaliable seats.
+ * @param {number | RangeQuery<number>} [options.seatsAvaliable] - Get by avaliable seats.
  * @param {string} [options.sort] - Sort fields (ex. "-start,+createAt").
  * @param {string} [options.fields] - Fields selected (ex. "name,fullCapacity").
  * @param {number} [options.limit] - Number of limit per query.
@@ -56,30 +120,32 @@ ActivitySchema.index({
  * @return {Result.limit} - Number of limit that used.
  * @return {Result.skip} - Number of offset that used.
  */
-ActivitySchema.static.findRoundByActivityId = (id, options) => {
-  const filter = _.pick(options, ['name', 'start', 'end', 'avaliableSeats'])
-                  .merge({ activityId: id });
+
+ActivitySchema.statics.findRoundByActivityId = (id, options) => {
+  const filter = _.pick(options, ['name.en', 'start', 'end', 'seats.avaliable']);
+  filter.activityId = id;
+
   return new Promise((resolve, reject) => {
     Round.find(filter).count().exec((err, count) => {
       if (err) {
         reject(err);
       }
       Round
-      .find(filter)
-      .select(options.fields)
-      .sort(options.sort)
-      .limit(options.limit)
-      .skip(options.skip || 0)
-      .exec()
-      .then((rounds) => {
-        resolve({
-          rounds,
-          count,
-          limit: options.limit,
-          skip: options.skip || 0,
-        });
-      })
-      .catch(reject);
+        .find(filter)
+        .select(options.fields)
+        .sort(options.sort)
+        .limit(options.limit)
+        .skip(options.skip || 0)
+        .exec()
+        .then((rounds) => {
+          resolve({
+            rounds,
+            count,
+            limit: options.limit,
+            skip: options.skip || 0,
+          });
+        })
+        .catch(reject);
     });
   });
 };
@@ -91,7 +157,7 @@ ActivitySchema.static.findRoundByActivityId = (id, options) => {
  *
  * @return {Promise<Activity>} - Promise of adding rounds totarget activity
  */
-ActivitySchema.static.findAndAddRound = (id, rounds) => (
+ActivitySchema.statics.findAndAddRound = (id, rounds) => (
   new Promise((resolve, reject) => {
     this.findById(id, (err, activity) => {
       if (err) {
@@ -107,7 +173,7 @@ ActivitySchema.static.findAndAddRound = (id, rounds) => (
           start: round.start,
           end: round.end,
           seats: {
-            reserved: round.reservedSeats,
+            reserved: round.seatsReserved,
             fullCapacity: round.fullCapacity,
           }
         }).save()));
@@ -118,7 +184,7 @@ ActivitySchema.static.findAndAddRound = (id, rounds) => (
           start: rounds.start,
           end: rounds.end,
           seats: {
-            reserved: rounds.reservedSeats,
+            reserved: rounds.seatsReserved,
             fullCapacity: rounds.fullCapacity,
           }
         }).save()]);

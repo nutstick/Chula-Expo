@@ -1,0 +1,125 @@
+<!-- Libery -->
+<link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="/public/lib/iron-ajax/iron-ajax.html">
+<link rel="import" href="/public/lib/bottom-button/bottom-button.html">
+
+<link rel="import" href="/components/shared-styles.html">
+<script type="text/javascript" src="/public/js/instascan.min.js"></script>
+<dom-module id="qr-scanner">
+  <template>
+    <style is="custom-style" include="shared-styles">
+      paper-dialog.size {
+        margin: 0;
+        position: fixed;
+        top: 6px;
+        left: 50%;
+        overflow: auto;
+      }
+      paper-dialog.size {
+        margin-left: -50%;
+        max-width: none !important;
+        background: transparent;
+      }
+      @media (min-width: 600px) { 
+        paper-dialog.size {
+          margin-left: -270px;
+        }
+      }
+      @media (min-width: 768px) {
+        paper-dialog.size {
+          margin-left: -360px;
+        }
+      }
+      @media (min-width: 992px) {
+        paper-dialog.size {
+          margin-left: -480px;
+        }
+      }
+      paper-dialog > *:first-child {
+        padding: 0;
+        margin: 0;
+      }
+      video {
+        width: 100%;
+      }
+      bottom-button {
+        --bottom-button-background-color: #F44336;
+      }
+    </style>
+    <iron-ajax
+      id="ajax"
+      url="[[url]]"
+      method="POST"
+      headers="{{headers}}"
+      on-response="_handleResponse"
+      handle-as="json"
+    ></iron-ajax>
+		<paper-dialog id="dialog" class="container size" modal on-iron-overlay-closed="_onClosed">
+		  <video id="preview"></video>
+      <bottom-button on-tap="_onClosed">CLOSE</bottom-button>
+		</paper-dialog>
+    <script type="text/javascript">
+      let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
+      scanner.addListener('scan', function (content) {
+        console.log(content);
+      });
+      Instascan.Camera.getCameras().then(function (cameras) {
+        if (cameras.length > 0) {
+          scanner.start(cameras[0]);
+        } else {
+          console.error('No cameras found.');
+        }
+      }).catch(function (e) {
+        console.error(e);
+      });
+    </script>
+  </template>
+
+	<script>
+    Polymer({
+      is: 'qr-scanner',
+      properties: {
+        url: String,
+        headers: {
+          type: Object,
+          value: {
+            'Authorization': 'JWT ' + window.token
+          }
+        },
+        error: Object,
+      },
+
+      observers: [
+      ],
+
+      open: function() {
+        // Append dialog to the body. This ensures that the dialog claims the full screen instead of being positioned next to the <paper-date-picker-item>
+			  Polymer.dom(document.body).appendChild(this);
+
+        // Wait until dialog is added to the DOM (required for Safari)
+        setTimeout(function() {
+          this.$.dialog.open();
+        }.bind(this), 1);
+      },
+      _onClosed: function(e, detail) {
+        // Remove the dialog from the DOM once the exit animation is finished
+        Polymer.dom(this.parentNode).removeChild(this);
+      },
+      _handleResponse: function(event) {
+        if(event.detail.response) {
+          if (event.detail.response.success) {
+            // TODO
+          }
+        }
+      },
+      _handleError: function(event) {
+        if(event.detail.response) {
+          if (!event.detail.response.success) {
+            this.error = event.detail.response.errors;
+          }
+        }
+      }
+    });
+  </script>
+	</dom-module>

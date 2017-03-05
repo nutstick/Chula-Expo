@@ -1,16 +1,10 @@
 const express = require('express');
-const { isAuthenticated, isStaff } = require('../../config/authenticate');
-const { menuList } = require('../../tools');
+const path = require('path');
 
 const router = express.Router();
 
-router.use(isAuthenticated, isStaff);
-
-router.get('/', menuList, (req, res) => {
-  res.render('home/home.view.ejs', {
-    menuList: req.menuList,
-    selected: 'Home'
-  });
+router.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '/home.view.html'));
 });
 
 module.exports = router;

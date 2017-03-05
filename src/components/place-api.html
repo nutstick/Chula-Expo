@@ -1,0 +1,135 @@
+<!-- Libery -->
+<link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="/public/lib/iron-ajax/iron-ajax.html">
+
+<dom-module id="place-api">
+  <template>
+    <iron-ajax
+      id="placeResource"
+      url="{{url}}"
+      headers="{{headers}}"
+      params="{{params}}"
+      on-response="_handleResponse"
+      handle-as="json"
+    ></iron-ajax>
+  </template>
+  <script>
+    Polymer({
+      is: 'place-api',
+      properties: {
+        url: {
+          type: String,
+          value: '/api/places',
+        },
+        params: {
+          type: Object,
+          value: {}
+        },
+        headers: {
+          type: Object,
+          value: {
+            'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
+          }
+        },
+        /*
+          Input Data
+        */
+        placeId: {
+          type: String,
+          observer: '_idChanged'
+        },
+        page: {
+          type: Number,
+          value: 0
+        },
+        pageSize: {
+          type: Number,
+          value: 0
+        },
+        fields: {
+          type: String,
+          value: ''
+        },
+        start: {
+          type: String,
+          value: ''
+        },
+        end: {
+          type: String,
+          value: ''
+        },
+        zone: {
+          type: String,
+          value: ''
+        },
+        /*
+          Output Data
+        */
+        places: {
+          type: Array,
+          value: [],
+          notify: true,
+        },
+        place: {
+          type: Object,
+          notify: true,
+        },
+        zoneId: {
+          type: String,
+          observer: '_zoneChanged'
+        },
+        loading: Boolean,
+        error: {
+          type: Object,
+          value: {}
+        }
+      },
+
+      observers: [
+        'updateRequest(page,pageSize,fields)'
+      ],
+
+      updateRequest: function(page, pageSize, fields) {
+        if (pageSize === 0) {
+          this.set('params.limit', null);
+          this.set('params.skip', page);
+        } else {
+          this.set('params.limit', pageSize);
+          this.set('params.skip', (page - 1) * pageSize);
+        }
+
+        this.set('params.fields', fields)
+      },
+      generateRequest: function() {
+        return this.$.placeResource.generateRequest();
+      },
+      _handleResponse: function(event) {
+        if(event.detail.response) {
+          if (event.detail.response.success) {
+            if (this.placeId) {
+              this.place = event.detail.response.results;
+            } else {
+              this.places = event.detail.response.results;
+            }
+          } else {
+            this.error = event.detail.response.errors;
+          }
+        }
+      },
+      _zoneChanged: function(id){
+        this.url = '/api/places?zoneid=' + id;
+        this.generateRequest();
+      },
+      _idChanged: function(id) {
+        if (id && id!='show' && id!='edit' && id!='add' && id!='list') {
+          this.url = '/api/places/' + id;
+        } else if (id && id=='list'){
+          this.url = '/api/place';
+        } else {
+          this.url = '';
+        }
+      }
+    });
+  </script>
+</dom-module>

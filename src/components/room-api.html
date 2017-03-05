@@ -1,0 +1,123 @@
+<!-- Libery -->
+<link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="/public/lib/iron-ajax/iron-ajax.html">
+
+<dom-module id="room-api">
+  <template>
+    <iron-ajax
+      auto
+      id="roomResource"
+      url="{{url}}"
+      headers="{{headers}}"
+      params="{{params}}"
+      on-response="_handleResponse"
+      handle-as="json"
+    ></iron-ajax>
+  </template>
+  <script>
+    Polymer({
+      is: 'room-api',
+      properties: {
+        url: {
+          type: String,
+          value: '/api/rooms',
+        },
+        params: {
+          type: Object,
+          value: {}
+        },
+        headers: {
+          type: Object,
+          value: {
+            'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
+          }
+        },
+        /*
+          Input Data
+        */
+        roomId: {
+          type: String,
+          observer: '_roomChanged'
+        },
+        page: {
+          type: Number,
+          value: 0
+        },
+        pageSize: {
+          type: Number,
+          value: 0
+        },
+        fields: {
+          type: String,
+          value: ''
+        },
+        placeId: {
+          type: String,
+          observer: '_placeChanged'
+        },
+        room: {
+          type: String,
+          value: ''
+        },
+        /*
+          Output Data
+        */
+        rooms: {
+          type: Array,
+          value: [],
+          notify: true,
+        },
+        room: {
+          type: Object,
+          notify: true,
+        },
+        loading: Boolean,
+        error: {
+          type: Object,
+          value: {}
+        }
+      },
+
+      observers: [
+        'updateRequest(page,pageSize,fields,start,end,room,placeId)'
+      ],
+
+      updateRequest: function(page, pageSize, fields, start, end, room, placeId) {
+        if (pageSize === 0) {
+          this.set('params.limit', null);
+          this.set('params.skip', page);
+        } else {
+          this.set('params.limit', pageSize);
+          this.set('params.skip', (page - 1) * pageSize);
+        }
+
+        this.set('params.fields', fields)
+      },
+      generateRequest: function() {
+        return this.$.roomResource.generateRequest();
+      },
+      _handleResponse: function(event) {
+        if(event.detail.response) {
+          if (event.detail.response.success) {
+            if (this.roomId) {
+              this.room = event.detail.response.results;
+            } else {
+              this.rooms = event.detail.response.results;
+            }
+          } else {
+            this.error = event.detail.response.errors;
+          }
+        }
+      },
+      _placeChanged: function(id){
+        this.url = '/api/rooms?placeid=' + id;
+        this.generateRequest();
+      },
+      _roomChanged: function(id){
+        this.url = '/api/rooms/' + id;
+        this.generateRequest();
+      }
+    });
+  </script>
+</dom-module>

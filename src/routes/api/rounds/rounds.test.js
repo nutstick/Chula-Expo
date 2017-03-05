@@ -10,12 +10,13 @@ const ObjectId = require('mongoose').Types.ObjectId;
 
 chai.use(chaiHttp);
 
-const { Activity, Round, Ticket } = require('../../../models');
+const { Round, Ticket } = require('../../../models');
+const Activity = require('../../../models/Activity');
 
 const expect = chai.expect;
 
 describe('API Rounds', () => {
-  beforeEach((done) => {
+  beforeEach((done)   => {
     // Changing connection to TEST_URI
     mongoose.createConnection(process.env.TEST_MONGODB_URI, done);
   });
@@ -27,12 +28,13 @@ describe('API Rounds', () => {
       // Clear round database
       Round.remove({}, (err) => {
         if (err) {
-          done();
+          return done();
         }
         // Create Promise for 20 mock data
         const roundsPromise = new Array(20).fill(1).map(() => {
           const round = new Round({
-            name: casual.safe_color_name,
+            'name.th': casual.safe_color_name,
+            'name.en': casual.safe_color_name,
             activityId: ObjectId(),
             start: new Date(casual.unix_time),
             end: new Date(casual.unix_time),
@@ -186,22 +188,48 @@ describe('API Rounds', () => {
   describe('POST /api/rounds', () => {
     it('should create new round', (done) => {
       const activity = new Activity({
-        name: casual.name,
-        shortDescription: casual.name,
-        description: casual.name,
-        faculty: casual.name,
-        startTime: new Date(casual.unix_time),
-        endTime: new Date(casual.unix_time),
+        name: {
+          en: casual.safe_color_name,
+          th: casual.safe_color_name,
+        },
+        thumbnail: `/img/activity/${casual.name}`,
+        banner: `/img/activity/${casual.name}`,
+        shortDescription: {
+          en: casual.sentence,
+          th: casual.sentence,
+        },
+        description: {
+          en: casual.sentences(40),
+          th: casual.sentences(40),
+        },
+        contact: casual.name,
+        pictures: `/img/activity/${casual.name}`,
+        video: `www.youtube.com/${casual.name}`,
+        pdf: `www.pdf.com/${casual.rgb_hex}`,
+        link: `www.link.com/${casual._rgb_hex}`,
+        isHighlight: casual.coin_flip,
+        tags: casual.sentence.replace(' ', ','),
+        location: {
+          place: ObjectId(),
+          floor: ObjectId(),
+          room: ObjectId(),
+          latitude: casual.latitude,
+          longitude: casual.longitude,
+        },
+        zone: ObjectId(),
+        start: new Date(casual.unix_time).toISOString(),
+        end: new Date(casual.unix_time).toISOString()
       });
 
       activity.save((err) => {
         expect(err).to.be.null;
         const round = {
-          name: casual.safe_color_name,
+          nameEN: casual.safe_color_name,
+          nameTH: casual.safe_color_name,
           activityId: activity.id,
           start: new Date(casual.unix_time).toISOString(),
           end: new Date(casual.unix_time).toISOString(),
-          reservedSeats: casual.integer(10, 40),
+          seatsReserved: casual.integer(10, 40),
           fullCapacity: casual.integer(100, 400),
         };
 
@@ -213,14 +241,15 @@ describe('API Rounds', () => {
             expect(res.body).to.have.property('success').eq(true);
             expect(res.body).to.have.property('message').eq('Create Round successfull');
             expect(res.body).to.have.property('results');
-            expect(res.body.results).to.have.property('name').eql(round.name);
+            expect(res.body.results).to.have.property('name.en').eql(round.nameEN);
+            expect(res.body.results).to.have.property('name.th').eql(round.nameTH);
             expect(res.body.results).to.have.property('activityId').eql(round.activityId);
             expect(res.body.results).to.have.property('start').eql(round.start);
             expect(res.body.results).to.have.property('end').eql(round.end);
             expect(res.body.results).to.have.property('seats');
-            expect(res.body.results.seats).to.have.property('reserved').eql(round.reservedSeats);
-            expect(res.body.results.seats).to.have.property('fullCapacity').eql(round.fullCapacity);
-            expect(res.body.results.seats).to.have.property('avaliable').eql(round.fullCapacity - round.reservedSeats);
+            expect(res.body.results.seats).to.have.property('reserved').eql(round.seatsReserved);
+            expect(res.body.results.seats).to.have.property('seatsFullCapacity').eql(round.fullCapacity);
+            expect(res.body.results.seats).to.have.property('avaliable').eql(round.fullCapacity - round.seatsReserved);
             done();
           });
       });
@@ -228,11 +257,12 @@ describe('API Rounds', () => {
 
     it('should return error on not matched activity found (random ObjectId of activity)', (done) => {
       const round = {
-        name: casual.safe_color_name,
+        nameEN: casual.safe_color_name,
+        nameTH: casual.safe_color_name,
         activityId: ObjectId(),
         start: new Date(casual.unix_time).toISOString(),
         end: new Date(casual.unix_time).toISOString(),
-        reservedSeats: casual.integer(10, 40),
+        seatsReserved: casual.integer(10, 40),
         fullCapacity: casual.integer(100, 400),
       };
 
@@ -250,9 +280,10 @@ describe('API Rounds', () => {
 
     it('should return error on missing required field', (done) => {
       const round = {
-        name: casual.safe_color_name,
+        nameEN: casual.safe_color_name,
+        nameTH: casual.safe_color_name,
         start: new Date(casual.unix_time).toISOString(),
-        reservedSeats: casual.integer(10, 40),
+        seatsReserved: casual.integer(10, 40),
         fullCapacity: casual.integer(100, 400),
       };
 
@@ -273,19 +304,45 @@ describe('API Rounds', () => {
     let round;
     before((done) => {
       const activity = new Activity({
-        name: casual.name,
-        shortDescription: casual.name,
-        description: casual.name,
-        faculty: casual.name,
-        startTime: new Date(casual.unix_time),
-        endTime: new Date(casual.unix_time),
+        name: {
+          en: casual.safe_color_name,
+          th: casual.safe_color_name,
+        },
+        thumbnail: `/img/activity/${casual.name}`,
+        banner: `/img/activity/${casual.name}`,
+        shortDescription: {
+          en: casual.sentence,
+          th: casual.sentence,
+        },
+        description: {
+          en: casual.sentences(40),
+          th: casual.sentences(40),
+        },
+        contact: casual.name,
+        pictures: `/img/activity/${casual.name}`,
+        video: `www.youtube.com/${casual.name}`,
+        pdf: `www.pdf.com/${casual.rgb_hex}`,
+        link: `www.link.com/${casual._rgb_hex}`,
+        isHighlight: casual.coin_flip,
+        tags: casual.sentence.replace(' ', ','),
+        location: {
+          place: ObjectId(),
+          floor: ObjectId(),
+          room: ObjectId(),
+          latitude: casual.latitude,
+          longitude: casual.longitude,
+        },
+        zone: ObjectId(),
+        start: new Date(casual.unix_time).toISOString(),
+        end: new Date(casual.unix_time).toISOString()
       });
       activity.save((err) => {
         if (err) {
-          done(err);
+          return done(err);
         }
         round = new Round({
-          name: casual.safe_color_name,
+          'name.en': casual.safe_color_name,
+          'name.th': casual.safe_color_name,
           activityId: activity.id,
           start: new Date(casual.unix_time),
           end: new Date(casual.unix_time),
@@ -330,19 +387,45 @@ describe('API Rounds', () => {
     let round;
     before((done) => {
       const activity = new Activity({
-        name: casual.name,
-        shortDescription: casual.name,
-        description: casual.name,
-        faculty: casual.name,
-        startTime: new Date(casual.unix_time),
-        endTime: new Date(casual.unix_time),
+        name: {
+          en: casual.safe_color_name,
+          th: casual.safe_color_name,
+        },
+        thumbnail: `/img/activity/${casual.name}`,
+        banner: `/img/activity/${casual.name}`,
+        shortDescription: {
+          en: casual.sentence,
+          th: casual.sentence,
+        },
+        description: {
+          en: casual.sentences(40),
+          th: casual.sentences(40),
+        },
+        contact: casual.name,
+        pictures: `/img/activity/${casual.name}`,
+        video: `www.youtube.com/${casual.name}`,
+        pdf: `www.pdf.com/${casual.rgb_hex}`,
+        link: `www.link.com/${casual._rgb_hex}`,
+        isHighlight: casual.coin_flip,
+        tags: casual.sentence.replace(' ', ','),
+        location: {
+          place: ObjectId(),
+          floor: ObjectId(),
+          room: ObjectId(),
+          latitude: casual.latitude,
+          longitude: casual.longitude,
+        },
+        zone: ObjectId(),
+        start: new Date(casual.unix_time).toISOString(),
+        end: new Date(casual.unix_time).toISOString()
       });
       activity.save((err) => {
         if (err) {
-          done(err);
+          return done(err);
         }
         round = new Round({
-          name: casual.safe_color_name,
+          'name.en': casual.safe_color_name,
+          'name.th': casual.safe_color_name,
           activityId: activity.id,
           start: new Date(casual.unix_time),
           end: new Date(casual.unix_time),
@@ -357,7 +440,7 @@ describe('API Rounds', () => {
 
     it('should change rounds documents data', (done) => {
       const change = {
-        name: casual.company_name,
+        'name.en': casual.company_name,
         fullCapacity: 500,
       };
 
@@ -370,7 +453,7 @@ describe('API Rounds', () => {
           expect(res.body).to.have.property('results');
           expect(res.body.results).to.have.property('name').eq(change.name);
           expect(res.body.results).to.have.property('seats');
-          expect(res.body.results.seats).to.have.property('fullCapacity').eq(change.fullCapacity);
+          expect(res.body.results.seats).to.have.property('seatsFullCapacity').eq(change.fullCapacity);
           expect(res.body.results.seats).to.have.property('avaliable').eq(change.fullCapacity - round.seats.reserved);
           done();
         });
@@ -381,19 +464,45 @@ describe('API Rounds', () => {
     let round;
     before((done) => {
       const activity = new Activity({
-        name: casual.name,
-        shortDescription: casual.name,
-        description: casual.name,
-        faculty: casual.name,
-        startTime: new Date(casual.unix_time),
-        endTime: new Date(casual.unix_time),
+        name: {
+          en: casual.safe_color_name,
+          th: casual.safe_color_name,
+        },
+        thumbnail: `/img/activity/${casual.name}`,
+        banner: `/img/activity/${casual.name}`,
+        shortDescription: {
+          en: casual.sentence,
+          th: casual.sentence,
+        },
+        description: {
+          en: casual.sentences(40),
+          th: casual.sentences(40),
+        },
+        contact: casual.name,
+        pictures: `/img/activity/${casual.name}`,
+        video: `www.youtube.com/${casual.name}`,
+        pdf: `www.pdf.com/${casual.rgb_hex}`,
+        link: `www.link.com/${casual._rgb_hex}`,
+        isHighlight: casual.coin_flip,
+        tags: casual.sentence.replace(' ', ','),
+        location: {
+          place: ObjectId(),
+          floor: ObjectId(),
+          room: ObjectId(),
+          latitude: casual.latitude,
+          longitude: casual.longitude,
+        },
+        zone: ObjectId(),
+        start: new Date(casual.unix_time).toISOString(),
+        end: new Date(casual.unix_time).toISOString()
       });
       activity.save((err) => {
         if (err) {
-          done(err);
+          return done(err);
         }
         round = new Round({
-          name: casual.safe_color_name,
+          'name.en': casual.safe_color_name,
+          'name.th': casual.safe_color_name,
           activityId: activity.id,
           start: new Date(casual.unix_time),
           end: new Date(casual.unix_time),

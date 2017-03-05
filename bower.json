@@ -1,7 +1,6 @@
 {
   "name": "chulaexpo",
   "description": "Chulalongkorn expo application",
-  "main": "src/server.js",
   "authors": [
     "Chula team"
   ],
@@ -54,6 +53,28 @@
     "polymer-cookie": "^1.1.1",
     "neon-animation": "PolymerElements/neon-animation#^1.2.4",
     "iron-grid": "*",
-    "paper-button-group": "Protoss78/paper-button-group#^0.0.1"
+    "paper-button-group": "Protoss78/paper-button-group#^0.0.1",
+    "paper-fab": "PolymerElements/paper-fab#^1.2.1",
+    "app-route": "*",
+    "paper-datatable": "^0.9.8",
+    "polymer": "Polymer/polymer#^1.7.1",
+    "iron-elements": "PolymerElements/iron-elements#^1.0.10",
+    "paper-elements": "PolymerElements/paper-elements#^1.0.7",
+    "paper-datatable-api": "^0.2.7",
+    "vaadin-combo-box": "^1.2.0",
+    "mn-paper-datetime-picker": "^1.1.4",
+    "paper-dialog": "^1.1.0",
+    "paper-date-picker-item": "https://github.com/nutstick/paper-date-picker-item.git#8538c067a49ef656945069b58d55499352da7dda",
+    "paper-select": "^0.2.6",
+    "qrcodejs": "^0.1.0",
+    "iron-input-image": "^1.1.0",
+    "paper-tile": "^1.1.1",
+    "s-circle-progress": "^0.1.0",
+    "iron-list": "^1.4.1",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.24",
+    "bottom-button": "greenyouse/bottom-button#^0.1.3",
+    "paper-collapse-item": "^1.1.4",
+    "paper-spinner": "^1.2.1",
+    "app-localize-behavior": "^0.10.1"
   }
 }

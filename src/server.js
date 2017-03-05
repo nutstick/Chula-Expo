@@ -18,8 +18,6 @@ const MongoStore = require('connect-mongo')(session);
 // SASS
 const sass = require('node-sass-middleware');
 // Route
-const home = require('./routes/home');
-const api = require('./routes/api');
 // Passport Config
 const passportConfig = require('./config/passport');
 const popupTools = require('popup-tools');
@@ -73,35 +71,64 @@ app.use(flash());
 // Set favicon using serve-favicon at /public/favicon.icon
 app.use(favicon(path.join(__dirname, '/public/favicon.ico')));
 // Set '/public' as static Routes
-// app.use('/public', express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
-app.use(express.static(__dirname, { maxAge: 31557600000 }));
+app.use('/public', express.static(path.join(__dirname, 'public'), { maxAge: 604800000 }));
+app.use('/components', express.static(path.join(__dirname, 'components'), { maxAge: 604800000 }));
+app.use('/pages', express.static(path.join(__dirname, 'pages'), { maxAge: 604800000 }));
+// Error Foramt send
+app.use(require('./tools/sendError'));
 
 /**
  * Route
  */
 // Login through Facebook
+app.get('/auth/facebook/token', (req, res, next) => {
+  passport.authenticate('facebook-token', (err, user) => {
+    if (err) {
+      return res.sendError(5, err);
+    } else if (!user) {
+      return res.sendError(24);
+    } else if (!user.id) {
+      // No User Exist in Database
+      return res.send({
+        success: false,
+        errors: {
+          code: 2,
+          message: 'First time Signup, need to provied more data',
+        },
+        user,
+      });
+    }
+    // Match user in database, go login
+    req.login(user, (err) => {
+      if (err) {
+        return next(err);
+      }
+      res.send({
+        success: true,
+        message: 'User already exist, login success.',
+        results: {
+          token: user.generateToken(),
+        }
+      });
+    });
+  })(req, res, next);
+});
 app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', 'public_profile', 'user_about_me'] }));
 app.get('/auth/facebook/callback', (req, res, next) => {
   passport.authenticate('facebook', (err, user) => {
     if (err) {
-      return res.json({
-        success: false,
-        errors: err
-      });
+      return res.sendError(5, err);
     } else if (!user) {
-      return res.end(popupTools.popupResponse({
-        success: false,
-        code: 5,
-        message: 'Internal Error',
-        user,
-      }));
+      return res.sendError(24);
     } else if (!user.id) {
       // No User Exist in Database
       // req.session.user = user;
       return res.send(popupTools.popupResponse({
         success: false,
-        code: 2,
-        message: 'First time Signup, need to provied more data',
+        errors: {
+          code: 2,
+          message: 'First time Signup, need to provied more data',
+        },
         user,
       }));
     }
@@ -120,17 +147,33 @@ app.get('/auth/facebook/callback', (req, res, next) => {
     });
   })(req, res, next);
 });
+
+/**
+ * Route
+ */
 app.use('/', require('./routes'));
 
 /**
- * Server run on https://localhost:3000
+ * Server run on localhost:3000
  */
-
 app.listen(app.get('port'), (err) => {
   if (err) {
     throw err;
   }
   console.log('%s App is running at http://localhost:%d in %s mode', chalk.green('✓'), app.get('port'), app.get('env')); // eslint-disable-line no-console
 });
+
+
+/**
+ * Server run on https://localhost:3000
+
+const https = require('https');
+const fs = require('fs');
+const options = {
+  key: fs.readFileSync('key.pem'),
+  cert: fs.readFileSync('cert.pem')
+};
+https.createServer(options, app).listen(3000);
+*/
 
 module.exports = app;

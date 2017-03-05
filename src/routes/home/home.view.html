@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+  <meta name="description" content="Staff Application.">
+
+  <title>Chula Expo Staff</title>
+  <link rel="manifest" href="/public/manifest.json">
+  <!-- Chrome -->
+  <meta name="theme-color" content="#222">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="ChulaExpo Staff App">
+  <link rel="icon" sizes="192x192" href="/img/expo1-192.png">
+
+  <!-- Mobile Safari -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="#222">
+  <meta name="apple-mobile-web-app-title" content="ChulaExpo Staff App">
+  <link rel="apple-touch-icon" href="/img/icon-square-3x.png">
+
+  <!-- Windows -->
+  <meta name="msapplication-TileColor" content="#fff">
+  <meta name="msapplication-TileImage" content="/img/icon-inverted-3x.png">
+
+  <!-- Libery -->
+  <script src="/public/lib/webcomponentsjs/webcomponents-lite.min.js"></script>
+  <!-- Polymer -->
+  <link rel="import" href="/public/lib/polymer/polymer.html">
+	<!-- Main Layout -->
+  <link rel="import" href="/pages/chulaexpo-staff-app.html">
+  <link href="https://fonts.googleapis.com/css?family=Noto Sans:200,300,400" rel="stylesheet">
+
+  <style is="custom-style">
+    html {
+      height: 100%;
+    }
+
+    :root {
+      --paper-font-common-base: {
+        font-family: 'Roboto', 'Noto Sans' sans-serif;
+        -webkit-font-smoothing: antialiased;
+      };
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Roboto', 'Noto Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      font-weight: 200;
+      background-color: #fafafa;
+      line-height: 1.5;
+      height: 100%;
+      background-color: #eeeeee;
+    }
+
+    body[unresolved] chulaexpo-staff-app {
+      height: 100%;
+      -ms-flex-direction: column;
+      -webkit-flex-direction: column;
+      flex-direction: column;
+    }
+
+    body[unresolved] .navbar {
+      display: block;
+      position: relative;
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      height: 64px;
+      background: #222;
+      color: #ddd;
+    }
+
+    body[unresolved] .container {
+      position: relative;
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      /*padding-right: 15px;
+      padding-left: 15px;*/
+    }
+    @media (min-width: 600px) { 
+      body[unresolved] .container {
+        width: 540px;
+        max-width: 100%;
+        /*padding-right: 15px;
+        padding-left: 15px;*/
+      }
+    }
+    @media (min-width: 768px) {
+      body[unresolved] .container {
+        width: 720px;
+        max-width: 100%;
+        /*padding-right: 15px;
+        padding-left: 15px;*/
+      }
+    }
+    @media (min-width: 992px) {
+      body[unresolved] .container {
+        width: 960px;
+        max-width: 100%;
+      }
+      body[unresolved] .container {
+        /*padding-right: 15px;
+        padding-left: 15px;*/
+      }
+    }
+    
+    body[unresolved] .container {
+      disply: flex;
+    }
+    @media (min-width: 600px) {
+      body[unresolved] .container {
+        padding-top: 20px;
+      }
+    }
+    body[unresolved] .paper-card {
+      display: block;
+      position: relative;
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      height: 80vh;
+      background: #fff;
+    }
+  </style>
+</head>
+<body unresolved>
+  <chulaexpo-staff-app>
+    <div class="navbar"></div>
+    <div class="container">
+      <div class="paper-card"></div>
+    </div>
+  </chulaexpo-staff-app> 
+</body>
+</html>

@@ -21,9 +21,20 @@ const TicketSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  size: {
+    type: Number,
+    default: 1,
+  },
+  createAt: { type: Date, default: new Date() },
+  updateAt: { type: Date, default: new Date() },
+  createBy: {
+    type: ObjectId,
+    ref: 'User'
+  },
+
 });
 
-TicketSchema.index({ user: 1, round: 1 });
+TicketSchema.index({ user: 1, round: 1 }, { unique: true });
 
 TicketSchema.static.cancelReserved = ticketId => new Promise((resolve, reject) => {
   TicketSchema.findbyId(ticketId, (err, ticket) => {
@@ -43,7 +54,7 @@ TicketSchema.static.cancelReserved = ticketId => new Promise((resolve, reject) =
           return reject(err);
         }
         // Decease reseaved seats by 1 and bound by zero
-        round.seats.reserved = Math.max(this.seats.reserved - 1, 0);
+        round.seats.reserved = Math.max(round.seats.reserved - ticket.size, 0);
         // Filter out User's reseved activity
         user.reservedActivity.filter(activity => activity.ticket !== ticket.id);
 
@@ -58,9 +69,12 @@ TicketSchema.static.cancelReserved = ticketId => new Promise((resolve, reject) =
   });
 });
 
-TicketSchema.methods.checkIn = () => {
-  this.checked = true;
-};
+TicketSchema.methods.checkIn = ticketId => new Promise((resolve, reject) => {
+  TicketSchema.findbyId(ticketId, (err, ticket) => {
+    ticket.checked = true;
+    ticket.save(err => (err ? resolve() : reject(err)));
+  });
+});
 
 const Ticket = mongoose.model('Ticket', TicketSchema);
 

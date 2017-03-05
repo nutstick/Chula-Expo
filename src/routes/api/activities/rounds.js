@@ -1,10 +1,9 @@
 const express = require('express');
 const { Activity, Round } = require('../../../models');
-const { isAuthenticatedByToken } = require('../../../config/authenticate');
-const retrieveError = require('../../../tools/retrieveError');
 const RangeQuery = require('../../../tools/RangeQuery');
+const { isAuthenticatedByToken, isStaff } = require('../../../config/authenticate');
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 /**
  * Get Rounds list of specific activity
@@ -12,13 +11,13 @@ const router = express.Router();
  * @param {string} [name] - Get by name.
  * @param {Date | RangeQuery<Date>} [start] - Get by start time.
  * @param {Date | RangeQuery<Date>} [end] - Get by end time.
- * @param {number | RangeQuery<number>} [avaliableSeats] - Get by avaliable seats.
+ * @param {number | RangeQuery<number>} [seatsAvaliable] - Get by avaliable seats.
  * @param {string} [sort] - Sort fields (ex. "-start,+createAt").
  * @param {string} [fields] - Fields selected (ex. "name,fullCapacity").
  * @param {number} [limit] - Number of limit per query.
  * @param {number} [skip=0] - Offset documents.
  *
- * Accessible fields { name, activityId, start, end, fullCapacity, avaliableSeats, reservedSeats }
+ * Accessible fields { name, activityId, start, end, fullCapacity, seatsAvaliable, reservedSeats }
  *
  * @return {boolean} success - Successful querying flag.
  * @return {Round[]} results - Result rounds for the query.
@@ -29,11 +28,16 @@ const router = express.Router();
  * @return {ObjectId} queryInfo.activity - Owning activity ID.
  */
 router.get('/', (req, res) => {
-  const filter = {};
-  // Round's start time range query
+  const filter = { activityId: req.params.id };
+  let sort = {};
+  let limit;
+  let skip = 0;
+  let fields;
+  // Round's name
   if (req.query.name) {
     filter.name = req.query.name;
   }
+  // Activity ID
   // Round's start time range query
   if (req.query.start) {
     filter.start = RangeQuery(JSON.parse(req.query.start), 'Date');
@@ -43,80 +47,87 @@ router.get('/', (req, res) => {
     filter.end = RangeQuery(JSON.parse(req.query.end), 'Date');
   }
   // Avaliable seats range query
-  if (req.query.avaliableSeats) {
-    filter['seats.avaliable'] = RangeQuery(JSON.parse(req.query.avaliableSeats), 'number');
+  if (req.query.seatsAvaliable) {
+    filter['seats.avaliable'] = RangeQuery(JSON.parse(req.query.seatsAvaliable), 'number');
   }
   // Sorting query
   if (req.query.sort) {
-    filter.sort = req.query.sort.split(',').reduce((prev, sortQuery) => {
-      let sortFields = sortQuery.substr(1);
-      if (sortFields === 'fullCapacity') {
-        sortFields = 'seats.capacity';
+    sort = req.query.sort.split(',').reduce((prev, sortQuery) => {
+      let sortFields = sortQuery[0] === '-' ? sortQuery.substr(1) : sortQuery;
+      if (sortFields === 'seatsFullCapacity') {
+        sortFields = 'seats.FullCapacity';
       }
-      if (sortFields === 'reservedSeats') {
+      if (sortFields === 'seatsReserved') {
         sortFields = 'seats.reserved';
       }
-      if (sortFields === 'avaliableSeats') {
+      if (sortFields === 'seatsAvaliable') {
         sortFields = 'seats.avaliable';
       }
 
       if (sortQuery[0] === '-') {
         prev[sortFields] = -1;
-      } else if (sortQuery[0] === '+') {
+      } else {
         prev[sortFields] = 1;
       }
+
       return prev;
     }, {});
   }
   // Limit query
   if (req.query.limit) {
-    filter.limit = Number.parseInt(req.query.limit, 10);
+    limit = Number.parseInt(req.query.limit, 10);
   }
   // Skip query
   if (req.query.skip) {
-    filter.skip = Number.parseInt(req.query.skip, 10);
+    skip = Number.parseInt(req.query.skip, 10);
   }
   // Fields selecting query
   if (req.query.fields) {
-    filter.fields = req.query.fields.split(',').map((field) => {
-      if (field === 'fullCapacity') {
-        return 'seats.capacity';
+    fields = req.query.fields.split(',').map((field) => {
+      if (field === 'seatsFullCapacity') {
+        return 'seats.FullCapacity';
       }
-      if (field === 'reservedSeats') {
+      if (field === 'seatsReserved') {
         return 'seats.reserved';
       }
-      if (field === 'avaliableSeats') {
+      if (field === 'seatsAvaliable') {
         return 'seats.avaliable';
       }
       return field;
     }).join(' ');
   }
-  Activity
-    .findRoundByActivityId(req.params.id, filter)
-    .then((results) => {
-      res.json({
+
+  // Create query from filter
+  let query = Round.find(filter);
+  // Counting all results
+  query.count().exec((err, count) => {
+    if (err) {
+      return res.sendError(5, err);
+    }
+
+    // Custom query by input filter, fields, sort, skip ,limit
+    query = Round.find(filter)
+      .select(fields)
+      .sort(sort)
+      .skip(skip)
+      .limit(limit);
+    // Execute query
+    query.exec((err, rounds) => {
+      if (err) {
+        return res.sendError(5, err);
+      }
+
+      return res.status(200).json({
         success: true,
-        results: results.rounds,
+        results: rounds,
         queryInfo: {
-          total: results.count,
-          limit: results.limit,
-          skip: results.skip,
-          activity: req.params.id,
+          total: count,
+          limit,
+          skip,
         }
       });
-    })
-    .catch((err) => {
-      if (err.code) {
-        return res.status(retrieveError(err.code).status).json({
-          success: false,
-          errors: retrieveError(err.code),
-        });
-      }
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
     });
+  });
 });
 
 /**
@@ -131,51 +142,43 @@ router.get('/', (req, res) => {
  * @return {boolean} success - Successful querying flag.
  * @return {Round} results - Created Round.
  */
-router.post('/', (req, res) => {
+router.post('/', isAuthenticatedByToken, isStaff, (req, res) => {
   // Create a new instance of the User model
   const round = new Round();
   // Validate required field from body
-  if (req.body.name &&
-    req.body.start && req.body.end && req.body.fullCapacity) {
+  if (req.body.nameEN &&
+    req.body.start && req.body.end && req.body.seatsFullCapacity) {
     // Check exist target activity input
-    Activity.findById(req.param.id, (err, activitiy) => {
+    Activity.findById(req.params.id, (err, activitiy) => {
       // Handle error from Activity.findById
       if (err) {
-        return res.status(500).json({
-          success: false,
-          errors: retrieveError(5, err),
-        });
+        return res.sendError(5, err);
       }
       // Related activity not found
       if (!activitiy) {
-        return res.status(403).json({
-          success: false,
-          errors: retrieveError(25),
-        });
+        return res.sendError(25, err);
       }
 
       // Set field value (comes from the request)
-      round.activityId = req.param.id;
-      round.name = req.body.name;
+      round.activityId = req.params.id;
+      round.name.th = req.body.nameTH;
+      round.name.en = req.body.nameEN;
       round.start = new Date(req.body.start);
       round.end = new Date(req.body.end);
       // round.tickets = [];
-      round.seats.fullCapacity = req.body.fullCapacity;
-      if (req.body.reservedSeats) {
-        round.seats.reserved = req.body.reservedSeats;
+      round.seats.fullCapacity = req.body.seatsFullCapacity;
+      if (req.body.seatsReserved) {
+        round.seats.reserved = req.body.seatsReserved;
       }
 
       // Save Round and check for error
       round.save((err, _round) => {
         // Handle error from save
         if (err) {
-          return res.status(500).json({
-            success: false,
-            errors: retrieveError(5, err),
-          });
+          return res.sendError(5, err);
         }
 
-        res.status(201).json({
+        return res.status(201).json({
           success: true,
           message: 'Create Round successfull',
           results: _round,
@@ -183,10 +186,7 @@ router.post('/', (req, res) => {
       });
     });
   } else {
-    res.status(500).json({
-      success: false,
-      errors: retrieveError(5, 'Missing required field.'),
-    });
+    return res.sendError(5, 'Missing required field.');
   }
 });
 
@@ -203,13 +203,13 @@ router.get('/:rid', (req, res) => {
   // Fields selecting query
   if (req.query.fields) {
     fields = req.query.fields.split(',').map((field) => {
-      if (field === 'fullCapacity') {
+      if (field === 'seatsFullCapacity') {
         return 'seats.capacity';
       }
       if (field === 'reservedSeats') {
         return 'seats.reserved';
       }
-      if (field === 'avaliableSeats') {
+      if (field === 'seatsAvaliable') {
         return 'seats.avaliable';
       }
       return field;
@@ -219,24 +219,15 @@ router.get('/:rid', (req, res) => {
   Round.findById(req.params.rid, fields, (err, round) => {
     // Handle error from Round.findById
     if (err) {
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
     // Round isn't exist.
     if (!round) {
-      return res.status(403).json({
-        success: false,
-        errors: retrieveError(26),
-      });
+      return res.sendError(26);
     }
     // Round is not belong to Activity
-    if (round.activityId !== req.param.id) {
-      return res.status(403).json({
-        success: false,
-        errors: retrieveError(26),
-      });
+    if (round.activityId.toString() !== req.params.id) {
+      return res.sendError(26);
     }
 
     res.json({
@@ -258,28 +249,19 @@ router.get('/:rid', (req, res) => {
  * @return {boolean} success - Successful updating flag.
  * @return {Round} results - Updated Round.
  */
-router.put('/:rid', (req, res) => {
+router.put('/:rid', isAuthenticatedByToken, isStaff, (req, res) => {
   Round.findById(req.params.id, (err, round) => {
     // Handle error from Round.findById
     if (err) {
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
     // Round isn't exist.
     if (!round) {
-      return res.status(403).json({
-        success: false,
-        errors: retrieveError(26),
-      });
+      return res.sendError(26);
     }
     // Round is not belong to Activity
-    if (round.activityId !== req.param.id) {
-      return res.status(403).json({
-        success: false,
-        errors: retrieveError(26),
-      });
+    if (round.activityId !== req.params.id) {
+      return res.sendError(26);
     }
 
     if (req.body.name) {
@@ -297,12 +279,9 @@ router.put('/:rid', (req, res) => {
 
     round.save((err, _round) => {
       if (err) {
-        return res.status(500).json({
-          success: false,
-          errors: retrieveError(5, err),
-        });
+        return res.sendError(5, err);
       }
-      res.status(202).json({
+      return res.status(202).json({
         success: true,
         message: 'Update round successfull',
         results: _round,
@@ -318,42 +297,73 @@ router.put('/:rid', (req, res) => {
  * @return {boolean} success - Successful removing flag.
  * @return {string} message - Remove message.
  */
-router.delete('/:rid', (req, res) => {
+router.delete('/:rid', isAuthenticatedByToken, isStaff, (req, res) => {
   Round.findByIdA(req.params.rid, (err, round) => {
     // Handle error from Round.findById
     if (err) {
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
     // Round isn't exist.
     if (!round) {
-      return res.status(403).json({
-        success: false,
-        errors: retrieveError(26),
-      });
+      return res.sendError(26);
     }
     // Round is not belong to Activity
-    if (round.activityId !== req.param.id) {
-      return res.status(403).json({
-        success: false,
-        errors: retrieveError(26),
-      });
+    if (round.activityId.toString() !== req.params.id) {
+      return res.sendError(26);
     }
     // Remove the round
     round.remove((err) => {
       if (err) {
-        return res.status(500).json({
-          success: false,
-          errors: retrieveError(5, err),
-        });
+        return res.sendError(5, err);
       }
-      res.status(202).json({
+      return res.status(202).json({
         success: true,
         message: `Round id ${req.params.rid} was removed.`,
       });
     });
+  });
+});
+
+/**
+ * Reserve round
+ * Access at POST http://localhost:8080/api/activities/:id/rounds/:rid/reserve
+ * Authenticate: JWT token
+ * @param {seats} count - Number of reserving seats
+ *
+ * @return {boolean} success - Successful querying flag.
+ * @return {string} message - Creating ticket message.
+ * @return {Round} results - Ticket.
+ */
+router.post('/:rid/reserve', isAuthenticatedByToken, (req, res) => {
+  let seats = 1;
+  if (req.user.type === 'Staff') {
+    seats = req.body.seats;
+  }
+
+  // Get round from instance round model by ID
+  Round.findById(req.params.rid, (err, round) => {
+    // Handle error from Round.findById
+    if (err) {
+      return res.sendError(5, err);
+    }
+    // Round isn't exist.
+    if (!round) {
+      return res.sendError(26);
+    }
+    // Round is not belong to Activity
+    if (round.activityId.toString() !== req.params.id) {
+      return res.sendError(26);
+    }
+
+    round.reserve(req.user.id, round, seats)
+      .then(results => (
+        res.status(201).json({
+          success: true,
+          message: 'Created Ticket Successful',
+          results,
+        })
+      ))
+      .catch(err => (err.code ? res.sendError(err.code) : res.sendError(5, err)));
   });
 });
 
@@ -366,47 +376,33 @@ router.delete('/:rid', (req, res) => {
  * @return {string} message - Creating ticket message.
  * @return {Round} results - Ticket.
  */
-router.post('/:rid/reserve', isAuthenticatedByToken, (req, res) => {
+router.delete('/:rid/reserve', isAuthenticatedByToken, (req, res) => {
   // Get round from instance round model by ID
   Round.findById(req.params.rid, (err, round) => {
     // Handle error from Round.findById
     if (err) {
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
     // Round isn't exist.
     if (!round) {
-      return res.status(403).json({
-        success: false,
-        errors: retrieveError(26),
-      });
+      return res.sendError(26);
     }
     // Round is not belong to Activity
-    if (round.activityId !== req.param.id) {
-      return res.status(403).json({
-        success: false,
-        errors: retrieveError(26),
-      });
+    if (round.activityId.toString() !== req.params.id) {
+      return res.sendError(26);
     }
 
-    round.reserve(req.user.id)
-      .then(results => (
+    round.cancelReservedSeat(req.user.id, round)
+      .then(() => (
         res.status(201).json({
           success: true,
-          message: 'Created Ticket Successful',
-          results,
+          message: `Successfully cancel reserved round ${req.params.rid}.`,
         })
       ))
-      .catch(err => (err.code ? res.status(retrieveError(err.code)).json({
-        success: false,
-        errors: retrieveError(err.code),
-      }) : res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      })));
+      .catch(err => (err.code ? res.sendError(err.code) : res.sendError(5, err)));
   });
 });
+
+router.use('/:rid/tickets', require('./tickets'));
 
 module.exports = router;

@@ -10,10 +10,12 @@
         width: 150px;
         height: 150px;
         background: #ddd;
+        cursor: pointer;
       }
     </style>
     <div class="preload">
-      <iron-image sizing="contain" id="image" alt="{{alt}}" src="{{image}}" preload fade></iron-image>
+      <iron-image sizing="contain" id="image" alt="{{alt}}" src="{{image}}" preload fade on-tap="_tap"></iron-image>
+      <input id="upload" type="file" accept="image/*" value="{{upload}}" style="display: none"></input>
       <input name="{{name}}" type="hidden" value="{{image}}"></input>
     </div>
   </template>
@@ -28,7 +30,17 @@
           type: String,
         },
         name: String,
+        upload: {
+          type: Object,
+          observer: '_uploading'
+        }
       },
+      _tap: function() {
+        this.$.upload.click();
+      },
+      _uploading: function(event) {
+        console.log(this.upload);
+      }
     });
   </script>
 </dom-module>

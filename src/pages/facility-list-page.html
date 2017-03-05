@@ -1,0 +1,188 @@
+<!-- Libery -->
+<link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="/public/lib/paper-card/paper-card.html">
+<link rel="import" href="/public/lib/paper-fab/paper-fab.html">
+<link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="/public/lib/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="/public/lib/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="/public/lib/paper-menu/paper-menu.html">
+<link rel="import" href="/public/lib/paper-item/paper-item.html">
+<link rel="import" href="/public/lib/paper-styles/shadow.html">
+<link rel="import" href="/public/lib/paper-dialog/paper-dialog.html">
+
+
+<link rel="import" href="/components/facility-api.html">
+<link rel="import" href="/components/paper-card-item.html">
+<link rel="import" href="/components/paper-card-item-pagination.html">
+<link rel="import" href="/components/shared-styles.html">
+
+<dom-module id="facility-list-page">
+  <template>
+    <style is="custom-style" include="shared-styles">
+      :host {
+        @apply(--layout-vertical);
+        @apply(--layout-center-center);
+        padding-top: 20px;
+      }
+      .fixed-bottom {
+        position: fixed;
+        bottom: 20px;
+      }
+      .empty-list {
+        height: 200px;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-center-justified);
+      }
+      .empty-list:before {
+        content: "ไม่มีข้อมูล";
+        font-style: italic;
+        color: #bbb;
+        font-weight: 200;
+      }
+      #add-icon {
+        position: absolute;
+        bottom: 0px;
+        right: -20px;
+        @apply(--shadow-elevation-8dp);
+      }
+      @media (max-width: 600px) {
+        .fixed-bottom {
+          right: 20px;
+        }
+        #add-icon {
+          right: 0px;
+        }
+      }
+      .clearfix:after {
+        clear:both;
+        display:block;
+        content: "";
+      }
+      paper-card-item {
+        width: 100%;
+      }
+      paper-button {
+        font-size: 12px;
+      }
+      paper-button > a {
+        color: #000;
+        text-decoration: none;
+        width: 100%;
+      }
+    </style>
+    <div class="container">
+      <template is="dom-if" if="{{_computeNoFacilities(facilities)}}">
+        <div class="empty-list"></div>
+      </template>
+
+      <template is="dom-repeat" items="{{facilities}}">
+        <paper-card-item action image="/public/img/thumbnail-default.jpg">
+          <div class="card-item-header">
+            {{item.type}}: {{item.name.en}}
+          </div>
+          <div class="card-item-content">
+            {{item.description.en}}
+          </div>
+          <div class="card-item-actions">
+            <div class="horizontal justified">
+              <paper-button on-tap="_showClick">Show</paper-button>
+              <paper-button on-tap="_editClick">Edit</paper-button>
+              <paper-button on-tap="_deleteClick">Delete</paper-button>
+            </div>
+          </div>
+        </paper-card-item>
+      </template>
+			<paper-card-item-pagination page="{{page}}" page-size="{{pageSize}}" totalPages="[[totalPages]]"></paper-card-item-pagination>
+      <div class="fixed-bottom">
+        <div class="container">
+          <paper-fab id="add-icon" icon="add" on-tap="_addClick"></paper-fab>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+      <facility-api id="facilityAPI" facilities="{{facilities}}" error="{{error}}" page="{{page}}" page-size="{{pageSize}}" totalPages="{{totalPages}}"></facility-api>
+    </div>
+    <paper-dialog id="dialog" on-iron-overlay-closed="_delete">
+      <h2>Are you sure?</h2>
+      <div class="buttons">
+        <paper-button dialog-dismiss>No</paper-button>
+        <paper-button dialog-confirm autofocus>Yes</paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+  <script>
+    Polymer({
+      is: 'facility-list-page',
+      properties: {
+        activated: {
+          type: Boolean,
+          value: false,
+          observer: '_activatedChanged'
+        },
+        page: {
+          type: Number,
+        },
+        pageSize: {
+          type: Number,
+        },
+        totalPages: {
+          type: Number,
+        },
+        error: {
+          type: Object,
+        },
+        facilities: {
+          type: Array,
+          value: [],
+        },
+        deleteId: {
+          type: String,
+        },
+      },
+      _activatedChanged: function(activated) {
+        if (activated) {
+          this.$.facilityAPI.generateRequest();
+        }
+      },
+      _showClick: function(id) {
+        var id = event.model.item['_id'];
+        document.querySelector('chulaexpo-staff-app').set('route.path', '/facility/' + id + '/show/');
+			},
+      _editClick: function(id) {
+        var id = event.model.item['_id'];
+        document.querySelector('chulaexpo-staff-app').set('route.path', '/facility/' + id + '/edit/');
+			},
+      _addClick: function() {
+        document.querySelector('chulaexpo-staff-app').set('route.path', '/facility/add/');
+      },
+      _deleteClick: function(event) {
+        this.deleteId = event.model.item['_id'];
+        this.$.dialog.open();
+      },
+      _delete: function(event) {
+        if(event.detail.confirmed) {
+          var id = this.deleteId;
+          var url = '/api/facilities/' + id;
+
+          var dom = this;
+          setTimeout(function () {
+            var req = new XMLHttpRequest();
+            req.open('DELETE',encodeURI(url));
+            var tokenJWT = 'JWT ' + document.querySelector('chulaexpo-staff-app').token
+            req.setRequestHeader('Authorization', tokenJWT);
+            req.onload = function() {
+              if (req.status === 202) {
+                dom.generateRequest();
+              }
+            };
+            req.send();
+          }.bind(this), 300);
+        }
+      },
+      _computeNoFacilities: function(facilities) {
+        return !facilities.length;
+      }
+    })
+  </script>
+</dom-module>

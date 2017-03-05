@@ -13,6 +13,11 @@ router.use('/users', require('./users'));
 router.use('/signup', require('./signup'));
 
 /**
+ * Login API
+ */
+router.use('/login', require('./login'));
+
+/**
  * Me API
  */
 router.use('/me', require('./me'));
@@ -38,13 +43,34 @@ router.use('/rounds', require('./rounds'));
 router.use('/tickets', require('./tickets'));
 
 /**
-=======
->>>>>>> upstream/master
+ * Facility API
+*/
+router.use('/facilities', require('./facilities'));
+
+/**
+ * Comment API
+*/
+router.use('/comments', require('./comments'));
+
+/**
+ * place API
+*/
+router.use('/places', require('./places'));
+router.use('/zones/:zoneid/places', require('./places'));
+/**
+ * zone API
+*/
+router.use('/zones', require('./zones'));
+/**
+ * room API
+*/
+router.use('/rooms', require('./rooms'));
+/**
  * Welcome Message
  * Access at GET http://localhost:8080/api
  */
 router.get('/', (req, res) => {
-  res.send('Welcaome to Official Chula Expo API.');
+  res.send('Welcome to Official Chula Expo API.');
 });
 
 module.exports = router;

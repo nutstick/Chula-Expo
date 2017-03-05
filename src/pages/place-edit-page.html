@@ -1,0 +1,265 @@
+<!-- Libery -->
+<link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="/public/lib/app-route/app-route.html">
+<link rel="import" href="/public/lib/vaadin-upload/vaadin-upload.html">
+<link rel="import" href="/public/lib/paper-card/paper-card.html">
+<link rel="import" href="/public/lib/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="/public/lib/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="/public/lib/paper-tags-input/paper-tags-input.html">
+<link rel="import" href="/public/lib/paper-input/paper-textarea.html">
+<link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="/public/lib/greenyouse-datetime-local-input/datetime-local-input.html">
+<link rel="import" href="/public/lib/google-map/google-map.html">
+<link rel="import" href="/public/lib/google-map/google-map-marker.html">
+<link rel="import" href="/public/lib/vaadin-combo-box/vaadin-combo-box.html">
+
+<link rel="import" href="/components/place-api.html">
+<link rel="import" href="/components/zone-api.html">
+
+<link rel="import" href="/components/shared-styles.html">
+
+<dom-module id="place-edit-page">
+  <template>
+    <style is="custom-style" include="shared-styles">
+      :host {
+        @apply(--layout-vertical);
+        @apply(--layout-center-center);
+        padding-top: 20px;
+      }
+
+      paper-card {
+        width: 100%;
+      }
+
+      .item {
+        margin-bottom: 10px;
+      }
+
+      .avatar {
+        display: inline-block;
+        height: 40px;
+        overflow: hidden;
+        margin-right: 20px;
+      }
+
+      .flex-layout {
+        @apply(--layout-horizontal);
+      }
+      .flex {
+        @apply(--layout-flex);
+      }
+      .label {
+        font-weight: 200;
+        width: 100px;
+        display: inline-block;
+        margin-right: 20px;
+      }
+      .label.--upload {
+        line-height: 70px;
+      }
+
+      .company {
+        font-size: 20px;
+        font-weight: 200;
+      }
+      google-map {
+        height: 300px;
+      }
+      .google-map {
+        display: block;
+        height: 300px;
+      }
+
+			.button-holder {
+        @apply(--layout-horizontal);
+        @apply(--layout-end-justified);
+        margin-top: 10px;
+      }
+
+      .fitdiv {
+        display: inline;
+        word-wrap: break-word;
+      }
+    </style>
+    <place-api
+      id="placeAPI"
+			place-id="{{placeId}}"
+			fields=""
+			page="0"
+      headers="{{headers}}"
+			page-size="0"
+			place="{{place}}"
+    ></place-api>
+    <div class="container">
+      <paper-card>
+				<form is="iron-form" id="form" method="post" class="card-content"
+					action="{{url}}" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
+					<div class="card-content">
+						<!-- Code -->
+						<div class="item">
+							<div>
+								<label class="label --input">Code</label>
+								<div class="flex fitdiv">
+									<paper-input type="text" value="{{place.code}}" name="code" label="" no-label-float="true" required></paper-input>
+								</div>
+							</div>
+						</div>
+
+            <div class="item">
+              <label class="label --input">Zone</label>
+              <div class="" style="display: inline; word-wrap: break-word;">
+                <vaadin-combo-box
+                  name="zone"
+                  items="{{zones}}"
+                  id="input-zone"
+                  class="elements-box"
+                  no-label-float="true"
+                  value="{{place.zone}}"
+                  item-label-path="name.en"
+                  item-value-path="_id"
+                  placeholder="เลือก zone ของกิจกรรม"
+                  required
+                ></vaadin-combo-box>
+                <zone-api
+                  id="zoneAPI"
+                  zones="{{zones}}"
+                  error="{{error}}"
+                  loading="{{zoneLoading}}"
+                  page="0"
+                  page-size="0"
+                  fields="_id,nameEN"
+                ></zone-api>
+              </div>
+            </div>
+
+						<!-- Google Map -->
+						<div class="item google-map">
+							<google-map latitude="[[place.location.latitude]]" longitude="[[place.location.longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o" fit>
+								<google-map-marker latitude="{{place.location.latitude}}" longitude="{{place.location.longitude}}" draggable="true"
+										title="place Location!" ></google-map-marker>
+							</google-map>
+						</div>
+					</div>
+					<div class="card-content">
+						<!-- Thai Language -->
+						<div class="flex-layout center">
+							<div class="avatar" item-icon><img src="/public/img/th.png" /></div>
+							<div class="flex company">ภาษาไทย</div>
+						</div>
+						<paper-input type="text" label="ชื่อสถานที่" value="{{place.name.th}}" name="nameTH" always-float-label required></paper-input>
+          </div>
+
+          <div class="card-content">
+						<!-- English Language -->
+						<div class="flex-layout center">
+							<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
+							<div class="flex company">English</div>
+						</div>
+						<paper-input type="text" label="place name" value="{{place.name.en}}" name="nameEN" always-float-label required></paper-input>
+					</div>
+
+					<!-- Submit Button -->
+					<div class="card-actions">
+						<div class="button-holder">
+							<paper-button on-click="_delayedSubmit">
+								<paper-spinner id="spinner" hidden></paper-spinner>Save
+							</paper-button>
+						</div>
+					</div>
+				</form>
+      </paper-card>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'place-edit-page',
+      properties: {
+				activated: {
+					type: Boolean,
+					value: false,
+					observer: '_activatedChanged'
+				},
+        zones: {
+          type: Array
+        },
+        url: {
+          type: Object,
+          value: ''
+        },
+        placeId: {
+          type: Object,
+          observer: '_idChanged'
+        },
+				token: {
+          type: String,
+        },
+        zoom: {
+          type: Number,
+          value: 16
+        },
+        tags_list: {
+          type: Array,
+          value: ['Chula Expo']
+        },
+        place: {
+          type: Object,
+        },
+        headers: {
+          type: Object,
+          value: {
+            'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
+          }
+        }
+      },
+      _activatedChanged: function(activated) {
+				if (activated) {
+          this.$.placeAPI.generateRequest();
+          this.$.zoneAPI.generateRequest();
+        }
+      },
+      _delayedSubmit: function(event) {
+        var form = this.$.form;
+        this.$.spinner.active = true;
+        this.$.spinner.hidden = false;
+        this.$.form.disabled = true;
+        // Simulate a slow server response.
+        setTimeout(function() {
+          form.submit();
+        }, 1000);
+      },
+      _response: function(e) {
+        if (e.detail.response.success) {
+          this.$.form.reset();
+
+          var list = document.querySelector('place-show-page')
+          if(typeof list.generateRequest === 'function'){
+            list.generateRequest();
+          }
+
+          window.history.pushState({}, null, '/place/' + this.placeId + '/show/');
+          window.dispatchEvent(new CustomEvent('location-changed'));
+        }
+      },
+      _presubmit: function(event) {
+        this.$.form.request.method = 'put';
+      	this.$.form.request.body.locationLat = this.place.location.latitude;
+				this.$.form.request.body.locationLong = this.place.location.longitude;
+
+        for (field in this.$.form.request.body) {
+          if (!this.$.form.request.body[field]) {
+            delete this.$.form.request.body[field];
+          }
+        }
+
+      },
+      _idChanged: function(id) {
+        if (id) {
+          this.url = '/api/places/' + id;
+        } else {
+          this.url = '/api/places';
+        }
+      }
+    })
+  </script>
+</dom-module>

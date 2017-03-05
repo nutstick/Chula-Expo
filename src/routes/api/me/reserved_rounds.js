@@ -1,10 +1,12 @@
 const express = require('express');
+const _ = require('lodash');
 const { Ticket, Round } = require('../../../models');
 const { retrieveError, RangeQuery } = require('../../../tools/retrieveError');
 
 const router = express.Router();
 
-const accessibleFields = ['name', 'activityId', 'start', 'end', 'fullCapacity', 'seats.avaliable', 'seats.reserved'];
+const accessibleFields = ['_id', 'id', 'name', 'activityId', 'start', 'end', 'seats.fullCapacity', 'seats.avaliable', 'seats.reserved'];
+const roundAccessibleFields = ['checked', 'size'];
 /**
  * Get all reserved reservable activities's rounds
  * Access at GET http://localhost:8080/api/me/reserved_rounds
@@ -16,7 +18,7 @@ const accessibleFields = ['name', 'activityId', 'start', 'end', 'fullCapacity', 
  * @param {number} [limit] - Number of limit per query.
  * @param {number} [skip=0] - Offset documents.
  *
- * Accessible fields { name, activityId, start, end, fullCapacity, avaliableSeats, reservedSeats }
+ * Accessible fields { name, activityId, start, end, fullCapacity, seatsAvaliable, seatsReserved }
  *
  * @return {boolean} success - Successful querying flag.
  * @return {Round[] + check} results - Result rounds for the query.
@@ -33,6 +35,7 @@ router.get('/', (req, res) => {
   let limit;
   let skip = 0;
   let fields;
+  let roundFields;
   // Round's name
   if (req.query.name) {
     filter.name = req.query.name;
@@ -49,13 +52,13 @@ router.get('/', (req, res) => {
   if (req.query.sort) {
     sort = req.query.sort.split(',').reduce((prev, sortQuery) => {
       let sortFields = sortQuery.substr(1);
-      if (sortFields === 'fullCapacity') {
+      if (sortFields === 'seatsFullCapacity') {
         sortFields = 'seats.capacity';
       }
-      if (sortFields === 'reservedSeats') {
+      if (sortFields === 'seatsReserved') {
         sortFields = 'seats.reserved';
       }
-      if (sortFields === 'avaliableSeats') {
+      if (sortFields === 'seatsAvaliable') {
         sortFields = 'seats.avaliable';
       }
 
@@ -78,28 +81,30 @@ router.get('/', (req, res) => {
   // Fields selecting query
   if (req.query.fields) {
     fields = _.intersection(req.query.fields.split(',').map((field) => {
-      if (field === 'fullCapacity') {
+      if (field === 'seatsFullCapacity') {
         return 'seats.capacity';
       }
-      if (field === 'reservedSeats') {
+      if (field === 'seatsReserved') {
         return 'seats.reserved';
       }
-      if (field === 'avaliableSeats') {
+      if (field === 'seatsAvaliable') {
         return 'seats.avaliable';
       }
       return field;
     }), accessibleFields).join(' ');
+
+    roundFields = _.intersection(req.query.fields.split(','), roundAccessibleFields).concat(['round']).join(' ');
   }
 
   Ticket.find({ user: req.user.id }).count().exec((err, count) => {
     if (err) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         errors: retrieveError(5, err),
       });
     }
 
-    Ticket.find({ user: req.user.id })
+    Ticket.find({ user: req.user.id }, roundFields)
       .populate('round', fields, filter, { sort, skip, limit })
       .exec((err, results) => {
         if (err) {
@@ -111,7 +116,9 @@ router.get('/', (req, res) => {
 
         res.json({
           success: true,
-          results: results.map(res => Object.assign({ check: res.check }, res.round)),
+          results: results.map(result =>
+            Object.assign({ checked: result.checked, size: result.size },
+            (result.round && result.round._doc) || {})),
           queryInfo: {
             total: count,
             limit,
@@ -128,29 +135,26 @@ router.get('/', (req, res) => {
  * Access at GET http://localhost:8080/api/me/reserved_rounds/:rid
  * @param {string} [fields] - Fields selected (ex. "name,fullCapacity").
  *
- * Accessible fields { name, activityId, start, end, fullCapacity, avaliableSeats, reservedSeats }
+ * Accessible fields { name, activityId, start, end, fullCapacity, seatsAvaliable, seatsReserved }
  *
  * @return {boolean} success - Successful querying flag.
  * @return {Round[] + check} results - Result rounds for the query.
  * @return {Object} queryInfo - Metadata query information.
- * @return {number} queryInfo.total - Total numbers of documents in collection that match the query.
- * @return {number} queryInfo.limit - Limit that was used.
- * @return {number} queryInfo.skip - Skip that was used.
- * @return {number} queryInfo.user - User's used to query.
- * @return {number} queryInfo.round - Round's used to query.
+ * @return {ObjectId} queryInfo.user - User's used to query.
+ * @return {ObjectId} queryInfo.round - Round's used to query.
  */
 router.get('/:rid', (req, res) => {
   let fields;
   // Fields selecting query
   if (req.query.fields) {
     fields = _.intersection(req.query.fields.split(',').map((field) => {
-      if (field === 'fullCapacity') {
+      if (field === 'seatsFullCapacity') {
         return 'seats.capacity';
       }
-      if (field === 'reservedSeats') {
+      if (field === 'seatsReserved') {
         return 'seats.reserved';
       }
-      if (field === 'avaliableSeats') {
+      if (field === 'seatsAvaliable') {
         return 'seats.avaliable';
       }
       return field;
@@ -162,7 +166,7 @@ router.get('/:rid', (req, res) => {
     .exec((err, results) => {
       // Handle error from Ticket.findOne
       if (err) {
-        res.status(500).json({
+        return res.status(500).json({
           success: false,
           errors: retrieveError(5, err),
         });
@@ -203,10 +207,7 @@ router.delete('/:rid', (req, res) => {
     }
     // Round isn't exist
     if (!round) {
-      return res.status(403).json({
-        success: false,
-        errors: retrieveError(26)
-      });
+      return res.sendError(26);
     }
     round.cancelReservedSeat(req.user.id)
       .then(() => (
@@ -215,13 +216,7 @@ router.delete('/:rid', (req, res) => {
           message: `Successfully cancel reserved round ${req.params.id}.`,
         })
       ))
-      .catch(err => (err.code ? res.status(retrieveError(err.code)).json({
-        success: false,
-        errors: retrieveError(err.code),
-      }) : res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      })));
+      .catch(err => (err.code ? res.sendError(err.code) : res.sendError(5, err)));
   });
 });
 

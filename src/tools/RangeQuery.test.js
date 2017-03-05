@@ -16,8 +16,8 @@ describe('Range query', () => {
     }, 'number');
 
     expect(result).to.eql({
-      lt: 1,
-      gt: 5,
+      $lt: 1,
+      $gt: 5,
     });
     done();
   });
@@ -30,8 +30,8 @@ describe('Range query', () => {
     }, 'string');
 
     expect(result).to.eql({
-      eq: 'abs',
-      gte: 'Test string',
+      $eq: 'abs',
+      $gte: 'Test string',
     });
     done();
   });
@@ -47,10 +47,10 @@ describe('Range query', () => {
       eq, lt, lte, ne, gt
     }, 'Date');
     expect(result).to.eql({
-      eq: new Date(eq),
-      lt: new Date(lt),
-      lte: new Date(lte),
-      ne: new Date(ne),
+      $eq: new Date(eq),
+      $lt: new Date(lt),
+      $lte: new Date(lte),
+      $ne: new Date(ne),
     });
     done();
   });
