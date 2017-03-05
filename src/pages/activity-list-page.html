@@ -105,6 +105,7 @@
               items="{{zones}}"
               item-value-path="_id"
               item-label-path="name.en"
+              on-selected-item-changed="_computeActivity"
               value="{{zone}}"
               always-float-label
             ></vaadin-combo-box>
@@ -250,6 +251,9 @@
             req.send();
           }.bind(this), 300);
         }
+      },
+      _computeActivity: function(e) {
+        this.generateRequest();
       },
       _computeNoActivities: function(activities) {
         return !activities.length;
