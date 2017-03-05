@@ -7,8 +7,6 @@ const router = express.Router();
 
 const avaliableFields = ['_id', 'name', 'email', 'age', 'gender', 'profile', 'type', 'academic', 'worker', 'staff'];
 
-router.use(isAuthenticatedByToken);
-
 /**
  * Get user by token
  * Access at GET http://localhost:8080/api/me
@@ -19,7 +17,7 @@ router.use(isAuthenticatedByToken);
  * @return {boolean} success - Successful querying flag.
  * @return {User} results - Token owner results.
  */
-router.get('/', (req, res) => {
+router.get('/', isAuthenticatedByToken, (req, res) => {
   let fields = [];
   // Fields selecting query
   if (req.query.fields) {
@@ -51,11 +49,11 @@ router.get('/where', (req, res) => {
   res.json({
     success: true,
     results: {
-      zone: {
-        en: 'faculty of engineering',
+      text: {
+        en: 'Faculty of engineering',
         th: 'คณะวิศวกรรมศาสตร์'
       }
-    },
+    }
   });
 });
 
@@ -81,7 +79,7 @@ router.get('/where', (req, res) => {
  * @return {string} message - Successful message.
  * @return {User} results - Updated user.
  */
-router.put('/', (req, res) => {
+router.put('/', isAuthenticatedByToken, (req, res) => {
   if (req.body.name) {
     req.user.name = req.body.name;
   }
@@ -152,7 +150,7 @@ router.put('/', (req, res) => {
  * @return {string} results.email - User's email.
  * @return {string} results.facebook - User's facebook accessId.
  */
-router.get('/account', (req, res) => {
+router.get('/account', isAuthenticatedByToken, (req, res) => {
   res.json({
     success: true,
     results: {
@@ -172,7 +170,7 @@ router.get('/account', (req, res) => {
  * @return {Game[]} results.pending - Pending paay games.
  * @return {Game[]} results.passed - Passed games.
  */
-router.get('/games', (req, res) => {
+router.get('/games', isAuthenticatedByToken, (req, res) => {
   res.json({
     success: true,
     results: req.user.game,
@@ -183,7 +181,7 @@ router.get('/games', (req, res) => {
  * Get all bookmark activities
  * Access at GET http://localhost:8080/api/me/bookmark_activities
  */
-router.get('/bookmark_activities', (req, res) => {});
+router.get('/bookmark_activities', isAuthenticatedByToken, (req, res) => {});
 
 router.use('/reserved_rounds', require('./reserved_rounds'));
 

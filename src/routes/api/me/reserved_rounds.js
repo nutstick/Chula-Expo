@@ -2,6 +2,7 @@ const express = require('express');
 const _ = require('lodash');
 const { Ticket, Round } = require('../../../models');
 const { retrieveError, RangeQuery } = require('../../../tools/retrieveError');
+const { isAuthenticatedByToken } = require('../../../config/authenticate');
 
 const router = express.Router();
 
@@ -29,7 +30,7 @@ const roundAccessibleFields = ['checked', 'size'];
  * @return {number} queryInfo.user - User's used to query.
  */
 
-router.get('/', (req, res) => {
+router.get('/', isAuthenticatedByToken, (req, res) => {
   const filter = {};
   let sort = {};
   let limit;
@@ -143,7 +144,7 @@ router.get('/', (req, res) => {
  * @return {ObjectId} queryInfo.user - User's used to query.
  * @return {ObjectId} queryInfo.round - Round's used to query.
  */
-router.get('/:rid', (req, res) => {
+router.get('/:rid', isAuthenticatedByToken,, (req, res) => {
   let fields;
   // Fields selecting query
   if (req.query.fields) {
@@ -196,7 +197,7 @@ router.get('/:rid', (req, res) => {
  * @return {boolean} success - Successful removing flag.
  * @return {string} message - Remove message.
  */
-router.delete('/:rid', (req, res) => {
+router.delete('/:rid', isAuthenticatedByToken, (req, res) => {
     // Handle error from Ticket.findOne
   Round.findById(req.param.rid, (err, round) => {
     if (err) {
