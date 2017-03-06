@@ -534,6 +534,7 @@ router.delete('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
 });
 
 router.use('/:id/rounds', require('./rounds'));
+router.use('/:id/checkin', require('./checkin'));
 
 
 module.exports = router;
