@@ -1,7 +1,7 @@
 const express = require('express');
 const { Activity, Round, Ticket } = require('../../../models');
 const RangeQuery = require('../../../tools/RangeQuery');
-const { isAuthenticatedByToken, isStaff } = require('../../../config/authenticate');
+const { isAuthenticatedByToken, isStaff, isScanner } = require('../../../config/authenticate');
 
 const router = express.Router({ mergeParams: true });
 
@@ -403,28 +403,30 @@ router.delete('/:rid/reserve', isAuthenticatedByToken, (req, res) => {
   });
 });
 
-router.post('/:rid/checkin', isAuthenticatedByToken, isStaff, (req, res) => {
+router.post('/:rid/checkin', isAuthenticatedByToken, isScanner, (req, res) => {
   const rid = req.params.rid;
   const userId = req.query.user;
-  if (req.user.staff.type !== 'Admin') {
-    Activity.find({ zone: req.user.staff.zone }, (err) => {
-      if (err) {
-        res.status(4, err);
-      }
-    });
-  }
-  Ticket.find({ round: rid, user: userId }, (err, ticket) => {
+  Activity.findById(req.params.id, (err, activity) => {
     if (err) {
-      res.status(5, err);
+      return res.sendError(5, err);
     }
-    ticket.checkIn(ticket._id)
-    .then(() => (
-      res.status(201).json({
-        success: true,
-        message: `Successfully check in ticket ${ticket._id} to ${req.params.rid}.`,
-      })
-    ))
-    .catch(err => (err.code ? res.sendError(err.code) : res.sendError(5, err)));
+    if (req.user.staff.type !== 'Admin' && activity.zone !== req.user.staff.zone) {
+      return res.sendError(4, 'Can\'t check in activity which not belong to your zone');
+    }
+
+    Ticket.find({ round: rid, user: userId }, (err, ticket) => {
+      if (err) {
+        return res.sendError(5, err);
+      }
+      ticket.checkIn(ticket._id)
+      .then(() => (
+        res.status(201).json({
+          success: true,
+          message: `Successfully check in ticket ${ticket._id} to ${req.params.rid}.`,
+        })
+      ))
+      .catch(err => (err.code ? res.sendError(err.code) : res.sendError(5, err)));
+    });
   });
 });
 
