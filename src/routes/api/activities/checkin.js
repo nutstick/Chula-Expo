@@ -55,7 +55,7 @@ router.post('/', isAuthenticatedByToken, isStaff, (req, res) => {
       }
       // Related activity not found
       if (!activitiy) {
-        return res.sendError(35, err);
+        return res.sendError(2, err);
       }
       User.findById(req.body.user).exec((err, _user) => {
         if (err) return res.sendError(5, err);
@@ -102,11 +102,11 @@ router.get('/:cid', (req, res) => {
     }
     // Checkin isn't exist.
     if (!_checkin) {
-      return res.sendError(35);
+      return res.sendError(36);
     }
     // Checkin is not belong to Activity
     if (_checkin.activityId.toString() !== req.params.id) {
-      return res.sendError(35);
+      return res.sendError(36);
     }
 
     res.json({
@@ -124,11 +124,11 @@ router.delete('/:cid', isAuthenticatedByToken, isStaff, (req, res) => {
     }
     // Checkin isn't exist.
     if (!_checkin) {
-      return res.sendError(35);
+      return res.sendError(36);
     }
     // Checkin is not belong to Activity
     if (_checkin.activityId.toString() !== req.params.id) {
-      return res.sendError(35);
+      return res.sendError(36);
     }
     // Remove the checkin
     _checkin.remove((err) => {
