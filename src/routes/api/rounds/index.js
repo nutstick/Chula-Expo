@@ -102,7 +102,7 @@ router.get('/', (req, res) => {
   if (req.query.fields) {
     fields = req.query.fields.split(',').map((field) => {
       if (field === 'seatsFullCapacity') {
-        return 'seats.FullCapacity';
+        return 'seats.fullCapacity';
       }
       if (field === 'seatsReserved') {
         return 'seats.reserved';
@@ -386,6 +386,8 @@ router.put('/:id', (req, res) => {
     if (req.body.seatsAvaliable) {
       round.seats.avaliable = req.body.seatsAvaliable;
     }
+
+    round.updateAt = new Date();
 
     round.save((err, _round) => {
       if (err) {

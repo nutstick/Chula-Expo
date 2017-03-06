@@ -83,18 +83,6 @@
           font: inherit;
         };
       }
-      #card-item-header {
-        @apply(--layout-horizontal);
-        @apply(--layout-justified);
-      }
-      #card-item-header > .right,
-      #card-item-header > .left {
-        @apply(--layout-horizontal);
-      }
-      .text-between {
-        margin: 0 6px;
-        line-height: 48px;
-      }
     </style>
     <div class="container">
       <activity-api
@@ -110,6 +98,7 @@
         total-pages="{{totalPages}}"
       ></activity-api>
       <zone-api
+        id="zoneAPI"
         zones="{{zones}}"
         error="{{error}}"
         loading="{{zoneLoading}}"
@@ -140,12 +129,12 @@
         <div class="empty-list"></div>
       </template>
       <template is="dom-repeat" items="{{activities}}">
-        <paper-card-item class="activity-item" action image="/public/img/thumbnail-default.jpg">
+        <paper-card-item action image="{{_computeImage(item.thumbnail)}}">
           <div class="card-item-header">
             {{item.name.en}}
           </div>
           <div class="card-item-content">
-            {{item.shortDescription.en}}
+          	{{_convertToDate(item.start)}} - {{_convertToDate(item.end)}}<br>{{_subString(item.shortDescription.en)}}
           </div>
           <div class="card-item-actions">
             <paper-tabs scrollable fit-container no-bar hide-scroll-buttons>
@@ -182,10 +171,13 @@
           observer: '_activatedChanged'
         },
         page: {
-          type: Number
+          type: Number,
         },
         pageSize: {
-          type: Number
+          type: Number,
+        },
+        zone: {
+          type: String,
         },
         totalPages: Number,
         error: {
@@ -209,15 +201,25 @@
         }
       },
       observers: [
-        '_changeAcitvityParams(page, pageSize)'
+        '_changeAcitvityParams(page, pageSize, zone)'
       ],
+      _computeImage(thumbnail) {
+        if(thumbnail)
+          return thumbnail;
+        else
+          return '/public/img/thumbnail-default.jpg';
+      },
       _changeAcitvityParams: function(page, pageSize) {
         this.$.activityAPI.generateRequest();
       },
       _activatedChanged: function(activated) {
         if (activated) {
-          this.$.activityAPI.generateRequest();
+          this.generateRequest();
         }
+      },
+      generateRequest: function() {
+        this.$.activityAPI.generateRequest();
+        this.$.zoneAPI.generateRequest();
       },
       _showClick: function(id) {
         var id = event.model.item['_id'];
@@ -266,6 +268,14 @@
         if (!me || !me.staff)
           return false;
         return me.staff.staffType === 'Admin';
+      },
+      _convertToDate: function(dateTime) {
+        return moment.utc(dateTime).format('MM-DD-YYYY HH:mm');
+      },
+      _subString: function(string) {
+        if(string.length>40)
+          return string.substring(0,40) + '...';
+        else return string;
       }
     })
   </script>

@@ -220,6 +220,9 @@ router.put('/:id', (req, res) => {
     if (req.body.locationLong) {
       fac.location.longitude = req.body.locationLong;
     }
+
+    fac.updateAt = new Date();
+
     fac.save((err, updatedFac) => {
       if (err) {
       // Handle error from save

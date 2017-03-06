@@ -41,11 +41,11 @@
         },
         page: {
           type: Number,
-          value: 0
+          value: 1
         },
         pageSize: {
           type: Number,
-          value: 0
+          value: 10
         },
         fields: {
           type: String,
@@ -98,7 +98,7 @@
         this.set('params.fields', fields)
       },
       generateRequest: function() {
-        this.$.facilityResource.generateRequest();
+        return this.$.facilityResource.generateRequest();
       },
       _handleResponse: function(event) {
         if(event.detail.response) {

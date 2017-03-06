@@ -166,10 +166,10 @@ router.post('/', (req, res) => {
   room.name.en = req.body.nameEN;
   room.name.th = req.body.nameTH;
 
-  room.floor= req.body.floor;
+  room.floor = req.body.floor;
 
 
- room.place = mongoose.Types.ObjectId(req.body.place);
+  room.place = mongoose.Types.ObjectId(req.body.place);
   // Save room and check for error
   room.save((err, _room) => {
     if (err) {
@@ -183,22 +183,7 @@ router.post('/', (req, res) => {
       success: true,
       results: _room
     });
-        Place.findOneAndUpdate(
-     {
-       _id:req.body.place
-     },{
-       $addToSet:{rooms: mongoose.Types.ObjectId(_room._id)}
-     },function(err,rooms){
-                         if(err){
-                             return res.status(400).send({
-                                 message:"Error add  room to place"
-                             });
-                         } else{
-                        }
-      });
-
-    });
-
+  });
 });
 
 // Update an existing room via PUT(JSON format)
@@ -235,6 +220,7 @@ router.put('/:id', (req, res) => {
     if (req.body.place) {
       room.place = mongoose.Types.ObjectId(req.body.place);
     }
+    room.updateAt = new Date();
 
     room.save((err, _room) => {
       if (err) {

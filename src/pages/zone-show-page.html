@@ -260,8 +260,8 @@
             <paper-card-dataitem action image="http://icons.iconarchive.com/icons/awicons/vista-artistic/256/office-building-icon.png">
 
               <div class="card-item-header">
-              <h2>  {{item.name.en}} </h2>
-              <h4>CODE {{item.code}}</h4>
+              <h4>  {{item.name.en}}</h4>
+              <h5>CODE {{item.code}}</h5>
 
               </div>
 
@@ -310,9 +310,11 @@
         '_activatedChanged(activated, zoneId)',
       ],
       _activatedChanged: function(activated, zoneId) {
-				if (activated) {
-          this.$.zoneAPI.generateRequest();
-          this.$.placeAPI.generateRequest();
+        if (activated) {
+          var zoneRequest = this.$.zoneAPI.generateRequest();
+          zoneRequest.completes.then(function() {
+            this.$.placeAPI.generateRequest();
+          }.bind(this));
         }
       },
       _response: function(e) {

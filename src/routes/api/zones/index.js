@@ -61,6 +61,17 @@ router.get('/', (req, res) => {
     filter.type = req.query.type;
   }
 
+
+  // Zones's updateAt range query
+  if (req.query.update) {
+    try {
+      req.query.update = JSON.parse(req.query.update);
+    } catch (err) {
+      // return res.sendError(5, err);
+    }
+    filter.updateAt = RangeQuery(req.query.update, 'Date');
+  }
+
 //----------------------------------------------------------------
 // initial limit
   let limit;
@@ -286,6 +297,8 @@ router.put('/:id', (req, res) => {
     if (req.body.locationLong) {
       zone.location.longitude = req.body.locationLong;
     }
+
+    zone.updateAt = new Date();
 
     zone.save((err, _zone) => {
       if (err) {

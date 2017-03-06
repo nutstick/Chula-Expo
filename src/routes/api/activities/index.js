@@ -6,6 +6,8 @@ const { RangeQuery } = require('../../../tools');
 const { isAuthenticatedByToken, isStaff } = require('../../../config/authenticate');
 
 const router = express.Router();
+
+
 /**
  * Get Activity list
  * Access at GET https://localhost:8080/api/activities
@@ -403,9 +405,9 @@ router.get('/:id/qrcode', (req, res) => {
   Activity.findById(req.params.id, (err, act) => {
     if (err) {
       return res.sendError(5, err);
-    } else if(!act) {
-		  return res.sendError(5, err);
-		} else if (!act.pdf) {
+    } else if (!act) {
+      return res.sendError(5, err);
+    } else if (!act.pdf) {
       return res.sendError(5, err);
     }
 
@@ -421,9 +423,9 @@ router.get('/:id/qrvideo', (req, res) => {
   Activity.findById(req.params.id, (err, act) => {
     if (err) {
       return res.sendError(5, err);
-    } else if(!act) {
-		  return res.sendError(5, err);
-		}  else if (!act.video) {
+    } else if (!act) {
+      return res.sendError(5, err);
+    } else if (!act.video) {
       return res.sendError(5, err);
     }
     res.writeHead(301, {
