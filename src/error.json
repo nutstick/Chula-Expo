@@ -98,5 +98,10 @@
     "status": "400",
     "message": "Can't use used ticket.",
     "code": "35"
+  },
+  "36": {
+    "status": "403",
+    "message": "Activity Checkin is not exist",
+    "code": "36"
   }
 }

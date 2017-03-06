@@ -5,6 +5,7 @@ const Ticket = require('./Ticket');
 const Facility = require('./Facility');
 const Place = require('./Place');
 const Zone = require('./Zone');
+const ActivityCheck = require('./ActivityCheck');
 
 module.exports = {
   Activity,
@@ -13,5 +14,6 @@ module.exports = {
   Round,
   Ticket,
   User,
-  Zone
+  Zone,
+  ActivityCheck
 };
