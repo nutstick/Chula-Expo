@@ -51,8 +51,8 @@ router.get('/where', (req, res) => {
     success: true,
     results: {
       text: {
-        en: 'Faculty of engineering',
-        th: 'คณะวิศวกรรมศาสตร์'
+        en: 'no information',
+        th: 'อยู่นอกพื้นที่จัดงาน'
       }
     }
   });
