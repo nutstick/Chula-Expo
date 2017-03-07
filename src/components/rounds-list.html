@@ -254,7 +254,6 @@
       _response: function(e) {
         if (e.detail.response.success) {
           this.$.form.reset();
-          console.log("kuy");
           this.$.api.generateRequest();
           this._state = 'list';
         }
