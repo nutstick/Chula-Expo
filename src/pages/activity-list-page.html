@@ -1,8 +1,9 @@
 <!-- Libery -->
 <link rel="import" href="/public/lib/polymer/polymer.html">
 <!-- Web Component -->
+<link rel="import" href="/public/lib/iron-icon/iron-icon.html">
+<link rel="import" href="/public/lib/iron-icons/iron-icons.html">
 <link rel="import" href="/public/lib/paper-card/paper-card.html">
-<link rel="import" href="/public/lib/paper-fab/paper-fab.html">
 <link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="/public/lib/paper-date-picker-item/paper-datetime-picker-item.html">
 <link rel="import" href="/public/lib/paper-icon-button/paper-icon-button.html">
@@ -14,10 +15,11 @@
 <link rel="import" href="/public/lib/vaadin-combo-box/vaadin-combo-box.html">
 
 <link rel="import" href="/components/activity-api.html">
-<link rel="import" href="/components/zone-api.html">
+<link rel="import" href="/components/bottom-prefab.html">
 <link rel="import" href="/components/paper-card-item.html">
 <link rel="import" href="/components/paper-card-item-pagination.html">
 <link rel="import" href="/components/shared-styles.html">
+<link rel="import" href="/components/zone-api.html">
 
 <script src="/public/lib/moment/locale/th.js"></script>
 <dom-module id="activity-list-page">
@@ -27,10 +29,6 @@
         @apply(--layout-vertical);
         @apply(--layout-center-center);
         padding-top: 20px;
-      }
-      .fixed-bottom {
-        position: fixed;
-        bottom: 20px;
       }
       .empty-list {
         height: 200px;
@@ -44,44 +42,26 @@
         color: #bbb;
         font-weight: 200;
       }
-      #add-icon {
-        position: absolute;
-        bottom: 0px;
-        right: -20px;
-        @apply(--shadow-elevation-8dp);
+      paper-card-item {
+        --paper-card-item-image-width: 136px;
+        --paper-card-item-image-height: 102px;
       }
-      @media (max-width: 600px) {
-        .fixed-bottom {
-          right: 20px;
-        }
-        #add-icon {
-          right: 0px;
-        }
-      }
-      .clearfix:after {
-        clear:both;
-        display:block;
-        content: "";
-      }
-      .activity-item .card-item-content {
+      .card-item-content {
         @apply(--layout-flex);
       }
+      .activity-item .card-item-content iron-icon {
+        color: #555;
+        margin-right: 8px;
+        --iron-icon-width: 16px;
+        --iron-icon-height: 16px;
+      }
+      /* .activity-item */
       .activity-item .card-item-actions paper-tabs {
-        height: 34px;
+        height: 42px;
       }
       .activity-item .card-item-actions paper-tab {
         --paper-tab-ink: #eee;
-        font-size: 12px;
         color: #000;
-        --paper-tab-content: {
-          text-decoration: none;
-          padding: 0.7em 0.57em;
-          cursor: pointer;
-          user-select: none;
-          text-transform: uppercase;
-          font-weight: 100!important;
-          font: inherit;
-        };
       }
     </style>
     <div class="container">
@@ -106,8 +86,9 @@
         page-size="0"
         fields="_id,nameEN"
       ></zone-api>
+      <!-- Search Header -->
       <paper-card-item hidden$="[[!isAdmin]]"  action>
-        <div id="card-item-header" class="card-item-content">
+        <div class="card-item-content">
           <div class="left">
             <vaadin-combo-box
               label="สังกัด"
@@ -125,19 +106,22 @@
           </div>
         </div>
       </paper-card-item>
+      <!-- List -->
       <template is="dom-if" if="{{_computeNoActivities(activities)}}">
         <div class="empty-list"></div>
       </template>
       <template is="dom-repeat" items="{{activities}}">
-        <paper-card-item action image="{{_computeImage(item.thumbnail)}}">
+        <paper-card-item class="activity-item" action image="[[_computeImage(item.thumbnail)]]">
           <div class="card-item-header">
-            {{item.name.en}}
+            [[_computeString(item.name.en)]]
           </div>
           <div class="card-item-content">
-          	{{_convertToDate(item.start)}} - {{_convertToDate(item.end)}}<br>{{_subString(item.shortDescription.en)}}
+            <iron-icon icon="icons:alarm"></iron-icon>
+            [[_computeDateFormat(item.start)]] ถึง [[_computeDateFormat(item.end)]]
+          	<!--[[_computeString(item.shortDescription.en)]]-->
           </div>
           <div class="card-item-actions">
-            <paper-tabs scrollable fit-container no-bar hide-scroll-buttons>
+            <paper-tabs scrollable no-bar hide-scroll-buttons>
               <paper-tab on-tap="_showClick">Show</paper-tab>
               <paper-tab on-tap="_editClick">Edit</paper-tab>
               <paper-tab on-tap="_deleteClick">Delete</paper-tab>
@@ -145,13 +129,9 @@
           </div>
         </paper-card-item>
       </template>
+      <!-- Pagination -->
       <paper-card-item-pagination page="{{page}}" page-size="{{pageSize}}" total-pages="[[totalPages]]"></paper-card-item-pagination>
-      <div class="fixed-bottom">
-        <div class="container">
-          <paper-fab id="add-icon" icon="add" on-tap="_addClick"></paper-fab>
-          <div class="clearfix"></div>
-        </div>
-      </div>
+      <bottom-prefab reveals effects="waterfall" target-url="/activity/add"></bottom-prefab>
     </div>
     <paper-dialog id="dialog" on-iron-overlay-closed="_delete">
       <h2>Are you sure?</h2>
@@ -203,12 +183,6 @@
       observers: [
         '_changeAcitvityParams(page, pageSize, zone)'
       ],
-      _computeImage(thumbnail) {
-        if(thumbnail)
-          return thumbnail;
-        else
-          return '/public/img/thumbnail-default.jpg';
-      },
       _changeAcitvityParams: function(page, pageSize) {
         this.$.activityAPI.generateRequest();
       },
@@ -229,9 +203,6 @@
         var id = event.model.item['_id'];
         document.querySelector('chulaexpo-staff-app').set('route.path', '/activity/'+id+'/edit/');
 			},
-      _addClick: function() {
-        document.querySelector('chulaexpo-staff-app').set('route.path', '/activity/add/');
-      },
       _scanClick: function(id) {
         var id = event.model.item['_id'];
         document.querySelector('chulaexpo-staff-app').set('route.path', '/activity/'+id+'/scan/');
@@ -269,10 +240,16 @@
           return false;
         return me.staff.staffType === 'Admin';
       },
-      _convertToDate: function(dateTime) {
-        return moment.utc(dateTime).format('MM-DD-YYYY HH:mm');
+      _computeImage(thumbnail) {
+        if(thumbnail)
+          return thumbnail;
+        else
+          return '/public/img/thumbnail-default.jpg';
       },
-      _subString: function(string) {
+      _computeDateFormat: function(dateTime) {
+        return moment.utc(dateTime).format('D MMM YY HH:mm');
+      },
+      _computeString: function(string) {
         if(string.length>40)
           return string.substring(0,40) + '...';
         else return string;

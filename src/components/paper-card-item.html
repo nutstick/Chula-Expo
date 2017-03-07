@@ -5,7 +5,7 @@
 
 <dom-module id="paper-card-item">
   <template>
-    <style>
+    <style is="custom-style">
       :host {
         overflow: hidden;
         box-sizing: border-box;
@@ -25,10 +25,10 @@
         @apply(--layout-flex);
         display: initial;
         overflow: visited;
-        width: var(--card-item-image-width, 110px);
-        height: var(--card-item-image-width, 110px);
+        width: var(--paper-card-item-image-width, 110px);
+        height: var(--paper-card-item-image-height, 110px);
         --iron-image-width: var(--paper-card-item-image-width, 110px);
-        --iron-image-height: var(--paper-card-item-image-width, 110px);
+        --iron-image-height: var(--paper-card-item-image-height, 110px);
       }
       .header {
         margin-right: 10px;
@@ -42,28 +42,36 @@
       :host([action]) .container {
         padding: 0px;
       }
+      /* .card-item-header */
       :host .container ::content .card-item-header {
         font-size: 18px;
         font-weight: 400;
+        margin-bottom: 6px;
         color: var(--paper-card-item-header-color, #000);
       }
+      /* .card-item-content */
       :host .container ::content > .card-item-content {
         font-size: 14px;
         font-weight: 400;
         color: var(--paper-card-item-content-color, #666);
-        margin-bottom: 12px;
+        margin-bottom: 6px;
       }
-      /*:host .container ::content .card-item-button {
-        display: block;
-        height: 100%;
-        right: 0;
-        position: absolute;
-        top: 0;
-        z-index: 1;
-      }*/
+      /* .card-item-actions */
       :host .container ::content .card-item-actions {
         border-top: 1px solid #e8e8e8;
         position:relative;
+        text-transform: uppercase;
+        text-decoration: none;
+      }
+      :host .container ::content .card-item-actions paper-tabs {
+        font-weight: 100;
+      }
+      :host .container ::content .card-item-actions paper-tab {
+        --paper-tab-ink: #555;
+        --paper-tab-content: {
+          padding: 0.7em 0.57em;
+          cursor: pointer;
+        };
       }
     </style>
     <div class="header">

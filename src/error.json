@@ -5,9 +5,9 @@
     "code": "1"
   },
   "2": {
-    "status": "450",
-    "message": "Email or Passowrd missing",
-    "code": "2"
+    "status": "400",
+    "code": 2,
+    "message": "First time Signup, need to provied more data"
   },
   "4": {
     "status": "401",

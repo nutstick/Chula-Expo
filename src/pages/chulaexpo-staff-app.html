@@ -58,6 +58,9 @@
         height: 100%;
         max-width: 640px;
       }
+      app-header-layout {
+        z-index: 1;
+      }
       paper-tab {
         --paper-tab-ink: var(--primary-color);
         text-transform: uppercase;
@@ -129,7 +132,7 @@
       </app-drawer>
       <!-- Navbar Layout on desktop -->
       <app-header-layout>
-        <app-header>
+        <app-header reveals condenses>
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle hidden$="{{displayMenu}}"></paper-icon-button>
             <div main-title>Chula Expo Staff</div>
