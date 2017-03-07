@@ -139,11 +139,11 @@
       },
       _activatedChanged: function(activated) {
         if (activated) {
+          console.log("Active changed")
           this.generateRequest();
         }
       },
       generateRequest: function() {
-        console.log('Place API', this.$.placeAPI);
         this.$.placeAPI.generateRequest();
       },
       _showClick: function(id) {

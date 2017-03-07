@@ -162,7 +162,7 @@
 						<div class="flex-layout">
 							<label class="label --upload">Thumbnail</label>
 							<div class="flex">
-                <iron-image style="width:140px; height:80px;" sizing="cover" preload fade src="{{activity.thumbnail}}"></iron-image>
+                <iron-image style="width:140px; height:80px;" sizing="cover" preload fade src="{{_computeThumbnail(activity.thumbnail)}}"></iron-image>
 							</div>
 						</div>
 					</div>
@@ -171,7 +171,7 @@
 						<div class="flex-layout">
 							<label class="label --upload">Banner</label>
 							<div class="flex">
-                <iron-image style="width:200px; height:150px;" sizing="cover" preload fade src="{{activity.banner}}"></iron-image>
+                <iron-image style="width:200px; height:150px;" sizing="cover" preload fade src="{{_computeBanner(activity.banner)}}"></iron-image>
 							</div>
 						</div>
 					</div>
@@ -441,6 +441,12 @@
       _convertToDate: function(dateTime) {
         return moment.utc(dateTime).format('MM-DD-YYYY HH:mm');
       },
+			_computeThumbnail: function(thumbnail) {
+				return window.api + thumbnail;
+			},
+			_computeBanner: function(banner) {
+				return window.api + banner;
+			}
     })
   </script>
 </dom-module>

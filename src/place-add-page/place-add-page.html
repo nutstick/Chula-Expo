@@ -182,7 +182,9 @@
         },
         _url: {
           type: String,
-          value: window.api + "/api/places"
+          value: function() {
+            return window.api + '/api/places';
+          }
         },
         zones: {
           type: Array

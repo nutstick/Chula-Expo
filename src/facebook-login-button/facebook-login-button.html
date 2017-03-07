@@ -34,13 +34,14 @@
       },
       fblogin: function() {
         var elem = this;
+        console.log(window.api + '/auth/facebook');
         popupTools.popup(window.api + '/auth/facebook', "Facebook Connect", {}, function (err, res) {
           if (err) {
             elem.error = err.toString();
           } else {
             if (res.success) {
               document.querySelector('chulaexpo-staff-app').token = res.results.token;;
-              document.getElementById('storage').save();
+              // document.getElementById('storage').save();
 
               window.history.pushState({}, null, '/');
               window.dispatchEvent(new CustomEvent('location-changed'));

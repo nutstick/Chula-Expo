@@ -20,7 +20,9 @@
       properties: {
         url: {
           type: String,
-          value: window.api + '/api/activities',
+          value: function() {
+            return window.api + '/api/activities';
+          }
         },
         params: {
           type: Object,
@@ -31,9 +33,9 @@
         },
         headers: {
           type: Object,
-          value: {
-            'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
-          }
+          // value: {
+          //   'Authorization': 'JWT ' + window.token
+          // }
         },
         /*
           Input Data
@@ -104,6 +106,19 @@
       observers: [
         'updateRequest(page,pageSize,fields,start,end,zone,me)'
       ],
+      ready: function(){
+        document.addEventListener('token', function(e) {
+          var token = e.detail.token;
+          if (!token) {
+            return;
+          }
+
+          this.headers = {
+            'Authorization': 'JWT ' + token
+          };
+          // this.generateRequest();
+        }.bind(this));
+      },
       updateRequest: function(page, pageSize, fields, start, end, zone, me) {
         if (pageSize === 0) {
           this.set('params.limit', null);

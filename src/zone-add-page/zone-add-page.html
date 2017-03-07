@@ -232,7 +232,9 @@
       properties: {
         _url: {
           type: String,
-          value: window.api + '/api/zones'
+          value: function() {
+            return window.api + '/api/zones';
+          }
         },
         token: {
           type: String,

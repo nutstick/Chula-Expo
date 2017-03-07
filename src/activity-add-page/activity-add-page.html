@@ -380,19 +380,27 @@
         },
         _url: {
           type: String,
-          value: window.api + '/activities'
+          value: function() {
+            return window.api + '/activities';
+          }
         },
         _thumbnailUploadUrl: {
           type: String,
-          value: window.api + '/upload/img/activities/thumbnail'
+          value: function() {
+            return window.api + '/upload/img/activities/thumbnail';
+          }
         },
         _bannerUploadUrl: {
           type: String,
-          value: window.api + '/upload/img/activities/banner'
+          value: function() {
+            return window.api + '/upload/img/activities/banner';
+          }
         },
         _activityUploadUrl: {
           type: String,
-          value: window.api + 'upload/img/activities/picture'
+          value: function() {
+            return window.api + 'upload/img/activities/picture';
+          }
         },
         zones: {
           type: Array,

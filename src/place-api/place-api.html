@@ -20,7 +20,9 @@
       properties: {
         url: {
           type: String,
-          value: window.api + '/api/places',
+          value: function() {
+            return window.api + "/api/places"
+          }
         },
         params: {
           type: Object,
@@ -28,9 +30,9 @@
         },
         headers: {
           type: Object,
-          value: {
-            'Authorization': 'JWT ' + window.token
-          }
+          // value: {
+          //   'Authorization': 'JWT ' + window.token
+          // }
         },
         /*
           Input Data
@@ -90,6 +92,19 @@
         'updateRequest(page,pageSize,fields)'
       ],
 
+      ready: function(){
+        document.addEventListener('token', function(e) {
+          var token = e.detail.token;
+          if (!token) {
+            return;
+          }
+
+          this.headers = {
+            'Authorization': 'JWT ' + token
+          };
+          // this.generateRequest();
+        }.bind(this));
+      },
       updateRequest: function(page, pageSize, fields) {
         if (pageSize === 0) {
           this.set('params.limit', null);
@@ -102,6 +117,7 @@
         this.set('params.fields', fields)
       },
       generateRequest: function() {
+        console.log(this.params)
         return this.$.placeResource.generateRequest();
       },
       _handleResponse: function(event) {
@@ -119,9 +135,10 @@
       },
       _zoneChanged: function(id){
         this.url = window.api + '/api/places?zoneid=' + id;
-        this.generateRequest();
+        // this.generateRequest();
       },
       _idChanged: function(id) {
+        console.log(id)
         if (id && id!='show' && id!='edit' && id!='add' && id!='list') {
           this.url = window.api + '/api/places/' + id;
         } else {

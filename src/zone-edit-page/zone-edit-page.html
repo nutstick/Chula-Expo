@@ -246,7 +246,9 @@
 				},
 				_url: {
           type: String,
-          value: window.api + '/api/zones'
+          value: function() {
+            return window.api + '/api/zones';
+          }
         },
         zoneId: {
           type: Object,

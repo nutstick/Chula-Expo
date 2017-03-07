@@ -47,7 +47,7 @@
       is: 'account-page',
       logout: function() {
         document.querySelector('chulaexpo-staff-app').token = null;
-        document.getElementById('storage').save();
+        // document.getElementById('storage').save();
 
         // window.history.pushState({}, null, '/');
         document.querySelector('chulaexpo-staff-app').set('route.path', '/');

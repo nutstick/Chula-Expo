@@ -166,7 +166,7 @@
 						<div class="flex-layout">
 							<label class="label --upload">Thumbnail</label>
 							<div class="flex fitdiv">
-                <iron-image style="width:140px; height:80px;" sizing="cover" preload fade src="{{zone.thumbnail}}"></iron-image>
+                <iron-image style="width:140px; height:80px;" sizing="cover" preload fade src="{{_computeThumbnail(zone.thumbnail)}}"></iron-image>
 							</div>
 						</div>
 					</div>
@@ -175,7 +175,7 @@
 						<div class="flex-layout">
 							<label class="label --upload">Banner</label>
               <div class="flex fitdiv">
-                <iron-image style="width:200px; height:150px;" sizing="cover" preload fade src="{{zone.banner}}"></iron-image>
+                <iron-image style="width:200px; height:150px;" sizing="cover" preload fade src="{{_computeBanner(zone.banner)}}"></iron-image>
 							</div>
 						</div>
 					</div>
@@ -346,7 +346,13 @@
           this.urlPlace = '';
         }
         this.$.placeAPI.generateRequest();
-      }
+      },
+			_computeThumbnail: function(thumbnail) {
+				return window.api + thumbnail;
+			},
+			_computeBanner: function(banner) {
+				return window.api + banner;
+			}
     })
   </script>
 </dom-module>

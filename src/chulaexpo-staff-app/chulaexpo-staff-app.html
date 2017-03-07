@@ -10,7 +10,7 @@
 <link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../../bower_components/app-route/app-location.html">
 <link rel="import" href="../../bower_components/app-route/app-route.html">
-<link rel="import" href="../../bower_components/iron-localstorage/iron-localstorage.html">
+<link rel="import" href="../../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
@@ -19,6 +19,12 @@
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <!-- Pages -->
 <link rel="import" href="../me-api/me-api.html">
+<link rel="import" href="../activity-api/activity-api.html">
+<link rel="import" href="../place-api/place-api.html">
+<link rel="import" href="../zone-api/zone-api.html">
+<link rel="import" href="../facility-api/facility-api.html">
+<link rel="import" href="../room-api/room-api.html">
+<link rel="import" href="../round-api/round-api.html">
 <link rel="import" href="../login-page/login-page.html">
 
 <dom-module id="chulaexpo-staff-app">
@@ -103,12 +109,12 @@
       data="{{routeData}}"
       tail="{{subroute}}"
     ></app-route>
-    <iron-localstorage
+    <app-localstorage-document
       id="storage"
-      name="chula-expo"
-      value="{{token}}"
-      autoSaveDisabled
-    ></iron-localstorage>
+      key="token"
+      data="{{token}}"
+      storage="window.localStorage"
+    ></app-localstorage-document>
     <me-api
       me="{{me}}"
       token="[[token]]"
@@ -189,8 +195,8 @@
           observer: '_pageChanged',
         },
         token: {
-          type: String,
-          value: null,
+          type: Object,
+          notify: true,
           observer: '_uppdateToken',
         },
         loggedIn: {
@@ -225,8 +231,8 @@
 
       _uppdateToken: function(token) {
         window.token = token;
-        var event = new CustomEvent('token', { token: token });
-        document.dispatchEvent(event)
+        // this.$.storage.save();
+        this.fire('token', { token: token });
       },
       _routePageChanged: function(page) {
         this.page = page || 'home';

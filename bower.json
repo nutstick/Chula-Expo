@@ -50,7 +50,8 @@
     "app-localize-behavior": "^0.10.1",
     "app-route": "PolymerElements/app-route#^0.9.3",
     "paper-tags-input": "^1.2.5",
-    "better-emmet-plugin": "^1.0.0-rc.1"
+    "better-emmet-plugin": "^1.0.0-rc.1",
+    "app-storage": "^0.9.8"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",

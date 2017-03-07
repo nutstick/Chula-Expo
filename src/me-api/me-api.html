@@ -30,18 +30,21 @@
         },
         _url: {
           type: String,
-          value: window.api + "/api/me"
+          value: function() {
+            return window.api + '/api/me';
+          }
         },
         headers: {
           type: Object,
-          value: {}
+          value: function() {
+            return {
+              'Authorization': 'JWT ' + window.token
+            };
+          }
         },
         auto: {
           type: Boolean,
           value: false,
-        },
-        token: {
-          type: String,
         },
         fields: {
           type: String,
@@ -58,25 +61,28 @@
       },
 
       observers: [
-        '_updateToken(token)',
         '_updateRequest(fields)'
       ],
 
-      _updateToken: function(token) {
-        this.set('auto', !!token);
-        if (!token) return;
-        this.headers = {
-          'Authorization': 'JWT ' + token
-        };
-        if (token) {
-          this.$.ajax.generateRequest();
-        }
+      ready: function(){
+        document.addEventListener('token', function(e) {
+          var token = e.detail.token;
+          if (!token) {
+            return;
+          }
+
+          this.headers = {
+            'Authorization': 'JWT ' + token
+          };
+          this.generateRequest();
+        }.bind(this));
       },
       _updateRequest: function(fields) {
         this.set('params.fields', fields);
-        if (this.token) {
-          this.$.ajax.generateRequest();
-        }
+        // this.generateRequest();
+      },
+      generateRequest: function() {
+        return this.$.ajax.generateRequest();
       },
       _handleResponse: function(event) {
         if (event.detail.response.success) {
@@ -88,8 +94,9 @@
         if (!response.success) {
           if (response.errors.code === "4") {
             // Logout
+            console.log(document.querySelector('chulaexpo-staff-app').token)
             document.querySelector('chulaexpo-staff-app').token = null;
-            document.getElementById('storage').save();
+            // document.getElementById('storage').save();
 
             // window.history.pushState({}, null, '/');
             document.querySelector('chulaexpo-staff-app').set('route.path', '/');

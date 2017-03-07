@@ -20,7 +20,9 @@
       properties: {
         url: {
           type: String,
-          value: window.api + '/api/rounds',
+          value: function() {
+            return window.api + '/api/rooms';
+          }
         },
         params: {
           type: Object,
@@ -99,7 +101,7 @@
             'Authorization': 'JWT ' + token
           };
           this.generateRequest();
-        });
+        }.bind(this));
       },
       _updateRequest: function(url, page, pageSize, fields, start, end, zone) {
         if (pageSize === 0) {

@@ -189,7 +189,9 @@
               },
               _url: {
                 type: String,
-                value: window.api + '/api/facilities'
+                value: function() {
+                  return window.api + '/api/facilities';
+                }
               },
               places: {
                 type: Array

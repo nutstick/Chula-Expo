@@ -73,7 +73,9 @@
       properties: {
         _url: {
           type: String,
-          value: window.api + '/api/login'
+          value: function() {
+            return window.api + '/api/login'
+          }
         },
         token: {
           type: String
@@ -120,10 +122,11 @@
       _response: function(e) {
         if (e.detail.response.success) {
           document.querySelector('chulaexpo-staff-app').token = e.detail.response.results.token;
-          document.getElementById('storage').save();
+          // document.getElementById('storage').save();
           
-          window.history.pushState({}, null, '/');
-          window.dispatchEvent(new CustomEvent('location-changed'));
+          // window.history.pushState({}, null, '/');
+          // window.dispatchEvent(new CustomEvent('location-changed'));
+          // window.location = '/';
         }
       },
       _error: function(e) {

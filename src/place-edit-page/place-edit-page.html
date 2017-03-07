@@ -191,7 +191,9 @@
         },
         _url: {
           type: Object,
-          value: window.api + '/api/places'
+          value: function() {
+            return window.api + '/api/places';
+          }
         },
         placeId: {
           type: Object,

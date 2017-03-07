@@ -21,7 +21,9 @@
       properties: {
         url: {
           type: String,
-          value: window.api + '/api/rooms',
+          value: function() {
+            return window.api + '/api/rooms';
+          }
         },
         params: {
           type: Object,
@@ -29,9 +31,9 @@
         },
         headers: {
           type: Object,
-          value: {
-            'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
-          }
+          // value: {
+          //   'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
+          // }
         },
         /*
           Input Data
@@ -83,6 +85,19 @@
         'updateRequest(page,pageSize,fields,start,end,room,placeId)'
       ],
 
+      ready: function(){
+        document.addEventListener('token', function(e) {
+          var token = e.detail.token;
+          if (!token) {
+            return;
+          }
+
+          this.headers = {
+            'Authorization': 'JWT ' + token
+          };
+          // this.generateRequest();
+        }.bind(this));
+      },
       updateRequest: function(page, pageSize, fields, start, end, room, placeId) {
         if (pageSize === 0) {
           this.set('params.limit', null);
@@ -115,6 +130,7 @@
         this.generateRequest();
       },
       _roomChanged: function(id){
+        console.log(id)
         this.url = window.api + '/api/rooms/' + id;
         this.generateRequest();
       }

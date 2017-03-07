@@ -37,7 +37,7 @@
         position: relative;
         background-color: var(--primary-color);
         margin-bottom: 60px;
-        overflow: inherit;
+        overflow: inherit!important;
       }
       .header * {
         overflow: inherit;
@@ -216,7 +216,9 @@
       properties: {
         _url: {
           type: String,
-          value: window.api + "/api/signup"
+          value: function() {
+            return window.api + '/api/signup';
+          }
         },
         zones: {
           type: Array,
@@ -329,7 +331,7 @@
       _response: function(e) {
         if (e.detail.response.success) {
           document.querySelector('chulaexpo-staff-app').token = e.detail.response.results.token;
-          document.getElementById('storage').save();
+          // document.getElementById('storage').save();
 
           window.history.pushState({}, null, '/');
           window.dispatchEvent(new CustomEvent('location-changed'));
