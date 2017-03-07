@@ -4,12 +4,12 @@
 
 ## Log in with facebook (Web)
 ```
-GET api/auth/facebook
+GET auth/facebook
 ```
 
 ## Log in with facebook (Andriod, iOS)
 ```
-GET api/auth/facebook/token
+GET auth/facebook/token
 ```
 Name | Datatype | required | Description
 -----|----------|----------|------------
