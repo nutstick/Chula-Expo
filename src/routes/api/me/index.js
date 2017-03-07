@@ -115,8 +115,6 @@ router.put('/', isAuthenticatedByToken, (req, res) => {
       req.user.staff.staffType = req.body.staff;
     }
   }
-  console.log(req.user);
-  console.log(req.body);
 
   // Save User and check for error
   req.user.save((err, _user) => {
