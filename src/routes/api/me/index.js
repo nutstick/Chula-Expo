@@ -100,30 +100,23 @@ router.put('/', isAuthenticatedByToken, (req, res) => {
     req.user.type = req.body.type;
   }
   if (req.body.type === 'Academic' && req.body.academicLevel && req.body.academicYear && req.body.academicSchool) {
-    req.user.academic = {
-      level: req.body.academicLevel,
-      year: req.body.academicYear,
-      school: req.body.academicSchool
-    };
+    req.user.academic.level = req.body.academicLevel;
+    req.user.academic.year = req.body.academicYear;
+    req.user.academic.school = req.body.academicSchool;
   }
   if (req.body.type === 'Worker' && req.body.workerJob) {
-    req.user.worker = {
-      job: req.body.workerJob
-    };
+    req.user.worker.job = req.body.workerJob;
   }
   if (req.body.type === 'Staff' && req.body.staffT) {
     if (req.body.staff !== 'Admin' && req.body.zone) {
-      req.user.staff = {
-        staffType: req.body.staff,
-        zone: req.body.zone
-      };
+      req.user.staff.staffType = req.body.staff;
+      req.user.staff.zone = req.body.zon;
     } else {
-      req.user.staff = {
-        staffType: req.body.staff
-      };
+      req.user.staff.staffType = req.body.staff;
     }
   }
   console.log(req.user);
+  console.log(req.body);
 
   // Save User and check for error
   req.user.save((err, _user) => {
