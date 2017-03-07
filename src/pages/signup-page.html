@@ -93,6 +93,7 @@
       }
     </style>
     <zone-api
+      id="zoneAPI"
       zones="{{zones}}"
       error="{{error}}"
       loading="{{zoneLoading}}"
@@ -229,6 +230,11 @@
         route: {
           type: String,
         },
+        activated: {
+          type: Boolean,
+          value: false,
+          observer: '_activatedChanged'
+        },
         queryParams: {
           type: Object,
           computed: "_computedQueryParams(route)"
@@ -244,7 +250,11 @@
           }
         }
       },
-
+      _activatedChanged: function(activated) {
+				if (activated) {
+					this.$.zoneAPI.generateRequest();
+				}
+      },
       _handleResponse: function(event) {
         if (event.detail.response.success) {
           this.zones = event.detail.response.zones;
