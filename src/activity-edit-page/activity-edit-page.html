@@ -342,7 +342,7 @@
 							<div class="input-wrapper">
                 <images-upload
                   id="pictureUpload"
-                  upload-url="_activityUploadUrl"
+                  upload-url="[[_activityUploadUrl]]"
                   headers="[[headers]]"
                   method="POST"
                   value="{{pictures}}"
@@ -400,7 +400,7 @@
         _url: {
           type: String,
           value: function() {
-            return window.api + '/activities';
+            return window.api + '/api/activities';
           }
         },
         _thumbnailUploadUrl: {
@@ -418,7 +418,7 @@
         _activityUploadUrl: {
           type: String,
           value: function() {
-            return window.api + 'upload/img/activities/picture';
+            return window.api + '/upload/img/activities/picture';
           }
         },
         zoom: {

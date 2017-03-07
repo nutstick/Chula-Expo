@@ -442,10 +442,10 @@
         return moment.utc(dateTime).format('MM-DD-YYYY HH:mm');
       },
 			_computeThumbnail: function(thumbnail) {
-				return window.api + thumbnail;
+				return thumbnail ? window.api + thumbnail : null;
 			},
 			_computeBanner: function(banner) {
-				return window.api + banner;
+				return banner ? window.api + banner : null;
 			}
     })
   </script>
