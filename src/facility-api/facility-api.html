@@ -20,7 +20,7 @@
       properties: {
         url: {
           type: String,
-          value: 'http://localhost:3000/api/facilities',
+          value: window.api + '/api/facilities',
         },
         params: {
           type: Object,
@@ -115,11 +115,9 @@
       },
       _idChanged: function(id) {
         if (id && id!='show' && id!='edit' && id!='add' && id!='list') {
-          this.url = 'http://localhost:3000/api/facilities/' + id;
-        } else if (id && id=='list'){
-          this.url = 'http://localhost:3000/api/facilities';
+          this.url = window.api + '/api/facilities/' + id;
         } else {
-          this.url = '';
+          this.url = window.api + '/api/facilities';
         }
       }
     });

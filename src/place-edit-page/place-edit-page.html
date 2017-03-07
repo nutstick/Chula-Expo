@@ -93,8 +93,14 @@
     ></place-api>
     <div class="container">
       <paper-card>
-				<form is="iron-form" id="form" method="post" class="card-content"
-					action="{{url}}" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
+				<form
+          is="iron-form"
+          id="form"
+          method="post"
+          class="card-content"
+					action="[[_url]]"
+          on-iron-form-presubmit="_presubmit"
+          on-iron-form-response="_response">
 					<div class="card-content">
 						<!-- Code -->
 						<div class="item">
@@ -183,9 +189,9 @@
         zones: {
           type: Array
         },
-        url: {
+        _url: {
           type: Object,
-          value: ''
+          value: window.api + '/api/places'
         },
         placeId: {
           type: Object,
@@ -255,9 +261,9 @@
       },
       _idChanged: function(id) {
         if (id) {
-          this.url = 'http://localhost:3000/api/places/' + id;
+          this._url = window.api + '/api/places/' + id;
         } else {
-          this.url = 'http://localhost:3000/api/places';
+          this._url = window.api + '/api/places';
         }
       }
     })

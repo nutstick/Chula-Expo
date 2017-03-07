@@ -101,9 +101,15 @@
     ></activity-api>
     <div class="container">
       <paper-card heading="Edit Activity">
-				<form is="iron-form" id="form" method="post" class="card-content"
-					action="{{url}}" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response"
-          headers="{{headers}}">
+				<form
+          is="iron-form"
+          id="form"
+          method="put"
+          class="card-content"
+					action="[[_url]]"
+          on-iron-form-presubmit="_presubmit"
+          on-iron-form-response="_response"
+          headers="[[headers]]">
 					<div class="card-content">
 						<!-- Thai Language -->
 						<div class="title">
@@ -134,10 +140,10 @@
 								<vaadin-upload
 									id="thumbnailUpload"
 									accept="image/*"
-									target="/upload/img/activities/thumbnail"
+                  target="[[_thumbnailUploadUrl]]"
 									method="POST"
                   max-files="1"
-									headers="{'Authorization': 'JWT {{token}}'}"
+                  headers="[[headers]]"
 									form-data-name="picture"
 								>
 									<div class="drop-label">
@@ -169,9 +175,9 @@
 									id="bannerUpload"
 									accept="image/*"
                   max-files="1"
-									target="/upload/img/activities/banner"
+                  target="[[_bannerUploadUrl]]"
 									method="POST"
-									headers="{'Authorization': 'JWT {{token}}'}"
+                  headers="[[headers]]"
 									form-data-name="picture"
 								>
 									<div class="drop-label">
@@ -336,8 +342,8 @@
 							<div class="input-wrapper">
                 <images-upload
                   id="pictureUpload"
-                  upload-url="http://localhost:3000/upload/img/activities/picture"
-                  headers="{{headers}}"
+                  upload-url="_activityUploadUrl"
+                  headers="[[headers]]"
                   method="POST"
                   value="{{pictures}}"
                   handle-as="json"
@@ -391,9 +397,21 @@
           value: false,
           observer: '_activatedChanged'
         },
-        url: {
-          type: Object,
-          value: ''
+        _url: {
+          type: String,
+          value: window.api + '/activities'
+        },
+        _thumbnailUploadUrl: {
+          type: String,
+          value: window.api + '/upload/img/activities/thumbnail'
+        },
+        _bannerUploadUrl: {
+          type: String,
+          value: window.api + '/upload/img/activities/banner'
+        },
+        _activityUploadUrl: {
+          type: String,
+          value: window.api + 'upload/img/activities/picture'
         },
         zoom: {
           type: Number,
@@ -472,7 +490,6 @@
         }
       },
       _presubmit: function(event) {
-        this.$.form.request.method = 'put';
       	this.$.form.request.body.locationLat = this.activity.location.latitude;
 				this.$.form.request.body.locationLong = this.activity.location.longitude;
 				this.$.form.request.body.pictures = [];
@@ -495,9 +512,9 @@
       },
       _idChanged: function(id) {
         if (id && id!='show' && id!='edit' && id!='add' && id!='list') {
-          this.url = 'http://localhost:3000/api/activities/' + id;
+          this._url = window.api + '/api/activities/' + id;
         } else {
-          this.url = 'http://localhost:3000/api/activities/';
+          this._url = window.api + '/api/activities/';
         }
       },
       _computePlace: function(e) {

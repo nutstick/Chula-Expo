@@ -21,7 +21,7 @@
       properties: {
         url: {
           type: String,
-          value: 'http://localhost:3000/api/rooms',
+          value: window.api + '/api/rooms',
         },
         params: {
           type: Object,
@@ -111,11 +111,11 @@
         }
       },
       _placeChanged: function(id){
-        this.url = 'http://localhost:3000/api/rooms?placeid=' + id;
+        this.url = window.api + '/api/rooms?placeid=' + id;
         this.generateRequest();
       },
       _roomChanged: function(id){
-        this.url = 'http://localhost:3000/api/rooms/' + id;
+        this.url = window.api + '/api/rooms/' + id;
         this.generateRequest();
       }
     });

@@ -214,15 +214,14 @@
       _delete: function(event) {
         if(event.detail.confirmed) {
           var id = this.deleteId;
-          var url = 'http://localhost:3000/api/activities/' + id;
-
+          var url = window.api + '/api/activities/' + id;
+          // TODO
           var dom = this;
           setTimeout(function () {
             var req = new XMLHttpRequest();
-            var tokenJWT = 'JWT ' + document.querySelector('chulaexpo-staff-app').token
 
             req.open('DELETE', encodeURI(url));
-            req.setRequestHeader('Authorization', tokenJWT);
+            req.setRequestHeader('Authorization', 'JWT ' + window.token);
             req.onload = function() {
               if (req.status === 202) {
                 dom.generateRequest();

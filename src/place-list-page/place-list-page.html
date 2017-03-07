@@ -11,8 +11,8 @@
 <link rel="import" href="../../bower_components/paper-styles/shadow.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 
-
 <link rel="import" href="../place-api/place-api.html">
+<link rel="import" href="../bottom-prefab/bottom-prefab.html">
 <link rel="import" href="../paper-card-item/paper-card-item.html">
 <link rel="import" href="../paper-card-item-pagination/paper-card-item-pagination.html">
 <link rel="import" href="../shared-styles/shared-styles.html">
@@ -95,14 +95,9 @@
         </paper-card-item>
       </template>
 			<paper-card-item-pagination page="{{page}}" page-size="{{pageSize}}" totalPages="[[totalPages]]"></paper-card-item-pagination>
-      <div class="fixed-bottom">
-        <div class="container">
-          <paper-fab id="add-icon" icon="add" on-tap="_addClick"></paper-fab>
-          <div class="clearfix"></div>
-        </div>
-      </div>
       <place-api id="placeAPI" places="{{places}}" error="{{error}}" page="{{page}}" page-size="{{pageSize}}" totalPages="{{totalPages}}"></place-api>
     </div>
+    <bottom-prefab reveals effects="waterfall" target-url="/zone/add"></bottom-prefab>
     <paper-dialog id="dialog" on-iron-overlay-closed="_delete">
       <h2>Are you sure?</h2>
       <div class="buttons">
@@ -148,6 +143,7 @@
         }
       },
       generateRequest: function() {
+        console.log('Place API', this.$.placeAPI);
         this.$.placeAPI.generateRequest();
       },
       _showClick: function(id) {
@@ -168,14 +164,13 @@
       _delete: function(event) {
         if(event.detail.confirmed) {
           var id = this.deleteId;
-          var url = 'http://localhost:3000/api/places/' + id;
+          var url =  window.api + '/api/places/' + id;
 
           var dom = this;
           setTimeout(function () {
             var req = new XMLHttpRequest();
-            req.open('DELETE',encodeURI(url));
-            var tokenJWT = 'JWT ' + document.querySelector('chulaexpo-staff-app').token
-            req.setRequestHeader('Authorization', tokenJWT);
+            req.open('DELETE', encodeURI(url));
+            req.setRequestHeader('Authorization', 'JWT ' + window.token);
             req.onload = function() {
               if (req.status === 202) {
                 dom.generateRequest();

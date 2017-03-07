@@ -97,8 +97,14 @@
     ></facility-api>
     <div class="container">
       <paper-card>
-				<form is="iron-form" id="form" method="post" class="card-content"
-					action="{{url}}" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
+				<form
+          is="iron-form"
+          id="form"
+          method="put"
+          class="card-content"
+					action="[[_url]]"
+          on-iron-form-presubmit="_presubmit"
+          on-iron-form-response="_response">
 					<div class="card-content">
 
 						<!-- type -->
@@ -207,9 +213,6 @@
           type: Object,
           observer: '_idChanged'
         },
-        token: {
-          type: String,
-        },
         zoom: {
           type: Number,
           value: 16
@@ -254,7 +257,6 @@
         }
       },
       _presubmit: function(event) {
-        this.$.form.request.method = 'put';
       	this.$.form.request.body.locationLat = this.facility.location.latitude;
 				this.$.form.request.body.locationLong = this.facility.location.longitude;
 
@@ -267,9 +269,9 @@
       },
       _idChanged: function(id) {
         if (id) {
-          this.url = 'http://localhost:3000/api/facilities/' + id;
+          this._url = window.api + '/api/facilities/' + id;
         } else {
-          this.url = 'http://localhost:3000/api/facilities';
+          this._url = window.api + '/api/facilities';
         }
       }
     })

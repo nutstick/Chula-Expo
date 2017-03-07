@@ -82,8 +82,15 @@
     </style>
     <div class="container">
       <paper-card>
-				<form is="iron-form" id="form" method="post" class="card-content" headers="{{headers}}"
-					action="http://localhost:3000/api/places" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
+				<form
+          is="iron-form"
+          id="form"
+          method="post"
+          class="card-content"
+          headers="{{headers}}"
+					action="[[_url]]"
+          on-iron-form-presubmit="_presubmit"
+          on-iron-form-response="_response">
 					<div class="card-content">
 
 						<!-- Code -->
@@ -172,6 +179,10 @@
           type: Boolean,
           value: false,
           observer: '_activatedChanged'
+        },
+        _url: {
+          type: String,
+          value: window.api + "/api/places"
         },
         zones: {
           type: Array

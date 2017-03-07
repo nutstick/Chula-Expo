@@ -20,7 +20,7 @@
       properties: {
         url: {
           type: String,
-          value: 'http://localhost:3000/api/activities',
+          value: window.api + '/api/activities',
         },
         params: {
           type: Object,
@@ -154,9 +154,9 @@
       },
       _idChanged: function(id) {
         if (id && id!='show' && id!='edit' && id!='add' && id!='list') {
-          this.url = 'http://localhost:3000/api/activities/' + id;
+          this.url = window.api + '/api/activities/' + id;
         } else if (id && id=='list'){
-          this.url = 'http://localhost:3000/api/activities';
+          this.url = window.api + '/api/activities';
         } else {
           this.url = '';
         }

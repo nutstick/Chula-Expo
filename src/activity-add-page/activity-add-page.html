@@ -95,10 +95,10 @@
           is="iron-form"
           id="form" method="post"
           class="card-content"
-					action="http://localhost:3000/api/activities"
+					action="[[_url]]"
           on-iron-form-presubmit="_presubmit"
           on-iron-form-response="_response"
-          headers="{{headers}}">
+          headers="[[headers]]">
           <div class="card-content">
 						<!-- Thai Language -->
 						<div class="title">
@@ -128,10 +128,10 @@
                 <vaadin-upload
                   id="thumbnailUpload"
                   accept="image/*"
-                  target="/upload/img/activities/thumbnail"
+                  target="[[_thumbnailUploadUrl]]"
                   method="POST"
                   max-files="1"
-                  headers="{'Authorization': 'JWT {{token}}'}"
+                  headers="[[headers]]"
                   form-data-name="picture"
                 >
                   <div class="drop-label">
@@ -162,9 +162,9 @@
                   id="bannerUpload"
                   accept="image/*"
                   max-files="1"
-                  target="/upload/img/activities/banner"
+                  target="[[_bannerUploadUrl]]"
                   method="POST"
-                  headers="{'Authorization': 'JWT {{token}}'}"
+                  headers="[[headers]]"
                   form-data-name="picture"
                 >
                   <div class="drop-label">
@@ -320,18 +320,18 @@
 					<div class="card-content">
 						<!-- Picture -->
 						<div class="item">
-								<label class="label --height">รูปภาพที่เกี่ยวข้อง</label>
-								<div class="input-wrapper">
-                  <images-upload
-                    id="pictureUpload"
-                    upload-url="http://localhost:3000/upload/img/activities/picture"
-                    headers="{{headers}}"
-                    method="POST"
-                    value="{{pictures}}"
-                    handle-as="json"
-                    form-data-name="picture"
-                  ></images-upload>
-								</div>
+              <label class="label --height">รูปภาพที่เกี่ยวข้อง</label>
+              <div class="input-wrapper">
+                <images-upload
+                  id="pictureUpload"
+                  upload-url="_activityUploadUrl"
+                  headers="[[headers]]"
+                  method="POST"
+                  value="{{pictures}}"
+                  handle-as="json"
+                  form-data-name="picture"
+                ></images-upload>
+              </div>
 						</div>
 						<!-- Tags -->
 						<div class="item">
@@ -378,8 +378,21 @@
           value: false,
           observer: '_activatedChanged'
         },
-        token: {
+        _url: {
           type: String,
+          value: window.api + '/activities'
+        },
+        _thumbnailUploadUrl: {
+          type: String,
+          value: window.api + '/upload/img/activities/thumbnail'
+        },
+        _bannerUploadUrl: {
+          type: String,
+          value: window.api + '/upload/img/activities/banner'
+        },
+        _activityUploadUrl: {
+          type: String,
+          value: window.api + 'upload/img/activities/picture'
         },
         zones: {
           type: Array,
@@ -418,7 +431,7 @@
         headers: {
           type: Object,
           value: {
-            'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
+            'Authorization': 'JWT ' + window.token
           }
         }
       },

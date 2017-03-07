@@ -11,8 +11,8 @@
 <link rel="import" href="../../bower_components/paper-styles/shadow.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 
-
 <link rel="import" href="../facility-api/facility-api.html">
+<link rel="import" href="../bottom-prefab/bottom-prefab.html">
 <link rel="import" href="../paper-card-item/paper-card-item.html">
 <link rel="import" href="../paper-card-item-pagination/paper-card-item-pagination.html">
 <link rel="import" href="../shared-styles/shared-styles.html">
@@ -95,14 +95,9 @@
         </paper-card-item>
       </template>
 			<paper-card-item-pagination page="{{page}}" page-size="{{pageSize}}" totalPages="[[totalPages]]"></paper-card-item-pagination>
-      <div class="fixed-bottom">
-        <div class="container">
-          <paper-fab id="add-icon" icon="add" on-tap="_addClick"></paper-fab>
-          <div class="clearfix"></div>
-        </div>
-      </div>
       <facility-api id="facilityAPI" facilities="{{facilities}}" error="{{error}}" page="{{page}}" page-size="{{pageSize}}" totalPages="{{totalPages}}"></facility-api>
     </div>
+    <bottom-prefab reveals effects="waterfall" target-url="/facility/add"></bottom-prefab>
     <paper-dialog id="dialog" on-iron-overlay-closed="_delete">
       <h2>Are you sure?</h2>
       <div class="buttons">
@@ -171,7 +166,7 @@
       _delete: function(event) {
         if(event.detail.confirmed) {
           var id = this.deleteId;
-          var url = 'http://localhost:3000/api/facilities/' + id;
+          var url = window.api + '/api/facilities/' + id;
 
           var dom = this;
           setTimeout(function () {

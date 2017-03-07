@@ -89,8 +89,14 @@
     ></zone-api>
     <div class="container">
       <paper-card>
-				<form is="iron-form" id="form" method="post" class="card-content"
-					action="{{url}}" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
+				<form
+          is="iron-form"
+          id="form"
+          method="put"
+          class="card-content"
+					action="[[_url]]"
+          on-iron-form-presubmit="_presubmit"
+          on-iron-form-response="_response">
 					<div class="card-content">
 						<!-- type -->
 						<div class="item">
@@ -238,9 +244,9 @@
 					value: false,
 					observer: '_activatedChanged'
 				},
-				url: {
-          type: Object,
-          value: ''
+				_url: {
+          type: String,
+          value: window.api + '/api/zones'
         },
         zoneId: {
           type: Object,
@@ -309,9 +315,9 @@
       },
       _idChanged: function(id) {
         if (id) {
-          this.url = 'http://localhost:3000/api/zones/' + id;
+          this._url = window.api + '/api/zones/' + id;
         } else {
-          this.url = 'http://localhost:3000/api/zones';
+          this._url = window.api + '/api/zones';
         }
       }
     })

@@ -217,8 +217,14 @@
       </paper-card>
       <div >
         <paper-card class="card">
-          <form is="iron-form" id="form" method="post" class="card-content"
-            action="http://localhost:3000/api/rooms" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
+          <form
+            is="iron-form"
+            id="form"
+            method="post"
+            class="card-content"
+            action="_roomUrl"
+            on-iron-form-presubmit="_presubmit"
+            on-iron-form-response="_response">
             <div class="card-content">
 
               <h2> Create ROOM </h2>
@@ -316,9 +322,9 @@
         error: {
           type: Object,
         },
-        urlRoom: {
+        _roomUrl: {
           type: String,
-          value: ''
+          value: window.api + '/api/rooms'
         },
         deleteId: {
           type: String,
@@ -365,7 +371,7 @@
       _delete: function(event) {
         if(event.detail.confirmed) {
           var id = this.deleteId;
-          var url = 'http://localhost:3000/api/rooms/' + id;
+          var url = window.api + '/api/rooms/' + id;
 
           var dom = this;
           setTimeout(function () {

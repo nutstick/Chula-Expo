@@ -325,7 +325,7 @@
       },
       _deleteClick: function(event) {
         var id = event.model.item['_id'];
-        var url = 'http://localhost:3000/api/places/' + id;
+        var url = window.api + '/api/places/' + id;
 
         var dom = this;
         setTimeout(function () {
@@ -341,7 +341,7 @@
       },
       _idChanged: function(id) {
         if (id && id!='show' && id!='edit' && id!='add' && id!='list') {
-          this.urlPlace = 'http://localhost:3000/api/places?zoneid=' + id ;
+          this.urlPlace = window.api + '/api/places?zoneid=' + id ;
         } else {
           this.urlPlace = '';
         }

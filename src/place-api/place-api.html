@@ -20,7 +20,7 @@
       properties: {
         url: {
           type: String,
-          value: 'http://localhost:3000/api/places',
+          value: window.api + '/api/places',
         },
         params: {
           type: Object,
@@ -29,7 +29,7 @@
         headers: {
           type: Object,
           value: {
-            'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
+            'Authorization': 'JWT ' + window.token
           }
         },
         /*
@@ -118,16 +118,14 @@
         }
       },
       _zoneChanged: function(id){
-        this.url = 'http://localhost:3000/api/places?zoneid=' + id;
+        this.url = window.api + '/api/places?zoneid=' + id;
         this.generateRequest();
       },
       _idChanged: function(id) {
         if (id && id!='show' && id!='edit' && id!='add' && id!='list') {
-          this.url = 'http://localhost:3000/api/places/' + id;
-        } else if (id && id=='list'){
-          this.url = 'http://localhost:3000/api/places';
+          this.url = window.api + '/api/places/' + id;
         } else {
-          this.url = '';
+          this.url = window.api + '/api/places';
         }
       }
     });

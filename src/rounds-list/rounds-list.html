@@ -276,7 +276,7 @@
       _delete: function(event) {
         if(event.detail.confirmed) {
           var id = this.deleteId;
-          var url = 'http://localhost:3000/api/rounds/' + id;
+          var url = window.api + '/api/rounds/' + id;
 
           setTimeout(function () {
             var req = new XMLHttpRequest();
@@ -292,7 +292,7 @@
       },
       _idChanged: function(id) {
         if (id && id!='show' && id!='edit' && id!='add' && id!='list') {
-          this._url = 'http://localhost:3000/api/activities/' + id + '/rounds';
+          this._url = window.api + '/api/activities/' + id + '/rounds';
           this.$.api.generateRequest();
         } else {
           this._url = '';

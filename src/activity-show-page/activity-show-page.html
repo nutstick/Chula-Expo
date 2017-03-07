@@ -398,7 +398,7 @@
         if(div_qrcode){
   				div_qrcode.innerHTML = "";
   				var qrcode = new QRCode(div_qrcode, {
-  					text: "http://localhost:3000/api/activities/" + document.querySelector('activity-show-page').activityId + "/qrcode",
+  					text: window.api + "/api/activities/" + this.activityId + "/qrcode",
   					width: 200,
   					height: 200,
   					colorDark : "#ff69B4",
@@ -411,7 +411,7 @@
         if(div_qrvideo) {
           div_qrvideo.innerHTML = "";
   				var qrcode = new QRCode(div_qrvideo, {
-  					text: "http://localhost:3000/api/activities/" + document.querySelector('activity-show-page').activityId + "/qrvideo",
+  					text: window.api + '/api/activities/' + this.activityId + "/qrvideo",
   					width: 200,
   					height: 200,
   					colorDark : "#000000",

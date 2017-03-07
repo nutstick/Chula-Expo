@@ -78,8 +78,15 @@
     </style>
     <div class="container">
       <paper-card>
-				<form is="iron-form" id="form" method="post" class="card-content" headers="{{headers}}"
-					action="http://localhost:3000/api/zones" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
+				<form
+          is="iron-form"
+          id="form"
+          method="post"
+          class="card-content"
+          headers="{{headers}}"
+					action="[[_url]]"
+          on-iron-form-presubmit="_presubmit"
+          on-iron-form-response="_response">
 					<div class="card-content">
 						<!-- type -->
 						<div class="item">
@@ -112,7 +119,7 @@
 										target="/upload/img/zones/thumbnail"
 										method="POST"
                     max-files="1"
-										headers="{'Authorization': 'JWT {{token}}'}"
+										headers="[[headers]]"
 										form-data-name="picture"
 									>
 										<div class="drop-label">
@@ -147,7 +154,7 @@
 										target="/upload/img/zones/banner"
 										method="POST"
                     max-files="1"
-										headers="{'Authorization': 'JWT {{token}}'}"
+										headers="[[_headers]]"
 										form-data-name="picture"
 									>
 										<div class="drop-label">
@@ -223,6 +230,10 @@
     Polymer({
       is: 'zone-add-page',
       properties: {
+        _url: {
+          type: String,
+          value: window.api + '/api/zones'
+        },
         token: {
           type: String,
         },
@@ -241,7 +252,7 @@
         headers: {
           type: Object,
           value: {
-            'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
+            'Authorization': 'JWT ' + window.token
           }
         }
       },
