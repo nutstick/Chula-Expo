@@ -1,7 +1,44 @@
 {
-  "entrypoint": "src/index.html",
-  "shell": "src/pages/chulaexpo-staff-app.html",
+  "entrypoint": "index.html",
+  "shell": "src/chulaexpo-staff-app/chulaexpo-staff-app.html",
   "fragments": [
-    "src/pages/account-page.html"
+    "src/account-page/account-page",
+    "src/activity-add-page/activity-add-page",
+    "src/activity-edit-page/activity-edit-page",
+    "src/activity-id-page/activity-id-page",
+    "src/activity-list-page/activity-list-page",
+    "src/activity-page/activity-page",
+    "src/activity-scan-page/activity-scan-page",
+    "src/activity-show-page/activity-show-page",
+    "src/facility-add-page/facility-add-page",
+    "src/facility-edit-page/facility-edit-page",
+    "src/facility-id-page/facility-id-page",
+    "src/facility-list-page/facility-list-page",
+    "src/facility-page/facility-page",
+    "src/facility-show-page/facility-show-page",
+    "src/home-page/home-page",
+    "src/login-page/login-page",
+    "src/place-add-page/place-add-page",
+    "src/place-edit-page/place-edit-page",
+    "src/place-id-page/place-id-page",
+    "src/place-list-page/place-list-page",
+    "src/place-page/place-page",
+    "src/place-show-page/place-show-page",
+    "src/signup-page/signup-page",
+    "src/zone-add-page/zone-add-page",
+    "src/zone-edit-page/zone-edit-page",
+    "src/zone-id-page/zone-id-page",
+    "src/zone-list-page/zone-list-page",
+    "src/zone-page/zone-page",
+    "src/zone-show-page/zone-show-page"
+  ],
+  "sources": [
+    "src/**/*",
+    "images/**/*",
+    "bower.json"
+  ],
+  "includeDependencies": [
+    "bower_components/webcomponentsjs/webcomponents-lite.min.js",
+    "lib/*"
   ]
 }

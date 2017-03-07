@@ -1,0 +1,128 @@
+<!-- Libery -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<dom-module id="paper-card-item">
+  <template>
+    <style is="custom-style">
+      :host {
+        overflow: hidden;
+        box-sizing: border-box;
+        position: relative;
+        margin-bottom: 12px;
+        @apply(--layout);
+        @apply(--layout-horizontal);
+        background-color: var(--paper-card-item-header-color, #fff);
+        border-radius: 2px;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+      }
+      /* IE 10 support for HTML5 hidden attr */
+      [hidden] {
+        display: none !important;
+      }
+      :host iron-image {
+        @apply(--layout-flex);
+        display: initial;
+        overflow: visited;
+        width: var(--paper-card-item-image-width, 102px);
+        height: var(--paper-card-item-image-height, 102px);
+        --iron-image-width: var(--paper-card-item-image-width, 102px);
+        --iron-image-height: var(--paper-card-item-image-height, 102px);
+      }
+      .header {
+        margin-right: 10px;
+      }
+      .container {
+        @apply(--layout);
+        @apply(--layout-flex);
+        @apply(--layout-vertical);
+        padding: 5px 30px 5px 5px;
+      }
+      :host([action]) .container {
+        padding: 0px;
+      }
+      /* .card-item-header */
+      :host .container ::content .card-item-header {
+        font-size: 18px;
+        font-weight: 400;
+        margin-bottom: 6px;
+        color: var(--paper-card-item-header-color, #000);
+      }
+      /* .card-item-content */
+      :host .container ::content > .card-item-content {
+        font-size: 14px;
+        font-weight: 400;
+        color: var(--paper-card-item-content-color, #666);
+        margin-bottom: 6px;
+      }
+      /* .card-item-actions */
+      :host .container ::content .card-item-actions {
+        border-top: 1px solid #e8e8e8;
+        position:relative;
+        text-transform: uppercase;
+        text-decoration: none;
+      }
+      :host .container ::content .card-item-actions paper-tabs {
+        font-weight: 100;
+      }
+      :host .container ::content .card-item-actions paper-tab {
+        --paper-tab-ink: #555;
+        --paper-tab-content: {
+          padding: 0.7em 0.57em;
+          cursor: pointer;
+        };
+      }
+    </style>
+    <div class="header">
+      <iron-image
+        hidden$="[[!image]]"
+        aria-hidden$="[[_isHidden(image)]]"
+        src="[[image]]"
+        alt="[[alt]]"
+        placeholder="[[placeholderImage]]"
+        preload="[[preloadImage]]"
+        fade="[[fadeImage]]"></iron-image>
+      <div hidden$="[[!heading]]" class$="title-text [[_computeHeadingClass(image)]]">[[heading]]</div>
+    </div>
+    <div class="container">
+      <content></content>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'paper-card-item',
+      properties: {
+        image: {
+          type: String,
+          value: ''
+        },
+        alt: {
+          type: String,
+        },
+        preloadImage: {
+          type: Boolean,
+          value: false
+        },
+        fadeImage: {
+          type: Boolean,
+          value: false
+        },
+        placeholderImage: {
+          type: String,
+          value: null
+        },
+        action: {
+          type: Boolean,
+          reflectToAttribute: true
+        },
+      },
+      _isHidden: function(image) {
+        return image ? 'false' : 'true';
+      },
+      _computeHeadingClass: function(image) {
+        return image ? ' over-image' : '';
+      },
+    })
+  </script>
+</dom-module>

@@ -1,0 +1,45 @@
+<!-- Libery -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/vaadin-upload/vaadin-upload.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower_components/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower_components/paper-tags-input/paper-tags-input.html">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/greenyouse-datetime-local-input/datetime-local-input.html">
+<link rel="import" href="../../bower_components/google-map/google-map.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/google-map/google-map-marker.html">
+
+<link rel="import" href="../qr-scanner/qr-scanner.html">
+
+<dom-module id="activity-scan-page">
+  <template>
+  <style is="custom-style" include="shared-styles">
+    :host {
+      @apply(--layout-vertical);
+      @apply(--layout-center-center);
+      padding-top: 20px;
+    }
+
+    paper-card {
+      width: 100%;
+    }
+
+  </style>
+    <qr-scanner>
+    <qr-scanner>
+  </template>
+  <script>
+    Polymer({
+      is: 'activity-scan-page',
+      properties: {
+      },
+      observers: [
+      ],
+    })
+  </script>
+</dom-module>

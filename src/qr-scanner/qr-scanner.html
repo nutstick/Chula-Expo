@@ -1,0 +1,152 @@
+<!-- Libery -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/bottom-button/bottom-button.html">
+
+<link rel="import" href="../shared-styles/shared-styles.html">
+<script type="text/javascript" src="../../lib/jquery.min.js"></script>
+<script type="text/javascript" src="../../lib/html5-qrcode.min.js"></script>
+<script type="text/javascript" src="../../lib/jsqrcode-combined.min.js"></script>
+<script type="text/javascript" src="../../lib/grid.js"></script>
+<script type="text/javascript" src="../../lib/version.js"></script>
+<script type="text/javascript" src="../../lib/detector.js"></script>
+<script type="text/javascript" src="../../lib/formatinf.js"></script>
+<script type="text/javascript" src="../../lib/errorlevel.js"></script>
+<script type="text/javascript" src="../../lib/bitmat.js"></script>
+<script type="text/javascript" src="../../lib/datablock.js"></script>
+<script type="text/javascript" src="../../lib/bmparser.js"></script>
+<script type="text/javascript" src="../../lib/datamask.js"></script>
+<script type="text/javascript" src="../../lib/rsdecoder.js"></script>
+<script type="text/javascript" src="../../lib/gf256poly.js"></script>
+<script type="text/javascript" src="../../lib/gf256.js"></script>
+<script type="text/javascript" src="../../lib/decoder.js"></script>
+<script type="text/javascript" src="../../lib/qrcode.js"></script>
+<script type="text/javascript" src="../../lib/findpat.js"></script>
+<script type="text/javascript" src="../../lib/alignpat.js"></script>
+<script type="text/javascript" src="../../lib/databr.js"></script>
+
+<dom-module id="qr-scanner">
+  <template>
+    <style is="custom-style" include="shared-styles">
+      paper-dialog#dialog.size {
+        margin: 0;
+        position: fixed;
+        top: 6px;
+        left: 50%;
+        overflow: auto;
+      }
+      paper-dialog#dialog.size {
+        margin-left: -50%;
+        max-width: none !important;
+        background: transparent;
+      }
+      @media (min-width: 600px) {
+        paper-dialog.size {
+          margin-left: -270px;
+        }
+      }
+      @media (min-width: 768px) {
+        paper-dialog.size {
+          margin-left: -360px;
+        }
+      }
+      @media (min-width: 992px) {
+        paper-dialog.size {
+          margin-left: -480px;
+        }
+      }
+      paper-dialog#dialog > *:first-child {
+        padding: 0;
+        margin: 0;
+      }
+      paper-dialog#alert {
+        position: fixed;
+        bottom: 40px;
+        background: rgba(1.0, 1.0, 1.0, 0.5);
+        color: #fff;
+      }
+      video {
+        width: 100%;
+      }
+      bottom-button {
+        --bottom-button-background-color: #F44336;
+      }
+    </style>
+    <iron-ajax
+      id="ajax"
+      url="[[url]]"
+      method="POST"
+      headers="{{headers}}"
+      on-response="_handleResponse"
+      on-error="_handleError"
+      handle-as="json"
+      debounce-duration="300"
+    ></iron-ajax>
+		<paper-dialog id="alert" on-iron-overlay-closed="_onClosedAlert">
+      Success
+		</paper-dialog>
+
+		<paper-dialog id="dialog" class="container size" modal on-iron-overlay-closed="_onClosed">
+      <bottom-button on-tap="_onClosed">CLOSE</bottom-button>
+      <div id="reader" style="width:300px;height:250px">
+      </div>
+		</paper-dialog>
+  </template>
+
+	<script>
+    Polymer({
+      is: 'qr-scanner',
+      properties: {
+        url: String,
+        headers: {
+          type: Object,
+          value: {
+            'Authorization': 'JWT ' + window.token
+          }
+        },
+        error: Object,
+      },
+
+      observers: [
+      ],
+      open: function() {
+        // Append dialog to the body. This ensures that the dialog claims the full screen instead of being positioned next to the <paper-date-picker-item>
+			  Polymer.dom(document.body).appendChild(this);
+
+        $('#reader').html5_qrcode(function(data){
+               // do something when code is read
+               console.log(data);
+        },
+        function(error){
+            //show read errors
+        }, function(videoError){
+            //the video stream could be opened
+        });
+
+        // Wait until dialog is added to the DOM (required for Safari)
+        setTimeout(function() {
+          this.$.dialog.open();
+        }.bind(this), 1);
+      },
+      _onClosed: function(e, detail) {
+        // Remove the dialog from the DOM once the exit animation is finished
+        Polymer.dom(this.parentNode).removeChild(this);
+      },
+      _handleResponse: function(event) {
+        if(event.detail.response) {
+          if (event.detail.response.success) {
+            // TODO
+          }
+        }
+      },
+      _handleError: function(event) {
+        if(event.detail.response) {
+          if (!event.detail.response.success) {
+            this.error = event.detail.response.errors;
+          }
+        }
+      }
+    });
+  </script>
+	</dom-module>

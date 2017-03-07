@@ -1,12 +1,7 @@
-node_modules
+bower_components
 
-.env
+build
 
 .DS_Store
 
 *.log
-npm-debug.log.*
-src/public/lib/*
-!src/public/lib/popup-tools
-src/public/img/activity
-src/public/img/zone
