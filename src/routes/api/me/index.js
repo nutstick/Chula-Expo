@@ -115,6 +115,10 @@ router.put('/', isAuthenticatedByToken, (req, res) => {
       req.user.staff.staffType = req.body.staff;
     }
   }
+  if (req.body.tags) {
+    req.user.tags = req.body.tags.split(',');
+  }
+
 
   // Save User and check for error
   req.user.save((err, _user) => {
