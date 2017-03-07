@@ -5,7 +5,27 @@
 <link rel="import" href="/public/lib/bottom-button/bottom-button.html">
 
 <link rel="import" href="/components/shared-styles.html">
-<script type="text/javascript" src="/public/js/instascan.min.js"></script>
+<script type="text/javascript" src="/public/js/jquery.min.js"></script>
+<script type="text/javascript" src="/public/js/html5-qrcode.min.js"></script>
+<script type="text/javascript" src="/public/js/jsqrcode-combined.min.js"></script>
+<script type="text/javascript" src="/public/js/grid.js"></script>
+<script type="text/javascript" src="/public/js/version.js"></script>
+<script type="text/javascript" src="/public/js/detector.js"></script>
+<script type="text/javascript" src="/public/js/formatinf.js"></script>
+<script type="text/javascript" src="/public/js/errorlevel.js"></script>
+<script type="text/javascript" src="/public/js/bitmat.js"></script>
+<script type="text/javascript" src="/public/js/datablock.js"></script>
+<script type="text/javascript" src="/public/js/bmparser.js"></script>
+<script type="text/javascript" src="/public/js/datamask.js"></script>
+<script type="text/javascript" src="/public/js/rsdecoder.js"></script>
+<script type="text/javascript" src="/public/js/gf256poly.js"></script>
+<script type="text/javascript" src="/public/js/gf256.js"></script>
+<script type="text/javascript" src="/public/js/decoder.js"></script>
+<script type="text/javascript" src="/public/js/qrcode.js"></script>
+<script type="text/javascript" src="/public/js/findpat.js"></script>
+<script type="text/javascript" src="/public/js/alignpat.js"></script>
+<script type="text/javascript" src="/public/js/databr.js"></script>
+
 <dom-module id="qr-scanner">
   <template>
     <style is="custom-style" include="shared-styles">
@@ -21,7 +41,7 @@
         max-width: none !important;
         background: transparent;
       }
-      @media (min-width: 600px) { 
+      @media (min-width: 600px) {
         paper-dialog.size {
           margin-left: -270px;
         }
@@ -68,24 +88,10 @@
 		</paper-dialog>
 
 		<paper-dialog id="dialog" class="container size" modal on-iron-overlay-closed="_onClosed">
-		  <video id="preview"></video>
       <bottom-button on-tap="_onClosed">CLOSE</bottom-button>
+      <div id="reader" style="width:300px;height:250px">
+      </div>
 		</paper-dialog>
-    <script type="text/javascript">
-      let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
-      scanner.addListener('scan', function (content) {
-        console.log(content);
-      });
-      Instascan.Camera.getCameras().then(function (cameras) {
-        if (cameras.length > 0) {
-          scanner.start(cameras[0]);
-        } else {
-          console.error('No cameras found.');
-        }
-      }).catch(function (e) {
-        console.error(e);
-      });
-    </script>
   </template>
 
 	<script>
@@ -104,10 +110,19 @@
 
       observers: [
       ],
-
       open: function() {
         // Append dialog to the body. This ensures that the dialog claims the full screen instead of being positioned next to the <paper-date-picker-item>
 			  Polymer.dom(document.body).appendChild(this);
+
+        $('#reader').html5_qrcode(function(data){
+               // do something when code is read
+               console.log(data);
+        },
+        function(error){
+            //show read errors
+        }, function(videoError){
+            //the video stream could be opened
+        });
 
         // Wait until dialog is added to the DOM (required for Safari)
         setTimeout(function() {
