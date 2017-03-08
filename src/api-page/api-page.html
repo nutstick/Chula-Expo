@@ -1,0 +1,33 @@
+<!-- Libery -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+
+<dom-module id="api-page">
+  <template>
+    <app-route
+      route="{{route}}"
+      pattern="/:page"
+      data="{{routeData}}"
+      tail="{{subroute}}"
+    ></app-route>
+  </template>
+  <script>
+    Polymer({
+      is: 'api-page',
+      properties: {
+        route: {
+          type: String,
+        },
+        subroute: {
+          type: String,
+          observer: '_routePageChanged'
+        },
+      },
+      attached: function() {
+        console.log(this.route)
+        window.location = window.api + this.route.prefix + this.route.path;
+      },
+    });
+  </script>
+</dom-module>

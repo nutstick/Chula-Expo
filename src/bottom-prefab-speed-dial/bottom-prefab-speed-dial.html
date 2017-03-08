@@ -233,7 +233,6 @@
       },
       
       _transformHeader: function(y) {
-        console.log(this.menuOpened)
         if (!y && this.menuOpened) {
           this.$.menu.toggle();
         }
@@ -257,7 +256,6 @@
       },
 
       _onEdit: function(e) {
-        console.log(this.parentUrl, this.targetUrl)
         window.history.pushState({}, null, this.parentUrl +  this.targetUrl + '/edit/');
         window.dispatchEvent(new CustomEvent('location-changed'));
       },
