@@ -12,8 +12,13 @@ const ActivityCheckSchema = new mongoose.Schema({
     type: ObjectId,
     ref: 'User',
     required: true,
+    index: true,
   },
-  createAt: { type: Date, default: new Date() },
+  createAt: {
+    type: Date,
+    default: new Date(),
+    index: true,
+  },
   createBy: {
     type: ObjectId,
     ref: 'User'
@@ -22,6 +27,7 @@ const ActivityCheckSchema = new mongoose.Schema({
     type: ObjectId,
     ref: 'Activity',
     required: true,
+    index: true,
   },
 });
 const ActivityCheck = mongoose.model('ActivityCheck', ActivityCheckSchema);
