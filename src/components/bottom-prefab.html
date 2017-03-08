@@ -32,18 +32,18 @@
         will-change: opacity;
         @apply(--app-header-shadow);
       }
-      
+
 
       :host {
         position: fixed;
         bottom: 20px;
       }
-      
+
       #addIcon {
         float: right;
         @apply(--shadow-elevation-8dp);
       }
-      
+
       @media (max-width: 600px) {
         .fixed-bottom {
           right: 20px;
@@ -87,7 +87,7 @@
           value: false
         },
       },
-      
+
       observers: [
         'resetLayout(isAttached, condenses, fixed)'
       ],
@@ -216,7 +216,7 @@
           progress = top / this._dHeight;
         }
         if (!forceUpdate) {
-          console.log(scrollTop, top)
+          //console.log(scrollTop, top)
           this._lastScrollTop = scrollTop;
           this._top = top;
           this._wasScrollingDown = isScrollingDown;
@@ -225,18 +225,18 @@
         if (forceUpdate || progress !== this._progress || lastTop !== top || scrollTop === 0) {
           this._progress = progress;
           this._runEffects(progress, top);
-          console.log(isScrollingDown)
+          //console.log(isScrollingDown)
           this._transformHeader(!isScrollingDown);
         }
       },
       _mayMove: function() {
         return this.condenses || !this.fixed;
       },
-      
+
       isOnScreen: function() {
         return this._height !== 0 && this._top < this._height;
       },
-      
+
       _transformHeader: function(y) {
         this.translate3d(0, (y ? 0 : 100) + 'px', 0);
         if (this._stickyEl) {
