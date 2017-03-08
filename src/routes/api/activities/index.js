@@ -295,6 +295,62 @@ router.get('/nearby', (req, res) => {
   });
 });
 
+// TODO - highlight from aj.nuttawut
+router.get('/highlight', (req, res) => {
+  const filter = {};
+
+  //  http://localhost:3000/?sort=createAt,-startDate
+  let sort = {};
+  sort = 'start';
+  filter.start = RangeQuery({ gt: new Date() }, 'Date');
+  filter.isHighlight = true;
+  // field selector
+  // http://localhost:3000/?fields=name,faculty
+  let fields;
+  if (req.query.fields) {
+    fields = req.query.fields.replace(/,/g, ' ');
+    fields = fields.replace(/nameEN/g, 'name.en');
+    fields = fields.replace(/shortDescriptionEN/g, 'shortDescription.en');
+    fields = fields.replace(/descriptionEN/g, 'description.en');
+    fields = fields.replace(/locationPlace/g, 'location.place');
+    fields = fields.replace(/locationFloor/g, 'location.floor');
+    fields = fields.replace(/locationRoom/g, 'location.room');
+    fields = fields.replace(/locationLat/g, 'location.latitude');
+    fields = fields.replace(/locationLong/g, 'location.longitude');
+  }
+
+  let query = Activity.find(filter);
+
+  if (sort) {
+    query.sort(sort);
+  }
+  if (fields) {
+    query.select(fields);
+  }
+  // limiter on each query
+  // http://localhost:3000/?limit=10
+  query = query.limit(20);
+
+
+  Activity.find(filter).count((err, total) => {
+    if (err) {
+      return res.sendError(5, err);
+    }
+    query.exec((err, _act) => {
+      if (err) {
+        return res.sendError(5, err);
+      }
+      return res.status(200).json({
+        success: true,
+        results: _act,
+        queryInfo: {
+          total,
+        }
+      });
+    });
+  });
+});
+
 /**
  * Create a new activity
  * Access at POST http://localhost:8080/api/activities

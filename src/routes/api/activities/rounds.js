@@ -163,9 +163,11 @@ router.post('/', isAuthenticatedByToken, isStaff, (req, res) => {
       round.activityId = req.params.id;
       round.name.th = req.body.nameTH;
       round.name.en = req.body.nameEN;
-      round.start = new Date(req.body.start);
-      round.end = new Date(req.body.end);
-      // round.tickets = [];
+
+      const offset = -1 * (new Date().getTimezoneOffset());
+      round.start = new Date(new Date(req.body.start).getTime() + (offset * 60000)).toUTCString();
+      round.end = new Date(new Date(req.body.end).getTime() + (offset * 60000)).toUTCString();
+
       round.seats.fullCapacity = req.body.seatsFullCapacity;
       if (req.body.seatsReserved) {
         round.seats.reserved = req.body.seatsReserved;
