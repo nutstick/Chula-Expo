@@ -36,7 +36,7 @@ const TicketSchema = new mongoose.Schema({
 
 TicketSchema.index({ user: 1, round: 1 }, { unique: true });
 
-TicketSchema.static.cancelReserved = ticketId => new Promise((resolve, reject) => {
+TicketSchema.statics.cancelReserved = ticketId => new Promise((resolve, reject) => {
   TicketSchema.findbyId(ticketId, (err, ticket) => {
     if (err) {
       return reject(err);
@@ -69,13 +69,15 @@ TicketSchema.static.cancelReserved = ticketId => new Promise((resolve, reject) =
   });
 });
 
-TicketSchema.methods.checkIn = ticketId => new Promise((resolve, reject) => {
-  TicketSchema.findbyId(ticketId, (err, ticket) => {
+TicketSchema.statics.checkIn = ticketId => new Promise((resolve, reject) => {
+  this.findById(ticketId, (err, ticket) => {
     if (ticket.checked) {
       return reject(35);
     }
     ticket.checked = true;
-    ticket.save(err => (err ? resolve() : reject(err)));
+    ticket.save((err) => {
+      return err ? resolve() : reject(err);
+    });
   });
 });
 

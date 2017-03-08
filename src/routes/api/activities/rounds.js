@@ -405,27 +405,43 @@ router.delete('/:rid/reserve', isAuthenticatedByToken, (req, res) => {
 
 router.post('/:rid/checkin', isAuthenticatedByToken, isScanner, (req, res) => {
   const rid = req.params.rid;
-  const userId = req.query.user;
+  const userId = req.body.user;
   Activity.findById(req.params.id, (err, activity) => {
     if (err) {
       return res.sendError(5, err);
     }
-    if (req.user.staff.type !== 'Admin' && activity.zone !== req.user.staff.zone) {
+    if (req.user.staff.staffType !== 'Admin' && activity.zone !== req.user.staff.zone) {
       return res.sendError(4, 'Can\'t check in activity which not belong to your zone');
     }
 
-    Ticket.find({ round: rid, user: userId }, (err, ticket) => {
+    Ticket.findOne({ round: rid, user: userId }, (err, ticket) => {
       if (err) {
         return res.sendError(5, err);
       }
-      ticket.checkIn(ticket._id)
-      .then(() => (
-        res.status(201).json({
+      if (!ticket) {
+        return res.sendError(27);
+      }
+      if (ticket.checked) {
+        return res.sendError(35);
+      }
+      ticket.checked = true;
+      ticket.save((err) => {
+        return err ? res.sendError(5, err) : res.status(201).json({
           success: true,
           message: `Successfully check in ticket ${ticket._id} to ${req.params.rid}.`,
-        })
-      ))
-      .catch(err => (err.code ? res.sendError(err.code) : res.sendError(5, err)));
+        });
+      });
+      // Ticket.checkIn(ticket._id)
+      // .then(() => (
+      //   res.status(201).json({
+      //     success: true,
+      //     message: `Successfully check in ticket ${ticket._id} to ${req.params.rid}.`,
+      //   })
+      // ))
+      // .catch(err => {
+      //   console.log(err);
+      //   return err.code ? res.sendError(err.code) : res.sendError(5, err);
+      // });
     });
   });
 });

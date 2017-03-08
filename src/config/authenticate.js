@@ -67,6 +67,7 @@ module.exports = {
     } else if (req.user && req.user.type === 'Staff' && req.user.staff.staffType === 'Scanner') {
       return next();
     }
+    console.log('Can\'t Scanner', req.user.type, req.user.staff.staffType);
     return res.sendError(4);
   }
 };
