@@ -14,13 +14,11 @@
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/google-map/google-map-marker.html">
 
-<script type="text/javascript" src="../../lib/jquery.min.js"></script>
-<script type="text/javascript" src="../../lib/qrcode.min.js"></script>
-
 <link rel="import" href="../activity-api/activity-api.html">
 <link rel="import" href="../place-api/place-api.html">
 <link rel="import" href="../zone-api/zone-api.html">
 <link rel="import" href="../room-api/room-api.html">
+<link rel="import" href="../bottom-prefab-speed-dial/bottom-prefab-speed-dial.html">
 <link rel="import" href="../paper-card-dataitem/paper-card-dataitem.html">
 <link rel="import" href="../shared-styles/shared-styles.html">
 <link rel="import" href="../rounds-list/rounds-list.html">
@@ -362,6 +360,7 @@
 			<div id="right">
         <rounds-list activity-id="[[activityId]]"></rounds-list>
 			</div>
+			<bottom-prefab-speed-dial reveals effects="waterfall" target-url="[[_computeActivityLink(activityId)]]" parent-url="/activity/"></bottom-prefab-speed-dial>
 		</div>
   </template>
   <script>
@@ -449,6 +448,9 @@
 			},
 			_computePicture: function(picture) {
 				return picture ? window.api + picture : null;
+			},
+			_computeActivityLink: function(activityId) {
+				return '/activity/' + activityId ? activityId : '';
 			}
     })
   </script>
