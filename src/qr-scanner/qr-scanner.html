@@ -3,6 +3,7 @@
 <!-- Web Component -->
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/bottom-button/bottom-button.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 
 <link rel="import" href="../shared-styles/shared-styles.html">
 <script type="text/javascript" src="../../lib/jquery.min.js"></script>
@@ -32,44 +33,55 @@
       paper-dialog#dialog.size {
         margin: 0;
         position: fixed;
-        top: 6px;
-        left: 50%;
-        overflow: auto;
-
-        margin-left: -50%;
+        top: 10px;
+        left: 0;
+        right: 0;
+        bottom: 72px;
+        margin-right: auto;
+        margin-left: auto;
+        margin-top: auto;
+        margin-bottom: auto;
         max-width: none !important;
         background: transparent;
       }
-      @media (min-width: 600px) {
-        paper-dialog.size {
-          margin-left: -270px;
-        }
-      }
-      @media (min-width: 768px) {
-        paper-dialog.size {
-          margin-left: -360px;
-        }
-      }
-      @media (min-width: 992px) {
-        paper-dialog.size {
-          margin-left: -480px;
-        }
-      }
-      paper-dialog#dialog > *:first-child {
+      paper-dialog#dialog > * {
         padding: 0;
         margin: 0;
       }
-      paper-dialog#alert {
-        position: fixed;
-        bottom: 40px;
-        background: rgba(1.0, 1.0, 1.0, 0.5);
-        color: #fff;
-      }
       video {
         width: 100%!important;
+        height: 100%!important;
       }
       bottom-button {
         --bottom-button-background-color: #F44336;
+      }
+      bottom-button /deep/ .bar {
+        z-index: 103;
+      }
+      #reader {
+        height: 100%;
+        width: 100%;
+      }
+      #overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        opacity: 0;
+        transition: opacity ease-in 0.5s;
+      }
+      #overlay .error {
+        color: #FFFFFF;
+        font-size: 36px;
+      }
+      #overlay[opened] {
+        opacity: 1;
+      }
+      #spinner {
+        width: 40px;
+        height: 40px;
       }
     </style>
     <iron-ajax
@@ -82,15 +94,19 @@
       handle-as="json"
       debounce-duration="300"
     ></iron-ajax>
-		<paper-dialog id="alert" on-iron-overlay-closed="_onClosedAlert">
-      Success
-		</paper-dialog>
-
 		<paper-dialog id="dialog" class="container size" modal on-iron-overlay-closed="_onClosed">
-      <bottom-button on-tap="_onClosed">กฟกฟหกหฟกCLOSE</bottom-button>
-      <div id="reader" style="width:300px;height:250px">
+      <div id="overlay" opened$="[[opened]]">
+        <div class="horizontal layout center-justified" style="height: 100%">
+          <div class="vertical layout center-justified">
+            <paper-spinner id="spinner" hidden></paper-spinner>
+            <p class="error">[[_computeTextMessage(success, error, videoError)]]</p>
+          </div>
+        </div>
+      </div>
+      <div id="reader" style="min-width:100%; min-height: 500px;">
       </div>
 		</paper-dialog>
+    <bottom-button on-tap="_onClosed">CLOSE</bottom-button>
   </template>
 
 	<script>
@@ -100,51 +116,121 @@
         url: String,
         headers: {
           type: Object,
-          value: {
-            'Authorization': 'JWT ' + window.token
+          value: function() {
+            return {
+              'Authorization': 'JWT ' + window.token
+            };
           }
         },
-        error: Object,
+        success: {
+          type: Boolean,
+          value: false,
+        },
+        error: {
+          type: String,
+          value: null
+        },
+        loading: {
+          type: Boolean,
+          value: false,
+          observer: '_loadingChanged'
+        },
+        videoError: {
+          type: String,
+          value: null
+        },
+        opened: {
+          type: Boolean,
+          value: false,
+          computed: '_computeShowOverlay(success, error, loading, videoError)'
+        }
       },
 
-      observers: [
-      ],
+      attached: function(){
+        document.addEventListener('token', function(e) {
+          var token = e.detail.token;
+          if (!token) {
+            return;
+          }
+
+          this.headers = {
+            'Authorization': 'JWT ' + token
+          };
+        }.bind(this));
+      },
       open: function() {
         // Append dialog to the body. This ensures that the dialog claims the full screen instead of being positioned next to the <paper-date-picker-item>
 			  Polymer.dom(document.body).appendChild(this);
 
-        $('#reader').html5_qrcode(function(data){
-               // do something when code is read
-               console.log(data);
-        },
-        function(error){
-            //show read errors
-        }, function(videoError){
-            //the video stream could be opened
-        });
-
         // Wait until dialog is added to the DOM (required for Safari)
         setTimeout(function() {
           this.$.dialog.open();
+          
+          setTimeout(function() {
+            $('#reader').html5_qrcode(function(data) {
+              // do something when code is read
+              this.$.ajax.params = {
+                user: data,
+              };
+              this.$.ajax.generateRequest();
+              this.set('loading', true);
+            }.bind(this),
+            function(error) {
+              //show read errors
+              // console.error(error)
+            }.bind(this), function(videoError) {
+              //the video stream could be opened
+              console.log(videoError)
+              this.videoError = videoError;
+            }.bind(this));
+          }.bind(this), 100);
         }.bind(this), 1);
       },
       _onClosed: function(e, detail) {
         // Remove the dialog from the DOM once the exit animation is finished
-        Polymer.dom(this.parentNode).removeChild(this);
+        $('#reader').html5_qrcode_stop();
+        setTimeout(function() {
+          Polymer.dom(this.parentNode).removeChild(this);
+        }.bind(this), 100);
       },
       _handleResponse: function(event) {
+        this.set('loading', false);
         if(event.detail.response) {
           if (event.detail.response.success) {
             // TODO
+            this.success = true;
           }
         }
       },
       _handleError: function(event) {
-        if(event.detail.response) {
-          if (!event.detail.response.success) {
-            this.error = event.detail.response.errors;
-          }
+        this.set('loading', false);
+        var response = event.detail.request.xhr.response;
+        if (!response.success) {
+          this.error = response.errors.message;
+          console.log(this.error);
         }
+      },
+      _computeShowOverlay: function(success, error, loading, videoError) {
+        if (!!error) {
+          // Async fadeOut
+          setTimeout(function() {
+            this.set('error', null);
+          }.bind(this), 4000)
+        }
+        if (!!success) {
+          // Async fadeOut
+          setTimeout(function() {
+            this.set('success', null);
+          }.bind(this), 4000)
+        }
+        return !!success || !!error || !!videoError || !!loading;
+      },
+      _computeTextMessage: function(success, error, videoError) {
+        return success ? 'Check in success' : (error ? error : videoError);
+      },
+      _loadingChanged: function(loading) {
+        this.$.spinner.active = true;
+        this.$.spinner.hidden = !loading;
       }
     });
   </script>
