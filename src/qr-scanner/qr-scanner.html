@@ -182,7 +182,6 @@
               // console.error(error)
             }.bind(this), function(videoError) {
               //the video stream could be opened
-              console.log(videoError)
               if (videoError.name === 'PermissionDeniedError') {
                 this.videoError = videoError.message;
               }
@@ -192,8 +191,10 @@
       },
       _onClosed: function(e, detail) {
         // Remove the dialog from the DOM once the exit animation is finished
-        if (!this.videoError) {
+        try {
           $(this.$.reader).html5_qrcode_stop();
+        } catch (err) {
+          console.error(err);
         }
         setTimeout(function() {
           Polymer.dom(this.parentNode).removeChild(this);
