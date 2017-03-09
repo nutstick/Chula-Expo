@@ -210,11 +210,11 @@ router.delete('/:rid', isAuthenticatedByToken, (req, res) => {
     if (!round) {
       return res.sendError(26);
     }
-    round.cancelReservedSeat(req.user.id)
+    round.cancelReservedSeat(req.user.id, round)
       .then(() => (
         res.status(201).json({
           success: true,
-          message: `Successfully cancel reserved round ${req.params.id}.`,
+          message: `Successfully cancel reserved round ${req.params.rid}.`,
         })
       ))
       .catch(err => (err.code ? res.sendError(err.code) : res.sendError(5, err)));
