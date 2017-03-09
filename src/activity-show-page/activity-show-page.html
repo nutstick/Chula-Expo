@@ -22,6 +22,8 @@
 <link rel="import" href="../paper-card-dataitem/paper-card-dataitem.html">
 <link rel="import" href="../shared-styles/shared-styles.html">
 <link rel="import" href="../rounds-list/rounds-list.html">
+<link rel="import" href="../qr-scanner/qr-scanner.html">
+<link rel="import" href="../activity-check-list/activity-check-list.html">
 
 <dom-module id="activity-show-page">
   <template>
@@ -142,6 +144,9 @@
       .fitdiv {
         display: inline;
         word-wrap: break-word;
+      }
+      #activityCheckDialog {
+        width: 100%;
       }
     </style>
     <activity-api
@@ -360,8 +365,23 @@
 			<div id="right">
         <rounds-list activity-id="[[activityId]]"></rounds-list>
 			</div>
-			<bottom-prefab-speed-dial reveals effects="waterfall" target-url="[[_computeActivityLink(activityId)]]" parent-url="/activity/"></bottom-prefab-speed-dial>
+			<bottom-prefab-speed-dial reveals effects="waterfall">
+				<paper-fab mini icon="icons:create" on-tap="_onEdit"></paper-fab>
+				<paper-fab mini icon="image:camera-alt" on-tap="_onLaunchQR"></paper-fab>
+				<paper-fab mini icon="maps:local-offer" on-tap="_onActivityCheckListClick"></paper-fab>
+				<paper-fab mini icon="icons:delete" on-tap=	"_onRemove"></paper-fab>
+			</bottom-prefab-speed-dial>
 		</div>
+    <paper-dialog id="activityCheckDialog" on-iron-overlay-closed="">
+      <activity-check-list id="activityCheckList" activity-id="[[activityId]]"></activity-check-list>
+    </paper-dialog>
+    <paper-dialog style="z-index: 150;" id="removeDialog" on-iron-overlay-closed="_onRemoveConfirm">
+      <h2>Are you sure?</h2>
+      <div class="buttons">
+        <paper-button dialog-dismiss>No</paper-button>
+        <paper-button dialog-confirm autofocus>Yes</paper-button>
+      </div>
+    </paper-dialog>
   </template>
   <script>
     Polymer({
@@ -437,6 +457,41 @@
           this.error = event.detail.response.errors;
         }
       },
+			_onEdit: function(e) {
+        window.history.pushState({}, null, '/activity/' + this.activityId + '/edit/');
+        window.dispatchEvent(new CustomEvent('location-changed'));
+      },
+      _onLaunchQR: function(e) {
+        var qr = document.createElement('qr-scanner');
+        qr.url = window.api + '/api/activities/' + this.activityId + '/checkin';
+        qr.open();
+      },
+      _onRemove: function(e) {
+        this.$.removeDialog.open();
+      },
+      _onRemoveConfirm: function(e) {
+        if(event.detail.confirmed) {
+          var url = window.api + '/api/activities' + this.activityId;
+          setTimeout(function () {
+            var req = new XMLHttpRequest();
+
+            req.open('DELETE', encodeURI(url));
+            req.setRequestHeader('Authorization', 'JWT ' + window.token);
+            req.onload = function() {
+              document.querySelector('chulaexpo-staff-app').set('route.path', this.parentUrl);
+              window.dispatchEvent(new CustomEvent('location-changed'));
+            }.bind(this);
+            req.send();
+          }.bind(this), 300);
+        }
+      },
+			_onActivityCheckListClick: function(e) {
+        this.$.activityCheckList.generateRequest();
+        setTimeout(function() {
+          this.$.activityCheckDialog.open();
+        }.bind(this), 50)
+			},
+
       _convertToDate: function(dateTime) {
         return moment.utc(dateTime).format('D MMM, HH:mm');
       },

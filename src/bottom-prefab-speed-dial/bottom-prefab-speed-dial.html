@@ -7,7 +7,6 @@
 <link rel="import" href="../../bower_components/app-layout/app-scroll-effects/effects/waterfall.html">
 <link rel="import" href="../../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
 
-<link rel="import" href="../qr-scanner/qr-scanner.html">
 <link rel="import" href="../shared-styles/shared-styles.html">
 
 <dom-module id="bottom-prefab-speed-dial">
@@ -36,20 +35,12 @@
       <paper-fab-speed-dial id="menu" active="{{menuOpened}}">
         <paper-fab icon="icons:menu"></paper-fab>
         <div class="dropdown-content">
-          <paper-fab mini icon="icons:create" on-tap="_onEdit"></paper-fab>
-          <paper-fab mini icon="image:camera-alt" on-tap="_onLaunchQR"></paper-fab>
-          <paper-fab mini icon="icons:delete" on-tap="_onRemove"></paper-fab>
+          <content>
+          </content>
         </div>
       </paper-fab-speed-dial>
       <!--<paper-fab id="addIcon" icon="add" on-tap="_onClick"></paper-fab>-->
     </div>
-    <paper-dialog style="z-index: 150;" id="dialog" on-iron-overlay-closed="_onRemoveConfirm">
-      <h2>Are you sure?</h2>
-      <div class="buttons">
-        <paper-button dialog-dismiss>No</paper-button>
-        <paper-button dialog-confirm autofocus>Yes</paper-button>
-      </div>
-    </paper-dialog>
   </template>
   <script>
     Polymer({
@@ -253,37 +244,6 @@
 
       getScrollState: function() {
         return { progress: this._progress, top: this._top };
-      },
-
-      _onEdit: function(e) {
-        window.history.pushState({}, null, this.parentUrl +  this.targetUrl + '/edit/');
-        window.dispatchEvent(new CustomEvent('location-changed'));
-      },
-      _onLaunchQR: function(e) {
-        var qr = document.createElement('qr-scanner');
-        qr.url = this.targetUrl + '/checkin';
-        qr.open();
-      },
-      _onRemove: function(e) {
-        this.$.dialog.open();
-      },
-      _onRemoveConfirm: function(e) {
-        if(event.detail.confirmed) {
-          var id = this.deleteId;
-          // FIXME api url
-          var url = window.api + '/api/' + this.parentUrl + this.targetUrl;
-          setTimeout(function () {
-            var req = new XMLHttpRequest();
-
-            req.open('DELETE', encodeURI(url));
-            req.setRequestHeader('Authorization', 'JWT ' + window.token);
-            req.onload = function() {
-              document.querySelector('chulaexpo-staff-app').set('route.path', this.parentUrl);
-              window.dispatchEvent(new CustomEvent('location-changed'));
-            }.bind(this);
-            req.send();
-          }.bind(this), 300);
-        }
       },
     });
   </script>

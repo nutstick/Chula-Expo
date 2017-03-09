@@ -1,0 +1,47 @@
+<!-- Libery -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="../../bower_components/iron-data-table/iron-data-table.html">
+<link rel="import" href="../../bower_components/iron-data-table/data-table-column.html">
+<link rel="import" href="../activity-check-api/activity-check-api.html">
+
+<dom-module id="activity-check-list">
+  <template>
+    <activity-check-api id="api" activity-id="[[activityId]]" activity-checks="{{activityChecks}}" page-size="0"></activity-check-api>
+    <iron-data-table items="[[activityChecks]]">
+      <data-table-column name="#" width="50px" flex="0">
+        <template>[[index]]</template>
+      </data-table-column>
+      <data-table-column name="User">
+        <template>[[item.user]]</template>
+      </data-table-column>
+      <data-table-column name="Create">
+        <template>[[_computeCreateAtDate(item.createAt)]]</template>
+      </data-table-column>
+      <data-table-column name="Status">
+        <template>[[_computeChecked(item.checked)]]</template>
+      </data-table-column>
+    </iron-data-table>
+  </template>
+  <script>
+    Polymer({
+      is: 'activity-check-list',
+      properties: {
+        activityId: {
+          type: String,
+          value: ''
+        },
+        activityChecks: {
+          type: Array,
+          value: []
+        },
+      },
+      generateRequest: function() {
+        return this.$.api.generateRequest();
+      },
+      _computeCreateAtDate: function(createAt) {
+        return moment.utc(createAt).format('D MMM, HH:mm');
+      },
+    });
+  </script>
+</dom-module>

@@ -136,7 +136,7 @@
   					<div class="item">
               <label class="label --upload">Thumbnail</label>
               <div class="input-wrapper --width">
-								<iron-image style="width:140px; height:80px;" sizing="cover" preload fade src="{{activity.thumbnail}}"></iron-image>
+                <iron-image style="width:140px; height:80px;" sizing="cover" preload fade src="{{_computeThumbnail(activity.thumbnail)}}"></iron-image>
 								<vaadin-upload
 									id="thumbnailUpload"
 									accept="image/*"
@@ -170,7 +170,7 @@
   					<div class="item">
 							<label class="label --upload">Banner</label>
               <div class="input-wrapper --width">
-                <iron-image style="width:200px; height:150px;" sizing="cover" preload fade src="{{activity.banner}}"></iron-image>
+                <iron-image style="width:200px; height:150px;" sizing="cover" preload fade src="{{_computeBanner(activity.banner)}}"></iron-image>
 								<vaadin-upload
 									id="bannerUpload"
 									accept="image/*"
@@ -204,13 +204,13 @@
   					<div class="item">
   						<label class="label --input">Start Time</label>
               <div class="input-wrapper">
-								<datetime-local-input name="start" label="" no-label-float="true" value="{{_convertToDate(activity.start)}}" required></datetime-local-input>
+								<datetime-local-input name="start" label="" no-label-float="true" value="{{activity.start}}" required></datetime-local-input>
   						</div>
             </div>
 						<div class="item">
 							<label class="label --input">End Time</label>
               <div class="input-wrapper">
-								<datetime-local-input name="end" label="" no-label-float="true" value="{{_convertToDate(activity.end)}}" required></datetime-local-input>
+								<datetime-local-input name="end" label="" no-label-float="true" value="{{activity.end}}" required></datetime-local-input>
 							</div>
   					</div>
 
@@ -339,6 +339,9 @@
 						<!-- Picture -->
 						<div class="item">
 							<label class="label --height">รูปภาพที่เกี่ยวข้อง</label>
+              <template is="dom-repeat" items="{{activity.pictures}}">
+                <iron-image style="width:100px; height:100px;" sizing="cover" preload fade src="{{_computePicture(item)}}"></iron-image>
+              </template>
 							<div class="input-wrapper">
                 <images-upload
                   id="pictureUpload"
@@ -471,9 +474,6 @@
           this.$.roomAPI.generateRequest();
         }
       },
-      _convertToDate: function(dateTime) {
-        return moment.utc(dateTime).format('D MMM, HH:mm');
-      },
       _delayedSubmit: function(event) {
         var form = this.$.form;
         this.$.spinner.active = true;
@@ -536,7 +536,16 @@
           this.placeId = e.detail.value._id;
           this.$.roomAPI.generateRequest();
         }
-      }
+      },
+			_computeThumbnail: function(thumbnail) {
+				return thumbnail ? window.api + thumbnail : null;
+			},
+			_computeBanner: function(banner) {
+				return banner ? window.api + banner : null;
+			},
+			_computePicture: function(picture) {
+				return picture ? window.api + picture : null;
+			},
     })
   </script>
 </dom-module>
