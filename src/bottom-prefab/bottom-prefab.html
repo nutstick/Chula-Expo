@@ -10,6 +10,7 @@
   <template>
     <style include="shared-styles">
       :host {
+        pointer-events: none;
         position: relative;
         display: block;
         transition-timing-function: linear;
@@ -40,6 +41,7 @@
       }
       
       #addIcon {
+        pointer-events: visible;
         float: right;
         @apply(--shadow-elevation-8dp);
       }

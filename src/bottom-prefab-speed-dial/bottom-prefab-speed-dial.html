@@ -13,6 +13,7 @@
   <template>
     <style include="shared-styles">
       :host {
+        pointer-events: none;
         position: relative;
         display: block;
         transition-timing-function: linear;
@@ -24,6 +25,10 @@
       :host {
         position: fixed;
         bottom: 20px;
+      }
+
+      :host {
+        pointer-events: visible;
       }
       
       #menu {
