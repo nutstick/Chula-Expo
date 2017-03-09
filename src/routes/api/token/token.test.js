@@ -50,7 +50,7 @@ describe('API Token', () => {
         const token = jwt.sign({
           sub: user.id,
         }, process.env.JWT_SECRET, {
-          expiresIn: 8 * 60 * 60 /* expires in 8 hrs */,
+          expiresIn: 7 * 24 * 60 * 60 /* expires in 8 hrs */,
         });
 
         chai.request(server)
@@ -80,7 +80,7 @@ describe('API Token', () => {
       const token = jwt.sign({
         sub: id,
       }, process.env.JWT_SECRET, {
-        expiresIn: 8 * 60 * 60 /* expires in 8 hrs */,
+        expiresIn: 7 * 24 * 60 * 60 /* expires in 8 hrs */,
       });
 
       chai.request(server)
