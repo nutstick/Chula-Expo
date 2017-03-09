@@ -192,7 +192,9 @@
       },
       _onClosed: function(e, detail) {
         // Remove the dialog from the DOM once the exit animation is finished
-        $(this.$.reader).html5_qrcode_stop();
+        if (!this.videoError) {
+          $(this.$.reader).html5_qrcode_stop();
+        }
         setTimeout(function() {
           Polymer.dom(this.parentNode).removeChild(this);
         }.bind(this), 100);
