@@ -1,0 +1,354 @@
+<!-- Libery -->
+<link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Icon Component -->
+<link rel="import" href="/public/lib/iron-icons/iron-icons.html">
+<link rel="import" href="/public/lib/paper-icon-button/paper-icon-button.html">
+<!-- Web Component -->
+<link rel="import" href="/public/lib/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="/public/lib/paper-card/paper-card.html">
+<link rel="import" href="/public/lib/iron-ajax/iron-ajax.html">
+<link rel="import" href="/public/lib/iron-form/iron-form.html">
+<link rel="import" href="/public/lib/iron-grid/iron-grid.html">
+<link rel="import" href="/public/lib/paper-input/paper-input.html">
+<link rel="import" href="/public/lib/paper-button/paper-button.html">
+<link rel="import" href="/public/lib/paper-button-group/paper-button-group.html">
+<link rel="import" href="/public/lib/paper-toggle-button/paper-toggle-button.html">
+
+<link rel="import" href="/components/shared-styles/shared-styles.html">
+<link rel="import" href="/components/zone-api/zone-api.html">
+<link rel="import" href="/components/profile-image-uploadable/profile-image-uploadable.html">
+<dom-module id="signup-page">
+  <template>
+    <style is="custom-style" include="shared-styles">
+      :host, paper-card {
+        width: 100%;
+      }
+      :host {
+        @apply(--layout);
+        @apply(--layout-center-center);
+      }
+      @media (min-width: 600px) {
+        :host {
+          padding-top: 20px;
+        }
+      }
+      .header {
+        height: 140px;
+        position: relative;
+        background-color: var(--primary-color);
+        margin-bottom: 60px;
+        overflow: inherit!important;
+      }
+      .header * {
+        overflow: inherit;
+      }
+      .center {
+        @apply(--layout-center-justified);
+        @apply(--layout-horizontal);
+      }
+      .offset {
+        position: absolute;
+        top: 40px;
+        width: 100%;
+      }
+      [hidden] {
+        display: none!important;
+      }
+      .item {
+        display: block;
+        padding: 8px 0;
+      }
+      .input-label {
+        width: 55px;
+        display: inline-block;
+        margin-right: 16px;
+        line-height: 46px;
+        color: #888;
+      }
+      paper-button[toggles] {
+        transition: background-color 0.3s;
+      }
+      paper-button[toggles][active] {
+        color: white;
+        background-color: var(--primary-color);
+        --paper-button-flat-focus-color: var(--secondary-color);
+      }
+      paper-button.ripple::shadow paper-ripple {
+        color: var(--primary-color);
+      }
+      paper-button.ripple paper-ripple {
+        color: var(--primary-color);
+      }
+      .field {
+        border: 1px dashed;
+        border-radius: 5px;
+        margin-top: 10px;
+      }
+      .button-holder {
+        @apply(--layout-horizontal);
+        @apply(--layout-end-justified);
+        margin-top: 10px;
+      }
+      .error-msg {
+        color: #ff5050;
+        text-align: center;
+        font-size: 1em;
+      }
+    </style>
+    <zone-api
+      id="zoneAPI"
+      zones="{{zones}}"
+      error="{{error}}"
+      loading="{{zoneLoading}}"
+      page="0"
+      page-size="0"
+      fields="_id,nameEN"
+    ></zone-api>
+    <form
+      is="iron-form"
+      id="form"
+      method="post"
+      action="_url"
+      on-iron-form-presubmit="_presubmit"
+      on-iron-form-response="_response"
+      on-iron-form-error="_error">
+      <paper-card class="container">
+        <div class="header style-scope paper-card">
+          <!-- Profile Image with uploadility -->
+          <div class="center offset">
+            <profile-image-uploadable image="{{queryParams.profile}}" alt="User profile" name="profile"></profile-image-uploadable>
+          </div>
+        </div>
+        <!-- Polymer Iron form -->
+        <div class="card-content">
+            <!-- Name -->
+            <paper-input name="name" label="ชื่อ" value="{{queryParams.name}}" required always-float-label></paper-input>
+            <!-- E-mail -->
+            <paper-input name="email" label="อีเมลล์" value="{{queryParams.email}}" required always-float-label></paper-input>
+            <!-- Password -->
+            <paper-input id="password" name="password" label="พาสเวิร์ด" type="password" hidden$={{queryParams.facebook}} required={{!queryParams.facebook}} always-float-label></paper-input>
+            <paper-input-container always-float-label attr-for-value="value" id="confirmPassword"  hidden$={{queryParams.facebook}}>
+              <label>คอนเฟิร์มพาสเวิร์ด</label>
+              <input
+                is="iron-input"
+                class="paper-input-input"
+                name="confirmPassword"
+                type="password"
+                required="{{!queryParams.facebook}}"
+                validator="confirmPasswordValidate"
+              ></input>
+              <paper-input-error>Password isn't macth</paper-input-error>
+            </paper-input-container>
+            <!-- Gender -->
+            <div class="item">
+              <div class="input-label" id="gender">เพศ:</div>
+              <paper-button-group selected="male">
+                <paper-button name="male" toggles active={{male}}>ชาย</paper-button>
+                <paper-button name="female" toggles active={{female}}>หญิง</paper-button>
+                <paper-button name="other" toggles active={{other}}>อื่นๆ</paper-button>
+              </paper-button-group>
+            </div>
+            <!-- Age -->
+            <paper-input name="age" label="อายุ" type="number" value="{{queryParams.age}}" required always-float-label></paper-input>
+            <div class="item">
+              <!-- Student/Worker -->
+              <div class="input-label">ประเภท:</div>
+              <paper-button-group selected="student">
+                <paper-button name="student" toggles active={{student}}>นักเรียน นิสิต</paper-button>
+                <paper-button name="worker" toggles active={{worker}}>บุคคลทั่วๆ</paper-button>
+                <paper-button name="staff" toggles active={{staff}}>สตาฟ</paper-button>
+              </paper-button-group>
+              <!-- Student -->
+              <fieldset class="field" hidden$="{{!student}}">
+                <paper-input name="academicLevel" label="การศึกษาปัจจุบัน" required="{{student}}" always-float-label></paper-input>
+                <paper-input name="academicYear" label="ชั้นปี" required="{{student}}" always-float-label></paper-input>
+                <paper-input name="academicSchool" label="สถาบันการศึกษา" required="{{student}}" always-float-label></paper-input>
+              </fieldset>
+              <!-- Worker -->
+              <fieldset class="field" hidden$="{{!worker}}">
+                <paper-input name="workerJob" label="อาชีพ" required="{{worker}}" always-float-label></paper-input>
+              </fieldset>
+              <!-- Staff -->
+              <fieldset class="field" hidden$="{{!staff}}">
+                <div class="item">
+                  <div class="input-label">ประเภท:</div>
+                  <paper-button-group selected="scannerStaff">
+                    <paper-button toggles name="adminStaff" active="{{adminStaff}}">Admin</paper-button>
+                    <paper-button toggles name="scannerStaff" active="{{scannerStaff}}">Scan man</paper-button>
+                    <paper-button toggles name="staffStaff" active="{{staffStaff}}">Staff</paper-button>
+                  </paper-button-group>
+                </div>
+                <paper-input-container always-float-label attr-for-value="value" id="code">
+                  <label>รหัสลทะเบียน</label>
+                  <input
+                    is="iron-input"
+                    class="paper-input-input"
+                    name="registrationCode"
+                    required="{{staff}}"
+                  ></input>
+                  <paper-input-error>Invalid Registration Code</paper-input-error>
+                </paper-input-container>
+                <vaadin-combo-box name="zone" item-value-path="_id" label="สังกัด" item-label-path="name.en" items="{{zones}}" hidden$="{{adminStaff}}" require="{{!adminStaff}}" always-float-label></vaadin-combo-box>
+              </fieldset>
+            </div>
+            <!-- Hidden Fields -->
+            <input name="accessToken" type="hidden" value="{{queryParams.accessToken}}"></input>
+            <input name="tokens[0].kind" type="hidden" value="{{queryParams.kind}}"></input>
+            <input name="tokens[0].accessToken" type="hidden" value="{{queryParams.accessToken}}"></input>
+            <input name="facebook" type="hidden" value="{{queryParams.facebook}}"></input>
+          </div>
+          <!-- Submit Button -->
+          <div class="card-actions">
+            <div class="button-holder">
+              <paper-button on-tap="_delayedSubmit">
+                <paper-spinner id="spinner" hidden></paper-spinner>Submit
+              </paper-button>
+              <!-- Reset Button -->
+              <paper-button on-tap="_reset">Reset</paper-button>
+            </div>
+          </div>
+      </paper-card>
+    </form>
+  </template>
+  <script>
+    Polymer({
+      is: 'signup-page',
+      properties: {
+        _url: {
+          type: String,
+          value: function() {
+            return window.api + '/api/signup';
+          }
+        },
+        zones: {
+          type: Array,
+        },
+        gender: {
+          type: String,
+        },
+        type: {
+          type: Boolean,
+          observer: '_typeChanged',
+        },
+        student: {
+          type: Boolean,
+          value: true
+        },
+        worker: {
+          type: Boolean,
+          value: false
+        },
+        staff: {
+          type: Boolean,
+          value: false
+        },
+        route: {
+          type: String,
+        },
+        activated: {
+          type: Boolean,
+          value: false,
+          observer: '_activatedChanged'
+        },
+        queryParams: {
+          type: Object,
+          computed: "_computedQueryParams(route)"
+        },
+        headerToken: {
+          type: String,
+          computed: "_computedHeaderToken(token)"
+        },
+        zoneParams: {
+          type: Object,
+          value: {
+            fields: 'id,name'
+          }
+        }
+      },
+      _activatedChanged: function(activated) {
+				if (activated) {
+					this.$.zoneAPI.generateRequest();
+				}
+      },
+      _handleResponse: function(event) {
+        if (event.detail.response.success) {
+          this.zones = event.detail.response.zones;
+        } else {
+          this.error = event.detail.response.errors;
+        }
+      },
+      _computedQueryParams: function(route) {
+        if(route.__queryParams.tokens) {
+          var object = JSON.parse(route.__queryParams.tokens);
+          route.__queryParams.kind = object[0].kind;
+          route.__queryParams.accessToken = object[0].accessToken;
+        }
+        return route.__queryParams;
+      },
+      _computedHeaderToken: function(token) {
+        return JSON.stringify({
+          Authorization: 'JWT ' + token
+        });
+      },
+      _typeChanged: function(event) {
+        this.hideStudent = this.type;
+        this.hideWorker = !this.type;
+      },
+      _delayedSubmit: function(event) {
+        var form = this.$.form;
+        this.$.spinner.active = true;
+        this.$.spinner.hidden = false;
+        this.$.form.disabled = true;
+        // Simulate a slow server response.
+        form.submit();
+      },
+      _reset: function(event) {
+        var form = this.$.form;
+        form.reset();
+      },
+      _presubmit: function(event) {
+        this.$.code.invalid = false;
+        this.$.password.invalid = false;
+        this.$.confirmPassword.invalid = false;
+        for (field in this.$.form.request.body) {
+          if (!this.$.form.request.body[field]) {
+            delete this.$.form.request.body[field];
+          }
+        }
+        if (this.$.form.request.body.password !== this.$.form.request.body.confirmPassword) {
+          this.$.password.invalid = true;
+          this.$.confirmPassword.invalid = true;
+          return event.preventDefault();
+        }
+        this.$.form.request.body.gender = this.male ? 'Male' : (this.female ? 'Female': 'Other');
+        this.$.form.request.body.type = this.student ? 'Academic' : (this.worker ? 'Worker' : 'Staff');
+        if (this.$.form.request.body.type === 'Staff') {
+          this.$.form.request.body.staff = this.adminStaff ? 'Admin' : (this.scannerStaff ? 'Scanner' : 'Staff');
+        } else {
+          delete this.$.form.request.body.staff;
+        }
+      },
+      _response: function(e) {
+        if (e.detail.response.success) {
+          document.querySelector('chulaexpo-staff-app').token = e.detail.response.results.token;
+          // document.getElementById('storage').save();
+
+          window.history.pushState({}, null, '/');
+          window.dispatchEvent(new CustomEvent('location-changed'));
+        } else {
+          if (e.detail.response.errors.code == "11") {
+            this.$.codeerror.innerHTML = "Invalid code"
+          }
+        }
+      },
+      _error: function(e) {
+        var res = e.detail.request.xhr.response;
+        if (!res.success) {
+          if (res.errors.code == "11") {
+            this.$.code.invalid = true;
+          }
+        }
+      }
+    });
+  </script>
+</dom-module>

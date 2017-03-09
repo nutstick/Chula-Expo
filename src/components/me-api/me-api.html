@@ -1,0 +1,110 @@
+<!-- Libery -->
+<link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="/public/lib/iron-ajax/iron-ajax.html">
+
+<dom-module id="me-api">
+  <template>
+    <iron-ajax
+      id="ajax"
+      url="[[_url]]"
+      params="{{params}}"
+      on-response="_handleResponse"
+      on-error="_handleError"
+      headers="{{headers}}"
+      handle-as="json"
+      debounce-duration="300"
+    ></iron-ajax>
+  </template>
+  <script>
+    Polymer({
+      is: 'me-api',
+      properties: {
+        params: {
+          type: Object,
+          value: {
+            fields: 'name,profile,type,staff',
+            limit: 0,
+            skip: 0
+          }
+        },
+        _url: {
+          type: String,
+          value: function() {
+            return window.api + '/api/me';
+          }
+        },
+        headers: {
+          type: Object,
+          value: function() {
+            return {
+              'Authorization': 'JWT ' + window.token
+            };
+          }
+        },
+        auto: {
+          type: Boolean,
+          value: false,
+        },
+        fields: {
+          type: String,
+        },
+        me: {
+          type: Object,
+          notify: true,
+        },
+        loading: Boolean,
+        error: {
+          type: Object,
+          value: {}
+        }
+      },
+
+      observers: [
+        '_updateRequest(fields)'
+      ],
+
+      ready: function(){
+        document.addEventListener('token', function(e) {
+          var token = e.detail.token;
+          if (!token) {
+            return;
+          }
+
+          this.headers = {
+            'Authorization': 'JWT ' + token
+          };
+          this.generateRequest();
+        }.bind(this));
+      },
+      _updateRequest: function(fields) {
+        this.set('params.fields', fields);
+        // this.generateRequest();
+      },
+      generateRequest: function() {
+        return this.$.ajax.generateRequest();
+      },
+      _handleResponse: function(event) {
+        if (event.detail.response.success) {
+          this.me = event.detail.response.results;
+        }
+      },
+      _handleError: function(event) {
+        var response = event.detail.request.xhr.response;
+        if (!response.success) {
+          if (response.errors.code === "4") {
+            // Logout
+            console.log(document.querySelector('chulaexpo-staff-app').token)
+            document.querySelector('chulaexpo-staff-app').token = null;
+            // document.getElementById('storage').save();
+
+            // window.history.pushState({}, null, '/');
+            document.querySelector('chulaexpo-staff-app').set('route.path', '/');
+            window.dispatchEvent(new CustomEvent('location-changed'));
+          }
+          this.error = response.errors;
+        }
+      }
+    });
+  </script>
+</dom-module>

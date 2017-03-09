@@ -1,0 +1,45 @@
+<!-- Libery -->
+<link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="/public/lib/app-route/app-route.html">
+<link rel="import" href="/public/lib/vaadin-upload/vaadin-upload.html">
+<link rel="import" href="/public/lib/paper-card/paper-card.html">
+<link rel="import" href="/public/lib/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="/public/lib/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="/public/lib/paper-tags-input/paper-tags-input.html">
+<link rel="import" href="/public/lib/paper-input/paper-textarea.html">
+<link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="/public/lib/greenyouse-datetime-local-input/datetime-local-input.html">
+<link rel="import" href="/public/lib/google-map/google-map.html">
+<link rel="import" href="/public/lib/paper-dialog/paper-dialog.html">
+<link rel="import" href="/public/lib/google-map/google-map-marker.html">
+
+<link rel="import" href="/components/qr-scanner/qr-scanner.html">
+
+<dom-module id="activity-scan-page">
+  <template>
+  <style is="custom-style" include="shared-styles">
+    :host {
+      @apply(--layout-vertical);
+      @apply(--layout-center-center);
+      padding-top: 20px;
+    }
+
+    paper-card {
+      width: 100%;
+    }
+
+  </style>
+    <qr-scanner>
+    <qr-scanner>
+  </template>
+  <script>
+    Polymer({
+      is: 'activity-scan-page',
+      properties: {
+      },
+      observers: [
+      ],
+    })
+  </script>
+</dom-module>

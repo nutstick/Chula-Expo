@@ -5,7 +5,7 @@
 <link rel="import" href="/public/lib/bottom-button/bottom-button.html">
 <link rel="import" href="/public/lib/paper-spinner/paper-spinner.html">
 
-<link rel="import" href="/components/shared-styles.html">
+<link rel="import" href="/components/shared-styles/shared-styles.html">
 
 <dom-module id="qr-scanner">
   <template>
@@ -147,9 +147,9 @@
         // Wait until dialog is added to the DOM (required for Safari)
         setTimeout(function() {
           this.$.dialog.open();
-
+          
           setTimeout(function() {
-            $('#reader').html5_qrcode(function(data) {
+            $(this.$.reader).html5_qrcode(function(data) {
               // do something when code is read
               this.$.ajax.params = {
                 user: data,
@@ -162,15 +162,20 @@
               // console.error(error)
             }.bind(this), function(videoError) {
               //the video stream could be opened
-              console.log(videoError)
-              this.videoError = videoError;
+              if (videoError.name === 'PermissionDeniedError') {
+                this.videoError = videoError.message;
+              }
             }.bind(this));
           }.bind(this), 100);
         }.bind(this), 1);
       },
       _onClosed: function(e, detail) {
         // Remove the dialog from the DOM once the exit animation is finished
-        $('#reader').html5_qrcode_stop();
+        try {
+          $(this.$.reader).html5_qrcode_stop();
+        } catch (err) {
+          console.error(err);
+        }
         setTimeout(function() {
           Polymer.dom(this.parentNode).removeChild(this);
         }.bind(this), 100);
@@ -216,4 +221,4 @@
       }
     });
   </script>
-</dom-module>
+	</dom-module>

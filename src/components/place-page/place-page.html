@@ -1,0 +1,63 @@
+<!-- Libery -->
+<link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="/public/lib/iron-pages/iron-pages.html">
+<link rel="import" href="/public/lib/app-route/app-route.html">
+
+<link rel="import" href="/components/shared-styles/shared-styles.html">
+
+<dom-module id="place-page">
+  <template>
+    <app-route
+      route="{{route}}"
+      pattern="/:page"
+      data="{{routeData}}"
+      tail="{{subroute}}"
+    ></app-route>
+    <iron-pages
+      selected="[[page]]"
+      attr-for-selected="name"
+      fallback-selection="id"
+      selected-attribute="activated"
+      role="main">
+      <place-list-page name="list"></place-list-page>
+      <place-add-page name="add"></place-add-page>
+			<place-id-page place-id="{{placeId}}" route="{{subroute}}" name="id"></place-show-page>
+    </iron-pages>
+  </template>
+  <script>
+    Polymer({
+      is: 'place-page',
+      properties: {
+        route: {
+          type: String,
+        },
+        page: {
+          type: String,
+          reflectToAttribute: true,
+          observer: '_pageChanged',
+        },
+        placeId: String
+      },
+
+      observers: [
+        '_routePageChanged(routeData.page)',
+      ],
+
+      _routePageChanged: function(page) {
+        if (page && page !== 'add') {
+          this.placeId = page;
+          this.page = 'id';
+        } else {
+          console.log(page)
+          this.page = page || 'list';
+        }
+      },
+      _pageChanged: function(page) {
+        var resolvedPageUrl = this.resolveUrl('../place-'+ page + '-page/place-' + page + '-page.html');
+        this.importHref(resolvedPageUrl, null, null, true);
+      }
+    });
+  </script>
+</dom-module>

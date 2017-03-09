@@ -1,0 +1,181 @@
+<!-- Libery -->
+<link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="/public/lib/iron-ajax/iron-ajax.html">
+
+<dom-module id="activity-api">
+  <template>
+    <iron-ajax
+      id="activityResource"
+      url="{{url}}"
+      headers="{{headers}}"
+      params="{{params}}"
+      on-response="_handleResponse"
+      handle-as="json"
+    ></iron-ajax>
+  </template>
+  <script>
+    Polymer({
+      is: 'activity-api',
+      properties: {
+        url: {
+          type: String,
+          value: function() {
+            return window.api + '/api/activities';
+          }
+        },
+        params: {
+          type: Object,
+          value: {
+            limit: 10,
+            skip: 0,
+          }
+        },
+        headers: {
+          type: Object,
+          // value: {
+          //   'Authorization': 'JWT ' + window.token
+          // }
+        },
+        /*
+          Input Data
+        */
+        activityId: {
+          type: String,
+          observer: '_idChanged'
+        },
+        page: {
+          type: Number,
+          value: 1
+        },
+        pageSize: {
+          type: Number,
+          value: 10
+        },
+        fields: {
+          type: String,
+          value: ''
+        },
+        start: {
+          type: String,
+          value: ''
+        },
+        end: {
+          type: String,
+          value: ''
+        },
+        zone: {
+          type: String,
+          value: ''
+        },
+        /*
+          Output Data
+        */
+        activities: {
+          type: Array,
+          value: [],
+          notify: true,
+        },
+        activity: {
+          type: Object,
+          notify: true,
+        },
+        loading: {
+          type: Boolean,
+          notify: true,
+        },
+        error: {
+          type: Object,
+          value: {},
+          notify: true,
+        },
+        createBy: {
+          type: String
+        },
+        me: {
+          type: Object,
+          value: {},
+          notify: true,
+        },
+        totalPages: {
+          type: Number,
+          notify: true,
+        }
+      },
+
+      observers: [
+        'updateRequest(page,pageSize,fields,start,end,zone,me)'
+      ],
+      ready: function(){
+        document.addEventListener('token', function(e) {
+          var token = e.detail.token;
+          if (!token) {
+            return;
+          }
+
+          this.headers = {
+            'Authorization': 'JWT ' + token
+          };
+          // this.generateRequest();
+        }.bind(this));
+      },
+      updateRequest: function(page, pageSize, fields, start, end, zone, me) {
+        if (pageSize === 0) {
+          this.set('params.limit', null);
+          this.set('params.skip', page);
+        } else {
+          this.set('params.limit', pageSize);
+          this.set('params.skip', (page - 1) * pageSize);
+        }
+
+        this.set('params.fields', fields)
+        if (start) {
+          var startQuery = { gte: start };
+          this.set('params.start', JSON.stringify(startQuery));
+          this.set('params.skip', 0);
+        }
+        if (end) {
+          var endQuery = { lte: end };
+          this.set('params.end', JSON.stringify(endQuery));
+          this.set('params.skip', 0);
+        }
+
+        if(me.type == 'Staff' && me.staff.staffType != 'Admin')
+          this.set('params.createBy', me._id);
+        else
+          delete this.params.createBy;
+
+
+        this.set('params.zone', zone);
+      },
+      generateRequest: function() {
+        return this.$.activityResource.generateRequest();
+      },
+      _handleResponse: function(event) {
+        if(event.detail.response) {
+          if (event.detail.response.success) {
+            if (this.activityId) {
+              // Specific id query
+              this.activity = event.detail.response.results;
+            } else {
+              this.activities = event.detail.response.results;
+              this.set('totalPages', Math.ceil(event.detail.response.queryInfo.total / this.pageSize));
+            }
+          } else {
+            this.error = event.detail.response.errors;
+          }
+
+        }
+      },
+      _idChanged: function(id) {
+        if (id && id!='show' && id!='edit' && id!='add' && id!='list') {
+          this.url = window.api + '/api/activities/' + id;
+        } else if (id && id=='list'){
+          this.url = window.api + '/api/activities';
+        } else {
+          this.url = '';
+        }
+      }
+    });
+  </script>
+</dom-module>

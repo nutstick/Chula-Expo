@@ -18,10 +18,10 @@
 <link rel="import" href="/public/lib/iron-pages/iron-pages.html">
 <link rel="import" href="/public/lib/vaadin-combo-box/vaadin-combo-box.html">
 
-<link rel="import" href="//components/facility-api.html">
-<link rel="import" href="//components/place-api.html">
+<link rel="import" href="/components/facility-api/facility-api.html">
+<link rel="import" href="/components/place-api/place-api.html">
 
-<link rel="import" href="//components/shared-styles.html">
+<link rel="import" href="/components/shared-styles/shared-styles.html">
 
 <dom-module id="facility-edit-page">
   <template>
@@ -97,8 +97,14 @@
     ></facility-api>
     <div class="container">
       <paper-card>
-				<form is="iron-form" id="form" method="post" class="card-content"
-					action="{{url}}" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
+				<form
+          is="iron-form"
+          id="form"
+          method="POST"
+          class="card-content"
+					action="[[_url]]"
+          on-iron-form-presubmit="_presubmit"
+          on-iron-form-response="_response">
 					<div class="card-content">
 
 						<!-- type -->
@@ -158,7 +164,7 @@
 					<div class="card-content">
 						<!-- Thai Language -->
 						<div class="flex-layout center">
-							<div class="avatar" item-icon><img src="/public/img/th.png" /></div>
+							<div class="avatar" item-icon><img src="../../images/th.png" /></div>
 							<div class="flex company">ภาษาไทย</div>
 						</div>
 						<paper-input type="text" value="[[facility.name.th]]" label="ชื่อ" name="nameTH" always-float-label required></paper-input>
@@ -168,7 +174,7 @@
           <div class="card-content">
 						<!-- English Language -->
 						<div class="flex-layout center">
-							<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
+							<div class="avatar" item-icon><img src="../../images/en.png" /></div>
 							<div class="flex company">English</div>
 						</div>
 						<paper-input type="text" label="name" value="[[facility.name.en]]" name="nameEN" always-float-label required></paper-input>
@@ -206,9 +212,6 @@
         facilityId: {
           type: Object,
           observer: '_idChanged'
-        },
-        token: {
-          type: String,
         },
         zoom: {
           type: Number,
@@ -254,7 +257,7 @@
         }
       },
       _presubmit: function(event) {
-        this.$.form.request.method = 'put';
+        this.$.form.method = "PUT";
       	this.$.form.request.body.locationLat = this.facility.location.latitude;
 				this.$.form.request.body.locationLong = this.facility.location.longitude;
 
@@ -267,9 +270,9 @@
       },
       _idChanged: function(id) {
         if (id) {
-          this.url = '/api/facilities/' + id;
+          this._url = window.api + '/api/facilities/' + id;
         } else {
-          this.url = '/api/facilities';
+          this._url = window.api + '/api/facilities';
         }
       }
     })

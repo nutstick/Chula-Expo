@@ -1,0 +1,51 @@
+<!-- Libery -->
+<link rel="import" href="/public/lib/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="/public/lib/paper-card/paper-card.html">
+<link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="/components/shared-styles/shared-styles.html">
+
+<dom-module id="home-page">
+  <template>
+    <style is="custom-style" include="shared-styles">
+      :host {
+        @apply(--layout);
+        @apply(--layout-center-center);
+        padding-top: 20px;
+      }
+    </style>
+    <paper-card class="container">
+      <div class="card-content">
+        <ul>
+          <li>zone คือ faculty,city,stage ต่างๆ ให้เข้าไปแก้ข้อมูลต่างๆ พร้อมอัพรูป banner และ thumbnail</li>
+          <li>place คือ สถานที่ต่างๆที่จะใช้จัดกิจกรรม ต้องมี place ที่จะใช้ก่อนสร้างกิจกรรมนั้นเสมอ</li>
+          <li>activity คือ กิจกรรมต่างๆ</li>
+          <li>round คือ รอบต่างๆของกิจกรรม สามารถไปเพิ่มได้ที่หน้า show ของ activity</li>
+          <li>facility คือ สิ่งอำนวยตวามสะดวกต่างๆ (โรงอาหาร, ที่จอดรถ, ละหมาด, ห้องน้ำ, จุดพยาบาล) ให้ระบุด้วยว่าอยู่ในหรือใกล้กับ place ไหน</li>
+        </ul>
+
+        <br>
+        <ul>
+          <li>Banner คือ ภาพที่จะโชว์ในหน้าหลักของส่วนนั้น ขนาด (1080x810)</li>
+          <li>Thumbnail คือ ภาพเล็กหน่อย</li>
+          <ul>
+            <li>Activity Thumbnail ขนาด (280x210)</li>
+            <li>City Thumbnail ขนาด (980x244)</li>
+            <li>Faculty Thumbnail ขนาด (475x284)</li>
+          </ul>
+        </ul>
+
+        <br>
+        ถ้ามีปัญหาการใช้งานใดๆให้ติดต่อที่เมลล์: cuexpo.it@gmail.com
+      </div>
+    </paper-card>
+  </template>
+  <script>
+    Polymer({
+      is: 'home-page',
+      properties: {
+      },
+    })
+  </script>
+</dom-module>

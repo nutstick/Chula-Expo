@@ -25,11 +25,32 @@
   <meta name="msapplication-TileImage" content="/img/icon-inverted-3x.png">
 
   <!-- Libery -->
+  <script src="/public/lib/popup-tools/PopupTools.js"></script>
   <script src="/public/lib/webcomponentsjs/webcomponents-lite.min.js"></script>
+  <script type="text/javascript" src="/public/js/lib/jquery.min.js"></script>
+  <script type="text/javascript" src="/public/js/lib/html5-qrcode.min.js"></script>
+  <script type="text/javascript" src="/public/js/lib/jsqrcode-combined.min.js"></script>
+  <script type="text/javascript" src="/public/js/lib/grid.js"></script>
+  <script type="text/javascript" src="/public/js/lib/version.js"></script>
+  <script type="text/javascript" src="/public/js/lib/detector.js"></script>
+  <script type="text/javascript" src="/public/js/lib/formatinf.js"></script>
+  <script type="text/javascript" src="/public/js/lib/errorlevel.js"></script>
+  <script type="text/javascript" src="/public/js/lib/bitmat.js"></script>
+  <script type="text/javascript" src="/public/js/lib/datablock.js"></script>
+  <script type="text/javascript" src="/public/js/lib/bmparser.js"></script>
+  <script type="text/javascript" src="/public/js/lib/datamask.js"></script>
+  <script type="text/javascript" src="/public/js/lib/rsdecoder.js"></script>
+  <script type="text/javascript" src="/public/js/lib/gf256poly.js"></script>
+  <script type="text/javascript" src="/public/js/lib/gf256.js"></script>
+  <script type="text/javascript" src="/public/js/lib/decoder.js"></script>
+  <script type="text/javascript" src="/public/js/lib/qrcode.js"></script>
+  <script type="text/javascript" src="/public/js/lib/findpat.js"></script>
+  <script type="text/javascript" src="/public/js/lib/alignpat.js"></script>
+  <script type="text/javascript" src="/public/js/lib/databr.js"></script>
   <!-- Polymer -->
   <link rel="import" href="/public/lib/polymer/polymer.html">
 	<!-- Main Layout -->
-  <link rel="import" href="/pages/chulaexpo-staff-app.html">
+  <link rel="import" href="/components/chulaexpo-staff-app/chulaexpo-staff-app.html">
   <link href="https://fonts.googleapis.com/css?family=Noto Sans:200,300,400" rel="stylesheet">
 
   <style is="custom-style">
@@ -126,6 +147,9 @@
   </style>
 </head>
 <body unresolved>
+  <script>
+    window.api = 'https://staff.chulaexpo.com';
+  </script>
   <chulaexpo-staff-app>
     <div class="navbar"></div>
     <div class="container">

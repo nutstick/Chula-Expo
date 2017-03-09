@@ -11,19 +11,15 @@
 <link rel="import" href="/public/lib/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="/public/lib/greenyouse-datetime-local-input/datetime-local-input.html">
 <link rel="import" href="/public/lib/google-map/google-map.html">
-<link rel="import" href="/public/lib/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="/public/lib/google-map/google-map-marker.html">
-<link rel="import" href="/public/lib/paper-menu/paper-menu.html">
-<link rel="import" href="/public/lib/paper-dropdown-menu/paper-dropdown-menu.html">
-<link rel="import" href="/public/lib/iron-pages/iron-pages.html">
 <link rel="import" href="/public/lib/vaadin-combo-box/vaadin-combo-box.html">
 
-<link rel="import" href="//components/facility-api.html">
-<link rel="import" href="//components/place-api.html">
+<link rel="import" href="/components/place-api/place-api.html">
+<link rel="import" href="/components/zone-api/zone-api.html">
 
-<link rel="import" href="//components/shared-styles.html">
+<link rel="import" href="/components/shared-styles/shared-styles.html">
 
-<dom-module id="facility-edit-page">
+<dom-module id="place-edit-page">
   <template>
     <style is="custom-style" include="shared-styles">
       :host {
@@ -75,7 +71,7 @@
         height: 300px;
       }
 
-      .button-holder {
+			.button-holder {
         @apply(--layout-horizontal);
         @apply(--layout-end-justified);
         margin-top: 10px;
@@ -86,93 +82,87 @@
         word-wrap: break-word;
       }
     </style>
-    <facility-api
-      id="facilityAPI"
-			facility-id="{{facilityId}}"
+    <place-api
+      id="placeAPI"
+			place-id="{{placeId}}"
 			fields=""
 			page="0"
       headers="{{headers}}"
 			page-size="0"
-			facility="{{facility}}"
-    ></facility-api>
+			place="{{place}}"
+    ></place-api>
     <div class="container">
       <paper-card>
-				<form is="iron-form" id="form" method="post" class="card-content"
-					action="{{url}}" on-iron-form-presubmit="_presubmit" on-iron-form-response="_response">
+				<form
+          is="iron-form"
+          id="form"
+          method="post"
+          class="card-content"
+					action="[[_url]]"
+          on-iron-form-presubmit="_presubmit"
+          on-iron-form-response="_response">
 					<div class="card-content">
-
-						<!-- type -->
+						<!-- Code -->
 						<div class="item">
-							<label class="label --input">Type</label>
-							<div class="flex fitdiv">
-								<paper-dropdown-menu label="" no-label-float="true" name="type" required>
-									<paper-menu class="dropdown-content" selected="{{facility.type}}" attr-for-selected="value">
-										<paper-item value="Toilet">Toilet</paper-item>
-										<paper-item value="Canteen">Canteen</paper-item>
-										<paper-item value="Carpark">Carpark</paper-item>
-                    <paper-item value="Prayer">Prayer</paper-item>
-                    <paper-item value="Emergency">Emergency</paper-item>
-                    <paper-item value="Souvenir">Souvenir</paper-item>
-                    <paper-item value="Information">Information</paper-item>
-										<paper-item value="Registration">Registration</paper-item>
-									</paper-menu>
-								</paper-dropdown-menu>
+							<div>
+								<label class="label --input">Code</label>
+								<div class="flex fitdiv">
+									<paper-input type="text" value="{{place.code}}" name="code" label="" no-label-float="true" required></paper-input>
+								</div>
 							</div>
 						</div>
-            <!-- Location -->
+
             <div class="item">
-              <label class="label --input">Place</label>
-              <div class="flex fitdiv">
+              <label class="label --input">Zone</label>
+              <div class="" style="display: inline; word-wrap: break-word;">
                 <vaadin-combo-box
-                  name="place"
-                  items="{{places}}"
-                  id="input-place"
+                  name="zone"
+                  items="{{zones}}"
+                  id="input-zone"
                   class="elements-box"
                   no-label-float="true"
+                  value="{{place.zone}}"
                   item-label-path="name.en"
                   item-value-path="_id"
-                  value="{{facility.place}}"
+                  placeholder="เลือก zone ของกิจกรรม"
                   required
-                  placeholder="เลือกสถานที่"
                 ></vaadin-combo-box>
-                <place-api
-                  id="placeAPI"
-                  places="{{places}}"
+                <zone-api
+                  id="zoneAPI"
+                  zones="{{zones}}"
                   error="{{error}}"
-                  loading="{{placeLoading}}"
+                  loading="{{zoneLoading}}"
                   page="0"
                   page-size="0"
                   fields="_id,nameEN"
-                ></place-api>
+                ></zone-api>
               </div>
-						</div>
+            </div>
 
 						<!-- Google Map -->
 						<div class="item google-map">
-							<google-map latitude="[[facility.location.latitude]]" longitude="[[facility.location.longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o" fit>
-								<google-map-marker latitude="{{facility.location.latitude}}" longitude="{{facility.location.longitude}}" draggable="true"
-										title="facility Location!" ></google-map-marker>
+							<google-map latitude="[[place.location.latitude]]" longitude="[[place.location.longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o" fit>
+								<google-map-marker latitude="{{place.location.latitude}}" longitude="{{place.location.longitude}}" draggable="true"
+										title="place Location!" ></google-map-marker>
 							</google-map>
 						</div>
 					</div>
 					<div class="card-content">
 						<!-- Thai Language -->
 						<div class="flex-layout center">
-							<div class="avatar" item-icon><img src="/public/img/th.png" /></div>
+							<div class="avatar" item-icon><img src="../../images/th.png" /></div>
 							<div class="flex company">ภาษาไทย</div>
 						</div>
-						<paper-input type="text" value="[[facility.name.th]]" label="ชื่อ" name="nameTH" always-float-label required></paper-input>
-						<paper-textarea label="รายละเอียด" value="[[facility.description.th]]" name="descriptionTH" rows="4" always-float-label required></paper-textarea>
+						<paper-input type="text" label="ชื่อสถานที่" value="{{place.name.th}}" name="nameTH" always-float-label required></paper-input>
           </div>
 
           <div class="card-content">
 						<!-- English Language -->
 						<div class="flex-layout center">
-							<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
+							<div class="avatar" item-icon><img src="../../images/en.png" /></div>
 							<div class="flex company">English</div>
 						</div>
-						<paper-input type="text" label="name" value="[[facility.name.en]]" name="nameEN" always-float-label required></paper-input>
-						<paper-textarea label="Description" value="[[facility.description.en]]" name="descriptionEN" rows="4" always-float-label required></paper-textarea>
+						<paper-input type="text" label="place name" value="{{place.name.en}}" name="nameEN" always-float-label required></paper-input>
 					</div>
 
 					<!-- Submit Button -->
@@ -189,45 +179,51 @@
   </template>
   <script>
     Polymer({
-      is: 'facility-edit-page',
+      is: 'place-edit-page',
       properties: {
-        activated: {
-          type: Boolean,
-          value: false,
-          observer: '_activatedChanged'
-        },
-        places: {
+				activated: {
+					type: Boolean,
+					value: false,
+					observer: '_activatedChanged'
+				},
+        zones: {
           type: Array
         },
-				url: {
-					type: Object,
-					value: ''
-				},
-        facilityId: {
+        _url: {
+          type: Object,
+          value: function() {
+            return window.api + '/api/places';
+          }
+        },
+        placeId: {
           type: Object,
           observer: '_idChanged'
         },
-        token: {
+				token: {
           type: String,
         },
         zoom: {
           type: Number,
           value: 16
         },
-        facility: {
+        tags_list: {
+          type: Array,
+          value: ['Chula Expo']
+        },
+        place: {
           type: Object,
         },
         headers: {
           type: Object,
           value: {
-            'Authorization': 'JWT ' + window.token
+            'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
           }
         }
       },
       _activatedChanged: function(activated) {
-        if (activated) {
-          this.$.facilityAPI.generateRequest();
+				if (activated) {
           this.$.placeAPI.generateRequest();
+          this.$.zoneAPI.generateRequest();
         }
       },
       _delayedSubmit: function(event) {
@@ -244,19 +240,19 @@
         if (e.detail.response.success) {
           this.$.form.reset();
 
-          var list = document.querySelector('facility-show-page')
+          var list = document.querySelector('place-show-page')
           if(typeof list.generateRequest === 'function'){
             list.generateRequest();
           }
 
-          window.history.pushState({}, null, '/facility/' + this.facilityId + '/show/');
+          window.history.pushState({}, null, '/place/' + this.placeId + '/show/');
           window.dispatchEvent(new CustomEvent('location-changed'));
         }
       },
       _presubmit: function(event) {
         this.$.form.request.method = 'put';
-      	this.$.form.request.body.locationLat = this.facility.location.latitude;
-				this.$.form.request.body.locationLong = this.facility.location.longitude;
+      	this.$.form.request.body.locationLat = this.place.location.latitude;
+				this.$.form.request.body.locationLong = this.place.location.longitude;
 
         for (field in this.$.form.request.body) {
           if (!this.$.form.request.body[field]) {
@@ -267,9 +263,9 @@
       },
       _idChanged: function(id) {
         if (id) {
-          this.url = '/api/facilities/' + id;
+          this._url = window.api + '/api/places/' + id;
         } else {
-          this.url = '/api/facilities';
+          this._url = window.api + '/api/places';
         }
       }
     })
