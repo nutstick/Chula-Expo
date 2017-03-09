@@ -242,7 +242,7 @@
         if(thumbnail)
           return window.api + thumbnail;
         else
-          return '../../images/thumbnail-default.jpg';
+          return '/public/img/thumbnail-default.jpg';
       },
       _computeDateFormat: function(dateTime) {
         return moment.utc(dateTime).format('D MMM, HH:mm');

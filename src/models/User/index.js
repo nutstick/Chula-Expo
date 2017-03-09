@@ -177,7 +177,7 @@ UserSchema.methods.generateToken = function generateToken() {
   return jwt.sign({
     sub: this.id,
   }, process.env.JWT_SECRET, {
-    expiresIn: 8 * 60 * 60 /* expires in 8 hrs */,
+    expiresIn: 14 * 24 * 60 * 60 /* expires in 8 hrs */,
   });
 };
 
