@@ -5,6 +5,27 @@
 <link rel="import" href="/public/lib/bottom-button/bottom-button.html">
 <link rel="import" href="/public/lib/paper-spinner/paper-spinner.html">
 
+<script type="text/javascript" src="/public/js/lib/jquery.min.js"></script>
+<script type="text/javascript" src="/public/js/lib/html5-qrcode.min.js"></script>
+<script type="text/javascript" src="/public/js/lib/jsqrcode-combined.min.js"></script>
+<script type="text/javascript" src="/public/js/lib/grid.js"></script>
+<script type="text/javascript" src="/public/js/lib/version.js"></script>
+<script type="text/javascript" src="/public/js/lib/detector.js"></script>
+<script type="text/javascript" src="/public/js/lib/formatinf.js"></script>
+<script type="text/javascript" src="/public/js/lib/errorlevel.js"></script>
+<script type="text/javascript" src="/public/js/lib/bitmat.js"></script>
+<script type="text/javascript" src="/public/js/lib/datablock.js"></script>
+<script type="text/javascript" src="/public/js/lib/bmparser.js"></script>
+<script type="text/javascript" src="/public/js/lib/datamask.js"></script>
+<script type="text/javascript" src="/public/js/lib/rsdecoder.js"></script>
+<script type="text/javascript" src="/public/js/lib/gf256poly.js"></script>
+<script type="text/javascript" src="/public/js/lib/gf256.js"></script>
+<script type="text/javascript" src="/public/js/lib/decoder.js"></script>
+<script type="text/javascript" src="/public/js/lib/qrcode.js"></script>
+<script type="text/javascript" src="/public/js/lib/findpat.js"></script>
+<script type="text/javascript" src="/public/js/lib/alignpat.js"></script>
+<script type="text/javascript" src="/public/js/lib/databr.js"></script>
+
 <link rel="import" href="/components/shared-styles/shared-styles.html">
 
 <dom-module id="qr-scanner">
@@ -147,7 +168,7 @@
         // Wait until dialog is added to the DOM (required for Safari)
         setTimeout(function() {
           this.$.dialog.open();
-          
+
           setTimeout(function() {
             $(this.$.reader).html5_qrcode(function(data) {
               // do something when code is read

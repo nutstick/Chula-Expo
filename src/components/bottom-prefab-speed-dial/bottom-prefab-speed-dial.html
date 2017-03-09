@@ -6,6 +6,8 @@
 <link rel="import" href="/public/lib/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="/public/lib/app-layout/app-scroll-effects/effects/waterfall.html">
 <link rel="import" href="/public/lib/iron-resizable-behavior/iron-resizable-behavior.html">
+<link rel="import" href="/public/lib/iron-icons/iron-icons.html">
+<link rel="import" href="/public/lib/iron-icons/maps-icons.html">
 
 <link rel="import" href="/components/shared-styles/shared-styles.html">
 
@@ -30,7 +32,7 @@
       :host {
         pointer-events: visible;
       }
-      
+
       #menu {
         float: right;
         position: relative;
@@ -80,7 +82,7 @@
           value: false
         }
       },
-      
+
       observers: [
         'resetLayout(isAttached, condenses, fixed)'
       ],
@@ -223,20 +225,20 @@
       _mayMove: function() {
         return this.condenses || !this.fixed;
       },
-      
+
       isOnScreen: function() {
         return this._height !== 0 && this._top < this._height;
       },
-      
+
       _transformHeader: function(y) {
         if (!y && this.menuOpened) {
           this.$.menu.toggle();
         }
-        this.translate3d(0, (y ? 0 : 100) + 'px', 0);
-        if (this._stickyEl) {
-          this.translate3d(0, this.condenses && y >= this._stickyElTop ?
-              (Math.min(y, this._dHeight) - this._stickyElTop) + 'px' : 0,  0, this._stickyEl);
-        }
+        // this.translate3d(0, (y ? 0 : 100) + 'px', 0);
+        // if (this._stickyEl) {
+        //   this.translate3d(0, this.condenses && y >= this._stickyElTop ?
+        //      (Math.min(y, this._dHeight) - this._stickyElTop) + 'px' : 0,  0, this._stickyEl);
+        // }
       },
 
       _resizeHandler: function() {
