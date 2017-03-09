@@ -167,7 +167,7 @@
           this.$.dialog.open();
           
           setTimeout(function() {
-            $('#reader').html5_qrcode(function(data) {
+            $(this.$.reader).html5_qrcode(function(data) {
               // do something when code is read
               this.$.ajax.params = {
                 user: data,
@@ -190,7 +190,7 @@
       },
       _onClosed: function(e, detail) {
         // Remove the dialog from the DOM once the exit animation is finished
-        $('#reader').html5_qrcode_stop();
+        $(this.$.reader).html5_qrcode_stop();
         setTimeout(function() {
           Polymer.dom(this.parentNode).removeChild(this);
         }.bind(this), 100);

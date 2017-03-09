@@ -3,12 +3,11 @@
 <!-- Web Component -->
 <link rel="import" href="../../bower_components/iron-data-table/iron-data-table.html">
 <link rel="import" href="../../bower_components/iron-data-table/data-table-column.html">
-<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../ticket-api/ticket-api.html">
 
 <dom-module id="ticket-list">
   <template>
-    <ticket-api round="[[round]]"></ticket-api>
-    <iron-ajax url="[[_url]]" last-response="{{data}}"></iron-ajax>
+    <ticket-api activity-id="[[activityId]]" round-id="[[roundId]]" tickets="{{tickets}}"></ticket-api>
     <iron-data-table items="[[data]]">
       <data-table-column name="#" width="50px" flex="0">
         <template>[[index]]</template>
@@ -32,7 +31,19 @@
           type: String,
           value: function() {
             return window.api + '/api/'
-        }
+        },
+        activityId: {
+          type: String,
+          value: ''
+        },
+        roundId: {
+          type: String,
+          value: ''
+        },
+        tickets: {
+          type: Array,
+          value: []
+        },
       }
     });
   </script>

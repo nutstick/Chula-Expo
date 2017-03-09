@@ -1,0 +1,126 @@
+<!-- Libery -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="ticket-api">
+  <template>
+    <iron-ajax
+      id="ticketsResource"
+      url="{{url}}"
+      headers="{{headers}}"
+      params="{{params}}"
+      on-response="_handleResponse"
+      handle-as="json"
+    ></iron-ajax>
+  </template>
+  <script>
+    Polymer({
+      is: 'ticket-api',
+      properties: {
+        url: {
+          type: String,
+          computed: '_computeUrl(activityId, roundId)'
+        },
+        params: {
+          type: Object,
+          value: {
+            limit: 10,
+            skip: 0,
+          }
+        },
+        headers: {
+          type: Object,
+          value: {
+            'Authorization': 'JWT ' + window.token
+          }
+        },
+        /*
+          Input Data
+        */
+        activityId: {
+          type: String,
+          value: ''
+        },
+        roundId: {
+          type: String,
+          value: ''
+        },
+        page: {
+          type: Number,
+          value: 1
+        },
+        pageSize: {
+          type: Number,
+          value: 10
+        },
+        fields: {
+          type: String,
+          value: ''
+        },
+        /*
+          Output Data
+        */
+        tickets: {
+          type: Array,
+          value: [],
+          notify: true,
+        },
+        loading: {
+          type: Boolean,
+          notify: false,
+        },
+        error: {
+          type: Object,
+          value: {},
+          notify: true,
+        },
+        totalPages: {
+          type: Number,
+          notify: true,
+        }
+      },
+      ready: function(){
+        document.addEventListener('token', function(e) {
+          var token = e.detail.token;
+          if (!token) {
+            return;
+          }
+
+          this.headers = {
+            'Authorization': 'JWT ' + token
+          };
+          // this.generateRequest();
+        }.bind(this));
+      },
+      generateRequest: function() {
+        if (pageSize === 0) {
+          this.set('params.limit', null);
+          this.set('params.skip', page);
+        } else {
+          this.set('params.limit', pageSize);
+          this.set('params.skip', (page - 1) * pageSize);
+        }
+
+        this.set('params.fields', fields);
+        this.set('params.sort', 'createAt');
+
+        return this.$.ticketsResource.generateRequest();
+      },
+      _handleResponse: function(event) {
+        if(event.detail.response) {
+          if (event.detail.response.success) {
+            this.tickets = event.detail.response.results;
+            this.set('totalPages', Math.ceil(event.detail.response.queryInfo.total / this.pageSize));
+          } else {
+            this.error = event.detail.response.errors;
+          }
+        }
+      },
+      _computeUrl: function(activityId, roundId) {
+        console.log(activityId, roundId)
+        return window.api + '/api/activities/' + activityId + '/rounds/' + roundId + '/tickets';
+      }
+    });
+  </script>
+</dom-module>
