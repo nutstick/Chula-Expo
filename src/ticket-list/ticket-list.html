@@ -1,0 +1,39 @@
+<!-- Libery -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="../../bower_components/iron-data-table/iron-data-table.html">
+<link rel="import" href="../../bower_components/iron-data-table/data-table-column.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="ticket-list">
+  <template>
+    <ticket-api round="[[round]]"></ticket-api>
+    <iron-ajax url="[[_url]]" last-response="{{data}}"></iron-ajax>
+    <iron-data-table items="[[data]]">
+      <data-table-column name="#" width="50px" flex="0">
+        <template>[[index]]</template>
+      </data-table-column>
+      <data-table-column name="First Name">
+        <template>[[item.name.first]]</template>
+      </data-table-column>
+      <data-table-column name="Last Name">
+        <template>[[item.user.name.last]]</template>
+      </data-table-column>
+      <data-table-column name="Email">
+        <template>[[item.user.email]]</template>
+      </data-table-column>
+    </iron-data-table>
+  </template>
+  <script>
+    Polymer({
+      is: 'ticket-list',
+      properties: {
+        _url: {
+          type: String,
+          value: function() {
+            return window.api + '/api/'
+        }
+      }
+    });
+  </script>
+</dom-module>

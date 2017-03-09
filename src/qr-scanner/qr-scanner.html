@@ -181,7 +181,9 @@
             }.bind(this), function(videoError) {
               //the video stream could be opened
               console.log(videoError)
-              this.videoError = videoError;
+              if (videoError.name === 'PermissionDeniedError') {
+                this.videoError = videoError.message;
+              }
             }.bind(this));
           }.bind(this), 100);
         }.bind(this), 1);
