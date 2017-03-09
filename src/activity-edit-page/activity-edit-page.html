@@ -104,7 +104,7 @@
 				<form
           is="iron-form"
           id="form"
-          method="put"
+          method="POST"
           class="card-content"
 					action="[[_url]]"
           on-iron-form-presubmit="_presubmit"
@@ -498,6 +498,7 @@
         }
       },
       _presubmit: function(event) {
+        this.$.form.request.method = 'PUT';
       	this.$.form.request.body.locationLat = this.activity.location.latitude;
 				this.$.form.request.body.locationLong = this.activity.location.longitude;
 				this.$.form.request.body.pictures = [];
