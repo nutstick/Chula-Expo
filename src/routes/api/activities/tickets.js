@@ -2,7 +2,7 @@ const express = require('express');
 const { Ticket } = require('../../../models');
 const { isAuthenticatedByToken, isStaff } = require('../../../config/authenticate');
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 router.use(isAuthenticatedByToken, isStaff);
 
