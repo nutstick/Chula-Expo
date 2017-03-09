@@ -14,6 +14,7 @@
 <link rel="import" href="../../bower_components/paper-collapse-item/paper-collapse-item.html">
 <link rel="import" href="../../bower_components/paper-collapse-item/paper-collapse-group.html">
 
+<link rel="import" href="../ticket-list/ticket-list.html">
 <link rel="import" href="../round-api/round-api.html">
 <link rel="import" href="../qr-scanner/qr-scanner.html">
 <dom-module id="rounds-list">
@@ -82,6 +83,9 @@
       .white-button[disabled] {
         background: transparent;
       }
+      #ticketDialog {
+        width: 100%;
+      }
     </style>
     <round-api id="api" url="[[_url]]" rounds="{{rounds}}" error="{{error}}"></round-api>
     <paper-card class="card">
@@ -111,6 +115,11 @@
                     <paper-icon-item>
                       <iron-icon icon="icons:event" item-icon></iron-icon>
                       [[_convertToDate(item.start)]] - [[_convertToDate(item.end)]]
+                    </paper-icon-item>
+                    <paper-icon-item on-tap="_onTicketListClick">
+                      <paper-ripple></paper-ripple>
+                      <iron-icon icon="maps:local-offer" item-icon></iron-icon>
+                      View Tickets List
                     </paper-icon-item>
                     <paper-icon-item on-tap="_launchQRScanner">
                       <paper-ripple></paper-ripple>
@@ -175,7 +184,10 @@
         </div>
       </iron-pages>
     </paper-card>
-    <paper-dialog id="dialog" on-iron-overlay-closed="_delete">
+    <paper-dialog id="ticketDialog" on-iron-overlay-closed="">
+      <ticket-list id="ticketList" activity-id="[[activityId]]" round-id="[[_targetRound]]"></ticket-list>
+    </paper-dialog>
+    <paper-dialog id="deleteDialog" on-iron-overlay-closed="_delete">
       <h2>Are you sure?</h2>
       <div class="buttons">
         <paper-button dialog-dismiss>No</paper-button>
@@ -211,7 +223,10 @@
               'Authorization': 'JWT ' + window.token,
             };
           }
-        }
+        },
+        _targetRound: {
+          type: String,
+        },
       },
 
       ready: function() {
@@ -271,7 +286,7 @@
       },
       _deleteClick: function(event) {
         this.deleteId = event.model.item['_id'];
-        this.$.dialog.open();
+        this.$.deleteDialog.open();
       },
       _delete: function(event) {
         if(event.detail.confirmed) {
@@ -299,7 +314,7 @@
         }
       },
       _convertToDate: function(dateTime) {
-        return moment.utc(dateTime).format('D MMM hh:mm');
+        return moment.utc(dateTime).format('D MMM, HH:mm');
       },
       _gotoList: function(e) {
         this._state = 'list';
@@ -311,6 +326,13 @@
         var qr = document.createElement('qr-scanner');
         qr.url = this._url + '/' + event.model.item['_id'] + '/checkin';
         qr.open();
+      },
+      _onTicketListClick: function() {
+        this._targetRound = event.model.item['_id'];
+        this.$.ticketList.generateRequest();
+        setTimeout(function() {
+          this.$.ticketDialog.open();
+        }.bind(this), 50)
       },
       _computeNoRounds: function(rounds) {
         return !rounds.length;

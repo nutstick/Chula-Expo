@@ -438,7 +438,7 @@
         }
       },
       _convertToDate: function(dateTime) {
-        return moment.utc(dateTime).format('MM-DD-YYYY HH:mm');
+        return moment.utc(dateTime).format('D MMM, HH:mm');
       },
 			_computeThumbnail: function(thumbnail) {
 				return thumbnail ? window.api + thumbnail : null;

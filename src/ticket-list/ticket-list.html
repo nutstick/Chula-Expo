@@ -7,19 +7,19 @@
 
 <dom-module id="ticket-list">
   <template>
-    <ticket-api activity-id="[[activityId]]" round-id="[[roundId]]" tickets="{{tickets}}"></ticket-api>
-    <iron-data-table items="[[data]]">
+    <ticket-api id="api" activity-id="[[activityId]]" round-id="[[roundId]]" tickets="{{tickets}}"></ticket-api>
+    <iron-data-table items="[[tickets]]">
       <data-table-column name="#" width="50px" flex="0">
         <template>[[index]]</template>
       </data-table-column>
-      <data-table-column name="First Name">
-        <template>[[item.name.first]]</template>
+      <data-table-column name="User">
+        <template>[[item.user]]</template>
       </data-table-column>
-      <data-table-column name="Last Name">
-        <template>[[item.user.name.last]]</template>
+      <data-table-column name="Create">
+        <template>[[_computeCreateAtDate(item.createAt)]]</template>
       </data-table-column>
-      <data-table-column name="Email">
-        <template>[[item.user.email]]</template>
+      <data-table-column name="Status">
+        <template>[[_computeChecked(item.checked)]]</template>
       </data-table-column>
     </iron-data-table>
   </template>
@@ -31,6 +31,7 @@
           type: String,
           value: function() {
             return window.api + '/api/'
+          }
         },
         activityId: {
           type: String,
@@ -44,6 +45,15 @@
           type: Array,
           value: []
         },
+      },
+      generateRequest: function() {
+        return this.$.api.generateRequest();
+      },
+      _computeCreateAtDate: function(createAt) {
+        return moment.utc(createAt).format('D MMM, HH:mm');
+      },
+      _computeChecked: function(checked) {
+        return checked ? 'checked' : 'unchecked';
       }
     });
   </script>

@@ -31,8 +31,10 @@
         },
         headers: {
           type: Object,
-          value: {
-            'Authorization': 'JWT ' + window.token
+          value: function() {
+            return {
+              'Authorization': 'JWT ' + window.token
+            }
           }
         },
         /*
@@ -94,15 +96,15 @@
         }.bind(this));
       },
       generateRequest: function() {
-        if (pageSize === 0) {
+        if (this.pageSize === 0) {
           this.set('params.limit', null);
-          this.set('params.skip', page);
+          this.set('params.skip', this.page - 1);
         } else {
-          this.set('params.limit', pageSize);
-          this.set('params.skip', (page - 1) * pageSize);
+          this.set('params.limit', this.pageSize);
+          this.set('params.skip', (this.page - 1) * this.pageSize);
         }
 
-        this.set('params.fields', fields);
+        this.set('params.fields', this.fields);
         this.set('params.sort', 'createAt');
 
         return this.$.ticketsResource.generateRequest();
@@ -111,15 +113,17 @@
         if(event.detail.response) {
           if (event.detail.response.success) {
             this.tickets = event.detail.response.results;
-            this.set('totalPages', Math.ceil(event.detail.response.queryInfo.total / this.pageSize));
+            // this.set('totalPages', Math.ceil(event.detail.response.queryInfo.total / this.pageSize));
           } else {
             this.error = event.detail.response.errors;
           }
         }
       },
       _computeUrl: function(activityId, roundId) {
-        console.log(activityId, roundId)
-        return window.api + '/api/activities/' + activityId + '/rounds/' + roundId + '/tickets';
+        if (activityId && roundId) {
+          return window.api + '/api/activities/' + activityId + '/rounds/' + roundId + '/tickets';
+        }
+        return '';
       }
     });
   </script>

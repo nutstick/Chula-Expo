@@ -21,7 +21,6 @@
 <link rel="import" href="../shared-styles/shared-styles.html">
 <link rel="import" href="../zone-api/zone-api.html">
 
-<script src="../../bower_components/moment/locale/th.js"></script>
 <dom-module id="activity-list-page">
   <template>
     <style is="custom-style" include="shared-styles">
@@ -246,7 +245,7 @@
           return '../../images/thumbnail-default.jpg';
       },
       _computeDateFormat: function(dateTime) {
-        return moment.utc(dateTime).format('D MMM YY HH:mm');
+        return moment.utc(dateTime).format('D MMM, HH:mm');
       },
       _computeString: function(string) {
         if(string.length>40)
