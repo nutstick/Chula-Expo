@@ -11,11 +11,13 @@ const ActivitySchema = new mongoose.Schema({
   name: {
     th: {
       type: String,
-      required: true
+      required: true,
+      index: true
     },
     en: {
       type: String,
-      required: true
+      required: true,
+      index: true
     }
   },
   thumbnail: String,
