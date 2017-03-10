@@ -300,7 +300,7 @@ router.put('/:rid', isAuthenticatedByToken, isStaff, (req, res) => {
  * @return {string} message - Remove message.
  */
 router.delete('/:rid', isAuthenticatedByToken, isStaff, (req, res) => {
-  Round.findByIdA(req.params.rid, (err, round) => {
+  Round.findById(req.params.rid, (err, round) => {
     // Handle error from Round.findById
     if (err) {
       return res.sendError(5, err);
@@ -313,6 +313,12 @@ router.delete('/:rid', isAuthenticatedByToken, isStaff, (req, res) => {
     if (round.activityId.toString() !== req.params.id) {
       return res.sendError(26);
     }
+    // Remove corresponding tickets
+    Ticket.remove({ round: req.params.rid }, (err) => {
+      if (err) {
+        return res.sendError(5, err);
+      }
+    });
     // Remove the round
     round.remove((err) => {
       if (err) {
