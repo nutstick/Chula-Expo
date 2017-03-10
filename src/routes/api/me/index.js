@@ -107,7 +107,7 @@ router.put('/', isAuthenticatedByToken, (req, res) => {
   if (req.body.type === 'Worker' && req.body.workerJob) {
     req.user.worker.job = req.body.workerJob;
   }
-  if (req.body.type === 'Staff' && req.body.staffT) {
+  if (req.body.type === 'Staff' && req.body.staff) {
     if (req.body.staff !== 'Admin' && req.body.zone) {
       req.user.staff.staffType = req.body.staff;
       req.user.staff.zone = req.body.zon;

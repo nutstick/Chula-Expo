@@ -162,7 +162,7 @@ router.get('/:rid', isAuthenticatedByToken, (req, res) => {
     }), accessibleFields).join(' ');
   }
   // Find one match user and round
-  Ticket.findOne({ user: req.user.id, round: req.param.rid })
+  Ticket.findOne({ user: req.user.id, round: req.params.rid })
     .populate('round', fields)
     .exec((err, results) => {
       // Handle error from Ticket.findOne
@@ -184,7 +184,7 @@ router.get('/:rid', isAuthenticatedByToken, (req, res) => {
         results: Object.assign({ check: results.check }, results.round),
         queryInfo: {
           user: req.user.id,
-          round: req.param.rid,
+          round: req.params.rid,
         }
       });
     });
@@ -199,7 +199,7 @@ router.get('/:rid', isAuthenticatedByToken, (req, res) => {
  */
 router.delete('/:rid', isAuthenticatedByToken, (req, res) => {
     // Handle error from Ticket.findOne
-  Round.findById(req.param.rid, (err, round) => {
+  Round.findById(req.params.rid, (err, round) => {
     if (err) {
       return res.status(500).json({
         success: false,
@@ -210,11 +210,11 @@ router.delete('/:rid', isAuthenticatedByToken, (req, res) => {
     if (!round) {
       return res.sendError(26);
     }
-    round.cancelReservedSeat(req.user.id)
+    round.cancelReservedSeat(req.user.id, round)
       .then(() => (
         res.status(201).json({
           success: true,
-          message: `Successfully cancel reserved round ${req.params.id}.`,
+          message: `Successfully cancel reserved round ${req.params.rid}.`,
         })
       ))
       .catch(err => (err.code ? res.sendError(err.code) : res.sendError(5, err)));

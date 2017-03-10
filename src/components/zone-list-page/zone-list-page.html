@@ -1,4 +1,3 @@
-<!-- Libery -->
 <link rel="import" href="/public/lib/polymer/polymer.html">
 <!-- Web Component -->
 <link rel="import" href="/public/lib/paper-card/paper-card.html">
@@ -142,7 +141,7 @@
         if(thumbnail)
           return window.api + thumbnail;
         else
-          return '../../images/thumbnail-default.jpg';
+          return '/public/img/thumbnail-default.jpg';
       },
       _activatedChanged: function(activated) {
         if (activated) {

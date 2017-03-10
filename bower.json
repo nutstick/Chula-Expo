@@ -71,7 +71,7 @@
     "better-emmet-plugin": "^1.0.0-rc.1",
     "app-storage": "^0.9.8",
     "paper-fab-menu": "^0.4.0",
-    "paper-fab-speed-dial": "^1.0.16",
+    "paper-fab-speed-dial": "paper-speed-dial#^0.6.0",
     "iron-data-table": "^1.0.6"
   }
 }
