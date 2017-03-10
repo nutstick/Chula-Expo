@@ -100,6 +100,10 @@
       .ui.container {
         padding-top: 20px;
       }
+      .progress.--blue {
+        --paper-progress-active-color: #e91e63;
+        width: 100%;
+      }
     </style>
     <!-- App Route -->
     <app-location route="{{route}}"></app-location>
@@ -165,6 +169,9 @@
 
       <!-- Content Gose Here -->
       <div>
+        <template is="dom-if" if="[[_loading]]">
+          <paper-progress indeterminate class="progress --blue"></paper-progress>
+        </template>
         <login-page token="[[token]]" page=[[page]]></login-page>
         <iron-pages
           selected="[[page]]"
@@ -222,11 +229,15 @@
         isAuthenticate: {
           type: Boolean,
           computed: '_computeAuthenticate(me)'
+        },
+        _loading: {
+          type: Boolean,
+          value: true
         }
       },
 
       observers: [
-        '_routePageChanged(routeData.page)',
+        '_routePageChanged(routeData.page, token)',
       ],
 
       _uppdateToken: function(token) {
@@ -234,16 +245,21 @@
         // this.$.storage.save();
         this.fire('token', { token: token });
       },
-      _routePageChanged: function(page) {
-        this.page = page || 'home';
+      _routePageChanged: function(page, token) {
+        if (token) {
+          this.page = page || 'home';
+        }
 
-        if (!this.$.drawer.persistent) {
+        if (!this.$.drawer.persistent && this.$.drawer.close) {
           this.$.drawer.close();
         }
       },
       _pageChanged: function(page) {
+        this.set('_loading', true);
         var resolvedPageUrl = this.resolveUrl('../'+ page + '-page/' + page + '-page.html');
-        this.importHref(resolvedPageUrl, null, this._showPage404, true);
+        this.importHref(resolvedPageUrl, function(e) {
+          this.set('_loading', false);
+        }.bind(this), this._showPage404, true);
       },
       _showPage404: function() {
         this.page = '404-page'

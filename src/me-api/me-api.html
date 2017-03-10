@@ -60,10 +60,6 @@
         }
       },
 
-      observers: [
-        '_updateRequest(fields)'
-      ],
-
       ready: function(){
         document.addEventListener('token', function(e) {
           var token = e.detail.token;
@@ -77,11 +73,8 @@
           this.generateRequest();
         }.bind(this));
       },
-      _updateRequest: function(fields) {
-        this.set('params.fields', fields);
-        // this.generateRequest();
-      },
       generateRequest: function() {
+        this.set('params.fields', fields);
         return this.$.ajax.generateRequest();
       },
       _handleResponse: function(event) {

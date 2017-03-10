@@ -330,7 +330,7 @@
   					<div class="item">
   						<label class="label --input">HighLight</label>
               <div class="input-wrapper">
-  							<paper-checkbox name="isHighlight" label="" no-label-float="true" ></paper-checkbox>
+                <paper-checkbox name="isHighlight" label="" no-label-float="true" checked={{activity.isHighlight}}></paper-checkbox>
   						</div>
   					</div>
           </div>
@@ -502,6 +502,8 @@
       	this.$.form.request.body.locationLat = this.activity.location.latitude;
 				this.$.form.request.body.locationLong = this.activity.location.longitude;
 				this.$.form.request.body.pictures = [];
+        this.$.form.request.body.isHighlight = this.activity.isHighlight;
+  
         var dom = this;
         this.pictures.forEach(function(key,value, Set) {
           dom.$.form.request.body.pictures.push(key);
@@ -514,7 +516,9 @@
 
         for (field in this.$.form.request.body) {
           if (!this.$.form.request.body[field]) {
-            delete this.$.form.request.body[field];
+            if (typeof this.$.form.request.body[field] === 'undefined') {
+              delete this.$.form.request.body[field];
+            }
           }
         }
 

@@ -81,10 +81,6 @@
         }
       },
 
-      observers: [
-        'updateRequest(page,pageSize,fields,start,end,room,placeId)'
-      ],
-
       ready: function(){
         document.addEventListener('token', function(e) {
           var token = e.detail.token;
@@ -98,7 +94,7 @@
           // this.generateRequest();
         }.bind(this));
       },
-      updateRequest: function(page, pageSize, fields, start, end, room, placeId) {
+      generateRequest: function() {
         if (pageSize === 0) {
           this.set('params.limit', null);
           this.set('params.skip', page);
@@ -108,8 +104,7 @@
         }
 
         this.set('params.fields', fields)
-      },
-      generateRequest: function() {
+
         return this.$.roomResource.generateRequest();
       },
       _handleResponse: function(event) {

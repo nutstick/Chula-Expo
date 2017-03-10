@@ -289,7 +289,7 @@
         this.$.form.request.body.locationLong = this.longitude;
 
         for (field in this.$.form.request.body) {
-          if (!this.$.form.request.body[field]) {
+          if (typeof this.$.form.request.body[field] === 'undefined') {
             delete this.$.form.request.body[field];
           }
         }

@@ -101,7 +101,7 @@
           // this.generateRequest();
         }.bind(this));
       },
-      updateRequest: function(page, pageSize, fields) {
+      generateRequest: function() {
         if (pageSize === 0) {
           this.set('params.limit', null);
           this.set('params.skip', page);
@@ -111,8 +111,7 @@
         }
 
         this.set('params.fields', fields)
-      },
-      generateRequest: function() {
+        
         return this.$.facilityResource.generateRequest();
       },
       _handleResponse: function(event) {
