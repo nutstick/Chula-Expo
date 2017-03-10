@@ -141,6 +141,7 @@ app.get('/auth/facebook/callback', (req, res, next) => {
         success: true,
         message: 'User already exist, login success.',
         results: {
+          user,
           token: user.generateToken(),
         }
       }));

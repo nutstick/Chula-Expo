@@ -113,7 +113,7 @@
 					<div class="card-content">
 						<!-- Thai Language -->
 						<div class="title">
-							<div class="avatar" item-icon><img src="../../images/th.png" /></div>
+							<div class="avatar" item-icon><img src="/public/img/th.png" /></div>
 							<div class="flex company">ภาษาไทย</div>
 						</div>
             <paper-input type="text" label="ชื่อกิจกรรม" value="{{activity.name.th}}" name="nameTH" always-float-label required></paper-input>
@@ -124,7 +124,7 @@
 					<div class="card-content">
 						<!-- English Language -->
 						<div class="title">
-							<div class="avatar" item-icon><img src="../../images/en.png" /></div>
+							<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
 							<div class="flex company">English</div>
 						</div>
             <paper-input type="text" label="Activity name" value="{{activity.name.en}}" name="nameEN" always-float-label required></paper-input>
@@ -330,7 +330,7 @@
   					<div class="item">
   						<label class="label --input">HighLight</label>
               <div class="input-wrapper">
-  							<paper-checkbox name="isHighlight" label="" no-label-float="true" ></paper-checkbox>
+  							<paper-checkbox name="isHighlight" label="" no-label-float="true" checked={{activity.isHighlight}}></paper-checkbox>
   						</div>
   					</div>
           </div>
@@ -502,6 +502,7 @@
       	this.$.form.request.body.locationLat = this.activity.location.latitude;
 				this.$.form.request.body.locationLong = this.activity.location.longitude;
 				this.$.form.request.body.pictures = [];
+        this.$.form.request.body.isHighlight = this.activity.isHighlight;
         var dom = this;
         this.pictures.forEach(function(key,value, Set) {
           dom.$.form.request.body.pictures.push(key);
@@ -513,7 +514,8 @@
         this.$.form.request.body.tags = this.activity.tags;
 
         for (field in this.$.form.request.body) {
-          if (!this.$.form.request.body[field]) {
+          console.log(field);
+          if (typeof this.$.form.request.body[field] === 'undefined') {
             delete this.$.form.request.body[field];
           }
         }

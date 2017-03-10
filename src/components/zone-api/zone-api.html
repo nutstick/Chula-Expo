@@ -83,11 +83,6 @@
           value: {}
         }
       },
-
-      observers: [
-        'updateRequest(page,pageSize,fields)'
-      ],
-
       ready: function(){
         document.addEventListener('token', function(e) {
           var token = e.detail.token;
@@ -101,18 +96,17 @@
           // this.generateRequest();
         }.bind(this));
       },
-      updateRequest: function(page, pageSize, fields) {
-        if (pageSize === 0) {
+      generateRequest: function() {
+        if (this.pageSize === 0) {
           this.set('params.limit', null);
-          this.set('params.skip', page);
+          this.set('params.skip', this.page);
         } else {
-          this.set('params.limit', pageSize);
-          this.set('params.skip', (page - 1) * pageSize);
+          this.set('params.limit', this.pageSize);
+          this.set('params.skip', (this.page - 1) * this.pageSize);
         }
 
-        this.set('params.fields', fields)
-      },
-      generateRequest: function() {
+        this.set('params.fields', this.fields)
+
         return this.$.zoneResource.generateRequest();
       },
       _handleResponse: function(event) {

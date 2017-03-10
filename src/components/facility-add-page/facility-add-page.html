@@ -147,7 +147,7 @@
 					<div class="card-content">
 						<!-- Thai Language -->
 						<div class="flex-layout center">
-							<div class="avatar" item-icon><img src="../../images/th.png" /></div>
+							<div class="avatar" item-icon><img src="/public/img/th.png" /></div>
 							<div class="flex company">ภาษาไทย</div>
 						</div>
 						<paper-input type="text" label="ชื่อ" name="nameTH" always-float-label required></paper-input>
@@ -157,7 +157,7 @@
           <div class="card-content">
 						<!-- English Language -->
 						<div class="flex-layout center">
-							<div class="avatar" item-icon><img src="../../images/en.png" /></div>
+							<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
 							<div class="flex company">English</div>
 						</div>
 						<paper-input type="text" label="name" name="nameEN" always-float-label required></paper-input>
@@ -258,7 +258,7 @@
                 this.$.form.request.body.locationLong = this.longitude;
 
                 for (field in this.$.form.request.body) {
-                  if (!this.$.form.request.body[field]) {
+                  if (typeof this.$.form.request.body[field] === 'undefined') {
                     delete this.$.form.request.body[field];
                   }
                 }
