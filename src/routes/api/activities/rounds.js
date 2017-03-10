@@ -407,7 +407,7 @@ router.delete('/:rid/reserve', isAuthenticatedByToken, (req, res) => {
 
 router.post('/:rid/checkin', isAuthenticatedByToken, isScanner, (req, res) => {
   const rid = req.params.rid;
-  const userId = req.body.user;
+  const userId = req.body.user || req.query.user;
   Activity.findById(req.params.id, (err, activity) => {
     if (err) {
       return res.sendError(5, err);
