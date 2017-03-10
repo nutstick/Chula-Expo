@@ -1,5 +1,7 @@
 const express = require('express');
 const Activity = require('../../../models/Activity');
+const Round = require('../../../models/Round');
+const Ticket = require('../../../models/Ticket');
 const _ = require('lodash');
 const mongoose = require('mongoose');
 const { RangeQuery } = require('../../../tools');
@@ -556,7 +558,6 @@ router.put('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
     });
   });
 });
-
 // Delete an existing activity via DEL.
 // Access at DEL http://localhost:3000/api/activities/:id
 // router.delete('/:id', (req, res) => {
@@ -576,6 +577,28 @@ router.delete('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
       && req.user.id !== String(activity.createBy))) {
       return res.sendError(4, 'No permission on deleting activity outside your own activity');
     }
+    // Find corresponding rounds and remove corresponding tickets
+    Round.find({ activityId: req.params.id }, (err, _rounds) => {
+      if (err) {
+        return res.sendError(5, err);
+      }
+      if (_rounds) {
+        _rounds.forEach((_round) => {
+          // Remove corresponding tickets
+          Ticket.remove({ round: _round._id }, (err) => {
+            if (err) {
+              return res.sendError(5, err);
+            }
+          });
+        });
+      }
+    });
+    // Remove corresponding rounds
+    Round.remove({ activityId: req.params.id }, (err) => {
+      if (err) {
+        return res.sendError(5, err);
+      }
+    });
 
     activity.remove((err) => {
       // Handle error remove
