@@ -487,7 +487,7 @@
         this.$.form.request.body.tags = this.activity.tags;
 
         for (field in this.$.form.request.body) {
-          if (!this.$.form.request.body[field]) {
+          if (typeof this.$.form.request.body[field] === 'undefined') {
             delete this.$.form.request.body[field];
           }
         }

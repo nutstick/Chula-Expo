@@ -188,7 +188,7 @@
 				<div class="card-content">
 					<!-- Thai Language -->
 					<div class="flex-layout ">
-						<div class="avatar" item-icon><img src="../../images/th.png" /></div>
+						<div class="avatar" item-icon><img src="/public/img/th.png" /></div>
 						<div class="flex company">ภาษาไทย</div>
 					</div>
 
@@ -203,7 +203,7 @@
 				<div class="card-content">
 					<!-- English Language -->
 					<div class="flex-layout center">
-						<div class="avatar" item-icon><img src="../../images/en.png" /></div>
+						<div class="avatar" item-icon><img src="/public/img/en.png" /></div>
 						<div class="flex company">English</div>
 					</div>
 
@@ -222,7 +222,7 @@
             id="form"
             method="post"
             class="card-content"
-            action="_roomUrl"
+            action="{{_roomUrl}}"
             on-iron-form-presubmit="_presubmit"
             on-iron-form-response="_response">
             <div class="card-content">
@@ -345,7 +345,7 @@
 				}
       },
       _presubmit: function(event) {
-        	this.$.form.request.body.place= this.placeId;
+        this.$.form.request.body.place = this.placeId;
       },
       _delayedSubmit: function(event) {
         var form = this.$.form;
