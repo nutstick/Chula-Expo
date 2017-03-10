@@ -7,7 +7,6 @@ const { isAuthenticatedByToken, isStaff } = require('../../../config/authenticat
 
 const router = express.Router();
 
-
 /**
  * Get Activity list
  * Access at GET https://localhost:8080/api/activities
