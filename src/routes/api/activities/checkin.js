@@ -45,8 +45,9 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', isAuthenticatedByToken, isStaff, (req, res) => {
+  const userId = req.body.user || req.query.user;
   // Validate required field from body
-  if (req.body.user) {
+  if (userId) {
     // Check exist target activity input
     Activity.findById(req.params.id, (err, activitiy) => {
       // Handle error from Activity.findById
@@ -57,11 +58,11 @@ router.post('/', isAuthenticatedByToken, isStaff, (req, res) => {
       if (!activitiy) {
         return res.sendError(2, err);
       }
-      User.findById(req.body.user).exec((err, _user) => {
+      User.findById(userId).exec((err, _user) => {
         if (err) return res.sendError(5, err);
         if (!_user) return res.sendError(24, err);
         const filter = { activityId: req.params.id,
-          user: req.body.user };
+          user: userId };
         ActivityCheck.findOne(filter).exec((err, _checkin) => {
           let duplicate = false;
           if (_checkin) {
@@ -69,7 +70,7 @@ router.post('/', isAuthenticatedByToken, isStaff, (req, res) => {
           }
           // Create a new instance of the User model
           const checkin = new ActivityCheck();
-          checkin.user = req.body.user;
+          checkin.user = userId;
           checkin.activityId = req.params.id;
           checkin.createBy = req.user.id;
           // Save checkin and check for error
