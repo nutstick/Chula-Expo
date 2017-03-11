@@ -74,7 +74,7 @@
         }.bind(this));
       },
       generateRequest: function() {
-        this.set('params.fields', fields);
+        this.set('params.fields', this.fields);
         return this.$.ajax.generateRequest();
       },
       _handleResponse: function(event) {
@@ -87,7 +87,7 @@
         if (!response.success) {
           if (response.errors.code === "4") {
             // Logout
-            console.log(document.querySelector('chulaexpo-staff-app').token)
+            // console.log(document.querySelector('chulaexpo-staff-app').token)
             document.querySelector('chulaexpo-staff-app').token = null;
             // document.getElementById('storage').save();
 
