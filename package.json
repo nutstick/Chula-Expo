@@ -1,0 +1,31 @@
+{
+  "name": "chulaexpo-staff-app",
+  "version": "1.0.0",
+  "description": "Staff web application for Chula expo 2017",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "start": "babel-node tools/start.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nutstick/Chula-Expo.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nutstick/Chula-Expo/issues"
+  },
+  "homepage": "https://github.com/nutstick/Chula-Expo#readme",
+  "devDependencies": {
+    "babel-cli": "^6.23.0",
+    "babel-plugin-transform-async-to-generator": "^6.22.0",
+    "babel-preset-es2015": "^6.22.0",
+    "babel-preset-es2017": "^6.22.0",
+    "child_process": "^1.0.2",
+    "polymer-cli": "^0.18.0-pre.13"
+  }
+}
