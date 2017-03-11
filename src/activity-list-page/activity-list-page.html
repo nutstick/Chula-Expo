@@ -73,6 +73,7 @@
         end="{{end}}"
         page="[[page]]"
         me="[[me]]"
+        loading="{{loading}}"
         page-size="[[pageSize]]"
         total-pages="{{totalPages}}"
       ></activity-api>
@@ -86,7 +87,7 @@
         fields="_id,nameEN"
       ></zone-api>
       <!-- Search Header -->
-      <paper-card-item hidden$="[[!isAdmin]]" action>
+      <paper-card-item action>
         <div class="card-item-content">
           <div class="left">
             <vaadin-combo-box
@@ -95,6 +96,7 @@
               item-value-path="_id"
               item-label-path="name.en"
               value="{{zone}}"
+              disabled$="[[!isAdmin]]"
               always-float-label
             ></vaadin-combo-box>
           </div>
@@ -162,6 +164,10 @@
         error: {
           type: Object,
         },
+        loading: {
+          type: Boolean,
+          value: false,
+        },
         activities: {
           type: Array,
           value: [],
@@ -183,6 +189,7 @@
         '_changeAcitvityParams(page, pageSize, zone)'
       ],
       _changeAcitvityParams: function(page, pageSize) {
+        this.set('activities', []);
         this.$.activityAPI.generateRequest();
       },
       _activatedChanged: function(activated) {
@@ -234,9 +241,8 @@
         return !activities.length;
       },
       _computeAdmin: function(me) {
-        if (!me || !me.staff)
-          return false;
-        return me.staff.staffType === 'Admin';
+        this.set('zone', (me && me.staff.staffType !== 'Admin') ? me.staff.zone : null);
+        return me && me.staff && me.staff.staffType === 'Admin';
       },
       _computeImage: function(thumbnail) {
         if(thumbnail)

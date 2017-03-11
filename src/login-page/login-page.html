@@ -4,6 +4,8 @@
 <link rel=*"import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-form/iron-form.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
 
 <link rel="import" href="../shared-styles/shared-styles.html">
 <link rel="import" href="../facebook-login-button/facebook-login-button.html">
@@ -12,22 +14,17 @@
   <template>
     <style is="custome-style" include="shared-styles">
       :host {
-        position: absolute;
+        position: fixed;
         top: 46px;
         left: 0;
         right: 0;
         bottom: 0;
         background-color: var(--primary-color);
-        transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 1;
+        z-index: 150;
         color: var(--secondary-color);
 
         @apply(--layout);
         @apply(--layout-center-center);
-      }
-      :host([hide]) {
-        opacity: 0;
-        pointer-events: none;
       }
       .login-wrapper {
         margin-top: 40px;
@@ -77,35 +74,62 @@
             return window.api + '/api/login'
           }
         },
-        token: {
-          type: String
-        },
         page: {
           type: String,
-        },
-        hide: {
-          type: Boolean,
-          reflectToAttribute: true,
-          value: false,
-          computed: '_computeHide(token,page)'
+          value: '',
         },
         email: {
           type: String
         },
         password: {
           type: String
+        },
+        hide: {
+          type: Boolean,
+          reflectToAttribute: true,
+          value: false,
+          computed: '_computeHide(page, _hasToken)'
+        },
+        _hasToken: {
+          type: Boolean,
+          value: false,
+        },
+        animationConfig: {
+          value: function() {
+            return {
+              'exit': {
+                name: 'fade-out-animation',
+                node: this
+              }
+            }
+          }
         }
       },
 
+      behaviors: [
+        Polymer.NeonAnimationRunnerBehavior,
+      ],
       observers: [
         '_submitDisable(email,password)',
       ],
+      listeners: {
+        // this event is fired when the animation finishes
+        'neon-animation-finish': '_onNeonAnimationFinish'
+      },
 
+      ready: function() {
+        document.addEventListener('token', function(e) {
+          this.set('_hasToken', !!token);
+        }.bind(this));
+      },
       _submitDisable: function(email, password) {
         this.$.loginButton.disabled = !email || !password;
       },
-      _computeHide: function(token, page) {
-        return token || page === 'signup';
+      _computeHide: function(page, _hasToken) {
+        if (this._hasToken || page === 'signup') {
+          this.playAnimation('exit');
+        }
+        return this._hasToken || page === 'signup';
       },
       _delayedSubmit: function(event) {
         var form = this.$.form;
@@ -122,16 +146,16 @@
       _response: function(e) {
         if (e.detail.response.success) {
           document.querySelector('chulaexpo-staff-app').token = e.detail.response.results.token;
-          // document.getElementById('storage').save();
-          
-          // window.history.pushState({}, null, '/');
-          // window.dispatchEvent(new CustomEvent('location-changed'));
-          // window.location = '/';
         }
       },
       _error: function(e) {
         if (!e.detail.response.success) {
 
+        }
+      },
+      _onNeonAnimationFinish: function() {
+        if (this.hide) {
+          this.style.display = 'none';
         }
       }
     });

@@ -82,7 +82,7 @@
         },
         loading: {
           type: Boolean,
-          notify: true,
+          notify: false,
         },
         error: {
           type: Object,
@@ -118,6 +118,7 @@
       },
 
       generateRequest: function() {
+        this.set('loading', true);
         if (this.pageSize === 0) {
           this.set('params.limit', null);
           this.set('params.skip', this.page);
@@ -148,6 +149,7 @@
         return this.$.activityResource.generateRequest();
       },
       _handleResponse: function(event) {
+        this.set('loading', false);
         if(event.detail.response) {
           if (event.detail.response.success) {
             if (this.activityId) {

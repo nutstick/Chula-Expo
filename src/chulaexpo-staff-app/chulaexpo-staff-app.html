@@ -173,7 +173,7 @@
         <template is="dom-if" if="[[_loading]]">
           <paper-progress indeterminate class="progress --blue"></paper-progress>
         </template>
-        <login-page token="[[token]]" page=[[page]]></login-page>
+        <login-page page=[[page]]></login-page>
         <iron-pages
           selected="[[page]]"
           attr-for-selected="name"
@@ -205,7 +205,7 @@
         token: {
           type: Object,
           notify: true,
-          observer: '_uppdateToken',
+          observer: '_updateToken',
         },
         loggedIn: {
           type: Boolean,
@@ -241,9 +241,8 @@
         '_routePageChanged(routeData.page, token)',
       ],
 
-      _uppdateToken: function(token) {
+      _updateToken: function(token) {
         window.token = token;
-        // this.$.storage.save();
         this.fire('token', { token: token });
       },
       _routePageChanged: function(page, token) {
