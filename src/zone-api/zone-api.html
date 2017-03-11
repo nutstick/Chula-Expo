@@ -98,15 +98,15 @@
         }.bind(this));
       },
       generateRequest: function() {
-        if (pageSize === 0) {
+        if (this.pageSize === 0) {
           this.set('params.limit', null);
-          this.set('params.skip', page);
+          this.set('params.skip', this.page);
         } else {
-          this.set('params.limit', pageSize);
-          this.set('params.skip', (page - 1) * pageSize);
+          this.set('params.limit', this.pageSize);
+          this.set('params.skip', (this.page - 1) * this.pageSize);
         }
 
-        this.set('params.fields', fields)
+        this.set('params.fields', this.fields)
         
         return this.$.zoneResource.generateRequest();
       },
