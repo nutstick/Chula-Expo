@@ -478,8 +478,9 @@
             req.open('DELETE', encodeURI(url));
             req.setRequestHeader('Authorization', 'JWT ' + window.token);
             req.onload = function() {
-              document.querySelector('chulaexpo-staff-app').set('route.path', this.parentUrl);
+              document.querySelector('chulaexpo-staff-app').set('route.path', '/activity/');
               window.dispatchEvent(new CustomEvent('location-changed'));
+							t
             }.bind(this);
             req.send();
           }.bind(this), 300);
