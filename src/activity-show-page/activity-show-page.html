@@ -413,7 +413,7 @@
         '_activatedChanged(activated, activityId)',
       ],
       _idChanged: function(id){
-        var div_qrcode = document.getElementById("qrcode");
+        var div_qrcode = this.$.qrcode;
         if(div_qrcode){
   				div_qrcode.innerHTML = "";
   				var qrcode = new QRCode(div_qrcode, {
@@ -426,7 +426,7 @@
   				});
         }
 
-				var div_qrvideo = document.getElementById("qrvideo");
+				var div_qrvideo = this.$.qrvideo;
         if(div_qrvideo) {
           div_qrvideo.innerHTML = "";
   				var qrcode = new QRCode(div_qrvideo, {
