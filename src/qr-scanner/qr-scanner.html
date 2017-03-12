@@ -269,7 +269,7 @@
             this.set('success', null);
           }.bind(this), 3000)
         }
-        
+
         return !!success || !!error || !!loading;
       },
       _computeTextMessage: function(success, error, videoError) {
@@ -289,7 +289,6 @@
         reader.readAsDataURL(event.target.files[0]);
       },
       _uploadClick: function(e) {
-        console.log(Polymer.dom(this.$.imageInput));
         this.$.imageInput.click();
       },
       _computeVideoShow: function(videoError) {

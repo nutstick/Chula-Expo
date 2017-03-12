@@ -146,12 +146,9 @@
 
         this.set('params.zone', this.zone);
 
-        console.log(this.params);
-        
         return this.$.activityResource.generateRequest();
       },
       _handleResponse: function(event) {
-        console.log(event.detail.response)
         this.set('loading', false);
         if(event.detail.response) {
           if (event.detail.response.success) {

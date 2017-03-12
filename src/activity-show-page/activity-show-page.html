@@ -208,7 +208,7 @@
 							<label class="label --input">Video Url</label>
 							<div class="flex fitdiv">
 								{{activity.video}}
-                <div id="qrvideo" style="width:200px; height:200px; margin-bottom:15px; margin-top:4px;"></div>
+                <div id="qrvideo" style="width:250px; height:250px; margin-bottom:15px; margin-top:4px;"></div>
 
 							</div>
 						</div>
@@ -216,8 +216,7 @@
 							<label class="label input">PDF Url</label>
 							<div class="flex fitdiv">
 								{{activity.pdf}}
-                <div id="qrcode" style="width:200px; height:200px; margin-bottom:15px; margin-top:4px;"></div>
-
+                <div id="qrcode" style="width:250px; height:250px; margin-bottom:15px; margin-top:4px;"></div>
 							</div>
 						</div>
 						<div>
@@ -417,7 +416,7 @@
         if(div_qrcode){
   				div_qrcode.innerHTML = "";
   				var qrcode = new QRCode(div_qrcode, {
-  					text: window.api + "/api/activities/" + this.activityId + "/qrcode",
+  					text: 'https://staff.chulaexpo.com/api/activities/' + this.activityId + "/qrcode",
   					width: 200,
   					height: 200,
   					colorDark : "#ff69B4",
@@ -430,7 +429,7 @@
         if(div_qrvideo) {
           div_qrvideo.innerHTML = "";
   				var qrcode = new QRCode(div_qrvideo, {
-  					text: window.api + '/api/activities/' + this.activityId + "/qrvideo",
+  					text: 'https://staff.chulaexpo.com/api/activities/' + this.activityId + "/qrvideo",
   					width: 200,
   					height: 200,
   					colorDark : "#000000",
