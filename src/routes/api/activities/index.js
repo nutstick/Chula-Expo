@@ -402,6 +402,7 @@ router.post('/', isAuthenticatedByToken, isStaff, (req, res) => {
 
     activity.createBy = req.user.id;
     activity.createAt = new Date();
+    activity.updateAt = new Date();
 
 
     // Save User and check for error

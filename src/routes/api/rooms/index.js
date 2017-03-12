@@ -172,6 +172,7 @@ router.post('/', (req, res) => {
   room.place = mongoose.Types.ObjectId(req.body.place);
 
   room.createAt = new Date();
+  room.updateAt = new Date();
 
   // Save room and check for error
   room.save((err, _room) => {

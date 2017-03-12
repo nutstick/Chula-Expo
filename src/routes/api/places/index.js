@@ -186,6 +186,7 @@ router.post('/', (req, res) => {
   }
 
   place.createAt = new Date();
+  place.updateAt = new Date();
 
   // Save place and check for error
   place.save((err, _place) => {

@@ -164,6 +164,7 @@ router.post('/', (req, res) => {
   facility.location.longitude = req.body.locationLong;
 
   facility.createAt = new Date();
+  facility.updateAt = new Date();
 
    // Save User and check for error
   facility.save((err, _act) => {

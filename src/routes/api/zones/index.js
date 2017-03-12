@@ -215,6 +215,7 @@ router.post('/', (req, res) => {
   zone.location.longitude = req.body.locationLong;
 
   zone.createAt = new Date();
+  zone.updateAt = new Date();
 
  // Save zone and check for error
   zone.save((err, _zone) => {
