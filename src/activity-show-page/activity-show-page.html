@@ -62,7 +62,7 @@
         display: inline-block;
         margin-right: 20px;
       }
-      .label.--upload {
+      .label.upload {
         line-height: 70px;
       }
 
@@ -163,7 +163,7 @@
           <!-- Thumbnail Upload -->
 					<div class="item">
 						<div class="flex-layout">
-							<label class="label --upload">Thumbnail</label>
+							<label class="label upload">Thumbnail</label>
 							<div class="flex">
                 <iron-image style="width:140px; height:80px;" sizing="cover" preload fade src="{{_computeThumbnail(activity.thumbnail)}}"></iron-image>
 							</div>
@@ -172,7 +172,7 @@
 					<!-- Banner Upload -->
 					<div class="item">
 						<div class="flex-layout">
-							<label class="label --upload">Banner</label>
+							<label class="label upload">Banner</label>
 							<div class="flex">
                 <iron-image style="width:200px; height:150px;" sizing="cover" preload fade src="{{_computeBanner(activity.banner)}}"></iron-image>
 							</div>
@@ -213,7 +213,7 @@
 							</div>
 						</div>
 						<div>
-							<label class="label --input">PDF Url</label>
+							<label class="label input">PDF Url</label>
 							<div class="flex fitdiv">
 								{{activity.pdf}}
                 <div id="qrcode" style="width:200px; height:200px; margin-bottom:15px; margin-top:4px;"></div>
@@ -221,7 +221,7 @@
 							</div>
 						</div>
 						<div>
-							<label class="label --input">Link</label>
+							<label class="label input">Link</label>
 							<div class="flex fitdiv">
 								{{activity.link}}
 							</div>
@@ -230,7 +230,7 @@
 
 					<!-- Zone -->
 					<div class="item">
-						<label class="label --upload">Zone</label>
+						<label class="label upload">Zone</label>
 						<div class="flex fitdiv">
               {{zone.name.en}}
 						</div>
@@ -246,7 +246,7 @@
 
 					<!-- Location -->
 					<div class="item">
-						<label class="label --input">Place</label>
+						<label class="label input">Place</label>
 						<div class="" style="display: inline; word-wrap: break-word;">
               {{place.name.en}}
             </div>
@@ -261,7 +261,7 @@
           </div>
 
 					<div class="item">
-						<label class="label --input">Room</label>
+						<label class="label input">Room</label>
 						<div class="flex fitdiv">
 							{{room.name.en}}
 						</div>
@@ -277,7 +277,7 @@
 
 					<div class="item">
 						<div>
-							<label class="label --input">HighLight</label>
+							<label class="label input">HighLight</label>
 							<div class="flex fitdiv">
                 {{activity.isHighlight}}
 							</div>
@@ -300,19 +300,19 @@
 					</div>
 
 					<div class="item">
-						<label class="label --input">ชื่อกิจกรรม</label>
+						<label class="label input">ชื่อกิจกรรม</label>
 						<div class="flex fitdiv">
 							{{activity.name.th}}
 						</div>
 					</div>
 					<div class="item">
-						<label class="label --input">รายละเอียดย่อ</label>
+						<label class="label input">รายละเอียดย่อ</label>
 						<div class="flex fitdiv">
 							{{activity.shortDescription.th}}
 						</div>
 					</div>
 					<div class="item">
-						<label class="label --input">รายละเอียด</label>
+						<label class="label input">รายละเอียด</label>
 						<div class="flex fitdiv">
 							{{activity.description.th}}
 						</div>
@@ -327,19 +327,19 @@
 					</div>
 
 					<div class="item">
-						<label class="label --input">activity name</label>
+						<label class="label input">activity name</label>
 						<div class="flex fitdiv">
 							{{activity.name.en}}
 						</div>
 					</div>
 					<div class="item">
-						<label class="label --input">short description</label>
+						<label class="label input">short description</label>
 						<div class="flex fitdiv">
 							{{activity.shortDescription.en}}
 						</div>
 					</div>
 					<div class="item">
-						<label class="label --input">description</label>
+						<label class="label input">description</label>
 						<div class="flex fitdiv">
 							{{activity.description.en}}
 						</div>
@@ -355,7 +355,7 @@
         <div class="card-content">
           <!-- Tags -->
           <div class="item">
-            <label class="label --input">Tags</label>
+            <label class="label input">Tags</label>
             <div class="flex fitdiv">
               {{activity.tags}}
             </div>
