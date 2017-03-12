@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <!-- Web Component -->
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
 
 <dom-module id="paper-card-item">
   <template>
@@ -23,12 +24,12 @@
       }
       :host iron-image {
         @apply(--layout-flex);
-        display: initial;
-        overflow: visited;
+        /*display: initial;*/
+        /*overflow: visited;*/
         width: var(--paper-card-item-image-width, 102px);
-        height: var(--paper-card-item-image-height, 102px);
-        --iron-image-width: var(--paper-card-item-image-width, 102px);
-        --iron-image-height: var(--paper-card-item-image-height, 102px);
+        height: var(--paper-card-item-image-height, 100%);
+        --iron-image-width: var(--paper-card-item-image-width, 100%);
+        --iron-image-height: var(--paper-card-item-image-height, 100%);
       }
       .header {
         margin-right: 10px;
@@ -82,7 +83,8 @@
         alt="[[alt]]"
         placeholder="[[placeholderImage]]"
         preload="[[preloadImage]]"
-        fade="[[fadeImage]]"></iron-image>
+        fade="[[fadeImage]]"
+        sizing="contain"></iron-image>
       <div hidden$="[[!heading]]" class$="title-text [[_computeHeadingClass(image)]]">[[heading]]</div>
     </div>
     <div class="container">
