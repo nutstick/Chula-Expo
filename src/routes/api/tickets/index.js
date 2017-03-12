@@ -7,7 +7,7 @@ const router = express.Router();
 router.use(isAuthenticatedByToken, isStaff);
 
 router.get('/:tid', (req, res) => {
-  Ticket.findById(req.param.tid, (err, ticket) => {
+  Ticket.findById(req.params.tid, (err, ticket) => {
     if (err) {
       return res.sendError(5, err);
     }
@@ -17,7 +17,7 @@ router.get('/:tid', (req, res) => {
     res.json({
       success: true,
       results: {
-        ticket: req.param.tid,
+        ticket: req.params.tid,
         user: ticket.user,
         round: ticket.round,
         checked: ticket.checked,
@@ -27,7 +27,7 @@ router.get('/:tid', (req, res) => {
 });
 
 router.delete('/:tid', (req, res) => {
-  Ticket.cancelReserved(req.param.tid)
+  Ticket.cancelReserved(req.params.tid)
     .then(() => {
       res.json({
         success: true,
@@ -38,14 +38,14 @@ router.delete('/:tid', (req, res) => {
 });
 
 router.post('/:tid/check', (req, res) => {
-  Ticket.findById(req.param.tid, (err, ticket) => {
+  Ticket.findById(req.params.tid, (err, ticket) => {
     ticket.checkIn(ticket._id)
       .then(() => (
         res.status(201).json({
           success: true,
-          message: `Successfully check ticket id ${req.param.tid}.`,
+          message: `Successfully check ticket id ${req.params.tid}.`,
           results: {
-            ticket: req.param.tid,
+            ticket: req.params.tid,
             user: ticket.user
           }
         })

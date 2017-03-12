@@ -128,7 +128,7 @@ const UserSchema = new mongoose.Schema({
   }],
   createAt: { type: Date, default: new Date() },
   updateAt: { type: Date, default: new Date() },
-}, { timestamps: true });
+});
 
 
 /**
