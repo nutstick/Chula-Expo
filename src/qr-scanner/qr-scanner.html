@@ -2,8 +2,10 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <!-- Web Component -->
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
 <link rel="import" href="../../bower_components/bottom-button/bottom-button.html">
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
 
 <link rel="import" href="../shared-styles/shared-styles.html">
 <script type="text/javascript" src="../../lib/jquery.min.js"></script>
@@ -105,7 +107,11 @@
           </div>
         </div>
       </div>
-      <div id="reader" style="min-width:100%; min-height: 500px;">
+      <div id="reader" style="min-width:100%; min-height: 500px;" hidden$=[[_computeVideoShow(videoError)]]>
+      </div>
+      <div style="min-width: 100%; min-height: 500px;">
+        <iron-image id="preview" src="[[targetImage]]"></iron-image>
+        <paper-input type="file" value="[[targetImage]]" accept="image/*" capture="camera" on-change="_handleFile"></paper-input>
       </div>
 		</paper-dialog>
     <bottom-button on-tap="_onClosed">CLOSE</bottom-button>
@@ -179,7 +185,7 @@
             }.bind(this),
             function(error) {
               //show read errors
-              // console.error(error)
+              console.error(error)
             }.bind(this), function(videoError) {
               //the video stream could be opened
               if (videoError.name === 'PermissionDeniedError') {
@@ -238,6 +244,21 @@
       _loadingChanged: function(loading) {
         this.$.spinner.active = true;
         this.$.spinner.hidden = !loading;
+      },
+      _handleFile: function(event) {
+        console.log(event.target.files[0]);
+
+        var reader = new FileReader();
+        reader.onload = function() {
+          var dataURL = reader.result;
+          console.log(reader);
+          this.targetImaget = dataURL;
+          console.log(qrcode.decode(dataUrl));
+        }.bind(this)
+        reader.readAsDataURL(event.target.files[0]);
+      },
+      _computeVideoShow: function(videoError) {
+        return !videoError;
       }
     });
   </script>

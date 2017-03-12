@@ -471,7 +471,7 @@
       },
       _onRemoveConfirm: function(e) {
         if(event.detail.confirmed) {
-          var url = window.api + '/api/activities' + this.activityId;
+          var url = window.api + '/api/activities/' + this.activityId;
           setTimeout(function () {
             var req = new XMLHttpRequest();
 
@@ -480,7 +480,6 @@
             req.onload = function() {
               document.querySelector('chulaexpo-staff-app').set('route.path', '/activity/');
               window.dispatchEvent(new CustomEvent('location-changed'));
-							t
             }.bind(this);
             req.send();
           }.bind(this), 300);

@@ -281,8 +281,8 @@
         if (!this.start || !this.end) {
           return event.preventDefault();
         }
-        this.$.form.request.body.start = this.start;
-        this.$.form.request.body.end = this.end;
+        this.$.form.request.body.start = moment.utc(this.start).local().format('YYYY-MMM-DD h:mm A');
+        this.$.form.request.body.end = moment.utc(this.end).local().format('YYYY-MMM-DD h:mm A');
       },
       _deleteClick: function(event) {
         this.deleteId = event.model.item['_id'];
