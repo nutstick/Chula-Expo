@@ -207,7 +207,7 @@
         // Wait until dialog is added to the DOM (required for Safari)
         setTimeout(function() {
           this.$.dialog.open();
-          
+
           setTimeout(function() {
             $(this.$.reader).html5_qrcode(function(data) {
               // do something when code is read
@@ -254,7 +254,6 @@
         var response = event.detail.request.xhr.response;
         if (!response.success) {
           this.error = response.errors.message;
-          console.log(this.error);
         }
       },
       _computeShowOverlay: function(success, error, loading, videoError) {

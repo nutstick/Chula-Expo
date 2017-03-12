@@ -234,7 +234,7 @@
           // Validate the entire form to see if we should enable the `Submit` button.
           this.$.submit.disabled = !this.$.form.validate();
         }.bind(this));
-        
+
         document.addEventListener('token', function(e) {
           var token = e.detail.token;
           if (!token) {
@@ -324,7 +324,7 @@
       },
       _launchQRScanner: function() {
         var qr = document.createElement('qr-scanner');
-        
+
         qr.url = this._url + '/' + event.model.item['_id'] + '/checkin';
         qr.open();
       },

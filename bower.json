@@ -16,7 +16,7 @@
     "paper-menu": "^1.2.2",
     "iron-icons": "^1.2.0",
     "paper-icon-button": "^1.1.4",
-    "iron-flex-layout": "^1.3.2",
+    "iron-flex-layout": "1.3.1",
     "paper-item": "^1.2.1",
     "paper-button": "^1.0.14",
     "iron-ajax": "^1.4.3",

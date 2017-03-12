@@ -141,18 +141,6 @@
                   </div>
                 </vaadin-upload>
                 <input id="thumbnail" type="hidden" name="thumbnail" value="">
-                <script>
-                  var thumbnailUpload = document.querySelector('activity-add-page').querySelector('vaadin-upload#thumbnailUpload')
-                  thumbnailUpload.addEventListener("upload-response", function(event) {
-                    if(event.detail.file.xhr.status == 200){
-                      var name = JSON.parse(event.detail.xhr.responseText);
-                      document.querySelector('activity-add-page').querySelector('#thumbnail').value = name.results.thumbnail;
-                    }
-                  });
-                  thumbnailUpload.addEventListener("upload-abort", function(event) {
-                    document.querySelector('activity-add-page').querySelector('#thumbnail').value = '';
-                  });
-                </script>
               </div>
 						</div>
 						<!-- Banner Upload -->
@@ -174,18 +162,6 @@
                   </div>
                 </vaadin-upload>
                 <input id="banner" type="hidden" name="banner" value="">
-                <script>
-                  var bannerUpload = document.querySelector('activity-add-page').querySelector('vaadin-upload#bannerUpload')
-                  bannerUpload.addEventListener("upload-response", function(event) {
-                    if(event.detail.file.xhr.status == 200){
-                      var name = JSON.parse(event.detail.xhr.responseText);
-                      document.querySelector('activity-add-page').querySelector('#banner').value = name.results.banner;
-                    }
-                  });
-                  bannerUpload.addEventListener("upload-abort", function(event) {
-                    document.querySelector('activity-add-page').querySelector('#banner').value = '';
-                  });
-                </script>
               </div>
 						</div>
 						<!-- Time -->
@@ -373,6 +349,12 @@
   <script>
     Polymer({
       is: 'activity-add-page',
+      listeners: {
+        'bannerUpload.upload-response': '_responseBanner',
+        'bannerUpload.upload-abort': '_responseAbortBanner',
+        'thumbnailUpload.upload-response': '_responseThumbnail',
+        'thumbnailUpload.upload-abort': '_responseAbortThumbnail',
+      },
       properties: {
         activated: {
           type: Boolean,
@@ -442,6 +424,14 @@
           value: {
             'Authorization': 'JWT ' + window.token
           }
+        },
+        thumbnail: {
+          type: String,
+          value: ''
+        },
+        banner: {
+          type: String,
+          value: ''
         }
       },
       _activatedChanged: function(activated) {
@@ -476,11 +466,6 @@
         if (e.detail.response.success) {
           this.$.form.reset();
 
-          var list = document.querySelector('activity-list-page')
-          if(typeof list.generateRequest === 'function'){
-            list.generateRequest();
-          }
-
           window.history.pushState({}, null, '/activity/');
           window.dispatchEvent(new CustomEvent('location-changed'));
         }
@@ -496,6 +481,13 @@
               return picture.results.picture;
             return null;
           });
+
+          if(this.thumbnail != '')
+            this.$.form.request.body.thumbnail = this.thumbnail;
+
+          if(this.banner != '')
+            this.$.form.request.body.banner = this.banner;
+
           this.$.form.request.body.tags = this.tags;
 
           for (field in this.$.form.request.body) {
@@ -512,7 +504,27 @@
       _computePlace: function(e) {
         this.zoneId = e.detail.value._id;
         this.$.placeAPI.generateRequest();
+      },
+      _responseBanner: function(event) {
+        if(event.detail.file.xhr.status == 200){
+          var name = JSON.parse(event.detail.xhr.responseText);
+          this.banner = name.results.banner;
+
+        }
+      },
+      _responseThumbnail: function(event) {
+        if(event.detail.file.xhr.status == 200){
+          var name = JSON.parse(event.detail.xhr.responseText);
+          this.thumbnail = name.results.thumbnail;
+        }
+      },
+      _responseAbortThumbnail: function(event) {
+        this.thumbnail = '';
+      },
+      _responseAbortBanner: function(event) {
+        this.banner = '';
       }
+
     })
   </script>
 </dom-module>

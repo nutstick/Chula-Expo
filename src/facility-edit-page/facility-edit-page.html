@@ -248,11 +248,6 @@
         if (e.detail.response.success) {
           this.$.form.reset();
 
-          var list = document.querySelector('facility-show-page')
-          if(typeof list.generateRequest === 'function'){
-            list.generateRequest();
-          }
-
           window.history.pushState({}, null, '/facility/' + this.facilityId + '/show/');
           window.dispatchEvent(new CustomEvent('location-changed'));
         }

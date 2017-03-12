@@ -242,11 +242,6 @@
                 if (e.detail.response.success) {
                    this.$.form.reset();
 
-                   var list = document.querySelector('facility-list-page')
-                   if(typeof list.generateRequest === 'function'){
-                     list.generateRequest();
-                   }
-
                    window.history.pushState({}, null, '/facility/');
                    window.dispatchEvent(new CustomEvent('location-changed'));
                 }
