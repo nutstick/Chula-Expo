@@ -401,6 +401,8 @@ router.post('/', isAuthenticatedByToken, isStaff, (req, res) => {
     activity.end = req.body.end;
 
     activity.createBy = req.user.id;
+    activity.createAt = new Date();
+
 
     // Save User and check for error
     activity.save((err, _act) => {

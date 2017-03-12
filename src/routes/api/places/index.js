@@ -185,6 +185,8 @@ router.post('/', (req, res) => {
     place.zone = mongoose.Types.ObjectId(req.body.zone);
   }
 
+  place.createAt = new Date();
+
   // Save place and check for error
   place.save((err, _place) => {
     if (err) {
