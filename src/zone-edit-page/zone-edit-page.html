@@ -300,10 +300,16 @@
 				this.$.form.request.method = 'PUT';
 				this.$.form.request.body.locationLat = this.zone.location.latitude;
         this.$.form.request.body.locationLong = this.zone.location.longitude;
-        if(!this.$.form.request.body.thumbnail)
-          this.$.form.request.body.thumbnail = '';
-        if(!this.$.form.request.body.banner)
-          this.$.form.request.body.banner = '';
+
+        if(this.thumbnail != '')
+          this.$.form.request.body.thumbnail = this.thumbnail;
+        else
+          this.$.form.request.body.thumbnail = this.zone.thumbnail;
+
+        if(this.banner != '')
+          this.$.form.request.body.banner = this.banner;
+        else
+          this.$.form.request.body.banner = this.zone.banner;
 
         for (field in this.$.form.request.body) {
           if (typeof this.$.form.request.body[field] === 'undefined') {
