@@ -135,7 +135,7 @@
       </div>
       <div id="reader" style="min-width:100%; min-height: 500px;" hidden$=[[_computeVideoShow(videoError)]]>
       </div>
-      <div style="width: 100%; height: 100%;">
+      <div style="width: 100%; height: 100%;" hidden$=[[!videoError]]>
         <div class="input-container" on-tap="_uploadClick">
           <iron-icon icon="image:photo"></iron-icon>
           <h3 style="text-align: center">Tap to upload QR<h3>
@@ -293,7 +293,7 @@
         this.$.imageInput.click();
       },
       _computeVideoShow: function(videoError) {
-        return !videoError;
+        return !!videoError;
       }
     });
   </script>

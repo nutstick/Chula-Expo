@@ -22,14 +22,49 @@
     <!-- Windows -->
     <meta name="msapplication-TileColor" content="#fff">
     <meta name="msapplication-TileImage" content="/images/ico/icon-inverted-3x.png">
-    <script src="/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
     <script src="/bower_components/moment/min/moment-with-locales.min.js"></script>
     <script src="/bower_components/moment/locale/th.js"></script>
 
     <script type="text/javascript" src="/lib/jquery.min.js"></script>
     <script type="text/javascript" src="/lib/qrcode.min.js"></script>
 
-    <link rel="import" href="/bower_components/paper-progress/paper-progress.html">
+    <script>
+      window.api = 'https://api.chulaexpo.com';
+
+      // Setup Polymer options
+      window.Polymer = {
+        dom: 'shadow',
+        lazyRegister: true,
+      };
+      // Load webcomponentsjs polyfill if browser does not support native
+      // Web Components
+      (function() {
+        'use strict';
+        var onload = function() {
+          // For native Imports, manually fire WebComponentsReady so user code
+          // can use the same code path for native and polyfill'd imports.
+          if (!window.HTMLImports) {
+            document.dispatchEvent(
+              new CustomEvent('WebComponentsReady', {bubbles: true})
+            );
+          }
+        };
+        var webComponentsSupported = (
+          'registerElement' in document
+          && 'import' in document.createElement('link')
+          && 'content' in document.createElement('template')
+        );
+        if (!webComponentsSupported) {
+          var script = document.createElement('script');
+          script.async = true;
+          script.src = '/bower_components/webcomponentsjs/webcomponents-lite.min.js';
+          script.onload = onload;
+          document.head.appendChild(script);
+        } else {
+          onload();
+        }
+      })();
+    </script>
     <link rel="import" href="/src/chulaexpo-staff-app/chulaexpo-staff-app.html">
     <link href="https://fonts.googleapis.com/css?family=Noto Sans:200,300,400" rel="stylesheet">
     
@@ -127,9 +162,6 @@
     </style>
   </head>
   <body unresolved>
-    <script>
-      window.api = 'https://api.chulaexpo.com';
-    </script>
     <chulaexpo-staff-app>
       <div class="navbar"></div>
       <div class="container">
