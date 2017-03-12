@@ -101,7 +101,7 @@
       .ui.container {
         padding-top: 20px;
       }
-      .progress.--blue {
+      .progress.blue {
         --paper-progress-active-color: #e91e63;
         width: 100%;
       }
@@ -171,7 +171,7 @@
       <!-- Content Gose Here -->
       <div>
         <template is="dom-if" if="[[_loading]]">
-          <paper-progress indeterminate class="progress --blue"></paper-progress>
+          <paper-progress indeterminate class="progress blue"></paper-progress>
         </template>
         <login-page page=[[page]]></login-page>
         <iron-pages
