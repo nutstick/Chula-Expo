@@ -578,7 +578,7 @@ router.delete('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
       return res.sendError(4, 'No permission on deleting activity outside your own activity');
     }
     // Find corresponding rounds and remove corresponding tickets
-    Round.find({ activityId: req.params.id }, (err, _rounds) => {
+    const promise = Round.find({ activityId: req.params.id }).exec((err, _rounds) => {
       if (err) {
         return res.sendError(5, err);
       }
@@ -594,12 +594,13 @@ router.delete('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
       }
     });
     // Remove corresponding rounds
-    Round.remove({ activityId: req.params.id }, (err) => {
-      if (err) {
-        return res.sendError(5, err);
-      }
+    promise.then(() => {
+      Round.remove({ activityId: req.params.id }, (err) => {
+        if (err) {
+          return res.sendError(5, err);
+        }
+      });
     });
-
     activity.remove((err) => {
       // Handle error remove
       if (err) {
