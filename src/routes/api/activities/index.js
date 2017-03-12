@@ -305,6 +305,8 @@ router.get('/highlight', (req, res) => {
   sort = 'start';
   filter.start = RangeQuery({ gt: new Date() }, 'Date');
   filter.isHighlight = true;
+  filter.banner = { $exists: true };
+  console.log(filter);
   // field selector
   // http://localhost:3000/?fields=name,faculty
   let fields;
