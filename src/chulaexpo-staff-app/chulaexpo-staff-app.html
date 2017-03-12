@@ -31,12 +31,17 @@
 <dom-module id="chulaexpo-staff-app">
   <template>
     <style is="custome-style" include="shared-styles">
-      :host, app-drawer-layout, app-drawer-layout > div {
-        height: 100%;
-        /*height: 1px;*/
+      :root {
+        --paper-font-common-base: {
+          font-family: 'Roboto', 'Noto Sans' sans-serif;
+          -webkit-font-smoothing: antialiased;
+        };
       }
+      
       :host {
         display: block;
+        --primary-color: #222;
+        --secondary-color: #fff;
       }
       app-toolbar {
         background-color: var(--primary-color);
@@ -101,7 +106,7 @@
       .ui.container {
         padding-top: 20px;
       }
-      .progress.--blue {
+      .progress.blue {
         --paper-progress-active-color: #e91e63;
         width: 100%;
       }
@@ -127,7 +132,7 @@
     ></me-api>
 
     <!-- Main Layout -->
-    <app-drawer-layout force-narrow>
+    <app-drawer-layout force-narrow fullbleed>
       <app-drawer id="drawer">
         <!-- Toolbar -->
         <app-toolbar>Menu</app-toolbar>
@@ -171,7 +176,7 @@
       <!-- Content Gose Here -->
       <div>
         <template is="dom-if" if="[[_loading]]">
-          <paper-progress indeterminate class="progress --blue"></paper-progress>
+          <paper-progress indeterminate class="progress blue"></paper-progress>
         </template>
         <login-page page=[[page]]></login-page>
         <iron-pages

@@ -219,12 +219,12 @@
             }.bind(this),
             function(error) {
               //show read errors
-              console.error(error)
+              console.log(error)
             }.bind(this), function(videoError) {
               //the video stream could be opened
-              if (videoError.name === 'PermissionDeniedError') {
-                this.videoError = videoError.message;
-              }
+              // if (videoError.name === 'PermissionDeniedError') {
+              this.set('videoError', videoError.message);
+              // }
             }.bind(this));
           }.bind(this), 100);
         }.bind(this), 1);
@@ -261,15 +261,16 @@
           // Async fadeOut
           setTimeout(function() {
             this.set('error', null);
-          }.bind(this), 4000)
+          }.bind(this), 3000)
         }
         if (!!success) {
           // Async fadeOut
           setTimeout(function() {
             this.set('success', null);
-          }.bind(this), 4000)
+          }.bind(this), 3000)
         }
-        return !!success || !!error || !!videoError || !!loading;
+        
+        return !!success || !!error || !!loading;
       },
       _computeTextMessage: function(success, error, videoError) {
         return success ? 'Check in success' : (error ? error : videoError);

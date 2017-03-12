@@ -47,7 +47,7 @@
       }
       .item .input-wrapper {
       }
-      .item .input-wrapper.--width {
+      .item .input-wrapper.width {
         @apply(--layout-flex);
       }
       .avatar {
@@ -134,8 +134,8 @@
           <div class="card-content">
             <!-- Thumbnail Upload -->
   					<div class="item">
-              <label class="label --upload">Thumbnail</label>
-              <div class="input-wrapper --width">
+              <label class="label upload">Thumbnail</label>
+              <div class="input-wrapper width">
                 <iron-image style="width:140px; height:80px;" sizing="cover" preload fade src="{{_computeThumbnail(activity.thumbnail)}}"></iron-image>
 								<vaadin-upload
 									id="thumbnailUpload"
@@ -156,8 +156,8 @@
 						</div>
   					<!-- Banner Upload -->
   					<div class="item">
-							<label class="label --upload">Banner</label>
-              <div class="input-wrapper --width">
+							<label class="label upload">Banner</label>
+              <div class="input-wrapper width">
                 <iron-image style="width:200px; height:150px;" sizing="cover" preload fade src="{{_computeBanner(activity.banner)}}"></iron-image>
 								<vaadin-upload
 									id="bannerUpload"
@@ -178,39 +178,39 @@
   					</div>
   					<!-- Time -->
   					<div class="item">
-  						<label class="label --input">Start Time</label>
+  						<label class="label input">Start Time</label>
               <div class="input-wrapper">
 								<datetime-local-input name="start" label="" no-label-float="true" value="{{activity.start}}" required></datetime-local-input>
   						</div>
             </div>
 						<div class="item">
-							<label class="label --input">End Time</label>
+							<label class="label input">End Time</label>
               <div class="input-wrapper">
 								<datetime-local-input name="end" label="" no-label-float="true" value="{{activity.end}}" required></datetime-local-input>
 							</div>
   					</div>
 
   					<div class="item">
-  						<label class="label --input">Contact</label>
-              <div class="input-wrapper --width">
+  						<label class="label input">Contact</label>
+              <div class="input-wrapper width">
   							<paper-input type="text" value="{{activity.contact}}" name="contact" label="" no-label-float="true" placeholder="เบอร์ ์หรือสถานที่ติดต่อ"></paper-input>
   						</div>
   					</div>
 
   					<div class="item">
-  						<label class="label --input">Video Url</label>
+  						<label class="label input">Video Url</label>
               <div class="input-wrapper">
   							<paper-input type="text" value="{{activity.video}}" name="video" label="" no-label-float="true" placeholder="www."></paper-input>
   		        </div>
   					</div>
             <div class="item">
-  						<label class="label --input">PDF Url</label>
+  						<label class="label input">PDF Url</label>
               <div class="input-wrapper">
   							<paper-input type="text" value="{{activity.pdf}}" name="pdf" label="" no-label-float="true" placeholder="www."></paper-input>
               </div>
             </div>
             <div class="item">
-  						<label class="label --input">Link</label>
+  						<label class="label input">Link</label>
               <div class="input-wrapper">
   							<paper-input type="text" value="{{activity.link}}" name="link" label="" no-label-float="true" placeholder="www."></paper-input>
   						</div>
@@ -218,7 +218,7 @@
 
             <!-- Zone -->
   					<div class="item">
-  						<label class="label --input">Zone</label>
+  						<label class="label input">Zone</label>
   						<div class="input-wrapper">
                 <vaadin-combo-box
                   name="zone"
@@ -247,7 +247,7 @@
 
             <!-- Location -->
   					<div class="item">
-              <label class="label --input">Place</label>
+              <label class="label input">Place</label>
               <div class="input-wrapper">
                 <vaadin-combo-box
                   name="locationPlace"
@@ -277,7 +277,7 @@
   					</div>
 
             <div class="item">
-              <label class="label --input">Room</label>
+              <label class="label input">Room</label>
               <div class="input-wrapper">
                 <vaadin-combo-box
                   name="locationRoom"
@@ -305,7 +305,7 @@
             </div>
 
   					<div class="item">
-  						<label class="label --input">HighLight</label>
+  						<label class="label input">HighLight</label>
               <div class="input-wrapper">
                 <paper-checkbox name="isHighlight" label="" no-label-float="true" checked={{activity.isHighlight}}></paper-checkbox>
   						</div>
@@ -315,7 +315,7 @@
           <div class="card-content">
 						<!-- Picture -->
 						<div class="item">
-							<label class="label --height">รูปภาพที่เกี่ยวข้อง</label>
+							<label class="label height">รูปภาพที่เกี่ยวข้อง</label>
               <template is="dom-repeat" items="{{activity.pictures}}">
                 <iron-image style="width:100px; height:100px;" sizing="cover" preload fade src="{{_computePicture(item)}}"></iron-image>
               </template>
@@ -333,7 +333,7 @@
 						</div>
 						<!-- Tags -->
 						<div class="item">
-              <label class="label --input">Tags</label>
+              <label class="label input">Tags</label>
               <div class="input-wrapper">
                 <paper-select
                   multiple
