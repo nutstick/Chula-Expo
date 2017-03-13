@@ -234,11 +234,6 @@
         if (e.detail.response.success) {
           this.$.form.reset();
 
-          var list = document.querySelector('place-list-page')
-          if(typeof list.generateRequest === 'function'){
-            list.generateRequest();
-          }
-
           window.history.pushState({}, null, '/place/');
           window.dispatchEvent(new CustomEvent('location-changed'));
 

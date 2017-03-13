@@ -84,10 +84,6 @@
         }
       },
 
-      observers: [
-        'updateRequest(page,pageSize,fields)'
-      ],
-
       ready: function(){
         document.addEventListener('token', function(e) {
           var token = e.detail.token;
@@ -111,7 +107,7 @@
         }
 
         this.set('params.fields', this.fields)
-        
+
         return this.$.facilityResource.generateRequest();
       },
       _handleResponse: function(event) {

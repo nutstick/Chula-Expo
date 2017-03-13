@@ -38,4 +38,3 @@ if (require.main === module && process.argv.length > 2) {
 }
 
 exports.default = run;
-

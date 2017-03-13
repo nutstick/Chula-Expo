@@ -116,7 +116,7 @@
 									<vaadin-upload
 										id="thumbnailUpload"
 										accept="image/*"
-										target="/upload/img/zones/thumbnail"
+										target="[[_thumbnailUploadUrl]]"
 										method="POST"
                     max-files="1"
 										headers="[[headers]]"
@@ -128,18 +128,6 @@
 										</div>
 									</vaadin-upload>
 									<input id="thumbnail" type="hidden" name="thumbnail" value="">
-									<script>
-										var thumbnailUpload = document.querySelector('zone-add-page').querySelector('vaadin-upload#thumbnailUpload')
-										thumbnailUpload.addEventListener("upload-response", function(event) {
-											if(event.detail.file.xhr.status == 200){
-                        var name = JSON.parse(event.detail.xhr.responseText);
-                        document.querySelector('zone-add-page').querySelector('#thumbnail').value = name.results.thumbnail;
-                      }
-										});
-                    thumbnailUpload.addEventListener("upload-abort", function(event) {
-                      document.querySelector('zone-add-page').querySelector('#thumbnail').value = '';
-                    });
-									</script>
 								</div>
 							</div>
 						</div>
@@ -151,7 +139,7 @@
 									<vaadin-upload
 										id="bannerUpload"
 										accept="image/*"
-										target="/upload/img/zones/banner"
+										target="[[_bannerUploadUrl]]"
 										method="POST"
                     max-files="1"
 										headers="[[_headers]]"
@@ -163,18 +151,6 @@
 										</div>
 									</vaadin-upload>
                   <input id="banner" type="hidden" name="banner" value="">
-                  <script>
-                    var bannerUpload = document.querySelector('zone-add-page').querySelector('vaadin-upload#bannerUpload')
-                    bannerUpload.addEventListener("upload-response", function(event) {
-                      if(event.detail.file.xhr.status == 200){
-                        var name = JSON.parse(event.detail.xhr.responseText);
-                        document.querySelector('zone-add-page').querySelector('#banner').value = name.results.banner;
-                      }
-                    });
-                    bannerUpload.addEventListener("upload-abort", function(event) {
-                      document.querySelector('zone-add-page').querySelector('#banner').value = '';
-                    });
-                  </script>
 								</div>
 							</div>
 						</div>
@@ -229,6 +205,12 @@
 <script>
     Polymer({
       is: 'zone-add-page',
+      listeners: {
+        'bannerUpload.upload-response': '_responseBanner',
+        'bannerUpload.upload-abort': '_responseAbortBanner',
+        'thumbnailUpload.upload-response': '_responseThumbnail',
+        'thumbnailUpload.upload-abort': '_responseAbortThumbnail',
+      },
       properties: {
         _url: {
           type: String,
@@ -256,6 +238,26 @@
           value: {
             'Authorization': 'JWT ' + window.token
           }
+        },
+        _thumbnailUploadUrl: {
+          type: String,
+          value: function() {
+            return window.api + '/upload/img/activities/thumbnail';
+          }
+        },
+        _bannerUploadUrl: {
+          type: String,
+          value: function() {
+            return window.api + '/upload/img/activities/banner';
+          }
+        },
+        thumbnail: {
+          type: String,
+          value: ''
+        },
+        banner: {
+          type: String,
+          value: ''
         }
       },
       _delayedSubmit: function(event) {
@@ -272,11 +274,6 @@
         if (e.detail.response.success) {
           this.$.form.reset();
 
-          var list = document.querySelector('zone-list-page')
-          if(typeof list.generateRequest === 'function'){
-            list.generateRequest();
-          }
-
           window.history.pushState({}, null, '/zone/');
           window.dispatchEvent(new CustomEvent('location-changed'));
         }
@@ -288,12 +285,36 @@
 				this.$.form.request.body.locationLat = this.latitude;
         this.$.form.request.body.locationLong = this.longitude;
 
+        if(this.thumbnail != '')
+          this.$.form.request.body.thumbnail = this.thumbnail;
+
+        if(this.banner != '')
+          this.$.form.request.body.banner = this.banner;
+
         for (field in this.$.form.request.body) {
           if (typeof this.$.form.request.body[field] === 'undefined') {
             delete this.$.form.request.body[field];
           }
         }
+      },
+      _responseBanner: function(event) {
+        if(event.detail.file.xhr.status == 200){
+          var name = JSON.parse(event.detail.xhr.responseText);
+          this.banner = name.results.banner;
 
+        }
+      },
+      _responseThumbnail: function(event) {
+        if(event.detail.file.xhr.status == 200){
+          var name = JSON.parse(event.detail.xhr.responseText);
+          this.thumbnail = name.results.thumbnail;
+        }
+      },
+      _responseAbortThumbnail: function(event) {
+        this.thumbnail = '';
+      },
+      _responseAbortBanner: function(event) {
+        this.banner = '';
       }
     })
   </script>

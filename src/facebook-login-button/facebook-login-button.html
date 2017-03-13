@@ -34,7 +34,6 @@
       },
       fblogin: function() {
         var elem = this;
-        console.log(window.api + '/auth/facebook');
         popupTools.popup(window.api + '/auth/facebook', "Facebook Connect", {}, function (err, res) {
           if (err) {
             elem.error = err.toString();
@@ -45,9 +44,6 @@
 
               window.history.pushState({}, null, '/');
               window.dispatchEvent(new CustomEvent('location-changed'));
-              setTimeout(function () {
-                document.querySelector('#navigation').notifyResize();
-              }, 100);
             } else if (res.errors.code === 2) {
               window.history.pushState({}, null, '/signup?email=' + res.user.email
                 + '&name=' + res.user.name

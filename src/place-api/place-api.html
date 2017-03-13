@@ -87,11 +87,6 @@
           value: {}
         }
       },
-
-      observers: [
-        'updateRequest(page,pageSize,fields)'
-      ],
-
       ready: function(){
         document.addEventListener('token', function(e) {
           var token = e.detail.token;
@@ -135,7 +130,6 @@
         // this.generateRequest();
       },
       _idChanged: function(id) {
-        console.log(id)
         if (id && id!='show' && id!='edit' && id!='add' && id!='list') {
           this.url = window.api + '/api/places/' + id;
         } else {

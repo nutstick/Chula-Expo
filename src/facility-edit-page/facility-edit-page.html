@@ -121,6 +121,7 @@
                     <paper-item value="Souvenir">Souvenir</paper-item>
                     <paper-item value="Information">Information</paper-item>
 										<paper-item value="Registration">Registration</paper-item>
+                    <paper-item value="BusStop">BusStop</paper-item>
 									</paper-menu>
 								</paper-dropdown-menu>
 							</div>
@@ -246,11 +247,6 @@
       _response: function(e) {
         if (e.detail.response.success) {
           this.$.form.reset();
-
-          var list = document.querySelector('facility-show-page')
-          if(typeof list.generateRequest === 'function'){
-            list.generateRequest();
-          }
 
           window.history.pushState({}, null, '/facility/' + this.facilityId + '/show/');
           window.dispatchEvent(new CustomEvent('location-changed'));
