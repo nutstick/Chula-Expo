@@ -1,28 +1,27 @@
-<!-- Libery -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<!-- Web Component -->
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 
-<dom-module id="facility-api">
+<dom-module id="user-api">
   <template>
     <iron-ajax
-      id="facilityResource"
-      url="{{url}}"
-      headers="{{headers}}"
-      params="{{params}}"
+      id="api"
+      url="[[url]]"
+      headers="[[headers]]"
+      params="[[params]]"
       on-response="_handleResponse"
       handle-as="json"
     ></iron-ajax>
   </template>
   <script>
     Polymer({
-      is: 'facility-api',
+      is: 'user-api',
       properties: {
         url: {
           type: String,
-          value: function() {
-            return window.api + '/api/facilities';
-          }
+          value: function () {
+            return window.api + '/api/users';
+          },
+          computed: '_computeUrl(targetId)'
         },
         params: {
           type: Object,
@@ -30,16 +29,14 @@
         },
         headers: {
           type: Object,
-          // value: {
-          //   'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
-          // }
+          // value: {}
+          value: function() {
+            return { 'Authorization': 'JWT ' + window.token };
+          }
         },
-        /*
-          Input Data
-        */
-        facilityId: {
+        targetId: {
           type: String,
-          observer: '_idChanged'
+          value: ''
         },
         page: {
           type: Number,
@@ -53,39 +50,28 @@
           type: String,
           value: ''
         },
-        start: {
-          type: String,
-          value: ''
-        },
-        end: {
-          type: String,
-          value: ''
-        },
-        zone: {
-          type: String,
-          value: ''
+        targetEmail: {
+          type: String
         },
         /*
           Output Data
         */
-        facilities: {
+        users: {
           type: Array,
           value: [],
           notify: true,
         },
-        facility: {
-          type: Object,
-          notify: true,
+        loading: {
+          type: Boolean,
+          value: false
         },
-        loading: Boolean,
         error: {
           type: Object,
           value: {}
         }
       },
-
+      
       ready: function() {
-        console.log('aaa')
         document.addEventListener('token', function(e) {
           var token = e.detail.token;
           if (!token) {
@@ -95,7 +81,6 @@
           this.headers = {
             'Authorization': 'JWT ' + token
           };
-          // this.generateRequest();
         }.bind(this));
       },
       generateRequest: function() {
@@ -107,30 +92,32 @@
           this.set('params.skip', (this.page - 1) * this.pageSize);
         }
 
-        this.set('params.fields', this.fields)
+        if (this.fields) {
+          this.set('params.fields', this.fields);
+        }
 
-        return this.$.facilityResource.generateRequest();
+        if (this.targetEmail) {
+          this.set('params.email', this.targetEmail);
+        }
+
+        return this.$.api.generateRequest();
       },
       _handleResponse: function(event) {
         if(event.detail.response) {
           if (event.detail.response.success) {
-            if (this.facilityId) {
-              this.facility = event.detail.response.results;
-            } else {
-              this.facilities = event.detail.response.results;
-            }
+            this.users = event.detail.response.results;
           } else {
             this.error = event.detail.response.errors;
           }
         }
       },
-      _idChanged: function(id) {
-        if (id && id!='show' && id!='edit' && id!='add' && id!='list') {
-          this.url = window.api + '/api/facilities/' + id;
+      _computeUrl: function(targetId) {
+        if (targetId) {
+          return window.api + '/api/users/' + targetId;
         } else {
-          this.url = window.api + '/api/facilities';
+          return window.api + '/api/users/';
         }
       }
-    });
+    })
   </script>
 </dom-module>

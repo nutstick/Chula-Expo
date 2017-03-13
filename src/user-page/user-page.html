@@ -1,13 +1,10 @@
-<!-- Libery -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<!-- Web Component -->
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/app-route/app-route.html">
 
-<dom-module id="activity-page">
+<dom-module id="user-page">
   <template>
-    <app-route
+    <app-route 
       route="{{route}}"
       pattern="/:page"
       data="{{routeData}}"
@@ -19,24 +16,22 @@
       fallback-selection="id"
       selected-attribute="activated"
       role="main">
-      <activity-list-page me="[[me]]" name="list"></activity-list-page>
-      <activity-add-page name="add"></activity-add-page>
-      <activity-id-page activity-id="{{activityId}}" route="{{subroute}}" name="id"></activity-id-page>
+      <user-list-page name="list"></user-list-page>
+      <user-add-page name="add"></user-add-page>
+      <user-id-page activity-id="{{activityId}}" route="{{subroute}}" name="id"></user-id-page>
     </iron-pages>
   </template>
   <script>
     Polymer({
-      is: 'activity-page',
+      is: 'user-page',
       properties: {
-        route: {
-          type: String,
-        },
+        route: String,
         page: {
           type: String,
           reflectToAttribute: true,
           observer: '_pageChanged',
         },
-        activityId: {
+        userId: {
           type: String,
         }
       },
@@ -54,9 +49,9 @@
         }
       },
       _pageChanged: function(page) {
-        var resolvedPageUrl = this.resolveUrl('../activity-'+ page + '-page/activity-' + page + '-page.html');
+        var resolvedPageUrl = this.resolveUrl('../user-'+ page + '-page/user-' + page + '-page.html');
         this.importHref(resolvedPageUrl, null, null, true);
       }
-    });
+    })
   </script>
 </dom-module>

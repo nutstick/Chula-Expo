@@ -219,6 +219,9 @@
             }.bind(this),
             function(error) {
               //show read errors
+              if (this.videoError) {
+                this.error = error;
+              }
               console.log(error)
             }.bind(this), function(videoError) {
               //the video stream could be opened

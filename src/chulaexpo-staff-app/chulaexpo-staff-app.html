@@ -20,6 +20,7 @@
 <!-- Pages -->
 <link rel="import" href="../me-api/me-api.html">
 <link rel="import" href="../activity-api/activity-api.html">
+<link rel="import" href="../user-api/user-api.html">
 <link rel="import" href="../ticket-api/ticket-api.html">
 <link rel="import" href="../place-api/place-api.html">
 <link rel="import" href="../zone-api/zone-api.html">
@@ -164,6 +165,7 @@
             <paper-tabs id="navigation" selected="[[page]]" attr-for-selected="name">
               <paper-tab name="home"><a href="/" horizontal center-center layout>Home</a></paper-tab>
               <paper-tab hidden$="[[isAuthenticate]]" name="signup"><a href="/signup/" horizontal center-center layout>Sign Up</a></paper-tab>
+              <paper-tab hidden$="[[!isAuthenticate]]" name="user"><a href="/user/" horizontal center-center layout>User</a></paper-tab>
               <paper-tab hidden$="[[!isAuthenticate]]" name="zone"><a href="/zone/" horizontal center-center layout>Zone</a></paper-tab>
               <paper-tab hidden$="[[!isAuthenticate]]" name="place"><a href="/place/" horizontal center-center layout>Place</a></paper-tab>
               <paper-tab hidden$="[[!isAuthenticate]]" name="activity"><a href="/activity/" horizontal center-center layout>Activity</a></paper-tab>
@@ -189,6 +191,7 @@
           <home-page name="home"></home-page>
           <signup-page name="signup" route={{subroute}}></signup-page>
           <account-page name="account"></account-page>
+          <user-page name="user" route={{subroute}}></user-page>
           <zone-page name="zone" route={{subroute}}></zone-page>
           <place-page name="place" route={{subroute}}></place-page>
           <activity-page me="[[me]]" name="activity" route={{subroute}}></activity-page>

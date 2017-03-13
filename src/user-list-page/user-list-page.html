@@ -1,0 +1,173 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/paper-styles/shadow.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../bottom-prefab/bottom-prefab.html">
+<link rel="import" href="../paper-card-item/paper-card-item.html">
+<link rel="import" href="../paper-card-item-pagination/paper-card-item-pagination.html">
+<link rel="import" href="../shared-styles/shared-styles.html">
+<link rel="import" href="../user-api/user-api.html">
+
+<dom-module id="user-list-page">
+  <template>
+    <style is="custom-style" include="shared-styles">
+      :host {
+        @apply(--layout-vertical);
+        @apply(--layout-center-center);
+        padding-top: 20px;
+      }
+      .empty-list {
+        height: 300px;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-center-justified);
+      }
+      .empty-list:before {
+        content: "ไม่มีข้อมูล";
+        font-style: italic;
+        color: #bbb;
+        font-weight: 200;
+      }
+      .loading {
+        text-align: center;
+        height: 300px;
+        @apply(--layout-horizontal);
+        @apply(--layout-justified);
+        @apply(--layout-center-justified);
+      }
+      .loading > paper-spinner {
+        @apply(--layout-self-center);
+        width: 48px;
+        height: 48px;
+      }
+      paper-card-item {
+        --paper-card-item-image-height: 100%;
+      }
+    </style>
+    <user-api
+      id="userAPI"
+      page="[[page]]"
+      page-size="[[pageSize]]"
+      totalPages="{{totalPages}}"
+      users="{{users}}"
+      error="{{error}}"
+    ></user-api>
+    <div class="contanier">
+      <template is="dom-if" if="[[_computeNoUser(_loading, users)]]">
+        <div class="empty-list"></div>
+      </template>
+      <template is="dom-if" if="[[_loading]]">
+        <div class="loading">
+          <paper-spinner id="spinner" active></paper-spinner>
+        </div>
+      </template>
+      <template is="dom-repeat" items="{{users}}">
+        <paper-card-item action image="../../images/thumbnail-default.jpg">
+          <div class="card-item-header">
+            [[item.email]]
+          </div>
+          <div class="card-item-actions">
+            <paper-tabs scrollable no-bar hide-scroll-buttons>
+              <paper-tab on-tap="_onShowClick">Show</paper-tab>
+              <paper-tab on-tap="_onEditClick">Edit</paper-tab>
+              <paper-tab on-tap="_onDeleteClick">Delete</paper-tab>
+            </paper-tabs>
+          </div>
+        </paper-card-item>
+      </template>
+			<paper-card-item-pagination page="{{page}}" page-size="{{pageSize}}" totalPages="[[totalPages]]"></paper-card-item-pagination>
+    </div>
+    <bottom-prefab reveals effects="waterfall" target-url="/user/add"></bottom-prefab>
+    <paper-dialog id="dialog" on-iron-overlay-closed="_delete">
+      <h2>Are you sure?</h2>
+      <div class="buttons">
+        <paper-button dialog-dismiss>No</paper-button>
+        <paper-button dialog-confirm autofocus>Yes</paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+  <script>
+    Polymer({
+      is: 'user-list-page',
+      properties: {
+        activated: {
+          type: Boolean,
+          value: false,
+          observer: '_activatedChanged'
+        },
+        page: Number,
+        pageSize: Number,
+        totalPages: Number,
+        error: Object,
+        users: {
+          type: Array,
+          value: [],
+          observer: '_onUsersChanged'
+        },
+        _loading: {
+          type: Boolean,
+          value: true
+        }
+      },
+
+      observers: [
+        '_onParamsChange(page, pageSize)'
+      ],
+      _deleteId: '',
+      
+      generateRequest: function() {
+        this.users = [];
+        this.set('_loading', true);
+        this.$.userAPI.generateRequest();
+      },
+      _activatedChanged: function(activated) {
+        if (activated) {
+          this.generateRequest();
+        }
+      },
+      _computeNoUser: function(_loading, users) {
+        return !_loading && !users.length;
+      },
+      _delete: function(event) {
+        if (event.detail.confirmed) {
+          var url = window.api + '/api/users/' + this._deleteId;
+          setTimeout(function () {
+            var req = new XMLHttpRequest();
+            req.open('DELETE', encodeURI(url));
+            req.setRequestHeader('Authorization', 'JWT ' + window.token);
+            req.onload = function() {
+              if (req.status === 202) {
+                this.generateRequest();
+              }
+            }.bind(this);
+            req.send();
+          }.bind(this), 300)
+        }
+      },
+      _onDeleteClick: function(event) {
+        this._deleteId = event.model.item['_id'];
+        this.$.dialog.open();
+      },
+      _onEditClick: function(event) {
+        var id = event.model.item['_id'];
+        document.querySelector('chulaexpo-staff-app').set('route.path', '/users/' + id + '/edit/');
+      },
+      _onShowClick: function(event) {
+        var id = event.model.item['_id'];
+        document.querySelector('chulaexpo-staff-app').set('route.path', '/users/' + id + '/show/');
+      },
+      _onParamsChange: function(page, pageSize) {
+        this.generateRequest();
+      },
+      _onUsersChanged: function(users) {
+        this.set('_loading', !users.length);
+      }
+    })
+  </script>
+</dom-module>
