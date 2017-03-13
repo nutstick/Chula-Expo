@@ -60,7 +60,7 @@ router.post('/', (req, res) => {
   user.age = req.body.age;
   user.profile = req.body.profile;
   user.type = req.body.type;
-  if (req.body.type === 'Academic' && req.body.academicLevel && req.body.academicYear && req.body.academicSchool) {
+  if (req.body.type === 'Academic' && req.body.academicLevel !== null && req.body.academicYear !== null && req.body.academicSchool !== null) {
     user.academic = {
       level: req.body.academicLevel,
       year: req.body.academicYear,
@@ -70,7 +70,7 @@ router.post('/', (req, res) => {
       user.tags = req.body.tags.split(',');
     }
   }
-  if (req.body.type === 'Worker' && req.body.workerJob) {
+  if (req.body.type === 'Worker' && req.body.workerJob !== null) {
     user.worker = {
       job: req.body.workerJob
     };
