@@ -9,7 +9,7 @@
 
 import path from 'path';
 import cp from 'child_process';
-const server = cp.spawn('polymer', ['serve'], {
+const server = cp.spawn('polymer', ['serve', '--hostname', '0.0.0.0'], {
   // env: Object.assign({ NODE_ENV: 'development' }, process.env),
   // silent: false,
   stdio: 'inherit',

@@ -163,7 +163,7 @@
             <!-- Nav on desktop: tabs -->
             <paper-tabs id="navigation" selected="[[page]]" attr-for-selected="name">
               <paper-tab name="home"><a href="/" horizontal center-center layout>Home</a></paper-tab>
-              <paper-tab name="signup"><a href="/signup/" horizontal center-center layout>Sign Up</a></paper-tab>
+              <paper-tab hidden$="[[isAuthenticate]]" name="signup"><a href="/signup/" horizontal center-center layout>Sign Up</a></paper-tab>
               <paper-tab hidden$="[[!isAuthenticate]]" name="zone"><a href="/zone/" horizontal center-center layout>Zone</a></paper-tab>
               <paper-tab hidden$="[[!isAuthenticate]]" name="place"><a href="/place/" horizontal center-center layout>Place</a></paper-tab>
               <paper-tab hidden$="[[!isAuthenticate]]" name="activity"><a href="/activity/" horizontal center-center layout>Activity</a></paper-tab>
