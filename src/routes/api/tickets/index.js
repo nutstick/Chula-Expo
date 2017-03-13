@@ -7,7 +7,9 @@ const router = express.Router();
 router.use(isAuthenticatedByToken, isStaff);
 
 router.get('/:tid', (req, res) => {
-  Ticket.findById(req.params.tid, (err, ticket) => {
+  Ticket.findById(req.params.tid)
+  .populate('user')
+  .exec((err, ticket) => {
     if (err) {
       return res.sendError(5, err);
     }
@@ -38,7 +40,9 @@ router.delete('/:tid', (req, res) => {
 });
 
 router.post('/:tid/check', (req, res) => {
-  Ticket.findById(req.params.tid, (err, ticket) => {
+  Ticket.findById(req.params.tid)
+  .populate('user')
+  .exec((err, ticket) => {
     ticket.checkIn(ticket._id)
       .then(() => (
         res.status(201).json({

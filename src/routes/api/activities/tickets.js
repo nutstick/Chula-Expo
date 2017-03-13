@@ -7,7 +7,9 @@ const router = express.Router({ mergeParams: true });
 router.use(isAuthenticatedByToken, isStaff);
 
 router.get('/', (req, res) => {
-  Ticket.find({ round: req.params.rid }, (err, tickets) => {
+  Ticket.find({ round: req.params.rid })
+  .populate('user')
+  .exec((err, tickets) => {
     if (err) {
       return res.sendError(5, err);
     }
@@ -19,7 +21,9 @@ router.get('/', (req, res) => {
 });
 
 router.get('/:tid', (req, res) => {
-  Ticket.findById(req.params.tid, (err, ticket) => {
+  Ticket.findById(req.params.tid)
+  .populate('user')
+  .exec((err, ticket) => {
     if (err) {
       return res.sendError(5, err);
     }
