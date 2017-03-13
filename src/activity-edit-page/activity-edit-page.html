@@ -152,18 +152,6 @@
 									</div>
 								</vaadin-upload>
                 <input id="thumbnail" type="hidden" name="thumbnail" value="">
-								<script>
-									var thumbnailUpload = document.querySelector('activity-edit-page').querySelector('vaadin-upload#thumbnailUpload')
-									thumbnailUpload.addEventListener("upload-response", function(event) {
-										if(event.detail.file.xhr.status == 200){
-                      var name = JSON.parse(event.detail.xhr.responseText);
-                      document.querySelector('activity-edit-page').querySelector('#thumbnail').value = name.results.thumbnail;
-                    }
-									});
-                  thumbnailUpload.addEventListener("upload-abort", function(event) {
-                    document.querySelector('activity-edit-page').querySelector('#thumbnail').value = '';
-                  });
-								</script>
 							</div>
 						</div>
   					<!-- Banner Upload -->
@@ -186,18 +174,6 @@
 									</div>
 								</vaadin-upload>
                 <input id="banner" type="hidden" name="banner" value="">
-                <script>
-                  var bannerUpload = document.querySelector('activity-edit-page').querySelector('vaadin-upload#bannerUpload')
-                  bannerUpload.addEventListener("upload-response", function(event) {
-                    if(event.detail.file.xhr.status == 200){
-                      var name = JSON.parse(event.detail.xhr.responseText);
-                      document.querySelector('activity-edit-page').querySelector('#banner').value = name.results.banner;
-                    }
-                  });
-                  bannerUpload.addEventListener("upload-abort", function(event) {
-                    document.querySelector('activity-edit-page').querySelector('#banner').value = '';
-                  });
-                </script>
 							</div>
   					</div>
   					<!-- Time -->
@@ -254,7 +230,7 @@
                   item-label-path="name.en"
                   item-value-path="_id"
                   placeholder="เลือก zone ของกิจกรรม"
-                  on-selected-item-changed="_computePlace"
+                  on-selected-item-changed="_clickZone"
                   required
                 ></vaadin-combo-box>
                 <zone-api
@@ -282,7 +258,7 @@
                   no-label-float="true"
                   item-label-path="name.en"
                   item-value-path="_id"
-                  on-selected-item-changed="_computeRoom"
+                  on-selected-item-changed="_clickPlace"
                   required
                   placeholder="เลือกสถานที่"
                 ></vaadin-combo-box>
@@ -312,6 +288,7 @@
                   no-label-float="true"
                   item-label-path="name.en"
                   item-value-path="_id"
+                  on-selected-item-changed="_clickRoom"
                   placeholder="เลือกห้อง"
                 ></vaadin-combo-box>
                 <room-api
@@ -394,6 +371,12 @@
   <script>
     Polymer({
       is: 'activity-edit-page',
+      listeners: {
+        'bannerUpload.upload-response': '_responseBanner',
+        'bannerUpload.upload-abort': '_responseAbortBanner',
+        'thumbnailUpload.upload-response': '_responseThumbnail',
+        'thumbnailUpload.upload-abort': '_responseAbortThumbnail',
+      },
       properties: {
         activated: {
           type: Boolean,
@@ -453,6 +436,14 @@
           value: {
             'Authorization': 'JWT ' + window.token
           }
+        },
+        thumbnail: {
+          type: String,
+          value: ''
+        },
+        banner: {
+          type: String,
+          value: ''
         }
       },
       inputChanged: function(e) {
@@ -488,13 +479,10 @@
         if (e.detail.response.success) {
           this.$.form.reset();
 
-          var list = document.querySelector('activity-show-page')
-          if(typeof list.generateRequest === 'function'){
-            list.generateRequest();
-          }
 
 					window.history.pushState({}, null, '/activity/' + this.activityId + '/show/');
           window.dispatchEvent(new CustomEvent('location-changed'));
+
         }
       },
       _presubmit: function(event) {
@@ -503,15 +491,22 @@
 				this.$.form.request.body.locationLong = this.activity.location.longitude;
 				this.$.form.request.body.pictures = [];
         this.$.form.request.body.isHighlight = this.activity.isHighlight;
-  
+
         var dom = this;
         this.pictures.forEach(function(key,value, Set) {
           dom.$.form.request.body.pictures.push(key);
         });
-        if(this.$.form.request.body.thumbnail == '')
+
+        if(this.thumbnail != '')
+          this.$.form.request.body.thumbnail = this.thumbnail;
+        else
           this.$.form.request.body.thumbnail = this.activity.thumbnail;
-        if(this.$.form.request.body.banner == '')
+
+        if(this.banner != '')
+          this.$.form.request.body.banner = this.banner;
+        else
           this.$.form.request.body.banner = this.activity.banner;
+
         this.$.form.request.body.tags = this.activity.tags;
 
         for (field in this.$.form.request.body) {
@@ -530,16 +525,24 @@
           this._url = window.api + '/api/activities/';
         }
       },
-      _computePlace: function(e) {
+      _clickZone: function(e) {
         if (e.detail.value) {
           this.zoneId = e.detail.value._id;
           this.$.placeAPI.generateRequest();
         }
       },
-      _computeRoom: function(e) {
+      _clickPlace: function(e) {
         if (e.detail.value) {
           this.placeId = e.detail.value._id;
+          this.zoneId = e.detail.value.zone;
+          this.activity.location.zone = this.zoneId;
           this.$.roomAPI.generateRequest();
+        }
+      },
+      _clickRoom: function(e) {
+        if (e.detail.value) {
+          this.placeId = e.detail.value.place;
+          this.activity.location.place = this.placeId;
         }
       },
 			_computeThumbnail: function(thumbnail) {
@@ -551,6 +554,26 @@
 			_computePicture: function(picture) {
 				return picture ? window.api + picture : null;
 			},
+      _responseBanner: function(event) {
+        if(event.detail.file.xhr.status == 200){
+          var name = JSON.parse(event.detail.xhr.responseText);
+          this.banner = name.results.banner;
+
+        }
+      },
+      _responseThumbnail: function(event) {
+        if(event.detail.file.xhr.status == 200){
+          var name = JSON.parse(event.detail.xhr.responseText);
+          this.thumbnail = name.results.thumbnail;
+        }
+      },
+      _responseAbortThumbnail: function(event) {
+        this.thumbnail = '';
+      },
+      _responseAbortBanner: function(event) {
+        this.banner = '';
+      }
+
     })
   </script>
 </dom-module>

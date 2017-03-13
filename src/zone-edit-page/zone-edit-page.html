@@ -127,7 +127,7 @@
 									<vaadin-upload
 										id="thumbnailUpload"
 										accept="image/*"
-										target="/upload/img/zones/thumbnail"
+										target="[[_thumbnailUploadUrl]]"
 										method="POST"
                     max-files="1"
 										headers="{'Authorization': 'JWT {{token}}'}"
@@ -139,18 +139,6 @@
 										</div>
 									</vaadin-upload>
                   <input id="thumbnail" type="hidden" name="thumbnail" value="{{zone.thumbnail}}">
-									<script>
-										var thumbnailUpload = document.querySelector('zone-edit-page').querySelector('vaadin-upload#thumbnailUpload')
-										thumbnailUpload.addEventListener("upload-response", function(event) {
-											if(event.detail.file.xhr.status == 200){
-                        var name = JSON.parse(event.detail.xhr.responseText);
-                        document.querySelector('zone-edit-page').querySelector('#thumbnail').value = name.results.thumbnail;
-                      }
-										});
-                    thumbnailUpload.addEventListener("upload-abort", function(event) {
-                      document.querySelector('zone-edit-page').querySelector('#thumbnail').value = '';
-                    });
-									</script>
 								</div>
 							</div>
 						</div>
@@ -163,7 +151,7 @@
 									<vaadin-upload
 										id="bannerUpload"
 										accept="image/*"
-										target="/upload/img/zones/banner"
+										target="[[_bannerUploadUrl]]"
                     max-files="1"
 										method="POST"
 										headers="{'Authorization': 'JWT {{token}}'}"
@@ -175,18 +163,6 @@
 										</div>
 									</vaadin-upload>
                   <input id="banner" type="hidden" name="banner" value="{{zone.banner}}">
-                  <script>
-                    var bannerUpload = document.querySelector('zone-edit-page').querySelector('vaadin-upload#bannerUpload')
-                    bannerUpload.addEventListener("upload-response", function(event) {
-                      if(event.detail.file.xhr.status == 200){
-                        var name = JSON.parse(event.detail.xhr.responseText);
-                        document.querySelector('zone-edit-page').querySelector('#banner').value = name.results.banner;
-                      }
-                    });
-                    bannerUpload.addEventListener("upload-abort", function(event) {
-                      document.querySelector('zone-edit-page').querySelector('#banner').value = '';
-                    });
-                  </script>
 								</div>
 							</div>
 						</div>
@@ -238,6 +214,12 @@
 <script>
     Polymer({
       is: 'zone-edit-page',
+      listeners: {
+        'bannerUpload.upload-response': '_responseBanner',
+        'bannerUpload.upload-abort': '_responseAbortBanner',
+        'thumbnailUpload.upload-response': '_responseThumbnail',
+        'thumbnailUpload.upload-abort': '_responseAbortThumbnail',
+      },
       properties: {
 				activated: {
 					type: Boolean,
@@ -261,6 +243,18 @@
           type: Number,
           value: 16
         },
+        _thumbnailUploadUrl: {
+          type: String,
+          value: function() {
+            return window.api + '/upload/img/activities/thumbnail';
+          }
+        },
+        _bannerUploadUrl: {
+          type: String,
+          value: function() {
+            return window.api + '/upload/img/activities/banner';
+          }
+        },
 				zone: {
 					type: Object
 				},
@@ -269,6 +263,14 @@
           value: {
             'Authorization': 'JWT ' + document.querySelector('chulaexpo-staff-app').token
           }
+        },
+        thumbnail: {
+          type: String,
+          value: ''
+        },
+        banner: {
+          type: String,
+          value: ''
         }
       },
       _activatedChanged: function(activated) {
@@ -290,11 +292,6 @@
 				if (e.detail.response.success) {
           this.$.form.reset();
 
-          var list = document.querySelector('zone-show-page')
-          if(typeof list.generateRequest === 'function'){
-            list.generateRequest();
-          }
-
           window.history.pushState({}, null, '/zone/' + this.zoneId + '/show/');
           window.dispatchEvent(new CustomEvent('location-changed'));
         }
@@ -303,10 +300,16 @@
 				this.$.form.request.method = 'PUT';
 				this.$.form.request.body.locationLat = this.zone.location.latitude;
         this.$.form.request.body.locationLong = this.zone.location.longitude;
-        if(!this.$.form.request.body.thumbnail)
-          this.$.form.request.body.thumbnail = '';
-        if(!this.$.form.request.body.banner)
-          this.$.form.request.body.banner = '';
+
+        if(this.thumbnail != '')
+          this.$.form.request.body.thumbnail = this.thumbnail;
+        else
+          this.$.form.request.body.thumbnail = this.zone.thumbnail;
+
+        if(this.banner != '')
+          this.$.form.request.body.banner = this.banner;
+        else
+          this.$.form.request.body.banner = this.zone.banner;
 
         for (field in this.$.form.request.body) {
           if (typeof this.$.form.request.body[field] === 'undefined') {
@@ -321,6 +324,25 @@
         } else {
           this._url = window.api + '/api/zones';
         }
+      },
+      _responseBanner: function(event) {
+        if(event.detail.file.xhr.status == 200){
+          var name = JSON.parse(event.detail.xhr.responseText);
+          this.banner = name.results.banner;
+
+        }
+      },
+      _responseThumbnail: function(event) {
+        if(event.detail.file.xhr.status == 200){
+          var name = JSON.parse(event.detail.xhr.responseText);
+          this.thumbnail = name.results.thumbnail;
+        }
+      },
+      _responseAbortThumbnail: function(event) {
+        this.thumbnail = '';
+      },
+      _responseAbortBanner: function(event) {
+        this.banner = '';
       }
     })
   </script>
