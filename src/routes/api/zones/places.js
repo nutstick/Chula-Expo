@@ -125,19 +125,6 @@ router.post('/:id/place/', (req, res, next) => {
       success: true,
       results: _place
     });
-    Zone.findOneAndUpdate({
-      _id: req.body.zone
-    }, {
-      $addToSet: { places: _place._id }
-    }, (err, places) => {
-      if (err) {
-        return res.status(400).send({
-          message: 'Error add  place to zone'
-        });
-      } else {
-
-      }
-    });
   });
 });
 
