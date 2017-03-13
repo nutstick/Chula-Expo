@@ -5,7 +5,7 @@ const { isAuthenticatedByToken } = require('../../../config/authenticate');
 
 const router = express.Router();
 
-const avaliableFields = ['_id', 'name', 'email', 'age', 'gender', 'profile', 'type', 'academic', 'worker', 'staff'];
+const avaliableFields = ['_id', 'name', 'email', 'age', 'gender', 'profile', 'type', 'academic', 'worker', 'staff', 'tags'];
 
 /**
  * Get user by token
