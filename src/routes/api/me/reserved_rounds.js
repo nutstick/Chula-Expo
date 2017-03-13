@@ -1,7 +1,7 @@
 const express = require('express');
 const _ = require('lodash');
 const { Ticket, Round } = require('../../../models');
-const { retrieveError, RangeQuery } = require('../../../tools/retrieveError');
+const { retrieveError, RangeQuery } = require('../../../tools');
 const { isAuthenticatedByToken } = require('../../../config/authenticate');
 
 const router = express.Router();

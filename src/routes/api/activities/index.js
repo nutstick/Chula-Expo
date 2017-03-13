@@ -305,6 +305,8 @@ router.get('/highlight', (req, res) => {
   sort = 'start';
   filter.start = RangeQuery({ gt: new Date() }, 'Date');
   filter.isHighlight = true;
+  filter.banner = { $exists: true };
+  console.log(filter);
   // field selector
   // http://localhost:3000/?fields=name,faculty
   let fields;
@@ -401,6 +403,9 @@ router.post('/', isAuthenticatedByToken, isStaff, (req, res) => {
     activity.end = req.body.end;
 
     activity.createBy = req.user.id;
+    activity.createAt = new Date();
+    activity.updateAt = new Date();
+
 
     // Save User and check for error
     activity.save((err, _act) => {
@@ -578,7 +583,7 @@ router.delete('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
       return res.sendError(4, 'No permission on deleting activity outside your own activity');
     }
     // Find corresponding rounds and remove corresponding tickets
-    Round.find({ activityId: req.params.id }, (err, _rounds) => {
+    const promise = Round.find({ activityId: req.params.id }).exec((err, _rounds) => {
       if (err) {
         return res.sendError(5, err);
       }
@@ -594,12 +599,13 @@ router.delete('/:id', isAuthenticatedByToken, isStaff, (req, res) => {
       }
     });
     // Remove corresponding rounds
-    Round.remove({ activityId: req.params.id }, (err) => {
-      if (err) {
-        return res.sendError(5, err);
-      }
+    promise.then(() => {
+      Round.remove({ activityId: req.params.id }, (err) => {
+        if (err) {
+          return res.sendError(5, err);
+        }
+      });
     });
-
     activity.remove((err) => {
       // Handle error remove
       if (err) {

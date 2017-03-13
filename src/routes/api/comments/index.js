@@ -42,6 +42,9 @@ router.post('/', isAuthenticatedByToken, (req, res) => {
   }
 
   comment.createBy = req.user.id;
+  comment.createAt = new Date();
+  comment.updateAt = new Date();
+
 
   // Save Comment and check for error
   comment.save((err, _Comment) => {

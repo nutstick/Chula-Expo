@@ -19,7 +19,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/:tid', (req, res) => {
-  Ticket.findById(req.param.tid, (err, ticket) => {
+  Ticket.findById(req.params.tid, (err, ticket) => {
     if (err) {
       return res.sendError(5, err);
     }
@@ -29,7 +29,7 @@ router.get('/:tid', (req, res) => {
     res.json({
       success: true,
       results: {
-        ticket: req.param.tid,
+        ticket: req.params.tid,
         user: ticket.user,
         round: ticket.round,
         checked: ticket.checked,
@@ -39,7 +39,7 @@ router.get('/:tid', (req, res) => {
 });
 
 router.delete('/:tid', (req, res) => {
-  Ticket.cancelReserved(req.param.tid)
+  Ticket.cancelReserved(req.params.tid)
     .then(() => {
       res.json({
         success: true,

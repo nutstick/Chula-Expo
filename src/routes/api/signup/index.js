@@ -41,7 +41,7 @@ router.post('/', (req, res) => {
   if (req.body.type === 'Staff' && req.body.staff === 'Staff' && req.body.registrationCode !== process.env.STAFF_REGISTRATION_CODE) {
     return res.sendError(11);
   }
-  if (req.body.type === 'Staff' && req.body.staff === 'Scanner' && req.body.regisationCode !== process.env.SCANNER_REGISTRATION_CODE) {
+  if (req.body.type === 'Staff' && req.body.staff === 'Scanner' && req.body.registrationCode !== process.env.SCANNER_REGISTRATION_CODE) {
     return res.sendError(11);
   }
 
