@@ -49,7 +49,7 @@
       .item-styles /deep/ paper-item:focus:before {
         opacity: 0;
       }
-      .--red {
+      .red {
         background-color: #F44336;
         color: #fff;
       }
@@ -88,6 +88,11 @@
       }
     </style>
     <round-api id="api" url="[[_url]]" rounds="{{rounds}}" error="{{error}}"></round-api>
+    <me-api
+      me="{{me}}"
+      token="[[token]]"
+      fields="name,_id,profile,type,staff"
+    ></me-api>
     <paper-card class="card">
       <app-header fixed style="height: 48px;">
         <app-toolbar>
@@ -126,7 +131,7 @@
                       <iron-icon icon="image:photo-camera" item-icon></iron-icon>
                       Open QRCode Scanner
                     </paper-icon-item>
-                    <paper-icon-item class="delete --red" on-tap="_deleteClick">
+                    <paper-icon-item class="delete red" on-tap="_deleteClick" disabled$="[[_computeScannerDisabled(me.staff.staffType)]]">
                       <paper-ripple></paper-ripple>
                       <iron-icon icon="icons:delete" item-icon></iron-icon>
                       Delete
@@ -210,6 +215,16 @@
         rounds: {
           type: Array,
           value: [],
+        },
+        token: {
+          type: String,
+          value: function() {
+            return window.token;
+          }
+        },
+        me: {
+          type: Object,
+          value: {}
         },
         error: {
           type: Array,
@@ -344,6 +359,9 @@
       },
       _computeTitleBarText: function(_state) {
         return _state === 'list' ? 'Round' : 'Create round';
+      },
+      _computeScannerDisabled: function(staffType) {
+        return staffType === 'Scanner'
       }
     });
   </script>
