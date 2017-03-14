@@ -191,6 +191,7 @@
               }
               console.log(error)
             }.bind(this), function(videoError) {
+              console.log(videoError)
               //the video stream could be opened
               this.set('videoError', videoError.name || videoError.message);
             }.bind(this));
@@ -226,8 +227,10 @@
         reader.onload = function(e) {
           var dataURL = reader.result;
           this.targetImage = dataURL;
+          console.log(dataURL);
           qrcode.decode(dataURL);
         }.bind(this)
+        console.log(event.target.files[0])
         reader.readAsDataURL(event.target.files[0]);
       },
       _uploadClick: function(e) {
