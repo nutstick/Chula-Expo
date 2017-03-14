@@ -25,7 +25,6 @@
     "src/place-page/place-page.html",
     "src/place-show-page/place-show-page.html",
     "src/signup-page/signup-page.html",
-    "src/user-add-page/user-add-page.html",
     "src/user-edit-page/user-edit-page.html",
     "src/user-id-page/user-id-page.html",
     "src/user-list-page/user-list-page.html",
