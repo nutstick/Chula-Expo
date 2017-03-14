@@ -24,7 +24,8 @@ router.get('/', (req, res) => {
     // Custom query by skip ,limit
     query = ActivityCheck.find(filter)
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .populate('user');
     // Execute query
     query.exec((err, checkin) => {
       if (err) {

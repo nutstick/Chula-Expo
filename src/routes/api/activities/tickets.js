@@ -7,15 +7,17 @@ const router = express.Router({ mergeParams: true });
 router.use(isAuthenticatedByToken, isStaff);
 
 router.get('/', (req, res) => {
-  Ticket.find({ round: req.params.rid }, (err, tickets) => {
-    if (err) {
-      return res.sendError(5, err);
-    }
-    res.json({
-      success: true,
-      results: tickets
+  Ticket.find({ round: req.params.rid })
+    .populate('user')
+    .exec((err, tickets) => {
+      if (err) {
+        return res.sendError(5, err);
+      }
+      res.json({
+        success: true,
+        results: tickets
+      });
     });
-  });
 });
 
 router.get('/:tid', (req, res) => {
