@@ -147,7 +147,7 @@ const UserSchema = new mongoose.Schema({
    });
  });
 
- UserSchema.pre('update', function save(next) {
+ UserSchema.pre('update', function update(next) {
    const user = this;
    bcrypt.genSalt(10, (err, salt) => {
      if (err) { return next(err); }
