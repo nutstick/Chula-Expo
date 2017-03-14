@@ -145,8 +145,8 @@
         }.bind(this));
       },
       _submitDisable: function(email, password) {
-        if (this.$.loginButton) {
-          this.$.loginButton.disabled = !email || !password;
+        if (!this._hasToken || this.isAuthenticate) {
+          this.$$('#loginButton').disabled = !email || !password;
         }
       },
       _computeHide: function(page, isAuthenticate) {
@@ -159,10 +159,10 @@
         return _hasToken && !isAuthenticate;
       },
       _delayedSubmit: function(event) {
-        var form = this.$.form;
-        this.$.spinner.active = true;
-        this.$.spinner.hidden = false;
-        this.$.form.disabled = true;
+        var form = this.$$('#form');
+        this.$$('#spinner').active = true;
+        this.$$('#spinner').hidden = false;
+        this.$$('#form').disabled = true;
         // Simulate a slow server response.
         form.submit();
       },
