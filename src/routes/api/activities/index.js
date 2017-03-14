@@ -465,25 +465,17 @@ router.get('/:id', (req, res) => {
 router.get('/:id/qrcode', (req, res) => {
   Activity.findById(req.params.id, (err, act) => {
     if (err) {
-      return res.writeHead(301, {
-        Location: encodeURI('https://www.chulaexpo.com/app')
-      });
+      return res.sendError(5, err);
     } else if (!act) {
-      return res.writeHead(301, {
-        Location: encodeURI('https://www.chulaexpo.com/app')
-      });
+      return res.sendError(5, err);
     } else if (!act.pdf) {
-      return res.writeHead(301, {
-        Location: encodeURI('https://www.chulaexpo.com/app')
-      });
+      return res.sendError(5, err);
     }
 
-    if (act.pdf.match(/^[(http)(https)]/));
-    else act.pdf = 'http://' + act.pdf;
-
-    return res.writeHead(301, {
+    res.writeHead(301, {
       Location: encodeURI(act.pdf)
-    }).end();
+    });
+    res.end();
   });
 });
 
@@ -491,27 +483,19 @@ router.get('/:id/qrcode', (req, res) => {
 router.get('/:id/qrvideo', (req, res) => {
   Activity.findById(req.params.id, (err, act) => {
     if (err) {
-      return res.writeHead(301, {
-        Location: encodeURI('https://www.chulaexpo.com/app')
-      });
+      return res.sendError(5, err);
     } else if (!act) {
-      return res.writeHead(301, {
-        Location: encodeURI('https://www.chulaexpo.com/app')
-      });
+      return res.sendError(5, err);
     } else if (!act.video) {
-      return res.writeHead(301, {
-        Location: encodeURI('https://www.chulaexpo.com/app')
-      });
+      return res.sendError(5, err);
     }
-
-    if (act.video.match(/^[(http)(https)]/));
-    else act.video = 'http://' + act.video;
-
-    return res.writeHead(301, {
+    res.writeHead(301, {
       Location: encodeURI(act.video)
     });
+    res.end();
   });
 });
+
 
 // Update an existing activity via PUT(JSON format)
 // ex. { "name","EditName"}
