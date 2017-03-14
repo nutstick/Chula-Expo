@@ -1,0 +1,282 @@
+<!-- Libery -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<!-- Icon Component -->
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<!-- Web Component -->
+<link rel="import" href="../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../../bower_components/iron-grid/iron-grid.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-button-group/paper-button-group.html">
+<link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
+
+<link rel="import" href="../shared-styles/shared-styles.html">
+<link rel="import" href="../user-api/user-api.html">
+<link rel="import" href="../zone-api/zone-api.html">
+<link rel="import" href="../profile-image-uploadable/profile-image-uploadable.html">
+<dom-module id="user-show-page">
+  <template>
+    <style is="custom-style" include="shared-styles">
+      :host, paper-card {
+        width: 100%;
+      }
+      :host {
+        @apply(--layout);
+        @apply(--layout-center-center);
+      }
+      @media (min-width: 600px) {
+        :host {
+          padding-top: 20px;
+        }
+      }
+      .header {
+        height: 140px;
+        position: relative;
+        background-color: var(--primary-color);
+        margin-bottom: 60px;
+        overflow: inherit!important;
+      }
+      .header * {
+        overflow: inherit;
+      }
+      .center {
+        @apply(--layout-center-justified);
+        @apply(--layout-horizontal);
+      }
+      .offset {
+        position: absolute;
+        top: 40px;
+        width: 100%;
+      }
+      [hidden] {
+        display: none!important;
+      }
+      .item {
+        display: block;
+        padding: 8px 0;
+      }
+      .label {
+        font-weight: 200;
+        width: 100px;
+        display: inline-block;
+        margin-right: 20px;
+      }
+      .input-label {
+        width: 55px;
+        display: inline-block;
+        margin-right: 16px;
+        line-height: 46px;
+        color: #888;
+      }
+      paper-button {
+        --paper-button-disabled: {
+          background-color: var(--secondary-color);
+        }
+      }
+      paper-button[toggles] {
+        transition: background-color 0.3s;
+      }
+      paper-button[toggles][active] {
+        color: white;
+        background-color: var(--primary-color);
+        --paper-button-flat-focus-color: var(--secondary-color);
+      }
+      paper-button.ripple::shadow paper-ripple {
+        color: var(--primary-color);
+      }
+      paper-button.ripple paper-ripple {
+        color: var(--primary-color);
+      }
+      
+      .field {
+        border: 1px dashed;
+        border-radius: 5px;
+        margin-top: 10px;
+      }
+      .button-holder {
+        @apply(--layout-horizontal);
+        @apply(--layout-end-justified);
+        margin-top: 10px;
+      }
+      .error-msg {
+        color: #ff5050;
+        text-align: center;
+        font-size: 1em;
+      }
+    </style>
+    <user-api
+      id="userAPI"
+			target-id="{{userId}}"
+			page="0"
+			page-size="0"
+			user="{{user}}"
+    ></user-api>
+    <zone-api
+      id="zoneAPI"
+			fields="_id,nameEN"
+			page="0"
+			page-size="0"
+			zones="{{zones}}"
+    ></zone-api>
+    <paper-card class="container">
+      <div class="header style-scope paper-card">
+        <!-- Profile Image with uploadility -->
+        <div class="center offset">
+          <profile-image-uploadable image="{{user.profile}}" alt="User profile" name="profile"></profile-image-uploadable>
+        </div>
+      </div>
+      <!-- Polymer Iron form -->
+      <div class="card-content">
+        <!-- Name -->
+        <div class="item">
+          <label class="input-label">ชื่อ</label>{{user.name}}
+        </div>
+        <!-- E-mail -->
+        <div class="item">
+          <label class="input-label">อีเมล</label>{{user.email}}
+        </div>
+        <!-- Gender -->
+        <div class="item">
+          <div class="input-label" id="gender">เพศ:</div>
+          <paper-button-group selected="{{user.gender}}" disabled>
+            <paper-button name="Male" toggles active={{male}} disabled>ชาย</paper-button>
+            <paper-button name="Female" toggles active={{female}} disabled>หญิง</paper-button>
+            <paper-button name="Other" toggles active={{other}} disabled>อื่นๆ</paper-button>
+          </paper-button-group>
+        </div>
+        <!-- Age -->
+        <div class="item">
+          <label class="input-label">อายุ</label>{{user.age}}
+        </div>
+        <div class="item">
+          <!-- Student/Worker -->
+          <div class="input-label">ประเภท:</div>
+          <paper-button-group selected="{{user.type}}" disabled>
+            <paper-button name="Academic" toggles active={{student}} disabled>นักเรียน นิสิต</paper-button>
+            <paper-button name="Worker" toggles active={{worker}} disabled>บุคคลทั่วๆ</paper-button>
+            <paper-button name="Staff" toggles active={{staff}} disabled>สตาฟ</paper-button>
+          </paper-button-group>
+          <!-- Student -->
+          <fieldset class="field" hidden$="{{!student}}">
+            <div class="item">
+              <label class="input-label">การศึกษาปัจจุบัน</label>{{user.academic.level}}
+            </div>
+            <div class="item">
+              <label class="input-label">ชั้นปี</label>{{user.academic.year}}
+            </div>
+            <div class="item">
+              <label class="input-label">สถาบันการศึกษา</label>{{user.academic.school}}
+            </div>
+          </fieldset>
+          <!-- Worker -->
+          <fieldset class="field" hidden$="{{!worker}}">
+            <div class="item">
+              <label class="input-label">อาชีพ</label>{{user.worker.job}}
+            </div>
+          </fieldset>
+          <!-- Staff -->
+          <fieldset class="field" hidden$="{{!staff}}">
+            <div class="item">
+              <div class="input-label">ประเภท:</div>
+              <paper-button-group selected="{{user.staff.staffType}}" disabled>
+                <paper-button toggles name="Admin" active="{{adminStaff}}" disabled>Admin</paper-button>
+                <paper-button toggles name="Scanner" active="{{scannerStaff}}" disabled>Scan man</paper-button>
+                <paper-button toggles name="Staff" active="{{staffStaff}}" disabled>Staff</paper-button>
+              </paper-button-group>
+            </div>
+          </fieldset>
+        </div>
+        <!-- Hidden Fields -->
+        <input name="accessToken" type="hidden" value="{{user.accessToken}}"></input>
+        <input name="tokens[0].kind" type="hidden" value="{{user.kind}}"></input>
+        <input name="tokens[0].accessToken" type="hidden" value="{{user.accessToken}}"></input>
+        <input name="facebook" type="hidden" value="{{user.facebook}}"></input>
+      </div>
+    </paper-card>
+  </template>
+  <script>
+    Polymer({
+      is: 'user-show-page',
+      properties: {
+        activated: {
+          type: Boolean,
+          value: false,
+          observer: '_activatedChanged'
+        },
+        _url: {
+          type: String,
+          computed: '_computeUrl(userId)'
+        },
+        headers: {
+          type: Object,
+          value: function() {
+            return {
+              'Authorization': 'JWT ' + window.token
+            };
+          }
+        },
+        user: {
+          type: Object,
+          value: {},
+        },
+        userId: {
+          type: String,
+        },
+        zones: {
+          type: Array,
+        },
+        gender: {
+          type: String,
+        },
+        type: {
+          type: Boolean,
+          observer: '_typeChanged',
+        },
+        student: {
+          type: Boolean,
+          value: false
+        },
+        worker: {
+          type: Boolean,
+          value: false
+        },
+        staff: {
+          type: Boolean,
+          value: false
+        },
+        adminStaff: {
+          type: Boolean,
+          value: false
+        },
+        scannerStaff: {
+          type: Boolean,
+          value: false
+        },
+        staffStaff: {
+          type: Boolean,
+          value: false
+        },
+        route: {
+          type: String,
+        },
+        activated: {
+          type: Boolean,
+          value: false,
+          observer: '_activatedChanged'
+        },
+      },
+      _computeUrl: function(userId) {
+        return window.api + '/api/users/' + userId;
+      },
+      _activatedChanged: function(activated) {
+				if (activated) {
+					this.$.userAPI.generateRequest();
+				}
+      },
+    });
+  </script>
+</dom-module>
