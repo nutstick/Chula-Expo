@@ -89,6 +89,7 @@
           setTimeout(function () {
             var req = new XMLHttpRequest();
             req.open('POST', encodeURI(url));
+            req.setRequestHeader('Authorization', 'JWT ' + window.token);
             req.onload = function() {
               if (req.status === 202) {
                 this.$.api.generateRequest();
@@ -110,6 +111,7 @@
           setTimeout(function () {
             var req = new XMLHttpRequest();
             req.open('DELETE', encodeURI(url));
+            req.setRequestHeader('Authorization', 'JWT ' + window.token);
             req.onload = function() {
               if (req.status === 202) {
                 this.$.api.generateRequest();

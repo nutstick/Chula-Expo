@@ -176,8 +176,7 @@
           setTimeout(function () {
             var req = new XMLHttpRequest();
             req.open('DELETE',encodeURI(url));
-            var tokenJWT = 'JWT ' + document.querySelector('chulaexpo-staff-app').token
-            req.setRequestHeader('Authorization', tokenJWT);
+            req.setRequestHeader('Authorization', 'JWT ' + window.token);
             req.onload = function() {
               if (req.status === 202) {
                 dom.generateRequest();
