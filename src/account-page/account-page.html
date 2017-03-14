@@ -50,8 +50,8 @@
         // document.getElementById('storage').save();
 
         // window.history.pushState({}, null, '/');
-        document.querySelector('chulaexpo-staff-app').set('route.path', '/');
-        window.dispatchEvent(new CustomEvent('location-changed'));
+        var resolvedPageUrl = this.resolveUrl('../login-page/login-page.html');
+        this.importHref(resolvedPageUrl, null, null, true);
       }
     });
   </script>
