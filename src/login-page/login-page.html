@@ -44,6 +44,11 @@
       #loginButton[disabled] {
         color: #a8a8a8;
       }
+      .error-msg {
+        color: #ff5050;
+        text-align: center;
+        font-size: 1em;
+      }
     </style>
     <div class="login-wrapper">
       <form
@@ -53,6 +58,7 @@
         action="[[_url]]"
         on-iron-form-response="_response"
         on-iron-form-error="_error">
+        <div class="error-msg">{{error}}</div>
         <paper-input name="email" value="{{email}}" label="E-mail" required></paper-input>
         <paper-input name="password" value="{{password}}" label="Password" type="password" required auto-validate></paper-input>
         <paper-button raised on-tap="_delayedSubmit" disabled id="loginButton">
@@ -149,8 +155,10 @@
         }
       },
       _error: function(e) {
-        if (!e.detail.response.success) {
-
+        var response = event.detail.request.xhr.response;
+        if (!response.success) {
+          if (response.errors.code === '4')
+          this.error = 'Invalid email or password'
         }
       },
       _onNeonAnimationFinish: function() {
