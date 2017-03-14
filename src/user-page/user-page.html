@@ -18,7 +18,7 @@
       role="main">
       <user-list-page name="list"></user-list-page>
       <user-add-page name="add"></user-add-page>
-      <user-id-page activity-id="{{activityId}}" route="{{subroute}}" name="id"></user-id-page>
+      <user-id-page user-id="{{userId}}" route="{{subroute}}" name="id"></user-id-page>
     </iron-pages>
   </template>
   <script>
@@ -42,7 +42,7 @@
 
       _routePageChanged: function(page) {
         if (page && page !== 'add') {
-          this.activityId = page;
+          this.userId = page;
           this.page = 'id';
         } else {
           this.page = page || 'list';

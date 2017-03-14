@@ -50,7 +50,7 @@
           type: String,
           value: ''
         },
-        targetEmail: {
+        search: {
           type: String
         },
         /*
@@ -61,6 +61,10 @@
           value: [],
           notify: true,
         },
+        user: {
+          type: Object,
+          notify: true,
+        },
         loading: {
           type: Boolean,
           value: false
@@ -68,6 +72,10 @@
         error: {
           type: Object,
           value: {}
+        },
+        totalPages: {
+          type: Number,
+          notify: true,
         }
       },
       
@@ -96,8 +104,8 @@
           this.set('params.fields', this.fields);
         }
 
-        if (this.targetEmail) {
-          this.set('params.email', this.targetEmail);
+        if (this.search) {
+          this.set('params.search', this.search);
         }
 
         return this.$.api.generateRequest();
@@ -105,7 +113,12 @@
       _handleResponse: function(event) {
         if(event.detail.response) {
           if (event.detail.response.success) {
-            this.users = event.detail.response.results;
+            if (this.targetId) {
+              this.user = event.detail.response.results;
+            } else {
+              this.users = event.detail.response.results;
+              this.set('totalPages', Math.ceil(event.detail.response.queryInfo.total / this.pageSize));
+            }
           } else {
             this.error = event.detail.response.errors;
           }

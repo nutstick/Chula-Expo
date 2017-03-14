@@ -1,0 +1,238 @@
+<!-- Libery -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<!-- Web Component -->
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/bottom-button/bottom-button.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+
+<link rel="import" href="../shared-styles/shared-styles.html">
+<script type="text/javascript" src="../../lib/jquery.min.js"></script>
+<script type="text/javascript" src="../../lib/html5-qrcode.min.js"></script>
+<script type="text/javascript" src="../../lib/jsqrcode-combined.min.js"></script>
+<script type="text/javascript" src="../../lib/grid.js"></script>
+<script type="text/javascript" src="../../lib/version.js"></script>
+<script type="text/javascript" src="../../lib/detector.js"></script>
+<script type="text/javascript" src="../../lib/formatinf.js"></script>
+<script type="text/javascript" src="../../lib/errorlevel.js"></script>
+<script type="text/javascript" src="../../lib/bitmat.js"></script>
+<script type="text/javascript" src="../../lib/datablock.js"></script>
+<script type="text/javascript" src="../../lib/bmparser.js"></script>
+<script type="text/javascript" src="../../lib/datamask.js"></script>
+<script type="text/javascript" src="../../lib/rsdecoder.js"></script>
+<script type="text/javascript" src="../../lib/gf256poly.js"></script>
+<script type="text/javascript" src="../../lib/gf256.js"></script>
+<script type="text/javascript" src="../../lib/decoder.js"></script>
+<script type="text/javascript" src="../../lib/qrcode.js"></script>
+<script type="text/javascript" src="../../lib/findpat.js"></script>
+<script type="text/javascript" src="../../lib/alignpat.js"></script>
+<script type="text/javascript" src="../../lib/databr.js"></script>
+
+<dom-module id="qr-scanner-lite">
+  <template>
+    <style is="custom-style" include="shared-styles">
+      paper-dialog#dialog.size {
+        margin: 0;
+        position: fixed;
+        top: 10px;
+        left: 0;
+        right: 0;
+        bottom: 72px;
+        margin-right: auto;
+        margin-left: auto;
+        margin-top: auto;
+        margin-bottom: auto;
+        max-width: none !important;
+        background: transparent;
+      }
+      paper-dialog#dialog > * {
+        padding: 0;
+        margin: 0;
+      }
+      video {
+        width: 100%!important;
+        height: 100%!important;
+      }
+      bottom-button {
+        --bottom-button-background-color: #F44336;
+      }
+      bottom-button /deep/ .bar {
+        z-index: 103;
+      }
+      #reader {
+        height: 100%;
+        width: 100%;
+      }
+      #overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        opacity: 0;
+        z-index: 42;
+        transition: opacity ease-in 0.5s;
+        pointer-events: none;
+      }
+      #overlay .error {
+        color: #FFFFFF;
+        font-size: 36px;
+        line-height: 36px;
+        text-align: center;
+      }
+      #overlay[opened] {
+        opacity: 1;
+        pointer-events: visible;
+      }
+      #spinner {
+        width: 40px;
+        height: 40px;
+      }
+      .input-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 240px;
+        max-width: 100%;
+        height: 240px;
+        margin: auto;
+        z-index: 41;
+        cursor: pointer;
+        color: #fff;
+        background-color: rgba(0, 0, 0, 0.9);
+        border-radius: 40px;
+      }
+      .input-container iron-icon {
+        --iron-icon-width: 240px;
+        --iron-icon-height: 240px;
+        --iron-icon-fill-color: #fff;
+      }
+    </style>
+		<paper-dialog id="dialog" class="container size" modal on-iron-overlay-closed="_onClosed">
+      <div id="overlay" opened$="[[opened]]">
+        <div class="horizontal layout center-justified" style="height: 100%">
+          <div class="vertical layout center-justified">
+            <paper-spinner id="spinner" hidden></paper-spinner>
+            <p class="error">[[_computeTextMessage(success, error, videoError)]]</p>
+          </div>
+        </div>
+      </div>
+      <div id="reader" style="min-width:100%; min-height: 500px;" hidden$=[[_computeVideoShow(videoError)]]>
+      </div>
+      <div style="width: 100%; height: 100%;" hidden$=[[!videoError]]>
+        <div class="input-container" on-tap="_uploadClick">
+          <iron-icon icon="image:photo"></iron-icon>
+          <h3 style="text-align: center">Tap to upload QR<h3>
+          <input id="imageInput" type="file" accept="image/*" capture="camera" on-change="_handleFile" hidden></input>
+        </div>
+        <iron-image  style="width: 100%; height: 100%;" id="preview" sizing="contain" src="[[targetImage]]" alt="preview"></iron-image>
+      </div>
+		</paper-dialog>
+    <bottom-button on-tap="_onClosed">CLOSE</bottom-button>
+  </template>
+
+	<script>
+    Polymer({
+      is: 'qr-scanner-lite',
+      properties: {
+        error: {
+          type: String,
+          value: null
+        },
+        videoError: {
+          type: String,
+          value: null
+        },
+        targetImage: {
+          type: String,
+          value: ''
+        },
+        result: {
+          type: String,
+          value: '',
+          notify: true
+        },
+        opened: {
+          type: Boolean,
+          value: false,
+          computed: '_computeShowOverlay(error, videoError)'
+        }
+      },
+
+      open: function() {
+        // Append dialog to the body. This ensures that the dialog claims the full screen instead of being positioned next to the <paper-date-picker-item>
+			  Polymer.dom(document.body).appendChild(this);
+
+        // Wait until dialog is added to the DOM (required for Safari)
+        setTimeout(function() {
+          this.$.dialog.open();
+
+          setTimeout(function() {
+            $(this.$.reader).html5_qrcode(function(data) {
+              console.log(data)
+              this.set('result', data);
+              setTimeout(function() {
+                this._onClosed();
+              }.bind(this), 100)
+            }.bind(this),
+            function(error) {
+              //show read errors
+              if (this.videoError) {
+                this.error = error;
+              }
+              console.log(error)
+            }.bind(this), function(videoError) {
+              //the video stream could be opened
+              this.set('videoError', videoError.name || videoError.message);
+            }.bind(this));
+          }.bind(this), 100);
+        }.bind(this), 1);
+      },
+      _onClosed: function(e, detail) {
+        // Remove the dialog from the DOM once the exit animation is finished
+        try {
+          $(this.$.reader).html5_qrcode_stop();
+        } catch (err) {
+          console.error(err);
+        }
+        setTimeout(function() {
+          Polymer.dom(this.parentNode).removeChild(this);
+        }.bind(this), 100);
+      },
+      _computeShowOverlay: function(error, videoError) {
+        if (!!error) {
+          // Async fadeOut
+          setTimeout(function() {
+            this.set('error', null);
+          }.bind(this), 3000)
+        }
+
+        return !!error;
+      },
+      _computeTextMessage: function(error, videoError) {
+        return error ? error : videoError;
+      },
+      _handleFile: function(event) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          var dataURL = reader.result;
+          this.targetImage = dataURL;
+          qrcode.decode(dataURL);
+        }.bind(this)
+        reader.readAsDataURL(event.target.files[0]);
+      },
+      _uploadClick: function(e) {
+        this.$.imageInput.click();
+      },
+      _computeVideoShow: function(videoError) {
+        return !!videoError;
+      }
+    });
+  </script>
+	</dom-module>

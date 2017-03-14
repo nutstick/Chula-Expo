@@ -1,4 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
@@ -13,6 +14,7 @@
 <link rel="import" href="../paper-card-item-pagination/paper-card-item-pagination.html">
 <link rel="import" href="../shared-styles/shared-styles.html">
 <link rel="import" href="../user-api/user-api.html">
+<link rel="import" href="../qr-scanner/qr-scanner-lite.html">
 
 <dom-module id="user-list-page">
   <template>
@@ -49,16 +51,50 @@
       paper-card-item {
         --paper-card-item-image-height: 100%;
       }
+      
+      .search-box {
+        background-color: #fff;
+        border: 1px solid #eee;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.26);
+        height: 40px;
+        margin-bottom: 20px;
+      }
+      .search-box iron-icon {
+        color: var(--google-grey-700);
+        fill: var(--google-grey-700);
+        margin: 0 8px;
+      }
+      
+      .search-box input {
+        font-size: 20px;
+        outline: 0;
+        border: none;
+        margin-left: 20px;
+      }
+      .search-box {
+        @apply(--layout-flex);
+        @apply(--layout-center);
+        @apply(--layout-horizontal);
+      }
+      .search-box input {
+        @apply(--layout-flex);
+      }
     </style>
     <user-api
       id="userAPI"
       page="[[page]]"
       page-size="[[pageSize]]"
+      search="[[_search]]"
       totalPages="{{totalPages}}"
       users="{{users}}"
       error="{{error}}"
     ></user-api>
-    <div class="contanier">
+    <div class="container">
+      <div class="search-box bottom">
+        <!--<iron-icon icon="menu"></iron-icon>-->
+        <input value="{{_search::input}}">
+        <paper-icon-button icon="image:photo-camera" on-tap="_onLaunchQR"></paper-icon-button>
+      </div>
       <template is="dom-if" if="[[_computeNoUser(_loading, users)]]">
         <div class="empty-list"></div>
       </template>
@@ -113,6 +149,11 @@
         _loading: {
           type: Boolean,
           value: true
+        },
+        _search: {
+          type: String,
+          value: '',
+          observer: '_onSearchChanged'
         }
       },
 
@@ -124,7 +165,9 @@
       generateRequest: function() {
         this.users = [];
         this.set('_loading', true);
-        this.$.userAPI.generateRequest();
+        setTimeout(function () {
+          this.$.userAPI.generateRequest();
+        }.bind(this), 10);
       },
       _activatedChanged: function(activated) {
         if (activated) {
@@ -156,17 +199,35 @@
       },
       _onEditClick: function(event) {
         var id = event.model.item['_id'];
-        document.querySelector('chulaexpo-staff-app').set('route.path', '/users/' + id + '/edit/');
+        document.querySelector('chulaexpo-staff-app').set('route.path', '/user/' + id + '/edit/');
       },
       _onShowClick: function(event) {
         var id = event.model.item['_id'];
-        document.querySelector('chulaexpo-staff-app').set('route.path', '/users/' + id + '/show/');
+        document.querySelector('chulaexpo-staff-app').set('route.path', '/user/' + id + '/show/');
       },
       _onParamsChange: function(page, pageSize) {
         this.generateRequest();
       },
       _onUsersChanged: function(users) {
         this.set('_loading', !users.length);
+      },
+      _onSearchChanged: function(_search) {
+        this.debounce('search', function() {
+          this.generateRequest();
+        }.bind(this), 300);
+      },
+      _onLaunchQR: function() {
+        var qr = document.createElement('qr-scanner-lite');
+        qr.addEventListener('result-changed', this.setProperty('_search'))
+        qr.open();
+      },
+      setProperty: function (varName) {
+        return function (evt) {
+          var newValue = evt.detail.value;
+          if(this[varName] != newValue) {
+            this[varName] = newValue;
+          }
+        }.bind(this);
       }
     })
   </script>

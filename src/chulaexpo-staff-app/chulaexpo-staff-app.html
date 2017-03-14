@@ -140,7 +140,8 @@
         <!-- Navbar on mobile: side nav menu -->
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
           <a name="home" href="/">Home</a>
-          <a name="signup" href="/signup/">Sign Up</a>
+          <a hidden$="[[isAuthenticate]]" name="signup" href="/signup/">Sign Up</a>
+          <a hidden$="[[!isAuthenticate]]" name="user" href="/user/">User</a>
           <a hidden$="[[!isAuthenticate]]" name="zone" href="/zone/">Zone</a>
           <a hidden$="[[!isAuthenticate]]" name="place" href="/place/">Place</a>
           <a hidden$="[[!isAuthenticate]]" name="activity" href="/activity/">Activity</a>
