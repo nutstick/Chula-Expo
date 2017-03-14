@@ -6,6 +6,7 @@ const _ = require('lodash');
 const mongoose = require('mongoose');
 const { RangeQuery } = require('../../../tools');
 const { isAuthenticatedByToken, isStaff } = require('../../../config/authenticate');
+const request = require('request');
 
 const router = express.Router();
 
@@ -191,7 +192,7 @@ router.get('/recommend', (req, res) => {
   //  http://localhost:3000/?sort=createAt,-startDate
   let sort = {};
   sort = 'start';
-  filter.start = RangeQuery({ gt: new Date() }, 'Date');
+  filter.start = { $gt: new Date() };
 
   // field selector
   // http://localhost:3000/?fields=name,faculty
@@ -301,12 +302,9 @@ router.get('/highlight', (req, res) => {
   const filter = {};
 
   //  http://localhost:3000/?sort=createAt,-startDate
-  let sort = {};
-  sort = 'start';
-  filter.start = RangeQuery({ gt: new Date() }, 'Date');
+  filter.start = { $gt: new Date(new Date().getTime() + (7 * 60000)).toUTCString() };
   filter.isHighlight = true;
   filter.banner = { $exists: true };
-  console.log(filter);
   // field selector
   // http://localhost:3000/?fields=name,faculty
   let fields;
@@ -322,24 +320,19 @@ router.get('/highlight', (req, res) => {
     fields = fields.replace(/locationLong/g, 'location.longitude');
   }
 
-  let query = Activity.find(filter);
-
-  if (sort) {
-    query.sort(sort);
-  }
-  if (fields) {
-    query.select(fields);
-  }
-  // limiter on each query
-  // http://localhost:3000/?limit=10
-  query = query.limit(20);
-
+  const query = Activity.find(filter).select(fields);
 
   Activity.find(filter).count((err, total) => {
     if (err) {
       return res.sendError(5, err);
     }
-    query.exec((err, _act) => {
+
+    let skip = Math.floor(Math.random() * total);
+    if (skip >= 15) {
+      skip -= 15;
+    }
+
+    query.skip(skip).limit(15).exec((err, _act) => {
       if (err) {
         return res.sendError(5, err);
       }

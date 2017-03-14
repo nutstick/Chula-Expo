@@ -16,7 +16,7 @@ const router = express.Router();
 router.post('/', (req, res, next) => {
   if (!req.body.email || !req.body.password) {
     // Handle error from save
-    return res.sendError(2);
+    return res.sendError(37);
   }
 
   passport.authenticate('local', (err, user) => {
@@ -40,5 +40,6 @@ router.post('/', (req, res, next) => {
     });
   })(req, res, next);
 });
+
 
 module.exports = router;
