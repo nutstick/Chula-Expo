@@ -53,7 +53,15 @@ router.get('/where', deserializeToken, (req, res) => {
   },
   (err, r, ans) => {
     if (err) {
-      return res.sendError(5, err);
+      return res.json({
+        success: true,
+        results: {
+          text: {
+            en: 'no information',
+            th: 'ไม่มีข้อมูลของสถานที่นี้'
+          }
+        }
+      });
     }
 
     const answer = JSON.parse(ans);

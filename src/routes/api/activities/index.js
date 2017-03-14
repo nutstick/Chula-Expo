@@ -193,14 +193,34 @@ router.get('/recommend', isAuthenticatedByToken, (req, res) => {
   },
   (err, r, ans) => {
     if (err) {
-      return res.sendError(5, err);
-    }
+      const filter = {};
+      filter.end = { $gt: new Date(new Date().getTime() + (7 * 60000)).toUTCString() };
+      const query = Activity.find(filter);
+      Activity.find(filter).count((err, total) => {
+        if (err) {
+          return res.sendError(5, err);
+        }
 
-    const answer = JSON.parse(ans);
-    return res.json({
-      success: true,
-      results: answer.activities
-    });
+        query.limit(20).exec((err, _act) => {
+          if (err) {
+            return res.sendError(5, err);
+          }
+          return res.status(200).json({
+            success: true,
+            results: _act,
+            queryInfo: {
+              total,
+            }
+          });
+        });
+      });
+    } else {
+      const answer = JSON.parse(ans);
+      return res.json({
+        success: true,
+        results: answer.activities
+      });
+    }
   });
 });
 
@@ -212,14 +232,34 @@ router.get('/nearby', deserializeToken, (req, res) => {
   },
   (err, r, ans) => {
     if (err) {
-      return res.sendError(5, err);
-    }
+      const filter = {};
+      filter.end = { $gt: new Date(new Date().getTime() + (7 * 60000)).toUTCString() };
+      const query = Activity.find(filter);
+      Activity.find(filter).count((err, total) => {
+        if (err) {
+          return res.sendError(5, err);
+        }
 
-    const answer = JSON.parse(ans);
-    return res.json({
-      success: true,
-      results: answer.activities
-    });
+        query.limit(20).exec((err, _act) => {
+          if (err) {
+            return res.sendError(5, err);
+          }
+          return res.status(200).json({
+            success: true,
+            results: _act,
+            queryInfo: {
+              total,
+            }
+          });
+        });
+      });
+    } else {
+      const answer = JSON.parse(ans);
+      return res.json({
+        success: true,
+        results: answer.activities
+      });
+    }
   });
 });
 
@@ -232,14 +272,34 @@ router.get('/search', deserializeToken, (req, res) => {
   },
   (err, r, ans) => {
     if (err) {
-      return res.sendError(5, err);
-    }
+      const filter = {};
+      filter['name.th'] = { $regex: req.query.text };
+      const query = Activity.find(filter);
+      Activity.find(filter).count((err, total) => {
+        if (err) {
+          return res.sendError(5, err);
+        }
 
-    const answer = JSON.parse(ans);
-    return res.json({
-      success: true,
-      results: answer.activities
-    });
+        query.limit(20).exec((err, _act) => {
+          if (err) {
+            return res.sendError(5, err);
+          }
+          return res.status(200).json({
+            success: true,
+            results: _act,
+            queryInfo: {
+              total,
+            }
+          });
+        });
+      });
+    } else {
+      const answer = JSON.parse(ans);
+      return res.json({
+        success: true,
+        results: answer.activities
+      });
+    }
   });
 });
 
@@ -274,11 +334,11 @@ router.get('/highlight', (req, res) => {
     }
 
     let skip = Math.floor(Math.random() * total);
-    if (skip >= 15) {
-      skip -= 15;
+    if (skip >= 10) {
+      skip -= 10;
     }
 
-    query.skip(skip).limit(15).exec((err, _act) => {
+    query.skip(skip).limit(10).exec((err, _act) => {
       if (err) {
         return res.sendError(5, err);
       }
