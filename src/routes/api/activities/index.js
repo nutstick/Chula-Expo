@@ -491,29 +491,25 @@ router.get('/:id/qrcode', (req, res) => {
 router.get('/:id/qrvideo', (req, res) => {
   Activity.findById(req.params.id, (err, act) => {
     if (err) {
-      res.writeHead(301, {
+      return res.writeHead(301, {
         Location: encodeURI('https://www.chulaexpo.com/app')
       });
-      res.end();
     } else if (!act) {
-      res.writeHead(301, {
+      return res.writeHead(301, {
         Location: encodeURI('https://www.chulaexpo.com/app')
       });
-      res.end();
     } else if (!act.video) {
-      res.writeHead(301, {
+      return res.writeHead(301, {
         Location: encodeURI('https://www.chulaexpo.com/app')
       });
-      res.end();
     }
 
     if (act.video.match(/^[(http)(https)]/));
     else act.video = 'http://' + act.video;
 
-    res.writeHead(301, {
+    return res.writeHead(301, {
       Location: encodeURI(act.video)
     });
-    res.end();
   });
 });
 
