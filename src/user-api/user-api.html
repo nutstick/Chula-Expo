@@ -9,6 +9,7 @@
       headers="[[headers]]"
       params="[[params]]"
       on-response="_handleResponse"
+      on-error="_handleError"
       handle-as="json"
     ></iron-ajax>
   </template>
@@ -67,7 +68,8 @@
         },
         loading: {
           type: Boolean,
-          value: false
+          value: false,
+          notify: true
         },
         error: {
           type: Object,
@@ -104,13 +106,15 @@
           this.set('params.fields', this.fields);
         }
 
-        if (this.search) {
-          this.set('params.search', this.search);
+        if (typeof this.search !== undefined) {
+          this.set('params.search', this.search.trim());
         }
 
+        this.set('loading', true);
         return this.$.api.generateRequest();
       },
       _handleResponse: function(event) {
+        this.set('loading', false);
         if(event.detail.response) {
           if (event.detail.response.success) {
             if (this.targetId) {
@@ -124,11 +128,18 @@
           }
         }
       },
+      _handleError: function(event) {
+        this.set('loading', false);
+        var response = event.detail.request.xhr.response;
+        if (!response.success) {
+          this.error = response.errors;
+        }
+      },
       _computeUrl: function(targetId) {
         if (targetId) {
           return window.api + '/api/users/' + targetId;
         } else {
-          return window.api + '/api/users/';
+          return window.api + '/api/users';
         }
       }
     })

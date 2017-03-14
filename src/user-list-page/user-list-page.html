@@ -70,6 +70,14 @@
         outline: 0;
         border: none;
         margin-left: 20px;
+
+        -webkit-appearance: none;
+        text-align: inherit;
+        vertical-align: bottom;
+        font-family: 'Roboto', 'Noto', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        font-size: 16px;
+        line-height: 24px;
       }
       .search-box {
         @apply(--layout-flex);
@@ -87,12 +95,13 @@
       search="[[_search]]"
       totalPages="{{totalPages}}"
       users="{{users}}"
+      loading="{{_loading}}"
       error="{{error}}"
     ></user-api>
     <div class="container">
       <div class="search-box bottom">
         <!--<iron-icon icon="menu"></iron-icon>-->
-        <input value="{{_search::input}}">
+        <input value="{{_search::input}}" placeholder="Search...">
         <paper-icon-button icon="image:photo-camera" on-tap="_onLaunchQR"></paper-icon-button>
       </div>
       <template is="dom-if" if="[[_computeNoUser(_loading, users)]]">
@@ -143,8 +152,7 @@
         error: Object,
         users: {
           type: Array,
-          value: [],
-          observer: '_onUsersChanged'
+          value: []
         },
         _loading: {
           type: Boolean,
@@ -164,7 +172,6 @@
       
       generateRequest: function() {
         this.users = [];
-        this.set('_loading', true);
         setTimeout(function () {
           this.$.userAPI.generateRequest();
         }.bind(this), 10);
@@ -207,9 +214,6 @@
       },
       _onParamsChange: function(page, pageSize) {
         this.generateRequest();
-      },
-      _onUsersChanged: function(users) {
-        this.set('_loading', !users.length);
       },
       _onSearchChanged: function(_search) {
         this.debounce('search', function() {
