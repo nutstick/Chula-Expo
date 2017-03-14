@@ -343,12 +343,15 @@
               <label class="label input">Tags</label>
               <div class="input-wrapper">
                 <paper-select
+                  id="tagsInput"
                   multiple
                   label-field="tags"
                   bind-value="{{activity.tags}}"
                   select-on-blur
                   label="เลือก tags สำหรับกิจกรรม"
                   on-input-changed="inputChanged"
+                  on-focus="inputChanged"
+                  on-blur="inputNofocus"
                 ></paper-select>
               </div>
 						</div>
@@ -452,16 +455,20 @@
           value: ''
         }
       },
+      _data: ["Energy","Ageing Society","Body","Mind","Social Issues","Invention","Quality of Life","Food & Agriculture","Community","Art & Culture","Medication","Economy","Transportation","Technology","Environment","Thai Wisdom","Design","Law","Education","Royal Duties","Beauty","Life","Communication","Sport","Science","Entertainment","International Issue"],
+
       inputChanged: function(e) {
-        var data = ["Energy","Ageing Society","Body","Mind","Social Issues","Invention","Quality of Life","Food & Agriculture","Community","Art & Culture","Medication","Economy","Transportation","Technology","Environment","Thai Wisdom","Design","Law","Education","Royal Duties","Beauty","Life","Communication","Sport","Science","Entertainment","International Issue"];
         var input = (e.detail.value || '').trim().toLowerCase();
         if (input) {
-          e.target.options = data.filter(function(item) {
+          e.target.options = this._data.filter(function(item) {
             return item.toLowerCase().indexOf(input) === 0;
           });
         } else {
-          e.target.options = [];
+          e.target.options = this._data;
         }
+      },
+      inputNofocus: function(e) {
+        e.target.options = [];
       },
       _activatedChanged: function(activated) {
         if (activated) {
