@@ -89,6 +89,8 @@
           <div class="card-item-actions">
             <div class="horizontal justified">
               <paper-button on-tap="_showClick">Show</paper-button>
+              <paper-button on-tap="_editClick">Edit</paper-button>
+              <paper-button on-tap="_deleteClick">Delete</paper-button>
             </div>
           </div>
         </paper-card-item>
@@ -96,6 +98,14 @@
 			<paper-card-item-pagination page="{{page}}" page-size="{{pageSize}}" totalPages="[[totalPages]]"></paper-card-item-pagination>
       <zone-api id="zoneAPI" zones="{{zones}}" error="{{error}}" page="{{page}}" page-size="{{pageSize}}" totalPages="[[totalPages]]"></zone-api>
     </div>
+    <bottom-prefab reveals effects="waterfall" target-url="/zone/add"></bottom-prefab>
+    <paper-dialog id="dialog" on-iron-overlay-closed="_delete">
+      <h2>Are you sure?</h2>
+      <div class="buttons">
+        <paper-button dialog-dismiss>No</paper-button>
+        <paper-button dialog-confirm autofocus>Yes</paper-button>
+      </div>
+    </paper-dialog>
   </template>
   <script>
     Polymer({
