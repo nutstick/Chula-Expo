@@ -187,7 +187,6 @@ const router = express.Router();
 
 // recommend from aj.nuttawut
 router.get('/recommend', isAuthenticatedByToken, (req, res) => {
-
   request.get({
     uri: 'http://104.199.143.190/recommend/' + req.user.id,
   },
