@@ -256,12 +256,12 @@ router.get('/search', deserializeToken, (req, res) => {
     const answer = JSON.parse(ans);
     return res.json({
       success: true,
-      results: answer.activities
+      results: answer.activities.splice(10, 40)
     });
   });
 });
 
-// TODO - highlight from aj.nuttawut
+// highlight from aj.nuttawut
 router.get('/highlight', (req, res) => {
   const filter = {};
 
