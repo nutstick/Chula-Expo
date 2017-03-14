@@ -86,6 +86,9 @@
       #ticketDialog {
         width: 100%;
       }
+      [hidden] {
+        display: none;
+      }
     </style>
     <round-api id="api" url="[[_url]]" rounds="{{rounds}}" error="{{error}}"></round-api>
     <me-api
@@ -131,7 +134,7 @@
                       <iron-icon icon="image:photo-camera" item-icon></iron-icon>
                       Open QRCode Scanner
                     </paper-icon-item>
-                    <paper-icon-item class="delete red" on-tap="_deleteClick" disabled$="[[_computeScannerDisabled(me.staff.staffType)]]">
+                    <paper-icon-item class="delete red" on-tap="_deleteClick" hidden$="[[_computeScannerDisabled(me.staff.staffType)]]">
                       <paper-ripple></paper-ripple>
                       <iron-icon icon="icons:delete" item-icon></iron-icon>
                       Delete
