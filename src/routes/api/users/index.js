@@ -1,10 +1,10 @@
 const express = require('express');
 const User = require('../../../models/User');
 const { isAuthenticatedByToken, isStaff } = require('../../../config/authenticate');
-const { retrieveError } = require('../../../tools/retrieveError');
 
 const router = express.Router();
-// const avaliableFields = ['_id', 'name', 'email', 'age', 'gender', 'profile', 'type', 'academic', 'worker', 'staff', 'tags', 'facebbok'];
+// const avaliableFields = ['_i', 'name', 'email', 'age', 'gender', 'profile', 'type',
+// 'academic', 'worker', 'staff', 'tags', 'facebbok'];
 
 router.use(isAuthenticatedByToken, isStaff);
 
