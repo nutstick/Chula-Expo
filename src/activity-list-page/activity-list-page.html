@@ -117,6 +117,9 @@
         --paper-tab-ink: #eee;
         color: #000;
       }
+      [hiden] {
+        display: none;
+      }
     </style>
     <div class="container">
       <activity-api
@@ -318,6 +321,7 @@
         else return string;
       },
       _computeStaff: function(staff) {
+        console.log(staff)
         return staff === 'Scanner'
       }
     })
