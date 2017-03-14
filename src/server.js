@@ -76,11 +76,21 @@ const logDirectory = path.join(__dirname, 'log');
 fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory); // eslint-disable-line
 
 const accessLogStream = rfs('access.log', {
-  interval: '2h', // rotate daily
+  interval: '1d', // rotate daily
   path: logDirectory
 });
 
-app.use(logger(':date[format] :method :remote-addr :req[authorization] :url :response-time ms', { stream: accessLogStream }));
+app.use(function (tokens, req, res) {
+  console.log(token.header)
+  console.log(token.headers)
+  return [
+    tokens.method(req, res),
+    tokens.url(req, res),
+    tokens.status(req, res),
+    tokens.res(req, res, 'content-length'), '-',
+    tokens['response-time'](req, res), 'ms'
+  ].join(' ')
+}, { stream: accessLogStream }));
 
 // Set favicon using serve-favicon at /public/favicon.icon
 app.use(favicon(path.join(__dirname, '/public/favicon.ico')));
