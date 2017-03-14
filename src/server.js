@@ -48,9 +48,9 @@ app.use(sass({
   dest: path.join(__dirname, 'public')
 }));
 // use morgan to log requests to the console
-if (process.env.NODE_ENV !== 'test') {
-  app.use(logger('dev'));
-}
+// if (process.env.NODE_ENV !== 'test') {
+//   app.use(logger('dev'));
+// }
 // use body parser so we can get info from POST and/or URL parameters
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
