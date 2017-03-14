@@ -467,15 +467,15 @@ router.get('/:id/qrcode', (req, res) => {
     if (err) {
       return res.writeHead(301, {
         Location: encodeURI('https://www.chulaexpo.com/app')
-      }).end();
+      });
     } else if (!act) {
       return res.writeHead(301, {
         Location: encodeURI('https://www.chulaexpo.com/app')
-      }).end();
+      });
     } else if (!act.pdf) {
       return res.writeHead(301, {
         Location: encodeURI('https://www.chulaexpo.com/app')
-      }).end();
+      });
     }
 
     if (act.pdf.match(/^[(http)(https)]/));
