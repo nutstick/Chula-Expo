@@ -175,6 +175,10 @@
 
           setTimeout(function() {
             $(this.$.reader).html5_qrcode(function(data) {
+              if (data === 'error decoding QR Code') {
+                return this.set('error', 'Can\'t find matched QR Code');
+              }
+
               this.set('result', data);
               setTimeout(function() {
                 this._onClosed();
