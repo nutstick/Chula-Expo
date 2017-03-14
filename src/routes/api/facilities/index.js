@@ -162,6 +162,10 @@ router.post('/', (req, res) => {
   facility.place = req.body.place;
   facility.location.latitude = req.body.locationLat;
   facility.location.longitude = req.body.locationLong;
+
+  facility.createAt = new Date();
+  facility.updateAt = new Date();
+
    // Save User and check for error
   facility.save((err, _act) => {
     if (err) {
