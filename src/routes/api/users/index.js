@@ -49,6 +49,19 @@ router.get('/', (req, res) => {
   if (req.query.worker) {
     filters.worker = req.query.worker;
   }
+  if (req.query.email) {
+    filters.email = req.query.email;
+  }
+  if (req.query.id) {
+    filters.id = req.query.id;
+  }
+  if (req.query.search) {
+    filters.$or = [
+      { _id: req.query.search },
+      { email: req.query.search },
+      { name: req.query.search }
+    ];
+  }
   try {
     let query = User.find(filters);
     const sort = {};
