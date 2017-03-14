@@ -139,7 +139,7 @@
           this.set('params.skip', 0);
         }
 
-        if(this.me.type == 'Staff' && this.me.staff.staffType != 'Admin')
+        if(this.me.type === 'Staff' && this.me.staff.staffType === 'Staff')
           this.set('params.createBy', this.me._id);
         else
           delete this.params.createBy;
