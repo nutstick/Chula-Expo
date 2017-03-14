@@ -259,11 +259,9 @@ router.get('/nearby', isAuthenticatedByToken, (req, res) => {
     }
 
     const answer = JSON.parse(ans);
-    console.log(answer);
     return res.json({
       success: true,
-      results: {
-      }
+      results: answer.activities
     });
   });
 });
