@@ -241,58 +241,29 @@ router.get('/recommend', (req, res) => {
   });
 });
 
-// TODO - nearby from aj.nuttawut
-router.get('/nearby', (req, res) => {
-  const filter = {};
-
-  //  http://localhost:3000/?sort=createAt,-startDate
-  let sort = {};
-  sort = 'start';
-  filter.start = RangeQuery({ gt: new Date() }, 'Date');
-
-  // field selector
-  // http://localhost:3000/?fields=name,faculty
-  let fields;
-  if (req.query.fields) {
-    fields = req.query.fields.replace(/,/g, ' ');
-    fields = fields.replace(/nameEN/g, 'name.en');
-    fields = fields.replace(/shortDescriptionEN/g, 'shortDescription.en');
-    fields = fields.replace(/descriptionEN/g, 'description.en');
-    fields = fields.replace(/locationPlace/g, 'location.place');
-    fields = fields.replace(/locationFloor/g, 'location.floor');
-    fields = fields.replace(/locationRoom/g, 'location.room');
-    fields = fields.replace(/locationLat/g, 'location.latitude');
-    fields = fields.replace(/locationLong/g, 'location.longitude');
+// nearby from aj.nuttawut
+router.get('/nearby', isAuthenticatedByToken, (req, res) => {
+  const qs = {};
+  qs.lat = req.query.latitude;
+  qs.lng = req.query.longitude;
+  if (req.user) {
+    qs.u = req.user.id;
   }
-
-  let query = Activity.find(filter);
-
-  if (sort) {
-    query.sort(sort);
-  }
-  if (fields) {
-    query.select(fields);
-  }
-  // limiter on each query
-  // http://localhost:3000/?limit=10
-  query = query.limit(20);
-
-
-  Activity.find(filter).count((err, total) => {
+  request.get({
+    uri: 'http://104.199.143.190/search',
+    qs
+  },
+  (err, r, ans) => {
     if (err) {
       return res.sendError(5, err);
     }
-    query.exec((err, _act) => {
-      if (err) {
-        return res.sendError(5, err);
+
+    const answer = JSON.parse(ans);
+    console.log(answer);
+    return res.json({
+      success: true,
+      results: {
       }
-      return res.status(200).json({
-        success: true,
-        results: _act,
-        queryInfo: {
-          total,
-        }
-      });
     });
   });
 });
