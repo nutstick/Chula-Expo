@@ -214,6 +214,7 @@
         },
         zone: {
           type: String,
+          observer: '_zoneChanged'
         },
         totalPages: Number,
         error: {
@@ -243,7 +244,7 @@
       observers: [
         '_changeAcitvityParams(page, pageSize, zone)'
       ],
-      _changeAcitvityParams: function(page, pageSize) {
+      _changeAcitvityParams: function(page, pageSize, zone) {
         this.set('activities', []);
         this.$.activityAPI.generateRequest();
       },
@@ -251,6 +252,9 @@
         if (activated) {
           this.generateRequest();
         }
+      },
+      _zoneChanged: function(zone) {
+        this.page = 1;
       },
       generateRequest: function() {
         this.$.activityAPI.generateRequest();

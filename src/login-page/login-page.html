@@ -145,7 +145,7 @@
         }.bind(this));
       },
       _submitDisable: function(email, password) {
-        if (!this._hasToken || this.isAuthenticate) {
+        if (this.$$('#loginButton')) {
           this.$$('#loginButton').disabled = !email || !password;
         }
       },

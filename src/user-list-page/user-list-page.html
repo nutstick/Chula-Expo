@@ -217,6 +217,7 @@
       },
       _onSearchChanged: function(_search) {
         this.debounce('search', function() {
+          this.page = 1;
           this.generateRequest();
         }.bind(this), 300);
       },
