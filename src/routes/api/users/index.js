@@ -130,7 +130,7 @@ router.get('/:id', (req, res) => {
       return res.sendError(5, err);
     }
     if (!user) {
-      return res.sendError(43);
+      return res.sendError(38);
     }
     return res.status(200).json({
       success: true,
