@@ -1,10 +1,10 @@
 const express = require('express');
 const User = require('../../../models/User');
 const { isAuthenticatedByToken, isStaff } = require('../../../config/authenticate');
-const { retrieveError } = require('../../../tools/retrieveError');
 
 const router = express.Router();
-const avaliableFields = ['_id', 'name', 'email', 'age', 'gender', 'profile', 'type', 'academic', 'worker', 'staff', 'tags'];
+// const avaliableFields = ['_i', 'name', 'email', 'age', 'gender', 'profile', 'type',
+// 'academic', 'worker', 'staff', 'tags', 'facebbok'];
 
 router.use(isAuthenticatedByToken, isStaff);
 
@@ -39,18 +39,18 @@ router.get('/', (req, res) => {
       { name: req.query.search }
     ];
     if (req.query.search.match(/^[0-9a-fA-F]{24}$/)) {
-      filters.$or.append('_id', req.query.search);
+      filters.$or.push({ _id: req.query.search });
     }
   }
 
   let fields = [];
   // Fields selecting query
   if (req.query.fields) {
-    fields = req.query.fields.split(',')
-      .filter(f => avaliableFields.find(field => f === field));
+    fields = req.query.fields.split(',');
+      // .filter(f => avaliableFields.find(field => f === field));
   }
   if (fields.length === 0) {
-    fields = avaliableFields;
+    fields = [];
   }
 
   try {
@@ -117,11 +117,11 @@ router.get('/:id', (req, res) => {
   let fields = [];
   // Fields selecting query
   if (req.query.fields) {
-    fields = req.query.fields.split(',')
-      .filter(f => avaliableFields.find(field => f === field));
+    fields = req.query.fields.split(',');
+      // .filter(f => avaliableFields.find(field => f === field));
   }
   if (fields.length === 0) {
-    fields = avaliableFields;
+    fields = [];
   }
 
   User.findById(req.params.id).select(fields.join(' ')).exec((err, user) => {

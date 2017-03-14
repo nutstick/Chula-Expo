@@ -1,4 +1,5 @@
 const express = require('express');
+const fs = require('fs');
 const favicon = require('serve-favicon');
 const session = require('express-session');
 const bodyParser = require('body-parser');
@@ -11,6 +12,7 @@ const cors = require('cors');
 // logger and utility
 const logger = require('morgan');
 const chalk = require('chalk');
+const rfs = require('rotating-file-stream');
 // database and passport
 const mongoose = require('mongoose');
 const passport = require('passport');
@@ -46,9 +48,9 @@ app.use(sass({
   dest: path.join(__dirname, 'public')
 }));
 // use morgan to log requests to the console
-if (process.env.NODE_ENV !== 'test') {
-  app.use(logger('dev'));
-}
+// if (process.env.NODE_ENV !== 'test') {
+//   app.use(logger('dev'));
+// }
 // use body parser so we can get info from POST and/or URL parameters
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -67,6 +69,18 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
+
+// Loging
+const logDirectory = path.join(__dirname, 'log');
+
+fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory); // eslint-disable-line
+
+const accessLogStream = rfs('access.log', {
+  interval: '1d', // rotate daily
+  path: logDirectory
+});
+
+app.use(logger(':date[format] :method :remote-addr :req[authorization] :url :response-time ms', { stream: accessLogStream }));
 
 // Set favicon using serve-favicon at /public/favicon.icon
 app.use(favicon(path.join(__dirname, '/public/favicon.ico')));

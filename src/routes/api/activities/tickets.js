@@ -8,7 +8,8 @@ router.use(isAuthenticatedByToken, isStaff);
 
 router.get('/', (req, res) => {
   Ticket.find({ round: req.params.rid })
-    .populate('user')
+    .populate('user', 'name email _id')
+    .populate('createBy', 'name email _id')
     .exec((err, tickets) => {
       if (err) {
         return res.sendError(5, err);
