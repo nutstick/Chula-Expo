@@ -23,8 +23,9 @@ router.get('/', (req, res) => {
     }
     // Custom query by skip ,limit
     query = ActivityCheck.find(filter)
-      .skip(skip)
-      .limit(limit);
+    .populate('user')
+    .skip(skip)
+    .limit(limit);
     // Execute query
     query.exec((err, checkin) => {
       if (err) {
@@ -43,13 +44,13 @@ router.get('/', (req, res) => {
     });
   });
 });
-
 router.post('/', isAuthenticatedByToken, isStaff, (req, res) => {
   const userId = req.body.user || req.query.user;
   // Validate required field from body
   if (userId) {
     // Check exist target activity input
-    Activity.findById(req.params.id, (err, activitiy) => {
+    Activity.findById(req.params.id)
+    .exec((err, activitiy) => {
       // Handle error from Activity.findById
       if (err) {
         return res.sendError(5, err);
@@ -63,85 +64,91 @@ router.post('/', isAuthenticatedByToken, isStaff, (req, res) => {
         if (!_user) return res.sendError(24, err);
         const filter = { activityId: req.params.id,
           user: userId };
-        ActivityCheck.findOne(filter).exec((err, _checkin) => {
-          let duplicate = false;
-          if (_checkin) {
-            duplicate = true;
-          }
-          // Create a new instance of the User model
-          const checkin = new ActivityCheck();
-          checkin.user = userId;
-          checkin.activityId = req.params.id;
-          checkin.createBy = req.user.id;
-          // Save checkin and check for error
-          checkin.save((err, _checkin) => {
-          // Handle error from save
-            if (err) {
-              return res.sendError(5, err);
+          ActivityCheck.findOne(filter)
+          .populate('user')
+          .exec((err, _checkin) => {
+            let duplicate = false;
+            if (_checkin) {
+              duplicate = true;
             }
-            return res.status(201).json({
-              success: true,
-              message: 'Create Checkin successfull',
-              results: _checkin,
-              duplicated: duplicate
+            // Create a new instance of the User model
+            const checkin = new ActivityCheck();
+            checkin.user = userId;
+            checkin.activityId = req.params.id;
+            checkin.createBy = req.user.id;
+            // Save checkin and check for error
+            checkin.save((err, _checkin) => {
+              // Handle error from save
+              if (err) {
+                return res.sendError(5, err);
+              }
+              return res.status(201).json({
+                success: true,
+                message: 'Create Checkin successfull',
+                results: _checkin,
+                duplicated: duplicate
+              });
             });
           });
         });
       });
-    });
-  } else {
-    return res.sendError(5, 'Missing required field.');
-  }
-});
-
-router.get('/:cid', (req, res) => {
-  // Get round from instance round model by ID
-  ActivityCheck.findById(req.params.cid, (err, _checkin) => {
-    // Handle error from ActivityCheck.findById
-    if (err) {
-      return res.sendError(5, err);
+    } else {
+      return res.sendError(5, 'Missing required field.');
     }
-    // Checkin isn't exist.
-    if (!_checkin) {
-      return res.sendError(36);
-    }
-    // Checkin is not belong to Activity
-    if (_checkin.activityId.toString() !== req.params.id) {
-      return res.sendError(36);
-    }
-
-    res.json({
-      success: true,
-      results: _checkin,
-    });
   });
-});
 
-router.delete('/:cid', isAuthenticatedByToken, isStaff, (req, res) => {
-  ActivityCheck.findById(req.params.cid, (err, _checkin) => {
-    // Handle error from ActivityCheck.findById
-    if (err) {
-      return res.sendError(5, err);
-    }
-    // Checkin isn't exist.
-    if (!_checkin) {
-      return res.sendError(36);
-    }
-    // Checkin is not belong to Activity
-    if (_checkin.activityId.toString() !== req.params.id) {
-      return res.sendError(36);
-    }
-    // Remove the checkin
-    _checkin.remove((err) => {
+  router.get('/:cid', (req, res) => {
+    // Get round from instance round model by ID
+    ActivityCheck.findById(req.params.cid)
+    .populate('user')
+    .exec((err, _checkin) => {
+      // Handle error from ActivityCheck.findById
       if (err) {
         return res.sendError(5, err);
       }
-      return res.status(202).json({
+      // Checkin isn't exist.
+      if (!_checkin) {
+        return res.sendError(36);
+      }
+      // Checkin is not belong to Activity
+      if (_checkin.activityId.toString() !== req.params.id) {
+        return res.sendError(36);
+      }
+
+      res.json({
         success: true,
-        message: `Checkin id ${req.params.cid} was removed.`,
+        results: _checkin,
       });
     });
   });
-});
 
-module.exports = router;
+  router.delete('/:cid', isAuthenticatedByToken, isStaff, (req, res) => {
+    ActivityCheck.findById(req.params.cid)
+    .populate('user')
+    .exec((err, _checkin) => {
+      // Handle error from ActivityCheck.findById
+      if (err) {
+        return res.sendError(5, err);
+      }
+      // Checkin isn't exist.
+      if (!_checkin) {
+        return res.sendError(36);
+      }
+      // Checkin is not belong to Activity
+      if (_checkin.activityId.toString() !== req.params.id) {
+        return res.sendError(36);
+      }
+      // Remove the checkin
+      _checkin.remove((err) => {
+        if (err) {
+          return res.sendError(5, err);
+        }
+        return res.status(202).json({
+          success: true,
+          message: `Checkin id ${req.params.cid} was removed.`,
+        });
+      });
+    });
+  });
+
+  module.exports = router;

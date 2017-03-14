@@ -422,7 +422,9 @@ router.post('/:rid/checkin', isAuthenticatedByToken, isScanner, (req, res) => {
       return res.sendError(4, 'Can\'t check in activity which not belong to your zone');
     }
 
-    Ticket.findOne({ round: rid, user: userId }, (err, ticket) => {
+    Ticket.findOne({ round: rid, user: userId })
+    .populate('user')
+    .exec((err, ticket) => {
       if (err) {
         return res.sendError(5, err);
       }
