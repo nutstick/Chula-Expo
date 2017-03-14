@@ -25,8 +25,8 @@ router.get('/', (req, res) => {
     query = ActivityCheck.find(filter)
       .skip(skip)
       .limit(limit)
-      .populate('user')
-      .populate('createBy');
+      .populate('user', 'name email _id')
+      .populate('createBy', 'name email _id');
     // Execute query
     query.exec((err, checkin) => {
       if (err) {
