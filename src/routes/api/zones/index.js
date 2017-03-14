@@ -28,6 +28,7 @@ router.get('/', (req, res) => {
   if (req.query.fields) {
     req.query.fields.split(',').forEach(
       (element) => {
+        console.log(element);
         if (element === 'nameEN') {
           element = 'name.en';
         } else if (element === 'welcomeMessageEN') {
@@ -36,12 +37,12 @@ router.get('/', (req, res) => {
           element = 'shortName.en';
         } else if (element === 'descriptionEN') {
           element = 'description.en';
+        } else if (element === 'nameTH') {
+          element = 'name.th';
         } else if (element === 'shortNameTH') {
           element = 'shortName.th';
         } else if (element === 'descriptionTH') {
           element = 'description.th';
-        } else if (element === 'nameTH') {
-          element = 'name.th';
         } else if (element === 'locationLat') {
           element = 'location.latitude';
         } else if (element === 'locationLong') {
