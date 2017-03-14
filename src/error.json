@@ -103,5 +103,10 @@
     "status": "403",
     "message": "Activity Checkin is not exist",
     "code": "36"
+  },
+  "37": {
+    "status": "403",
+    "message": "Invalid request, Please send email and password",
+    "code": "37"
   }
 }

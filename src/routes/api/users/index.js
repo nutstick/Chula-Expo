@@ -153,7 +153,7 @@ router.post('/', (req, res) => {
       job: req.body.workerJob
     };
   }
-  if (req.body.type === 'Staff' && req.body.staffT) {
+  if (req.body.type === 'Staff' && req.body.staff) {
     if (req.body.staff !== 'Admin' && req.body.zone) {
       user.staff = {
         staffType: req.body.staff,
@@ -237,7 +237,7 @@ router.put('/:id', (req, res) => {
       job: req.body.workerJob
     };
   }
-  if (req.body.type === 'Staff' && req.body.staffT) {
+  if (req.body.type === 'Staff' && req.body.staff) {
     if (req.body.staff !== 'Admin' && req.body.zone) {
       user.staff = {
         staffType: req.body.staff,
@@ -253,10 +253,7 @@ router.put('/:id', (req, res) => {
   // Update user in mongoose
   User.update({ _id: req.params.id }, user, (err, user) => {
     if (err) {
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
 
     return res.status(202).json({
@@ -273,10 +270,7 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
   User.remove({ _id: req.params.id }, (err) => {
     if (err) {
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
 
     return res.status(202).json({
