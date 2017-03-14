@@ -39,18 +39,20 @@ router.delete('/:tid', (req, res) => {
 
 router.post('/:tid/check', (req, res) => {
   Ticket.findById(req.params.tid, (err, ticket) => {
-    ticket.checkIn(ticket._id)
-      .then(() => (
-        res.status(201).json({
-          success: true,
-          message: `Successfully check ticket id ${req.params.tid}.`,
-          results: {
-            ticket: req.params.tid,
-            user: ticket.user
-          }
-        })
-      ))
-      .catch(err => (err.code ? res.sendError(err.code) : res.sendError(5, err)));
+    if (err) {
+      return res.sendError(5, err);
+    }
+    if (!ticket) {
+      return res.sendError(27);
+    }
+    if (ticket.checked) {
+      return res.sendError(35);
+    }
+    ticket.checked = true;
+    ticket.save(err => (err ? res.sendError(5, err) : res.status(201).json({
+      success: true,
+      message: `Successfully check in ticket ${ticket._id} to ${req.params.rid}.`,
+    })));
   });
 });
 

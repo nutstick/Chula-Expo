@@ -433,12 +433,10 @@ router.post('/:rid/checkin', isAuthenticatedByToken, isScanner, (req, res) => {
         return res.sendError(35);
       }
       ticket.checked = true;
-      ticket.save((err) => {
-        return err ? res.sendError(5, err) : res.status(201).json({
-          success: true,
-          message: `Successfully check in ticket ${ticket._id} to ${req.params.rid}.`,
-        });
-      });
+      ticket.save(err => (err ? res.sendError(5, err) : res.status(201).json({
+        success: true,
+        message: `Successfully check in ticket ${ticket._id} to ${req.params.rid}.`,
+      })));
       // Ticket.checkIn(ticket._id)
       // .then(() => (
       //   res.status(201).json({
