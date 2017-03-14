@@ -296,7 +296,7 @@ router.put('/:id', (req, res) => {
     }
 
     // Update user in mongoose
-    User.save((err, updatedUser) => {
+    user.save((err, updatedUser) => {
       if (err) {
         return res.sendError(5, err);
       }
