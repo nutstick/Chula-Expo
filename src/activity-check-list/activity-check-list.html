@@ -13,7 +13,7 @@
         <template>[[index]]</template>
       </data-table-column>
       <data-table-column name="User">
-        <template>[[item.user.name]]</template>
+        <template>[[_computeName(item.user.name)]]</template>
       </data-table-column>
       <data-table-column name="Create">
         <template>[[_computeCreateAtDate(item.createAt)]]</template>
@@ -74,6 +74,9 @@
             req.send();
           }.bind(this), 300);
         }
+      },
+      _computeName: function(name) {
+        return name || 'Not found';
       },
       _computeCreateAtDate: function(createAt) {
         return moment.utc(createAt).format('D MMM, HH:mm');
