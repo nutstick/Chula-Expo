@@ -175,7 +175,6 @@
 
           setTimeout(function() {
             $(this.$.reader).html5_qrcode(function(data) {
-              console.log(data)
               this.set('result', data);
               setTimeout(function() {
                 this._onClosed();

@@ -211,6 +211,9 @@
           setTimeout(function() {
             $(this.$.reader).html5_qrcode(function(data) {
               // do something when code is read
+              if (data === 'error decoding QR Code') {
+                return this.set('error', 'Can\'t find matched QR Code');
+              }
               this.$.ajax.params = {
                 user: data,
               };
@@ -225,7 +228,7 @@
               console.log(error)
             }.bind(this), function(videoError) {
               //the video stream could be opened
-              this.set('videoError', videoError.message);
+              this.set('videoError', videoError.name || videoError.message);
             }.bind(this));
           }.bind(this), 100);
         }.bind(this), 1);
