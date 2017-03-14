@@ -36,10 +36,12 @@ router.get('/', (req, res) => {
           element = 'shortName.en';
         } else if (element === 'descriptionEN') {
           element = 'description.en';
-        } else if (element === 'shortNameEN') {
-          element = 'shortName.en';
-        } else if (element === 'descriptionEN') {
-          element = 'description.en';
+        } else if (element === 'shortNameTH') {
+          element = 'shortName.th';
+        } else if (element === 'descriptionTH') {
+          element = 'description.th';
+        } else if (element === 'nameTH') {
+          element = 'name.th';
         } else if (element === 'locationLat') {
           element = 'location.latitude';
         } else if (element === 'locationLong') {
@@ -147,6 +149,18 @@ router.get('/:id', (req, res) => {
           }
           if (element === 'descriptionEN') {
             element = 'description.en';
+          }
+          if (element === 'nameTH') {
+            element = 'name.th';
+          }
+          if (element === 'welcomeMessageTH') {
+            element = 'welcomeMessage.th';
+          }
+          if (element === 'shortNameTH') {
+            element = 'shortName.th';
+          }
+          if (element === 'descriptionTH') {
+            element = 'description.th';
           }
           if (element === 'locationLat') {
             element = 'location.latitude';
