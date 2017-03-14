@@ -75,6 +75,7 @@ router.post('/', isAuthenticatedByToken, isScanner, (req, res) => {
           checkin.user = userId;
           checkin.activityId = req.params.id;
           checkin.createBy = req.user.id;
+          checkin.createAt = new Date();
           // Save checkin and check for error
           checkin.save((err, _checkin) => {
           // Handle error from save
