@@ -93,6 +93,13 @@
         -webkit-font-smoothing: antialiased;
         font-size: 16px;
         line-height: 24px;
+
+        --paper-input-container-underline: {
+          display: none;
+        }
+        --paper-input-container-underline-focus: {
+          display: none;
+        }
       }
       .search-box {
         @apply(--layout-flex);
@@ -146,7 +153,6 @@
           disabled$="[[!isAdmin]]"
           no-label-float="true"
         ></vaadin-combo-box>
-        <paper-icon-button icon="image:photo-camera" on-tap="_onLaunchQR"></paper-icon-button>
       </div>
       <paper-card-item id="search" action>
         <div class="card-item-content">

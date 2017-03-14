@@ -13,15 +13,27 @@
         <template>[[index]]</template>
       </data-table-column>
       <data-table-column name="User">
-        <template>[[item.user]]</template>
+        <template>[[item.user.name]]</template>
       </data-table-column>
       <data-table-column name="Create">
         <template>[[_computeCreateAtDate(item.createAt)]]</template>
       </data-table-column>
-      <data-table-column name="Status">
-        <template>[[_computeChecked(item.checked)]]</template>
+      <data-table-column name="Create By">
+        <template>[[item.createBy.name]]</template>
+      </data-table-column>
+      <data-table-column name="" width="26px">
+        <template>
+          <paper-icon-button icon="icons:delete" target-id$="[[item._id]]" on-tap="_onRemoveCheckIn"></paper-icon-button>
+        </template>
       </data-table-column>
     </iron-data-table>
+    <paper-dialog id="deleteDialog" on-iron-overlay-closed="_onRemove">
+      <h2>Are you sure?</h2>
+      <div class="buttons">
+        <paper-button dialog-dismiss>No</paper-button>
+        <paper-button dialog-confirm autofocus>Yes</paper-button>
+      </div>
+    </paper-dialog>
   </template>
   <script>
     Polymer({
@@ -36,8 +48,31 @@
           value: []
         },
       },
+      _removeId: null,
+
       generateRequest: function() {
         return this.$.api.generateRequest();
+      },
+      _onRemoveCheckIn: function(e) {
+        this._removeId = e.target.getAttribute('target-id');
+        this.$.deleteDialog.open();
+      },
+      _onRemove: function(e) {
+        if(event.detail.confirmed) {
+          var url = window.api + '/api/activities/' + activityId + '/checkin/' + this._removeId;
+          this._removeId = null;
+
+          setTimeout(function () {
+            var req = new XMLHttpRequest();
+            req.open('DELETE', encodeURI(url));
+            req.onload = function() {
+              if (req.status === 202) {
+                this.$.api.generateRequest();
+              }
+            }.bind(this);
+            req.send();
+          }.bind(this), 300);
+        }
       },
       _computeCreateAtDate: function(createAt) {
         return moment.utc(createAt).format('D MMM, HH:mm');
