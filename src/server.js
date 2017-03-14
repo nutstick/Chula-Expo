@@ -80,7 +80,7 @@ const accessLogStream = rfs('access.log', {
   path: logDirectory
 });
 
-app.use(logger(':method :url :response-time ms', { stream: accessLogStream }));
+app.use(logger(':date[format] :method :remote-addr :req[authorization] :url :response-time ms', { stream: accessLogStream }));
 
 // Set favicon using serve-favicon at /public/favicon.icon
 app.use(favicon(path.join(__dirname, '/public/favicon.ico')));

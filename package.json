@@ -70,6 +70,7 @@
     "passport-oauth": "^1.0.0",
     "popup-tools": "^1.0.1",
     "request": "^2.81.0",
+    "rotating-file-stream": "^1.1.9",
     "serve-favicon": "^2.3.2",
     "webcomponent-qr-code": "^0.1.9"
   },
