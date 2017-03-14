@@ -13,7 +13,7 @@ const router = express.Router();
  * @return {User} results.
  * @return {Token} results.token - Generated token.
  */
-router.post('/', (req, res) => {
+router.post('/', (req, res, next) => {
   if (!req.body.email || !req.body.password) {
     // Handle error from save
     return res.sendError(37);
@@ -21,7 +21,7 @@ router.post('/', (req, res) => {
 
   passport.authenticate('local', (err, user) => {
     if (err) {
-      return res.sendError(5, err);
+      return next(err);
     }
     if (!user) {
       return res.sendError(4);
@@ -32,13 +32,14 @@ router.post('/', (req, res) => {
       }
       res.json({
         success: true,
-        message: 'User log in successful',
+        message: 'User log in successfull!',
         results: {
           token: user.generateToken(),
         },
       });
     });
-  });
+  })(req, res, next);
 });
+
 
 module.exports = router;

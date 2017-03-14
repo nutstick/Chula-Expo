@@ -1,10 +1,10 @@
 const express = require('express');
 const { User } = require('../../../models');
 const { retrieveError } = require('../../../tools/retrieveError');
-const { isAuthenticatedByToken } = require('../../../config/authenticate');
+const { isAuthenticatedByToken, deserializeToken } = require('../../../config/authenticate');
+const request = require('request');
 
 const router = express.Router();
-
 const avaliableFields = ['_id', 'name', 'email', 'age', 'gender', 'profile', 'type', 'academic', 'worker', 'staff', 'tags'];
 
 /**
@@ -46,15 +46,41 @@ router.get('/', isAuthenticatedByToken, (req, res) => {
 });
 
 
-router.get('/where', (req, res) => {
-  res.json({
-    success: true,
-    results: {
-      text: {
-        en: 'no information',
-        th: 'อยู่นอกพื้นที่จัดงาน'
-      }
+router.get('/where', deserializeToken, (req, res) => {
+  const qs = {};
+  qs.lat = req.query.latitude;
+  qs.lng = req.query.longitude;
+  if (req.user) {
+    qs.u = req.user.id;
+  }
+
+  request.get({
+    uri: 'http://104.199.143.190/area',
+    qs
+  },
+  (err, r, ans) => {
+    if (err) {
+      return res.sendError(5, err);
     }
+
+    const answer = JSON.parse(ans);
+    if (!answer.area) {
+      answer.area = {};
+    }
+    if (!answer.area.nameEn || !answer.area.nameTh) {
+      answer.area.nameEn = 'no information';
+      answer.area.nameTh = 'ไม่มีข้อมูลของสถานที่นี้';
+    }
+
+    return res.json({
+      success: true,
+      results: {
+        text: {
+          en: answer.area.nameEn,
+          th: answer.area.nameTh
+        }
+      }
+    });
   });
 });
 

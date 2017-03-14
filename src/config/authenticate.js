@@ -28,8 +28,11 @@ module.exports = {
   },
 
   deserializeToken: (req, res, next) => {
-    const extractHeader = req.headers.Authorization.split(' ');
-    if (extractHeader[0] === 'JWT') {
+    let extractHeader = null;
+    if (req.headers.Authorization) {
+      extractHeader = req.headers.Authorization.split(' ');
+    }
+    if (extractHeader !== null && extractHeader[0] === 'JWT') {
       jwt.decode(process.env.JWT_SECRET, extractHeader[1], (err, decodedPayload, decodedHeader) => {
         if (err) {
           next(err);
