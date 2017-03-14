@@ -1,5 +1,6 @@
 const express = require('express');
 const User = require('../../../models/User');
+const bcrypt = require('bcrypt-nodejs');
 const { isAuthenticatedByToken, isStaff } = require('../../../config/authenticate');
 
 const router = express.Router();
@@ -295,15 +296,25 @@ router.put('/:id', (req, res) => {
       }
     }
 
-    // Update user in mongoose
-    user.save((err, updatedUser) => {
+    bcrypt.genSalt(10, (err, salt) => {
       if (err) {
         return res.sendError(5, err);
       }
+      bcrypt.hash(user.password, salt, null, (err, hash) => {
+        if (err) {
+          return res.sendError(5, err);
+        }
+        user.password = hash;
+        user.save((err, updatedUser) => {
+          if (err) {
+            return res.sendError(5, err);
+          }
 
-      return res.status(202).json({
-        success: true,
-        results: updatedUser,
+          return res.status(202).json({
+            success: true,
+            results: updatedUser,
+          });
+        });
       });
     });
   });

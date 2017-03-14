@@ -136,15 +136,11 @@ const UserSchema = new mongoose.Schema({
  */
  UserSchema.pre('save', function save(next) {
    const user = this;
-   console.log("a");
    if (!user.isModified('password')) { return next(); }
-   console.log("b");
    bcrypt.genSalt(10, (err, salt) => {
-     console.log("c");
      if (err) { return next(err); }
      bcrypt.hash(user.password, salt, null, (err, hash) => {
        if (err) { return next(err); }
-       console.log(hash);
        user.password = hash;
        next();
      });
@@ -153,14 +149,10 @@ const UserSchema = new mongoose.Schema({
 
  UserSchema.pre('update', function update(next) {
    const user = this;
-   console.log("a");
    bcrypt.genSalt(10, (err, salt) => {
-     console.log("b");
      if (err) { return next(err); }
-     console.log("c");
      bcrypt.hash(user.password, salt, null, (err, hash) => {
        if (err) { return next(err); }
-       console.log(hash);
        user.password = hash;
        next();
      });
