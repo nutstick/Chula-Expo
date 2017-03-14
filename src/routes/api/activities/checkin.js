@@ -16,8 +16,7 @@ router.get('/', (req, res) => {
     skip = Number.parseInt(req.query.skip, 10);
   }
   // Create query from filter
-  let query = ActivityCheck.find(filter)
-  .populate('user');
+  let query = ActivityCheck.find(filter);
   query.count().exec((err, count) => {
     if (err) {
       return res.sendError(5, err);
