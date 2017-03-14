@@ -46,7 +46,7 @@
         --paper-card-item-image-width: 136px;
         --paper-card-item-image-height: 100%;
       }
-      .card-item-content {
+      .activity-item .card-item-content {
         @apply(--layout-flex);
       }
       .activity-item .card-item-content iron-icon {
@@ -54,6 +54,53 @@
         margin-right: 8px;
         --iron-icon-width: 16px;
         --iron-icon-height: 16px;
+      }
+      #search .card-item-content .a {
+        max-width: 300px;
+        width: 100%;
+      }
+      #search .card-item-content {
+        @apply(--layout-horizontal);
+        line-height: 48px;
+        margin-bottom: 0px;
+        width: 100%;
+      }
+      .search-box {
+        background-color: #fff;
+        border: 1px solid #eee;
+        border-radius: 2px;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+        height: 40px;
+        margin-bottom: 12px;
+      }
+      .search-box iron-icon {
+        color: var(--google-grey-700);
+        fill: var(--google-grey-700);
+        margin: 0 8px;
+      }
+      
+      .search-box vaadin-combo-box {
+        font-size: 20px;
+        outline: 0;
+        border: none;
+        margin-left: 20px;
+        width: 100%;
+
+        -webkit-appearance: none;
+        text-align: inherit;
+        vertical-align: bottom;
+        font-family: 'Roboto', 'Noto', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        font-size: 16px;
+        line-height: 24px;
+      }
+      .search-box {
+        @apply(--layout-flex);
+        @apply(--layout-center);
+        @apply(--layout-horizontal);
+      }
+      .search-box input {
+        @apply(--layout-flex);
       }
       /* .activity-item */
       .activity-item .card-item-actions paper-tabs {
@@ -88,24 +135,25 @@
         fields="_id,nameEN"
       ></zone-api>
       <!-- Search Header -->
-      <paper-card-item action>
+      <div class="search-box bottom">
+        <!--<iron-icon icon="menu"></iron-icon>-->
+        <vaadin-combo-box
+          label="สังกัด"
+          items="{{zones}}"
+          item-value-path="_id"
+          item-label-path="name.en"
+          value="{{zone}}"
+          disabled$="[[!isAdmin]]"
+          no-label-float="true"
+        ></vaadin-combo-box>
+        <paper-icon-button icon="image:photo-camera" on-tap="_onLaunchQR"></paper-icon-button>
+      </div>
+      <paper-card-item id="search" action>
         <div class="card-item-content">
-          <div class="left">
-            <vaadin-combo-box
-              label="สังกัด"
-              items="{{zones}}"
-              item-value-path="_id"
-              item-label-path="name.en"
-              value="{{zone}}"
-              disabled$="[[!isAdmin]]"
-              always-float-label
-            ></vaadin-combo-box>
-          </div>
-          <div class="right">
-            <paper-datetime-picker-item locale="[[locale]]" placeholder="เวลาเริ่ม" value={{start}} defaultTime="08:00"></paper-datetime-picker-item>
-            <div class="text-between">-</div>
-            <paper-datetime-picker-item locale="[[locale]]" placeholder="เวลาจบ" value={{end}} defaultTime="08:00"></paper-datetime-picker-item>
-          </div>
+          <iron-icon icon="icons:alarm" style="height: 48px;"></iron-icon>
+          <paper-datetime-picker-item locale="[[locale]]" placeholder="เวลาเริ่ม" value={{start}} defaultTime="08:00"></paper-datetime-picker-item>
+          <div class="text-between">-</div>
+          <paper-datetime-picker-item locale="[[locale]]" placeholder="เวลาจบ" value={{end}} defaultTime="08:00"></paper-datetime-picker-item>
         </div>
       </paper-card-item>
       <!-- List -->

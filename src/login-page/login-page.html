@@ -6,6 +6,7 @@
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animation-runner-behavior.html">
 <link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 
 <link rel="import" href="../shared-styles/shared-styles.html">
 <link rel="import" href="../facebook-login-button/facebook-login-button.html">
@@ -37,6 +38,11 @@
       paper-input {
         --paper-input-container-input-color: var(--secondary-color);
       }
+      #logining {
+        width: 80px;
+        height: 80px;
+        margin-top: -80px;
+      }
       #loginButton {
         background-color: var(--secondary-color);
         color: var(--primary-color);
@@ -51,23 +57,29 @@
       }
     </style>
     <div class="login-wrapper">
-      <form
-        is="iron-form"
-        id="form"
-        method="post"
-        action="[[_url]]"
-        on-iron-form-response="_response"
-        on-iron-form-error="_error">
-        <div class="error-msg">{{error}}</div>
-        <paper-input name="email" value="{{email}}" label="E-mail" required></paper-input>
-        <paper-input name="password" value="{{password}}" label="Password" type="password" required auto-validate></paper-input>
-        <paper-button raised on-tap="_delayedSubmit" disabled id="loginButton">
-          <paper-spinner id="spinner" hidden></paper-spinner>Submit
-        </paper-button>
-        <paper-button raised on-tap="_gotoSignup">Sign Up</paper-button>
-        <div class="output"></div>
-      </form>
-      <facebook-login-button></facebook-login-button>
+      <template is="dom-if" if="{{_computeLoading(isAuthenticate, _hasToken)}}">
+        <paper-spinner id="logining" active></paper-spinner>
+      </template>
+      <template is="dom-if" if="{{!_computeLoading(isAuthenticate, _hasToken)}}">
+        <form
+          is="iron-form"
+          id="form"
+          method="post"
+          action="[[_url]]"
+          on-iron-form-response="_response"
+          on-iron-form-error="_error">
+          <div class="error-msg">{{error}}</div>
+          <paper-input name="email" value="{{email}}" label="E-mail" required></paper-input>
+          <paper-input name="password" value="{{password}}" label="Password" type="password" required auto-validate></paper-input>
+          <paper-button raised on-tap="_delayedSubmit" disabled id="loginButton">
+            <paper-spinner id="spinner" hidden></paper-spinner>
+            Submit
+          </paper-button>
+          <paper-button raised on-tap="_gotoSignup">Sign Up</paper-button>
+          <div class="output"></div>
+        </form>
+        <facebook-login-button></facebook-login-button>
+      </template>
     </div>
   </template>
   <script>
@@ -84,6 +96,10 @@
           type: String,
           value: '',
         },
+        isAuthenticate: {
+          type: Boolean,
+          value: false
+        },
         email: {
           type: String
         },
@@ -94,7 +110,7 @@
           type: Boolean,
           reflectToAttribute: true,
           value: false,
-          computed: '_computeHide(page, _hasToken)'
+          computed: '_computeHide(page, isAuthenticate)'
         },
         _hasToken: {
           type: Boolean,
@@ -129,13 +145,18 @@
         }.bind(this));
       },
       _submitDisable: function(email, password) {
-        this.$.loginButton.disabled = !email || !password;
+        if (this.$.loginButton) {
+          this.$.loginButton.disabled = !email || !password;
+        }
       },
-      _computeHide: function(page, _hasToken) {
-        if (this._hasToken || page === 'signup') {
+      _computeHide: function(page, isAuthenticate) {
+        if (isAuthenticate || page === 'signup') {
           this.playAnimation('exit');
         }
-        return this._hasToken || page === 'signup';
+        return isAuthenticate || page === 'signup';
+      },
+      _computeLoading: function(isAuthenticate, _hasToken) {
+        return _hasToken && !isAuthenticate;
       },
       _delayedSubmit: function(event) {
         var form = this.$.form;

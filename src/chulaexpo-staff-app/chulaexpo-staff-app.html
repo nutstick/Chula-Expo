@@ -29,8 +29,6 @@
 <link rel="import" href="../round-api/round-api.html">
 <link rel="import" href="../login-page/login-page.html">
 
-<script src="../../bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
-
 <dom-module id="chulaexpo-staff-app">
   <template>
     <style is="custome-style" include="shared-styles">
@@ -183,7 +181,7 @@
         <template is="dom-if" if="[[_loading]]">
           <paper-progress indeterminate class="progress blue"></paper-progress>
         </template>
-        <login-page page=[[page]]></login-page>
+        <login-page page=[[page]] is-authenticate="[[isAuthenticate]]"></login-page>
         <iron-pages
           selected="[[page]]"
           attr-for-selected="name"
