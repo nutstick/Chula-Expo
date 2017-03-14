@@ -108,5 +108,10 @@
     "status": "403",
     "message": "Invalid request, Please send email and password",
     "code": "37"
+  },
+  "38": {
+    "status": "403",
+    "message": "User is not exist",
+    "code": "38"
   }
 }

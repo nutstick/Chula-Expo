@@ -4,31 +4,9 @@ const { isAuthenticatedByToken, isStaff } = require('../../../config/authenticat
 const { retrieveError } = require('../../../tools/retrieveError');
 
 const router = express.Router();
-
+const avaliableFields = ['_id', 'name', 'email', 'age', 'gender', 'profile', 'type', 'academic', 'worker', 'staff', 'tags'];
 
 router.use(isAuthenticatedByToken, isStaff);
-/**
- * Get User by specific ID
- * Access at GET http://localhost:8080/api/users/:id
- */
-router.get('/:id', (req, res) => {
-  // Get User from instance User model by ID
-  User.findById(req.params.id, (err, user) => {
-    if (err) {
-      // Handle error from User.findById
-      return res.sendError(5, err);
-    }
-    const params = {
-      name: user.name,
-      email: user.email,
-      gender: user.gender,
-    };
-    res.json({
-      success: true,
-      results: params,
-    });
-  });
-});
 
 router.get('/', (req, res) => {
   const filters = {};
@@ -64,6 +42,17 @@ router.get('/', (req, res) => {
       filters.$or.append('_id', req.query.search);
     }
   }
+
+  let fields = [];
+  // Fields selecting query
+  if (req.query.fields) {
+    fields = req.query.fields.split(',')
+      .filter(f => avaliableFields.find(field => f === field));
+  }
+  if (fields.length === 0) {
+    fields = avaliableFields;
+  }
+
   try {
     let query = User.find(filters);
     const sort = {};
@@ -77,10 +66,11 @@ router.get('/', (req, res) => {
       });
     }
     if (sort) {
-      query.sort(sort);
+      query = query.sort(sort);
     }
-    if (req.query.select) {
-      query.select(req.query.select);
+
+    if (fields) {
+      query = query.select(fields);
     }
 
     let limit;
@@ -116,6 +106,37 @@ router.get('/', (req, res) => {
   } catch (error) {
     return res.sendError(5, error);
   }
+});
+
+/**
+ * Get User by specific ID
+ * Access at GET http://localhost:8080/api/users/:id
+ */
+router.get('/:id', (req, res) => {
+  // Get User from instance User model by ID
+  let fields = [];
+  // Fields selecting query
+  if (req.query.fields) {
+    fields = req.query.fields.split(',')
+      .filter(f => avaliableFields.find(field => f === field));
+  }
+  if (fields.length === 0) {
+    fields = avaliableFields;
+  }
+
+  User.findById(req.params.id).select(fields.join(' ')).exec((err, user) => {
+    if (err) {
+      // Handle error from User.findById
+      return res.sendError(5, err);
+    }
+    if (!user) {
+      return res.sendError(43);
+    }
+    return res.status(200).json({
+      success: true,
+      results: user,
+    });
+  });
 });
 
 
