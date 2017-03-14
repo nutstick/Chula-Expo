@@ -5,7 +5,7 @@ const Ticket = require('../../../models/Ticket');
 const _ = require('lodash');
 const mongoose = require('mongoose');
 const { RangeQuery } = require('../../../tools');
-const { isAuthenticatedByToken, isStaff } = require('../../../config/authenticate');
+const { isAuthenticatedByToken, isStaff, deserializeToken } = require('../../../config/authenticate');
 const request = require('request');
 
 const router = express.Router();
@@ -204,13 +204,46 @@ router.get('/recommend', isAuthenticatedByToken, (req, res) => {
 });
 
 // nearby from aj.nuttawut
-router.get('/nearby', isAuthenticatedByToken, (req, res) => {
+router.get('/nearby', deserializeToken, (req, res) => {
   const qs = {};
   qs.lat = req.query.latitude;
   qs.lng = req.query.longitude;
   qs.cutoff = 100;
-  qs.u = req.user.id;
+  if (req.user) {
+    qs.u = req.user;
+  }
+  request.get({
+    uri: 'http://104.199.143.190/search',
+    qs
+  },
+  (err, r, ans) => {
+    if (err) {
+      return res.sendError(5, err);
+    }
 
+    const answer = JSON.parse(ans);
+    return res.json({
+      success: true,
+      results: answer.activities
+    });
+  });
+});
+
+
+// search from aj.nuttawut
+router.get('/search', deserializeToken, (req, res) => {
+  const qs = {};
+  if (req.query.latitude) {
+    qs.lat = req.query.latitude;
+  }
+  if (req.query.longitude) {
+    qs.lng = req.query.longitude;
+  }
+  qs.q = req.query.text;
+  qs.cutoff = 200;
+  if (req.user) {
+    qs.u = req.user;
+  }
   request.get({
     uri: 'http://104.199.143.190/search',
     qs
