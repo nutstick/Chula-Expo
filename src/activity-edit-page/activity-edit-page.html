@@ -8,6 +8,7 @@
 <link rel="import" href="../../bower_components/paper-autocomplete/paper-autocomplete.html">
 <link rel="import" href="../../bower_components/paper-select/paper-select.html">
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/greenyouse-datetime-local-input/datetime-local-input.html">
 <link rel="import" href="../../bower_components/google-map/google-map.html">
@@ -319,7 +320,7 @@
               <template is="dom-repeat" items="{{activity.pictures}}">
                 <iron-image style="width:100px; height:100px;" sizing="cover" preload fade src="{{_computePicture(item)}}"></iron-image>
               </template>
-							<div class="input-wrapper">
+              <div class="input-wrapper">
                 <images-upload
                   id="pictureUpload"
                   upload-url="[[_activityUploadUrl]]"
@@ -329,7 +330,7 @@
                   handle-as="json"
                   form-data-name="picture"
                 ></images-upload>
-							</div>
+              </div>
 						</div>
 						<!-- Tags -->
 						<div class="item">
@@ -421,8 +422,7 @@
           type: Object,
         },
         pictures: {
-          type: Set,
-          value: new Set()
+          type: Array
         },
         activityId: {
           type: String,
@@ -489,13 +489,14 @@
         this.$.form.request.method = 'PUT';
       	this.$.form.request.body.locationLat = this.activity.location.latitude;
 				this.$.form.request.body.locationLong = this.activity.location.longitude;
-				this.$.form.request.body.pictures = [];
         this.$.form.request.body.isHighlight = this.activity.isHighlight;
 
-        var dom = this;
-        this.pictures.forEach(function(key,value, Set) {
-          dom.$.form.request.body.pictures.push(key);
+        this.$.form.request.body.pictures = this.pictures.map(function(picture) {
+          if (picture.success)
+            return picture.results.picture;
+          return null;
         });
+
 
         if(this.thumbnail != '')
           this.$.form.request.body.thumbnail = this.thumbnail;
