@@ -117,8 +117,10 @@
       action="{{_url}}"
       on-iron-form-presubmit="_presubmit"
       on-iron-form-response="_response"
+      on-iron-form-response="_response"
+      on-iron-form-reset="_reset"
       on-iron-form-error="_error"
-      headers="[[headers]]">>
+      headers="[[headers]]">
       <paper-card class="container">
         <div class="header style-scope paper-card">
           <!-- Profile Image with uploadility -->
@@ -149,10 +151,10 @@
             <!-- Gender -->
             <div class="item">
               <div class="input-label" id="gender">เพศ:</div>
-              <paper-button-group selected="male">
-                <paper-button name="male" toggles active={{male}}>ชาย</paper-button>
-                <paper-button name="female" toggles active={{female}}>หญิง</paper-button>
-                <paper-button name="other" toggles active={{other}}>อื่นๆ</paper-button>
+              <paper-button-group selected="{{user.gender}}">
+                <paper-button name="Male" toggles active={{male}}>ชาย</paper-button>
+                <paper-button name="Female" toggles active={{female}}>หญิง</paper-button>
+                <paper-button name="Other" toggles active={{other}}>อื่นๆ</paper-button>
               </paper-button-group>
             </div>
             <!-- Age -->
@@ -160,16 +162,16 @@
             <div class="item">
               <!-- Student/Worker -->
               <div class="input-label">ประเภท:</div>
-              <paper-button-group selected="student">
-                <paper-button name="student" toggles active={{student}}>นักเรียน นิสิต</paper-button>
-                <paper-button name="worker" toggles active={{worker}}>บุคคลทั่วๆ</paper-button>
-                <paper-button name="staff" toggles active={{staff}}>สตาฟ</paper-button>
+              <paper-button-group selected="{{user.type}}">
+                <paper-button name="Academic" toggles active={{student}}>นักเรียน นิสิต</paper-button>
+                <paper-button name="Worker" toggles active={{worker}}>บุคคลทั่วๆ</paper-button>
+                <paper-button name="Staff" toggles active={{staff}}>สตาฟ</paper-button>
               </paper-button-group>
               <!-- Student -->
               <fieldset class="field" hidden$="{{!student}}">
-                <paper-input name="academicLevel" label="การศึกษาปัจจุบัน" value="{{user.student.level}}" required="{{student}}" always-float-label></paper-input>
-                <paper-input name="academicYear" label="ชั้นปี" value="{{user.student.year}}" required="{{student}}" always-float-label></paper-input>
-                <paper-input name="academicSchool" label="สถาบันการศึกษา" value="{{user.student.school}}" required="{{student}}" always-float-label></paper-input>
+                <paper-input name="academicLevel" label="การศึกษาปัจจุบัน" value="{{user.academic.level}}" required="{{student}}" always-float-label></paper-input>
+                <paper-input name="academicYear" label="ชั้นปี" value="{{user.academic.year}}" required="{{student}}" always-float-label></paper-input>
+                <paper-input name="academicSchool" label="สถาบันการศึกษา" value="{{user.academic.school}}" required="{{student}}" always-float-label></paper-input>
               </fieldset>
               <!-- Worker -->
               <fieldset class="field" hidden$="{{!worker}}">
@@ -179,10 +181,10 @@
               <fieldset class="field" hidden$="{{!staff}}">
                 <div class="item">
                   <div class="input-label">ประเภท:</div>
-                  <paper-button-group selected="scannerStaff">
-                    <paper-button toggles name="adminStaff" active="{{adminStaff}}">Admin</paper-button>
-                    <paper-button toggles name="scannerStaff" active="{{scannerStaff}}">Scan man</paper-button>
-                    <paper-button toggles name="staffStaff" active="{{staffStaff}}">Staff</paper-button>
+                  <paper-button-group selected="{{user.staff.staffType}}">
+                    <paper-button toggles name="Admin" active="{{adminStaff}}">Admin</paper-button>
+                    <paper-button toggles name="Scanner" active="{{scannerStaff}}">Scan man</paper-button>
+                    <paper-button toggles name="Staff" active="{{staffStaff}}">Staff</paper-button>
                   </paper-button-group>
                 </div>
                 <paper-input-container always-float-label attr-for-value="value" id="code">
@@ -207,10 +209,10 @@
               </fieldset>
             </div>
             <!-- Hidden Fields -->
-            <input name="accessToken" type="hidden" value="{{queryParams.accessToken}}"></input>
-            <input name="tokens[0].kind" type="hidden" value="{{queryParams.kind}}"></input>
-            <input name="tokens[0].accessToken" type="hidden" value="{{queryParams.accessToken}}"></input>
-            <input name="facebook" type="hidden" value="{{queryParams.facebook}}"></input>
+            <input name="accessToken" type="hidden" value="{{user.accessToken}}"></input>
+            <input name="tokens[0].kind" type="hidden" value="{{user.kind}}"></input>
+            <input name="tokens[0].accessToken" type="hidden" value="{{user.accessToken}}"></input>
+            <input name="facebook" type="hidden" value="{{user.facebook}}"></input>
           </div>
           <!-- Submit Button -->
           <div class="card-actions">
@@ -265,13 +267,25 @@
         },
         student: {
           type: Boolean,
-          value: true
+          value: false
         },
         worker: {
           type: Boolean,
           value: false
         },
         staff: {
+          type: Boolean,
+          value: false
+        },
+        adminStaff: {
+          type: Boolean,
+          value: false
+        },
+        scannerStaff: {
+          type: Boolean,
+          value: false
+        },
+        staffStaff: {
           type: Boolean,
           value: false
         },
@@ -285,7 +299,7 @@
         },
       },
       _computeUrl: function(userId) {
-        return window.api + '/users/' + userId;
+        return window.api + '/api/users/' + userId;
       },
       _activatedChanged: function(activated) {
 				if (activated) {
@@ -305,9 +319,12 @@
       },
       _reset: function(event) {
         var form = this.$.form;
+        this.$.spinner.active = false;
+        this.$.spinner.hidden = true;
         form.reset();
       },
       _presubmit: function(event) {
+        this.$.form.request.method = 'PUT';
         this.$.code.invalid = false;
         this.$.password.invalid = false;
         this.$.confirmPassword.invalid = false;
@@ -330,6 +347,13 @@
         }
       },
       _response: function(e) {
+        if (e.detail.response.success) {
+          this.$.form.reset();
+
+					window.history.pushState({}, null, '/user/' + this.activityId + '/show/');
+          window.dispatchEvent(new CustomEvent('location-changed'));
+
+        }
       },
       _error: function(e) {
       }
