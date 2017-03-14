@@ -57,10 +57,12 @@ router.get('/', (req, res) => {
   }
   if (req.query.search) {
     filters.$or = [
-      { _id: req.query.search },
       { email: req.query.search },
       { name: req.query.search }
     ];
+    if (req.query.search.match(/^[0-9a-fA-F]{24}$/)) {
+      filters.$or.append('_id', req.query.search);
+    }
   }
   try {
     let query = User.find(filters);
