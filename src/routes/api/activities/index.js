@@ -159,7 +159,7 @@ const router = express.Router();
    // http://localhost:3000/?skip=10
    let skip;
    if (req.query.skip) {
-     skip = Number.parseInt(req.query.skip, 10);
+     skip = Number.parseInt(req.query.skip, 0);
      query = query.skip(skip);
    }
 

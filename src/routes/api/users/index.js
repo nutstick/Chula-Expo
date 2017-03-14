@@ -49,6 +49,21 @@ router.get('/', (req, res) => {
   if (req.query.worker) {
     filters.worker = req.query.worker;
   }
+  if (req.query.email) {
+    filters.email = req.query.email;
+  }
+  if (req.query.id) {
+    filters.id = req.query.id;
+  }
+  if (req.query.search) {
+    filters.$or = [
+      { email: req.query.search },
+      { name: req.query.search }
+    ];
+    if (req.query.search.match(/^[0-9a-fA-F]{24}$/)) {
+      filters.$or.append('_id', req.query.search);
+    }
+  }
   try {
     let query = User.find(filters);
     const sort = {};
@@ -67,21 +82,36 @@ router.get('/', (req, res) => {
     if (req.query.select) {
       query.select(req.query.select);
     }
+
+    let limit;
     if (req.query.limit) {
-      query = query.limit(parseInt(req.query.limit, 10));
+      limit = Number.parseInt(req.query.limit, 10);
+      query = query.limit(limit);
     }
+
+    let skip;
     if (req.query.skip) {
-      query = query.skip(parseInt(req.query.skip, 10));
+      skip = Number.parseInt(req.query.skip, 0);
+      query = query.skip(skip);
     }
-    query.exec((err, users) => {
+    User.find(filters).count((err, total) => {
       if (err) {
         return res.sendError(5, err);
-      } else {
+      }
+      query.exec((err, users) => {
+        if (err) {
+          return res.sendError(5, err);
+        }
         return res.json({
           success: true,
           results: users,
+          queryInfo: {
+            total,
+            limit,
+            skip,
+          }
         });
-      }
+      });
     });
   } catch (error) {
     return res.sendError(5, error);
