@@ -18,7 +18,7 @@
       rol="main">
       <user-edit-page user-id="[[userId]]" name="edit"></user-edit-page>
       <user-show-page user-id="[[userId]]" name="show"></user-show-page>
-      <user-show-page name="notactive"></user-show-page>
+      <user-show-page name=""></user-show-page>
     </iron-pages>
   </template>
   <script>
@@ -50,7 +50,7 @@
       },
       _activatedChanged: function(activated) {
 				if (!activated) {
-					this.subpage = 'notactive';
+					this.subpage = '';
 				}
       },
       _pageChanged: function(subpage) {
