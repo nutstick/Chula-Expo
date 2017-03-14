@@ -75,7 +75,7 @@
         return this.$.api.generateRequest();
       },
       _computeCreateAtDate: function(createAt) {
-        return moment.utc(createAt).format('D MMM, HH:mm');
+        return moment.locale('th').format('D MMM, HH:mm');
       },
       _onCheckClick: function(e) {
         this._removeId = e.target.getAttribute('target-id');
@@ -105,7 +105,7 @@
       },
       _onRemove: function(e) {
         if(event.detail.confirmed) {
-          var url = window.api + '/api/rounds/' + roundId + '/tickets/' + this._removeId;
+          var url = window.api + '/api/rounds/' + this.roundId + '/tickets/' + this._removeId;
           this._removeId = null;
 
           setTimeout(function () {
