@@ -80,6 +80,7 @@ const accessLogStream = rfs('access.log', {
   path: logDirectory
 });
 
+/*
 app.use(function (tokens, req, res) {
   console.log(token.header)
   console.log(token.headers)
@@ -91,6 +92,7 @@ app.use(function (tokens, req, res) {
     tokens['response-time'](req, res), 'ms'
   ].join(' ')
 }, { stream: accessLogStream });
+*/
 
 // Set favicon using serve-favicon at /public/favicon.icon
 app.use(favicon(path.join(__dirname, '/public/favicon.ico')));
