@@ -39,7 +39,7 @@ router.get('/', (req, res) => {
       { name: req.query.search }
     ];
     if (req.query.search.match(/^[0-9a-fA-F]{24}$/)) {
-      filters.$or.append('_id', req.query.search);
+      filters.$or.push('_id', req.query.search);
     }
   }
 

@@ -73,7 +73,7 @@ app.use(flash());
 // Loging
 const logDirectory = path.join(__dirname, 'log');
 
-fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
+// fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
 
 const accessLogStream = rfs('access.log', {
   interval: '1d', // rotate daily
