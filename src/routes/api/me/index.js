@@ -48,8 +48,8 @@ router.get('/', isAuthenticatedByToken, (req, res) => {
 
 router.get('/where', deserializeToken, (req, res) => {
   const qs = {};
-  qs.lat = req.query.latitude;
-  qs.lng = req.query.longitude;
+  qs.lat = '' + req.query.latitude;
+  qs.lng = '' + req.query.longitude;
   if (req.user) {
     qs.u = req.user;
   }

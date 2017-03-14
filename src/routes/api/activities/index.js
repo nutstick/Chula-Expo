@@ -206,8 +206,8 @@ router.get('/recommend', isAuthenticatedByToken, (req, res) => {
 // nearby from aj.nuttawut
 router.get('/nearby', deserializeToken, (req, res) => {
   const qs = {};
-  qs.lat = req.query.latitude;
-  qs.lng = req.query.longitude;
+  qs.lat = '' + req.query.latitude;
+  qs.lng = '' + req.query.longitude;
   qs.cutoff = 100;
   if (req.user) {
     qs.u = req.user;
@@ -235,10 +235,10 @@ router.get('/search', deserializeToken, (req, res) => {
 
   const qs = {};
   if (req.query.latitude) {
-    qs.lat = req.query.latitude;
+    qs.lat = '' + req.query.latitude;
   }
   if (req.query.longitude) {
-    qs.lng = req.query.longitude;
+    qs.lng = '' + req.query.longitude;
   }
   qs.q = req.query.text;
   qs.cutoff = 200;
@@ -445,7 +445,7 @@ router.get('/:id/qrcode', (req, res) => {
     return res.writeHead(301, {
       Location: encodeURI(act.pdf)
     });
-    res.end();
+    res.end(
   });
 });
 
