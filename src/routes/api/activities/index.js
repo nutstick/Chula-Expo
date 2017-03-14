@@ -426,14 +426,23 @@ router.get('/:id', (req, res) => {
 router.get('/:id/qrcode', (req, res) => {
   Activity.findById(req.params.id, (err, act) => {
     if (err) {
-      return res.sendError(5, err);
+      return res.writeHead(301, {
+        Location: "https://www.chulaexpo.com/app"
+      });
     } else if (!act) {
-      return res.sendError(5, err);
+      return res.writeHead(301, {
+        Location: "https://www.chulaexpo.com/app"
+      });
     } else if (!act.pdf) {
-      return res.sendError(5, err);
+      return res.writeHead(301, {
+        Location: "https://www.chulaexpo.com/app"
+      });
     }
 
-    res.writeHead(301, {
+    if (act.pdf.match(/^[(http)(https)]/));
+    else act.pdf = 'http://' + act.pdf;
+
+    return res.writeHead(301, {
       Location: encodeURI(act.pdf)
     });
     res.end();
@@ -444,13 +453,23 @@ router.get('/:id/qrcode', (req, res) => {
 router.get('/:id/qrvideo', (req, res) => {
   Activity.findById(req.params.id, (err, act) => {
     if (err) {
-      return res.sendError(5, err);
+      return res.writeHead(301, {
+        Location: "https://www.chulaexpo.com/app"
+      });
     } else if (!act) {
-      return res.sendError(5, err);
+      return res.writeHead(301, {
+        Location: "https://www.chulaexpo.com/app"
+      });
     } else if (!act.video) {
-      return res.sendError(5, err);
+      return res.writeHead(301, {
+        Location: "https://www.chulaexpo.com/app"
+      });
     }
-    res.writeHead(301, {
+
+    if (act.video.match(/^[(http)(https)]/));
+    else act.video = 'http://' + act.video;
+
+    return res.writeHead(301, {
       Location: encodeURI(act.video)
     });
     res.end();
