@@ -239,64 +239,72 @@ router.post('/', (req, res) => {
  * @return {User} results - Created User.
  */
 router.put('/:id', (req, res) => {
-  const user = {};
-
-  if (req.body.email) {
-    user.email = req.body.email;
-  }
-  if (req.body.password) {
-    user.password = req.body.password;
-  }
-
-  if (req.body.name) {
-    user.name = req.body.name;
-  }
-  if (req.body.gender) {
-    user.gender = req.body.gender;
-  }
-  if (req.body.age) {
-    user.age = Number.parseInt(req.body.age, 10);
-  }
-  if (req.body.profile) {
-    user.profile = req.body.profile;
-  }
-  if (req.body.type) {
-    user.type = req.body.type;
-  }
-  if (req.body.type === 'Academic' && req.body.academicLevel && req.body.academicYear && req.body.academicSchool) {
-    user.academic = {
-      level: req.body.academicLevel,
-      year: req.body.academicYear,
-      school: req.body.academicSchool
-    };
-  }
-  if (req.body.type === 'Worker' && req.body.workerJob) {
-    user.worker = {
-      job: req.body.workerJob
-    };
-  }
-  if (req.body.type === 'Staff' && req.body.staff) {
-    if (req.body.staff !== 'Admin' && req.body.zone) {
-      user.staff = {
-        staffType: req.body.staff,
-        zone: req.body.zone
-      };
-    } else {
-      user.staff = {
-        staffType: req.body.staff
-      };
-    }
-  }
-
-  // Update user in mongoose
-  User.update({ _id: req.params.id }, user, (err, user) => {
+  User.findById(req.params.id, (err, user) => {
     if (err) {
+      // Handle error from User.findById
       return res.sendError(5, err);
     }
+    if (!user) {
+      return res.sendError(24);
+    }
 
-    return res.status(202).json({
-      success: true,
-      results: user,
+    if (req.body.email) {
+      user.email = req.body.email;
+    }
+    if (req.body.password) {
+      user.password = req.body.password;
+    }
+
+    if (req.body.name) {
+      user.name = req.body.name;
+    }
+    if (req.body.gender) {
+      user.gender = req.body.gender;
+    }
+    if (req.body.age) {
+      user.age = Number.parseInt(req.body.age, 10);
+    }
+    if (req.body.profile) {
+      user.profile = req.body.profile;
+    }
+    if (req.body.type) {
+      user.type = req.body.type;
+    }
+    if (req.body.type === 'Academic' && req.body.academicLevel && req.body.academicYear && req.body.academicSchool) {
+      user.academic = {
+        level: req.body.academicLevel,
+        year: req.body.academicYear,
+        school: req.body.academicSchool
+      };
+    }
+    if (req.body.type === 'Worker' && req.body.workerJob) {
+      user.worker = {
+        job: req.body.workerJob
+      };
+    }
+    if (req.body.type === 'Staff' && req.body.staff) {
+      if (req.body.staff !== 'Admin' && req.body.zone) {
+        user.staff = {
+          staffType: req.body.staff,
+          zone: req.body.zone
+        };
+      } else {
+        user.staff = {
+          staffType: req.body.staff
+        };
+      }
+    }
+
+    // Update user in mongoose
+    User.save((err, updatedUser) => {
+      if (err) {
+        return res.sendError(5, err);
+      }
+
+      return res.status(202).json({
+        success: true,
+        results: updatedUser,
+      });
     });
   });
 });
