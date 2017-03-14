@@ -90,7 +90,7 @@ app.use(function (tokens, req, res) {
     tokens.res(req, res, 'content-length'), '-',
     tokens['response-time'](req, res), 'ms'
   ].join(' ')
-}, { stream: accessLogStream }));
+}, { stream: accessLogStream });
 
 // Set favicon using serve-favicon at /public/favicon.icon
 app.use(favicon(path.join(__dirname, '/public/favicon.ico')));
