@@ -87,6 +87,12 @@
         width: 100%;
         height: 300px;
       }
+      .image {
+        width: 100px;
+        height: 100px;
+        margin: 4px 8px 4px 0px;
+        position: relative;
+      }
       .title {
         @apply(--layout);
       }
@@ -318,7 +324,7 @@
 						<div class="item">
 							<label class="label height">รูปภาพที่เกี่ยวข้อง</label>
               <template is="dom-repeat" items="{{activity.pictures}}">
-                <iron-image style="width:100px; height:100px;" sizing="cover" preload fade src="{{_computePicture(item)}}"></iron-image>
+                <iron-image class="image" style="width:100px; height:100px;" sizing="cover" preload fade src="{{_computePicture(item)}}"></iron-image>
               </template>
               <div class="input-wrapper">
                 <images-upload

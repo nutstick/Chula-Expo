@@ -3,6 +3,7 @@
 <!-- Web Component -->
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
 <link rel="import" href="../../bower_components/iron-input-image/iron-input-image.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-request.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
@@ -54,8 +55,11 @@
         width: 100%;
         height: 100%;
       }
-      paper-tile::shadow #content {
-        background: transparent;
+      .tile {
+        height: 100px;
+        width: 100px;
+        --iron-image-widtht: 100px;
+        --iron-image-height: 100px;
       }
       .add-image {
         height: 100px;
@@ -91,11 +95,12 @@
           <div class="remove overlay" on-tap="_remove">
             <iron-icon icon="icons:close"></iron-icon>
           </div>
-          <paper-tile
+          <iron-image class="tile" sizing="cover" src="[[item.src]]"></iron-image>
+          <!--<paper-tile
             img="[[item.src]]"
             first-line=""
             second-line=""
-          ></paper-tile>
+          ></paper-tile>-->
         </div>
       </template>
       <div class="add-image">
