@@ -102,7 +102,7 @@
         max-width: 100%;
         height: 240px;
         margin: auto;
-        z-index: 41;
+        z-index: 5;
         cursor: pointer;
         color: #fff;
         background-color: rgba(0, 0, 0, 0.9);
@@ -119,7 +119,7 @@
         <div class="horizontal layout center-justified" style="height: 100%">
           <div class="vertical layout center-justified">
             <paper-spinner id="spinner" hidden></paper-spinner>
-            <p class="error">[[_computeTextMessage(success, error, videoError)]]</p>
+            <p class="error">[[_computeTextMessage(error)]]</p>
           </div>
         </div>
       </div>
@@ -149,6 +149,11 @@
           type: String,
           value: null
         },
+        loading: {
+          type: String,
+          value: false,
+          observer: '_loadingChanged'
+        },
         targetImage: {
           type: String,
           value: ''
@@ -161,10 +166,15 @@
         opened: {
           type: Boolean,
           value: false,
-          computed: '_computeShowOverlay(error, videoError)'
+          computed: '_computeShowOverlay(error, loading)'
         }
       },
 
+      attached: function() {
+        if(/(android)/i.test(navigator.userAgent)) {
+          this.videoError = ' '
+        }
+      },
       open: function() {
         // Append dialog to the body. This ensures that the dialog claims the full screen instead of being positioned next to the <paper-date-picker-item>
 			  Polymer.dom(document.body).appendChild(this);
@@ -176,6 +186,7 @@
           setTimeout(function() {
             $(this.$.reader).html5_qrcode(function(data) {
               if (data === 'error decoding QR Code') {
+                this.set('loading', false);
                 return this.set('error', 'Can\'t find matched QR Code');
               }
 
@@ -186,10 +197,11 @@
             }.bind(this),
             function(error) {
               //show read errors
+              console.log(error)
               if (this.videoError) {
+                this.set('loading', false);
                 this.error = error;
               }
-              console.log(error)
             }.bind(this), function(videoError) {
               console.log(videoError)
               //the video stream could be opened
@@ -209,7 +221,8 @@
           Polymer.dom(this.parentNode).removeChild(this);
         }.bind(this), 100);
       },
-      _computeShowOverlay: function(error, videoError) {
+      _computeShowOverlay: function(error, loading) {
+        console.log(error, loading)
         if (!!error) {
           // Async fadeOut
           setTimeout(function() {
@@ -217,20 +230,19 @@
           }.bind(this), 3000)
         }
 
-        return !!error;
+        return !!error || !!loading;
       },
-      _computeTextMessage: function(error, videoError) {
-        return error ? error : videoError;
+      _computeTextMessage: function(error) {
+        return error;
       },
       _handleFile: function(event) {
+        this.set('loading', true);
         var reader = new FileReader();
         reader.onload = function(e) {
           var dataURL = reader.result;
           this.targetImage = dataURL;
-          console.log(dataURL);
           qrcode.decode(dataURL);
-        }.bind(this)
-        console.log(event.target.files[0])
+        }.bind(this);
         reader.readAsDataURL(event.target.files[0]);
       },
       _uploadClick: function(e) {
