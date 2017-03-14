@@ -232,7 +232,7 @@ router.get('/nearby', deserializeToken, (req, res) => {
 
 // search from aj.nuttawut
 router.get('/search', deserializeToken, (req, res) => {
-  /*
+
   const qs = {};
   if (req.query.latitude) {
     qs.lat = req.query.latitude;
@@ -261,7 +261,7 @@ router.get('/search', deserializeToken, (req, res) => {
     });
   });
 
-  */
+
 });
 
 // highlight from aj.nuttawut
