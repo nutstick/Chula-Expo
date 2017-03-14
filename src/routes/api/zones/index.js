@@ -28,7 +28,6 @@ router.get('/', (req, res) => {
   if (req.query.fields) {
     req.query.fields.split(',').forEach(
       (element) => {
-        console.log(element);
         if (element === 'nameEN') {
           element = 'name.en';
         } else if (element === 'welcomeMessageEN') {
