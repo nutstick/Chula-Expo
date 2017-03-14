@@ -102,7 +102,7 @@
       loading="{{zoneLoading}}"
       page="0"
       page-size="0"
-      fields="_id,nameEN"
+      fields="_id,nameTH"
     ></zone-api>
     <form
       is="iron-form"
@@ -188,7 +188,7 @@
                   ></input>
                   <paper-input-error>Invalid Registration Code</paper-input-error>
                 </paper-input-container>
-                <vaadin-combo-box name="zone" item-value-path="_id" label="สังกัด" item-label-path="name.en" items="{{zones}}" hidden$="{{adminStaff}}" require="{{!adminStaff}}" always-float-label></vaadin-combo-box>
+                <vaadin-combo-box name="zone" item-value-path="_id" label="สังกัด" item-label-path="name.th" items="{{zones}}" hidden$="{{adminStaff}}" require="{{!adminStaff}}" always-float-label></vaadin-combo-box>
               </fieldset>
             </div>
             <!-- Hidden Fields -->

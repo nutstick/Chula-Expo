@@ -139,7 +139,7 @@
         loading="{{zoneLoading}}"
         page="0"
         page-size="0"
-        fields="_id,nameEN"
+        fields="_id,nameTH"
       ></zone-api>
       <!-- Search Header -->
       <div class="search-box bottom">
@@ -148,7 +148,7 @@
           label="สังกัด"
           items="{{zones}}"
           item-value-path="_id"
-          item-label-path="name.en"
+          item-label-path="name.th"
           value="{{zone}}"
           disabled$="[[!isAdmin]]"
           no-label-float="true"
