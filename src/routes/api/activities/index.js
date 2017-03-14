@@ -428,15 +428,15 @@ router.get('/:id/qrcode', (req, res) => {
     if (err) {
       return res.writeHead(301, {
         Location: "https://www.chulaexpo.com/app"
-      });
+      }).end();
     } else if (!act) {
       return res.writeHead(301, {
         Location: "https://www.chulaexpo.com/app"
-      });
+      }).end();
     } else if (!act.pdf) {
       return res.writeHead(301, {
         Location: "https://www.chulaexpo.com/app"
-      });
+      }).end();
     }
 
     if (act.pdf.match(/^[(http)(https)]/));
@@ -444,8 +444,7 @@ router.get('/:id/qrcode', (req, res) => {
 
     return res.writeHead(301, {
       Location: encodeURI(act.pdf)
-    });
-    res.end(
+    }).end();
   });
 });
 
@@ -455,15 +454,15 @@ router.get('/:id/qrvideo', (req, res) => {
     if (err) {
       return res.writeHead(301, {
         Location: "https://www.chulaexpo.com/app"
-      });
+      }).end();
     } else if (!act) {
       return res.writeHead(301, {
         Location: "https://www.chulaexpo.com/app"
-      });
+      }).end();
     } else if (!act.video) {
       return res.writeHead(301, {
         Location: "https://www.chulaexpo.com/app"
-      });
+      }).end();
     }
 
     if (act.video.match(/^[(http)(https)]/));
@@ -471,8 +470,7 @@ router.get('/:id/qrvideo', (req, res) => {
 
     return res.writeHead(301, {
       Location: encodeURI(act.video)
-    });
-    res.end();
+    }).end();
   });
 });
 
