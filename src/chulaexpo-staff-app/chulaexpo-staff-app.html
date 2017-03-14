@@ -303,7 +303,7 @@
       _computeAuthenticate: function(me) {
         if (!me || !me.staff)
           return false;
-        return me.staff.staffType === 'Admin' || me.staff.staffType === 'Staff';
+        return me.staff.staffType === 'Admin' || me.staff.staffType === 'Staff' || me.staff.staffType === 'Scanner';
       }
     });
   </script>
