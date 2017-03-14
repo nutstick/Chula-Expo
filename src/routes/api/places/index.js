@@ -6,6 +6,7 @@ const { RangeQuery } = require('../../../tools');
 const retrieveError = require('../../../tools/retrieveError');
 const ObjectId = require('mongoose').Types.ObjectId;
 const mongoose = require('mongoose');
+const { isAuthenticatedByToken, isStaff, deserializeToken } = require('../../../config/authenticate');
 
 const router = express.Router();
 

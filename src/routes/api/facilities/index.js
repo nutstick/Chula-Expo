@@ -2,6 +2,7 @@ const express = require('express');
 const Facility = require('../../../models/Facility');
 const { RangeQuery } = require('../../../tools');
 const retrieveError = require('../../../tools/retrieveError');
+const { isAuthenticatedByToken, isStaff, deserializeToken } = require('../../../config/authenticate');
 
 const router = express.Router();
 

@@ -189,6 +189,7 @@ const router = express.Router();
 router.get('/recommend', isAuthenticatedByToken, (req, res) => {
   request.get({
     uri: 'http://104.199.143.190/recommend/' + req.user.id,
+    timeout: 800
   },
   (err, r, ans) => {
     if (err) {
@@ -205,16 +206,9 @@ router.get('/recommend', isAuthenticatedByToken, (req, res) => {
 
 // nearby from aj.nuttawut
 router.get('/nearby', deserializeToken, (req, res) => {
-  const qs = {};
-  qs.lat = '' + req.query.latitude;
-  qs.lng = '' + req.query.longitude;
-  qs.cutoff = 100;
-  if (req.user) {
-    qs.u = req.user;
-  }
   request.get({
-    uri: 'http://104.199.143.190/search',
-    qs
+    uri: 'http://104.199.143.190/search?lat=' + req.query.latitude + '&lng=' + req.query.longitude + '&cutoff=100' + (req.user?('&u=' + req.user):''),
+    timeout: 800
   },
   (err, r, ans) => {
     if (err) {
@@ -232,22 +226,9 @@ router.get('/nearby', deserializeToken, (req, res) => {
 
 // search from aj.nuttawut
 router.get('/search', deserializeToken, (req, res) => {
-
-  const qs = {};
-  if (req.query.latitude) {
-    qs.lat = '' + req.query.latitude;
-  }
-  if (req.query.longitude) {
-    qs.lng = '' + req.query.longitude;
-  }
-  qs.q = req.query.text;
-  qs.cutoff = 200;
-  if (req.user) {
-    qs.u = req.user;
-  }
   request.get({
-    uri: 'http://104.199.143.190/search',
-    qs
+    uri: 'http://104.199.143.190/search?q=' + req.query.text + (req.user?('&u=' + req.user):'') + (req.latitude?('&lat=' + req.latitude):'') + (req.longitude?('&lng=' + req.longitude):''),
+    timeout: 800
   },
   (err, r, ans) => {
     if (err) {
@@ -260,8 +241,6 @@ router.get('/search', deserializeToken, (req, res) => {
       results: answer.activities
     });
   });
-
-
 });
 
 // highlight from aj.nuttawut
@@ -269,7 +248,7 @@ router.get('/highlight', (req, res) => {
   const filter = {};
 
   //  http://localhost:3000/?sort=createAt,-startDate
-  filter.start = { $gt: new Date(new Date().getTime() + (7 * 60000)).toUTCString() };
+  filter.end = { $gt: new Date(new Date().getTime() + (7 * 60000)).toUTCString() };
   filter.isHighlight = true;
   filter.banner = { $exists: true };
   // field selector
