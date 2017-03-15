@@ -296,25 +296,14 @@ router.put('/:id', (req, res) => {
       }
     }
 
-    bcrypt.genSalt(10, (err, salt) => {
+    user.save((err, updatedUser) => {
       if (err) {
         return res.sendError(5, err);
       }
-      bcrypt.hash(user.password, salt, null, (err, hash) => {
-        if (err) {
-          return res.sendError(5, err);
-        }
-        user.password = hash;
-        user.save((err, updatedUser) => {
-          if (err) {
-            return res.sendError(5, err);
-          }
 
-          return res.status(202).json({
-            success: true,
-            results: updatedUser,
-          });
-        });
+      return res.status(202).json({
+        success: true,
+        results: updatedUser,
       });
     });
   });
