@@ -1,6 +1,6 @@
 const express = require('express');
 const { Activity, ActivityCheck, User } = require('../../../models');
-const { isAuthenticatedByToken, isStaff } = require('../../../config/authenticate');
+const { isAuthenticatedByToken, isStaff, isScanner } = require('../../../config/authenticate');
 
 const router = express.Router({ mergeParams: true });
 router.get('/', (req, res) => {
@@ -46,7 +46,7 @@ router.get('/', (req, res) => {
   });
 });
 
-router.post('/', isAuthenticatedByToken, isStaff, (req, res) => {
+router.post('/', isAuthenticatedByToken, isScanner, (req, res) => {
   const userId = req.body.user || req.query.user;
   // Validate required field from body
   if (userId) {
@@ -75,6 +75,7 @@ router.post('/', isAuthenticatedByToken, isStaff, (req, res) => {
           checkin.user = userId;
           checkin.activityId = req.params.id;
           checkin.createBy = req.user.id;
+          checkin.createAt = new Date();
           // Save checkin and check for error
           checkin.save((err, _checkin) => {
           // Handle error from save
@@ -119,7 +120,7 @@ router.get('/:cid', (req, res) => {
   });
 });
 
-router.delete('/:cid', isAuthenticatedByToken, isStaff, (req, res) => {
+router.delete('/:cid', isAuthenticatedByToken, isScanner, (req, res) => {
   ActivityCheck.findById(req.params.cid, (err, _checkin) => {
     // Handle error from ActivityCheck.findById
     if (err) {

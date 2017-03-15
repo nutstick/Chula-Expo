@@ -3,6 +3,7 @@ const Room = require('../../../models/Room');
 const Place = require('../../../models/Place');
 const retrieveError = require('../../../tools/retrieveError');
 const { RangeQuery } = require('../../../tools');
+const { isAuthenticatedByToken, isStaff, deserializeToken } = require('../../../config/authenticate');
 var ObjectId = require('mongoose').Types.ObjectId;
 const mongoose = require('mongoose');
 const router = express.Router();

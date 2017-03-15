@@ -2,6 +2,7 @@ const express = require('express');
 const Facility = require('../../../models/Facility');
 const { RangeQuery } = require('../../../tools');
 const retrieveError = require('../../../tools/retrieveError');
+const { isAuthenticatedByToken, isStaff, deserializeToken } = require('../../../config/authenticate');
 
 const router = express.Router();
 
@@ -189,17 +190,12 @@ router.put('/:id', (req, res) => {
   Facility.findById(req.params.id, (err, fac) => {
     if (err) {
       // Handle error from User.findById
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err)
-      });
+      return res.sendError(5, err);
     }
     if (!fac) {
-      return res.status(403).json({
-        success: false,
-        errors: retrieveError(32)
-      });
+      return res.sendError(32);
     }
+
     if (req.body.nameTH) {
       fac.name.th = req.body.nameTH;
     }

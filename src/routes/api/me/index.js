@@ -47,20 +47,21 @@ router.get('/', isAuthenticatedByToken, (req, res) => {
 
 
 router.get('/where', deserializeToken, (req, res) => {
-  // const qs = {};
-  // qs.lat = req.query.latitude;
-  // qs.lng = req.query.longitude;
-  // if (req.user) {
-  //   qs.u = req.user.id;
-  // }
-
   request.get({
-    uri: req.user && req.user.id ? `http://104.199.143.190/area?lat=${req.query.latitude}&lng=${req.query.longitude}&u=${req.user.id}`
-      : `http://104.199.143.190/area?lat=${req.query.latitude}&lng=${req.query.longitude}`,
+    uri: 'http://104.199.143.190/area?lat=' + req.query.latitude + '&lng=' + req.query.longitude + (req.user?('&u=' + req.user):''),
+    timeout: 1200
   },
   (err, r, ans) => {
     if (err) {
-      return res.sendError(5, err);
+      return res.json({
+        success: true,
+        results: {
+          text: {
+            en: 'no information',
+            th: 'ไม่มีข้อมูลของสถานที่นี้'
+          }
+        }
+      });
     }
 
     try {

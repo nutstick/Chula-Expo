@@ -5,7 +5,7 @@ const Ticket = require('../../../models/Ticket');
 const _ = require('lodash');
 const mongoose = require('mongoose');
 const { RangeQuery } = require('../../../tools');
-const { isAuthenticatedByToken, isStaff } = require('../../../config/authenticate');
+const { isAuthenticatedByToken, isStaff, deserializeToken } = require('../../../config/authenticate');
 const request = require('request');
 
 const router = express.Router();
@@ -185,124 +185,130 @@ const router = express.Router();
    });
  });
 
-// TODO - recommend from aj.nuttawut
-router.get('/recommend', (req, res) => {
-  const filter = {};
-
-  //  http://localhost:3000/?sort=createAt,-startDate
-  let sort = {};
-  sort = 'start';
-  filter.start = { $gt: new Date() };
-
-  // field selector
-  // http://localhost:3000/?fields=name,faculty
-  let fields;
-  if (req.query.fields) {
-    fields = req.query.fields.replace(/,/g, ' ');
-    fields = fields.replace(/nameEN/g, 'name.en');
-    fields = fields.replace(/shortDescriptionEN/g, 'shortDescription.en');
-    fields = fields.replace(/descriptionEN/g, 'description.en');
-    fields = fields.replace(/locationPlace/g, 'location.place');
-    fields = fields.replace(/locationFloor/g, 'location.floor');
-    fields = fields.replace(/locationRoom/g, 'location.room');
-    fields = fields.replace(/locationLat/g, 'location.latitude');
-    fields = fields.replace(/locationLong/g, 'location.longitude');
-  }
-
-  let query = Activity.find(filter);
-
-  if (sort) {
-    query.sort(sort);
-  }
-  if (fields) {
-    query.select(fields);
-  }
-  // limiter on each query
-  // http://localhost:3000/?limit=10
-  query = query.limit(20);
-
-
-  Activity.find(filter).count((err, total) => {
+// recommend from aj.nuttawut
+router.get('/recommend', isAuthenticatedByToken, (req, res) => {
+  request.get({
+    uri: 'http://104.199.143.190/recommend/' + req.user.id,
+    timeout: 800
+  },
+  (err, r, ans) => {
     if (err) {
-      return res.sendError(5, err);
-    }
-    query.exec((err, _act) => {
-      if (err) {
-        return res.sendError(5, err);
-      }
-      return res.status(200).json({
-        success: true,
-        results: _act,
-        queryInfo: {
-          total,
+      const filter = {};
+      filter.end = { $gt: new Date(new Date().getTime() + (7 * 60000)).toUTCString() };
+      const query = Activity.find(filter);
+      Activity.find(filter).count((err, total) => {
+        if (err) {
+          return res.sendError(5, err);
         }
+
+        query.limit(20).exec((err, _act) => {
+          if (err) {
+            return res.sendError(5, err);
+          }
+          return res.status(200).json({
+            success: true,
+            results: _act,
+            queryInfo: {
+              total,
+            }
+          });
+        });
       });
-    });
+    } else {
+      const answer = JSON.parse(ans);
+      return res.json({
+        success: true,
+        results: answer.activities
+      });
+    }
   });
 });
 
-// TODO - nearby from aj.nuttawut
-router.get('/nearby', (req, res) => {
-  const filter = {};
-
-  //  http://localhost:3000/?sort=createAt,-startDate
-  let sort = {};
-  sort = 'start';
-  filter.start = RangeQuery({ gt: new Date() }, 'Date');
-
-  // field selector
-  // http://localhost:3000/?fields=name,faculty
-  let fields;
-  if (req.query.fields) {
-    fields = req.query.fields.replace(/,/g, ' ');
-    fields = fields.replace(/nameEN/g, 'name.en');
-    fields = fields.replace(/shortDescriptionEN/g, 'shortDescription.en');
-    fields = fields.replace(/descriptionEN/g, 'description.en');
-    fields = fields.replace(/locationPlace/g, 'location.place');
-    fields = fields.replace(/locationFloor/g, 'location.floor');
-    fields = fields.replace(/locationRoom/g, 'location.room');
-    fields = fields.replace(/locationLat/g, 'location.latitude');
-    fields = fields.replace(/locationLong/g, 'location.longitude');
-  }
-
-  let query = Activity.find(filter);
-
-  if (sort) {
-    query.sort(sort);
-  }
-  if (fields) {
-    query.select(fields);
-  }
-  // limiter on each query
-  // http://localhost:3000/?limit=10
-  query = query.limit(20);
-
-
-  Activity.find(filter).count((err, total) => {
+// nearby from aj.nuttawut
+router.get('/nearby', deserializeToken, (req, res) => {
+  request.get({
+    uri: 'http://104.199.143.190/search?lat=' + req.query.latitude + '&lng=' + req.query.longitude + '&cutoff=100' + (req.user?('&u=' + req.user):''),
+    timeout: 800
+  },
+  (err, r, ans) => {
     if (err) {
-      return res.sendError(5, err);
-    }
-    query.exec((err, _act) => {
-      if (err) {
-        return res.sendError(5, err);
-      }
-      return res.status(200).json({
-        success: true,
-        results: _act,
-        queryInfo: {
-          total,
+      const filter = {};
+      filter.end = { $gt: new Date(new Date().getTime() + (7 * 60000)).toUTCString() };
+      const query = Activity.find(filter);
+      Activity.find(filter).count((err, total) => {
+        if (err) {
+          return res.sendError(5, err);
         }
+
+        query.limit(20).exec((err, _act) => {
+          if (err) {
+            return res.sendError(5, err);
+          }
+          return res.status(200).json({
+            success: true,
+            results: _act,
+            queryInfo: {
+              total,
+            }
+          });
+        });
       });
-    });
+    } else {
+      const answer = JSON.parse(ans);
+      return res.json({
+        success: true,
+        results: answer.activities
+      });
+    }
   });
 });
 
-// TODO - highlight from aj.nuttawut
+
+// search from aj.nuttawut
+router.get('/search', deserializeToken, (req, res) => {
+  request.get({
+    uri: 'http://104.199.143.190/search?q=' + req.query.text + (req.user?('&u=' + req.user):'') + (req.latitude?('&lat=' + req.latitude):'') + (req.longitude?('&lng=' + req.longitude):''),
+    timeout: 800
+  },
+  (err, r, ans) => {
+    if (err) {
+      const filter = {};
+      filter['name.th'] = { $regex: req.query.text };
+      const query = Activity.find(filter);
+      Activity.find(filter).count((err, total) => {
+        if (err) {
+          return res.sendError(5, err);
+        }
+
+        query.limit(20).exec((err, _act) => {
+          if (err) {
+            return res.sendError(5, err);
+          }
+          return res.status(200).json({
+            success: true,
+            results: _act,
+            queryInfo: {
+              total,
+            }
+          });
+        });
+      });
+    } else {
+      const answer = JSON.parse(ans);
+      return res.json({
+        success: true,
+        results: answer.activities
+      });
+    }
+  });
+});
+
+// highlight from aj.nuttawut
 router.get('/highlight', (req, res) => {
   const filter = {};
 
   //  http://localhost:3000/?sort=createAt,-startDate
-  filter.start = { $gt: new Date(new Date().getTime() + (7 * 60000)).toUTCString() };
+  filter.end = { $gt: new Date(new Date().getTime() + (7 * 60000)).toUTCString() };
   filter.isHighlight = true;
   filter.banner = { $exists: true };
   // field selector
@@ -328,11 +334,11 @@ router.get('/highlight', (req, res) => {
     }
 
     let skip = Math.floor(Math.random() * total);
-    if (skip >= 15) {
-      skip -= 15;
+    if (skip >= 10) {
+      skip -= 10;
     }
 
-    query.skip(skip).limit(15).exec((err, _act) => {
+    query.skip(skip).limit(10).exec((err, _act) => {
       if (err) {
         return res.sendError(5, err);
       }
@@ -489,6 +495,7 @@ router.get('/:id/qrvideo', (req, res) => {
     res.end();
   });
 });
+
 
 // Update an existing activity via PUT(JSON format)
 // ex. { "name","EditName"}
