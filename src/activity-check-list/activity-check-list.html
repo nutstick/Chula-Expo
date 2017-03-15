@@ -79,7 +79,7 @@
         return name || 'Not found';
       },
       _computeCreateAtDate: function(createAt) {
-        return moment.utc(createAt).format('D MMM, HH:mm');
+        return moment.utc(createAt).local().format('D MMM, HH:mm');
       },
     });
   </script>
