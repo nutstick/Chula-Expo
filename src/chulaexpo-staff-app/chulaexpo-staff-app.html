@@ -259,6 +259,7 @@
         this.fire('token', { token: token });
       },
       _routePageChanged: function(page, token) {
+        console.log(page);
         if (token) {
           this.page = page || 'home';
         }
