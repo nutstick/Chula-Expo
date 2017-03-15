@@ -32,12 +32,18 @@
         @apply(--layout-vertical);
         @apply(--layout-center-center);
         padding-top: 20px;
+				position: relative;
 				margin-bottom: 40px;
       }
 
 			paper-card {
         width: 100%;
+				position: relative;
       }
+			
+			.card-content {
+				position: relative;
+			}
 
       .item {
         margin-bottom: 10px;
@@ -103,6 +109,7 @@
 				flex: 3 1 30%;
         min-width: 30%;
 				order: 2;
+				margin-bottom: 70px;
 			}
 
       .card {
@@ -122,7 +129,7 @@
 					}
 
 					#main > #left, #main > #right {
-							min-height: 50px;
+							/*min-height: 50px;*/
 					}
 			}
 
