@@ -1,6 +1,5 @@
 const express = require('express');
 const User = require('../../../models/User');
-const bcrypt = require('bcrypt-nodejs');
 const { isAuthenticatedByToken, isStaff } = require('../../../config/authenticate');
 
 const router = express.Router();

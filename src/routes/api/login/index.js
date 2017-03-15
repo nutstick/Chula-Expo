@@ -24,7 +24,7 @@ router.post('/', (req, res, next) => {
       return next(err);
     }
     if (!user) {
-      return res.sendError(4);
+      return res.sendError(6);
     }
     req.logIn(user, { session: false }, (err) => {
       if (err) {
