@@ -117,6 +117,9 @@
         --paper-tab-ink: #eee;
         color: #000;
       }
+      [hiden] {
+        display: none;
+      }
     </style>
     <div class="container">
       <activity-api
@@ -139,7 +142,7 @@
         loading="{{zoneLoading}}"
         page="0"
         page-size="0"
-        fields="_id,nameEN"
+        fields="_id,nameTH"
       ></zone-api>
       <!-- Search Header -->
       <div class="search-box bottom">
@@ -148,7 +151,7 @@
           label="สังกัด"
           items="{{zones}}"
           item-value-path="_id"
-          item-label-path="name.en"
+          item-label-path="name.th"
           value="{{zone}}"
           disabled$="[[!isAdmin]]"
           no-label-float="true"
@@ -179,8 +182,8 @@
           <div class="card-item-actions">
             <paper-tabs scrollable no-bar hide-scroll-buttons>
               <paper-tab on-tap="_showClick">Show</paper-tab>
-              <paper-tab on-tap="_editClick">Edit</paper-tab>
-              <paper-tab on-tap="_deleteClick">Delete</paper-tab>
+              <paper-tab on-tap="_editClick" hiden$="[[_computeStaff(me.staff.staffType)]]">Edit</paper-tab>
+              <paper-tab on-tap="_deleteClick" hiden$="[[_computeStaff(me.staff.staffType)]]">Delete</paper-tab>
             </paper-tabs>
           </div>
         </paper-card-item>
@@ -316,6 +319,10 @@
         if(string.length>40)
           return string.substring(0,40) + '...';
         else return string;
+      },
+      _computeStaff: function(staff) {
+        console.log(staff)
+        return staff === 'Scanner'
       }
     })
   </script>

@@ -208,7 +208,7 @@
 							<label class="label input">Video Url</label>
 							<div class="flex fitdiv">
 								{{activity.video}}
-                <div id="qrvideo" style="width:250px; height:250px; margin-bottom:15px; margin-top:4px;" hidden$="{{!activity.video}}"></div>
+                <div id="qrvideo" style="width:250px; height:250px; margin-bottom:15px; margin-top:4px;"></div>
 
 							</div>
 						</div>
@@ -216,7 +216,7 @@
 							<label class="label input">PDF Url</label>
 							<div class="flex fitdiv">
 								{{activity.pdf}}
-                <div id="qrcode" style="width:250px; height:250px; margin-bottom:15px; margin-top:4px;" hidden$="{{!activity.video}}"></div>
+                <div id="qrcode" style="width:250px; height:250px; margin-bottom:15px; margin-top:4px;"></div>
 							</div>
 						</div>
 						<div>
@@ -236,7 +236,7 @@
             <zone-api
               id="zoneAPI"
               zone-id="{{activity.zone}}"
-              fields="nameEN"
+              fields="nameTH"
               page="0"
               page-size="0"
               zone="{{zone}}"
@@ -252,7 +252,7 @@
             <place-api
               id="placeAPI"
               place-id="{{activity.location.place}}"
-              fields="nameEN"
+              fields="nameTH"
               page="0"
               page-size="0"
               place="{{place}}"
@@ -267,7 +267,7 @@
             <room-api
               id="roomAPI"
               room-id="{{activity.location.room}}"
-              fields="nameEN"
+              fields="nameTH"
               page="0"
               page-size="0"
               room="{{room}}"
@@ -287,10 +287,10 @@
 					<div class="item google-map">
 						<google-map latitude="[[activity.location.latitude]]" longitude="[[activity.location.longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o" fit>
 							<google-map-marker latitude="{{activity.location.latitude}}" longitude="{{activity.location.longitude}}" draggable="false"
-									title="Activity Location!" ></google-map-marker>
-						</google-map>
+								title="Activity Location!" ></google-map-marker>
+							</google-map>
+						</div>
 					</div>
-				</div>
 				<div class="card-content">
 					<!-- Thai Language -->
 					<div class="flex-layout center">
@@ -365,10 +365,10 @@
         <rounds-list activity-id="[[activityId]]"></rounds-list>
 			</div>
 			<bottom-prefab-speed-dial reveals effects="waterfall">
-				<paper-fab mini icon="icons:create" on-tap="_onEdit"></paper-fab>
+				<!--<paper-fab mini icon="icons:create" on-tap="_onEdit"></paper-fab>-->
 				<paper-fab mini icon="image:camera-alt" on-tap="_onLaunchQR"></paper-fab>
 				<paper-fab mini icon="maps:local-offer" on-tap="_onActivityCheckListClick"></paper-fab>
-				<paper-fab mini icon="icons:delete" on-tap=	"_onRemove"></paper-fab>
+				<!--<paper-fab mini icon="icons:delete" on-tap=	"_onRemove"></paper-fab>-->
 			</bottom-prefab-speed-dial>
 		</div>
     <paper-dialog id="activityCheckDialog" on-iron-overlay-closed="">

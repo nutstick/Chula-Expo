@@ -59,7 +59,7 @@
       },
       _onRemove: function(e) {
         if(event.detail.confirmed) {
-          var url = window.api + '/api/activities/' + activityId + '/checkin/' + this._removeId;
+          var url = window.api + '/api/activities/' + this.activityId + '/checkin/' + this._removeId;
           this._removeId = null;
 
           setTimeout(function () {

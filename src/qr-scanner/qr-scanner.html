@@ -129,7 +129,7 @@
         <div class="horizontal layout center-justified" style="height: 100%">
           <div class="vertical layout center-justified">
             <paper-spinner id="spinner" hidden></paper-spinner>
-            <p class="error">[[_computeTextMessage(success, error, videoError)]]</p>
+            <p class="error">[[_computeTextMessage(success, error)]]</p>
           </div>
         </div>
       </div>
@@ -199,6 +199,10 @@
             'Authorization': 'JWT ' + token
           };
         }.bind(this));
+
+        if(/(android)/i.test(navigator.userAgent)) {
+          this.videoError = ' '
+        }
       },
       open: function() {
         // Append dialog to the body. This ensures that the dialog claims the full screen instead of being positioned next to the <paper-date-picker-item>
@@ -212,6 +216,7 @@
             $(this.$.reader).html5_qrcode(function(data) {
               // do something when code is read
               if (data === 'error decoding QR Code') {
+                this.set('loading', false);
                 return this.set('error', 'Can\'t find matched QR Code');
               }
               this.$.ajax.params = {
@@ -223,6 +228,7 @@
             function(error) {
               //show read errors
               if (this.videoError) {
+                this.set('loading', false); 
                 this.error = error;
               }
               console.log(error)
@@ -276,14 +282,15 @@
 
         return !!success || !!error || !!loading;
       },
-      _computeTextMessage: function(success, error, videoError) {
-        return success ? 'Check in success' : (error ? error : videoError);
+      _computeTextMessage: function(success, error) {
+        return success ? 'Check in success' : error;
       },
       _loadingChanged: function(loading) {
         this.$.spinner.active = true;
         this.$.spinner.hidden = !loading;
       },
       _handleFile: function(event) {
+        this.set('loading', true);
         var reader = new FileReader();
         reader.onload = function(e) {
           var dataURL = reader.result;

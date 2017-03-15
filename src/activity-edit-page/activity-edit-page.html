@@ -87,6 +87,12 @@
         width: 100%;
         height: 300px;
       }
+      .image {
+        width: 100px;
+        height: 100px;
+        margin: 4px 8px 4px 0px;
+        position: relative;
+      }
       .title {
         @apply(--layout);
       }
@@ -228,7 +234,7 @@
                   class="elements-box"
                   no-label-float="true"
                   value="{{activity.zone}}"
-                  item-label-path="name.en"
+                  item-label-path="name.th"
                   item-value-path="_id"
                   placeholder="เลือก zone ของกิจกรรม"
                   on-selected-item-changed="_clickZone"
@@ -241,7 +247,7 @@
                   loading="{{zoneLoading}}"
                   page="0"
                   page-size="0"
-                  fields="_id,nameEN"
+                  fields="_id,nameTH"
                 ></zone-api>
   						</div>
   					</div>
@@ -257,7 +263,7 @@
                   class="elements-box"
                   value="{{activity.location.place}}"
                   no-label-float="true"
-                  item-label-path="name.en"
+                  item-label-path="name.th"
                   item-value-path="_id"
                   on-selected-item-changed="_clickPlace"
                   required
@@ -272,7 +278,7 @@
                   page="0"
                   value="{{activity.location.place}}"
                   page-size="0"
-                  fields="_id,nameEN"
+                  fields="_id,nameTH"
                 ></place-api>
               </div>
   					</div>
@@ -287,7 +293,7 @@
                   value="{{activity.location.room}}"
                   class="elements-box"
                   no-label-float="true"
-                  item-label-path="name.en"
+                  item-label-path="name.th"
                   item-value-path="_id"
                   on-selected-item-changed="_clickRoom"
                   placeholder="เลือกห้อง"
@@ -300,7 +306,7 @@
                   loading="{{roomLoading}}"
                   page="0"
                   page-size="0"
-                  fields="_id,nameEN"
+                  fields="_id,nameTH"
                 ></room-api>
               </div>
             </div>
@@ -318,7 +324,7 @@
 						<div class="item">
 							<label class="label height">รูปภาพที่เกี่ยวข้อง</label>
               <template is="dom-repeat" items="{{activity.pictures}}">
-                <iron-image style="width:100px; height:100px;" sizing="cover" preload fade src="{{_computePicture(item)}}"></iron-image>
+                <iron-image class="image" style="width:100px; height:100px;" sizing="cover" preload fade src="{{_computePicture(item)}}"></iron-image>
               </template>
               <div class="input-wrapper">
                 <images-upload
@@ -337,12 +343,15 @@
               <label class="label input">Tags</label>
               <div class="input-wrapper">
                 <paper-select
+                  id="tagsInput"
                   multiple
                   label-field="tags"
                   bind-value="{{activity.tags}}"
                   select-on-blur
                   label="เลือก tags สำหรับกิจกรรม"
                   on-input-changed="inputChanged"
+                  on-focus="inputChanged"
+                  on-blur="inputNofocus"
                 ></paper-select>
               </div>
 						</div>
@@ -446,16 +455,20 @@
           value: ''
         }
       },
+      _data: ["Energy","Ageing Society","Body","Mind","Social Issues","Invention","Quality of Life","Food & Agriculture","Community","Art & Culture","Medication","Economy","Transportation","Technology","Environment","Thai Wisdom","Design","Law","Education","Royal Duties","Beauty","Life","Communication","Sport","Science","Entertainment","International Issue"],
+
       inputChanged: function(e) {
-        var data = ["Energy","Ageing Society","Body","Mind","Social Issues","Invention","Quality of Life","Food & Agriculture","Community","Art & Culture","Medication","Economy","Transportation","Technology","Environment","Thai Wisdom","Design","Law","Education","Royal Duties","Beauty","Life","Communication","Sport","Science","Entertainment","International Issue"];
         var input = (e.detail.value || '').trim().toLowerCase();
         if (input) {
-          e.target.options = data.filter(function(item) {
+          e.target.options = this._data.filter(function(item) {
             return item.toLowerCase().indexOf(input) === 0;
           });
         } else {
-          e.target.options = [];
+          e.target.options = this._data;
         }
+      },
+      inputNofocus: function(e) {
+        e.target.options = [];
       },
       _activatedChanged: function(activated) {
         if (activated) {

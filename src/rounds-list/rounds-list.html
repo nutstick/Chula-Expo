@@ -49,7 +49,7 @@
       .item-styles /deep/ paper-item:focus:before {
         opacity: 0;
       }
-      .--red {
+      .red {
         background-color: #F44336;
         color: #fff;
       }
@@ -86,8 +86,17 @@
       #ticketDialog {
         width: 100%;
       }
+      [hidden] {
+        display: none;
+      }
     </style>
     <round-api id="api" url="[[_url]]" rounds="{{rounds}}" error="{{error}}"></round-api>
+    <me-api
+      id="meAPI"
+      me="{{me}}"
+      token="[[token]]"
+      fields="name,_id,profile,type,staff"
+    ></me-api>
     <paper-card class="card">
       <app-header fixed style="height: 48px;">
         <app-toolbar>
@@ -126,7 +135,7 @@
                       <iron-icon icon="image:photo-camera" item-icon></iron-icon>
                       Open QRCode Scanner
                     </paper-icon-item>
-                    <paper-icon-item class="delete --red" on-tap="_deleteClick">
+                    <paper-icon-item class="delete red" on-tap="_deleteClick" hidden$="[[_computeScannerHidden(me.staff.staffType)]]">
                       <paper-ripple></paper-ripple>
                       <iron-icon icon="icons:delete" item-icon></iron-icon>
                       Delete
@@ -211,6 +220,16 @@
           type: Array,
           value: [],
         },
+        token: {
+          type: String,
+          value: function() {
+            return window.token;
+          }
+        },
+        me: {
+          type: Object,
+          value: {}
+        },
         error: {
           type: Array,
           value: [],
@@ -246,6 +265,9 @@
           };
           this.$.api.generateRequest();
         }.bind(this));
+      },
+      attached: function() {
+        this.$.meAPI.generateRequest();
       },
       _getClassForItem: function(item, selected) {
         return selected ? 'item expanded' : 'item';
@@ -344,6 +366,10 @@
       },
       _computeTitleBarText: function(_state) {
         return _state === 'list' ? 'Round' : 'Create round';
+      },
+      _computeScannerHidden: function(staffType) {
+        console.log(staffType)
+        return staffType === 'Scanner'
       }
     });
   </script>

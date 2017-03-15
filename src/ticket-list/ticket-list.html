@@ -78,7 +78,7 @@
         return moment.utc(createAt).local().format('D MMM, HH:mm');
       },
       _onCheckClick: function(e) {
-        this._removeId = e.target.getAttribute('target-id');
+        this._checkInId = e.target.getAttribute('target-id');
         this.$.checkInDialog.open();
       },
       _onCheck: function(e) {
@@ -105,7 +105,7 @@
       },
       _onRemove: function(e) {
         if(event.detail.confirmed) {
-          var url = window.api + '/api/rounds/' + this.roundId + '/tickets/' + this._removeId;
+          var url = window.api + '/api/activities' + this.activityId + '/rounds/' + this.roundId + '/tickets/' + this._removeId;
           this._removeId = null;
 
           setTimeout(function () {
