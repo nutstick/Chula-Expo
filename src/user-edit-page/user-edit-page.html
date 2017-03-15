@@ -169,13 +169,31 @@
               </paper-button-group>
               <!-- Student -->
               <fieldset class="field" hidden$="{{!student}}">
-                <paper-input name="academicLevel" label="การศึกษาปัจจุบัน" value="{{user.academic.level}}" required="{{student}}" always-float-label></paper-input>
-                <paper-input name="academicYear" label="ชั้นปี" value="{{user.academic.year}}" required="{{student}}" always-float-label></paper-input>
+                <vaadin-combo-box
+                  name="academicLevel"
+                  label="การศึกษาปัจจุบัน"
+                  items="[[academicLevels]]"
+                  value="{{academicLevel}}"
+                  require="{{student}}"
+                  always-float-label></vaadin-combo-box>
+                <vaadin-combo-box
+                  name="academicYear"
+                  label="ชั้นปี"
+                  items="[[academicYears]]"
+                  value="{{user.academic.year}}"
+                  require="{{student}}"
+                  always-float-label></vaadin-combo-box>
                 <paper-input name="academicSchool" label="สถาบันการศึกษา" value="{{user.academic.school}}" required="{{student}}" always-float-label></paper-input>
               </fieldset>
               <!-- Worker -->
               <fieldset class="field" hidden$="{{!worker}}">
-                <paper-input name="workerJob" label="อาชีพ" value="{{user.worker.job}}" required="{{worker}}" always-float-label></paper-input>
+                <vaadin-combo-box
+                  name="workerJob"
+                  label="อาชีพ"
+                  items="[[workerJobs]]"
+                  value="{{user.worker.job}}"
+                  require="{{worker}}"
+                  always-float-label></vaadin-combo-box>
               </fieldset>
               <!-- Staff -->
               <fieldset class="field" hidden$="{{!staff}}">
@@ -289,22 +307,66 @@
           type: Boolean,
           value: false
         },
+        workerJobs: {
+          type: Array,
+          value: ['เกษตรกร‎', 'เจ้าหน้าที่รัฐบาล‎', 'เภสัชกร‎', 'แพทย์', 'โฆษก‎ ', 'โปรแกรมเมอร์', 'กวี‎', 'การประมง‎', 'การฝีมือ‎', 'การส่งเสริมอาชีพ‎', 'ข้าราชการ‎', 'คนขับรถแท็กซี่‎', 'ครู', 'คอลัมนิสต์‎', 'จิตรกร‎', 'ช่างทำเครื่องดนตรี‎', 'ช่างทำผม‎', 'ตำรวจ‎', 'ตุลาการ‎', 'ทนายความ‎', 'ทหาร', 'ธุรกิจส่วนตัว', 'นักเขียน‎', 'นักเขียนบทภาพยนตร์', 'นักเคลื่อนไหว‎', 'นักเศรษฐศาสตร์', 'นักแต่งเพลง', 'นักแปล', 'นักแสดง‎', 'นักโบราณคดี', 'นักโภชนาการ', 'นักกฎหมาย‎', 'นักการเมือง‎', 'นักการกุศล‎', 'นักการทูต‎', 'นักการธนาคาร‎', 'นักการศึกษา‎', 'นักกีฬา‎', 'นักข่าว', 'นักคณิตศาสตร์‎', 'นักจัดรายการวิทยุ‎', 'นักจิตวิทยา', 'นักชีววิทยา‎', 'นักดนตรี‎', 'นักดาราศาสตร์‎', 'นักถ่ายภาพ‎', 'นักธุรกิจ‎', 'นักบวช‎', 'นักบัญชี', 'นักบิน‎', 'นักบินอวกาศ‎', 'นักประชาสัมพันธ์‎', 'นักประดิษฐ์', 'นักประวัติศาสตร์', 'นักประวัติศาสตร์ศิลป์‎', 'นักปรัชญา', 'นักปีนเขา', 'นักผจญภัย‎', 'นักพากย์', 'นักภาษาศาสตร์', 'นักมายากล‎', 'นักร้อง', 'นักวาดการ์ตูน', 'นักวิจารณ์ภาพยนตร์', 'นักวิทยาศาสตร์', 'นักสะสมศิลปะ', 'นักสังคมวิทยา', 'นักสังคมศาสตร์', 'นักสัตววิทยา', 'นักสำรวจ', 'นักสืบ', 'นักหนังสือพิมพ์‎', 'นักอนุรักษ์ธรรมชาติ', 'นักออกแบบ', 'นักออกแบบเสื้อผ้า‎', 'นักออกแบบกราฟิก‎', 'นางแบบ', 'นางงาม', 'นายแบบ', 'บรรณาธิการ', 'บุคคลในวงการคอมพิวเตอร์‎', 'บุคคลในวงการพลศึกษา', 'บุคคลในวงการวรรณกรรม', 'บุคคลด้านสื่อ', 'ผู้เชี่ยวชาญด้านศาสนาพุทธ', 'ผู้กำกับ', 'ผู้กำกับภาพยนตร์', 'ผู้กำกับละครโทรทัศน์‎', 'ผู้จัดพิมพ์ (บุคคล)‎', 'ผู้ประกาศข่าว', 'ผู้พิพากษาไทย‎', 'ผู้มีชื่อเสียง', 'ผู้อำนวยการสร้างภาพยนตร์', 'พยาบาล', 'พิธีกร', 'ฟรีแลนซ์', 'ภูมิสถาปนิก', 'รัฐวิสาหกิจ', 'ว่างงาน', 'วาทยกร', 'วิชาชีพทางด้านสาธารณสุข', 'วิศวกร', 'วีเจ', 'ศิลปิน', 'สถาปนิก', 'อัยการ', 'อาจารย์', 'อาชีพการเดินเรือ', 'อาชีพการบันเทิง', 'อาชีพด้านอาหาร', 'อื่น ๆ']
+        },
+        academicLevels: {
+          type: Array,
+          value: ["มัธยมต้น", "มัธยมปลาย", "ปริญญาตรี", "ปริญญาโท", "ปริญญาเอก", "อื่น ๆ"]
+        },
+        academicLevel: {
+          type: String,
+          observer: '_onAcademicLevelChanged'
+        },
+        academicYears: {
+          type: Array,
+          value: []
+        },
         route: {
           type: String,
         },
         activated: {
           type: Boolean,
           value: false,
-          observer: '_activatedChanged'
+          observer: '_onActivatedChanged'
         },
       },
+      observers: [
+        '_onUserChanged(user)'
+      ],
       _computeUrl: function(userId) {
         return window.api + '/api/users/' + userId;
       },
-      _activatedChanged: function(activated) {
+      _onAcademicLevelChanged: function(level) {
+        if (level === 'มัธยมต้น') {
+          this.academicYears = ["ม.1", "ม.2", "ม.3"];
+        } else if (level === 'มัธยมปลาย') {
+          this.academicYears = ["ม.4", "ม.5", "ม.6"];
+        } else if (level === 'ปริญญาตรี') {
+          this.academicYears = ["ปี 1", "ปี 2", "ปี 3", "ปี 4", "ปี 5", "ปี 6", "ปี 7", "ปี 8"];
+        } else if (level === 'ปริญญาโท') {
+          this.academicYears = ["ปี 1", "ปี 2", "ปี 3", "ปี 4"];
+        } else if (level === 'ปริญญาเอก') {
+          this.academicYears = ["ปี 1", "ปี 2", "ปี 3", "ปี 4"];
+        } else if (level === 'อื่น ๆ') {
+          this.academicYears = ["ปี 1", "ปี 2", "ปี 3", "ปี 4", "ปี 5", "ปี6"];
+        } else {
+          this.academicYears = [];
+        }
+      },
+      _onActivatedChanged: function(activated) {
 				if (activated) {
 					this.$.userAPI.generateRequest();
 				}
+      },
+      _onUserChanged: function(user) {
+        if (user.worker) {
+          this.workerJob = user.worker.job;
+        } else if (user.academic) {
+          this.academicLevel = user.academic.level;
+          this.academicYear = user.academic.year;
+        }
       },
       _typeChanged: function(event) {
         this.hideStudent = this.type;
@@ -350,9 +412,8 @@
         if (e.detail.response.success) {
           this.$.form.reset();
 
-					window.history.pushState({}, null, '/user/' + this.activityId + '/show/');
+					window.history.pushState({}, null, '/user/' + this.userId + '/show/');
           window.dispatchEvent(new CustomEvent('location-changed'));
-
         }
       },
       _error: function(e) {

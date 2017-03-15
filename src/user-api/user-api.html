@@ -121,6 +121,7 @@
               this.user = event.detail.response.results;
             } else {
               this.users = event.detail.response.results;
+              console.log(Math.ceil(event.detail.response.queryInfo.total / this.pageSize));
               this.set('totalPages', Math.ceil(event.detail.response.queryInfo.total / this.pageSize));
             }
           } else {
