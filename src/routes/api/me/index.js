@@ -64,24 +64,28 @@ router.get('/where', deserializeToken, (req, res) => {
       });
     }
 
-    const answer = JSON.parse(ans);
-    if (!answer.area) {
-      answer.area = {};
-    }
-    if (!answer.area.nameEn || !answer.area.nameTh) {
-      answer.area.nameEn = 'no information';
-      answer.area.nameTh = 'ไม่มีข้อมูลของสถานที่นี้';
-    }
-
-    return res.json({
-      success: true,
-      results: {
-        text: {
-          en: answer.area.nameEn,
-          th: answer.area.nameTh
-        }
+    try {
+      const answer = JSON.parse(ans);
+      if (!answer.area) {
+        answer.area = {};
       }
-    });
+      if (!answer.area.nameEn || !answer.area.nameTh) {
+        answer.area.nameEn = 'no information';
+        answer.area.nameTh = 'ไม่มีข้อมูลของสถานที่นี้';
+      }
+
+      return res.json({
+        success: true,
+        results: {
+          text: {
+            en: answer.area.nameEn,
+            th: answer.area.nameTh
+          }
+        }
+      });
+    } catch (err) {
+      return res.sendError(5, err);
+    }
   });
 });
 

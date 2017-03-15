@@ -12,7 +12,7 @@ const cors = require('cors');
 // logger and utility
 const logger = require('morgan');
 const chalk = require('chalk');
-const rfs = require('rotating-file-stream');
+const fsr = require('file-stream-rotator');
 // database and passport
 const mongoose = require('mongoose');
 const passport = require('passport');
@@ -23,6 +23,8 @@ const sass = require('node-sass-middleware');
 // Passport Config
 const passportConfig = require('./config/passport');
 const popupTools = require('popup-tools');
+
+const jwt = require('json-web-token');
 
 // Load envirountment variables from .env file
 dotenv.load({ path: '.env' });
@@ -75,24 +77,36 @@ const logDirectory = path.join(__dirname, 'log');
 
 fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory); // eslint-disable-line
 
-const accessLogStream = rfs('access.log', {
-  interval: '1d', // rotate daily
-  path: logDirectory
+const accessLogStream = fsr.getStream({
+  filename: 'log/access-%DATE%.log',
+  frequency: 'daily',
+  date_format: 'YYYY-MM-DD'
 });
 
-/*
-app.use(function (tokens, req, res) {
-  console.log(token.header)
-  console.log(token.headers)
-  return [
+app.use(logger((tokens, req, res) => {
+  const authorization = tokens.req(req, res, 'Authorization');
+  const log = [
+    tokens.date(req, res),
     tokens.method(req, res),
     tokens.url(req, res),
     tokens.status(req, res),
-    tokens.res(req, res, 'content-length'), '-',
-    tokens['response-time'](req, res), 'ms'
-  ].join(' ')
-}, { stream: accessLogStream });
-*/
+  ];
+  if (authorization && authorization.split(' ')[0] === 'JWT') {
+    jwt.decode(process.env.JWT_SECRET, authorization.split(' ')[1], (err, decodedPayload) => {
+      if (!err) {
+        log.push(':UID[');
+        log.push(decodedPayload.sub);
+        log.push(']');
+        log.push(tokens['response-time'](req, res), 'ms');
+        return log.join(' ');
+      }
+      return '';
+    });
+  } else {
+    log.push(tokens['response-time'](req, res), 'ms');
+    return log.join(' ');
+  }
+}, { stream: accessLogStream }));
 
 // Set favicon using serve-favicon at /public/favicon.icon
 app.use(favicon(path.join(__dirname, '/public/favicon.ico')));
