@@ -136,7 +136,7 @@
       <div id="reader" style="min-width:100%; min-height: 500px;" hidden$=[[_computeVideoShow(videoError)]]>
       </div>
       <div style="width: 100%; height: 100%;" hidden$=[[!videoError]]>
-        <div class="input-container" on-click="_uploadClick">
+        <div class="input-container" on-tap="_uploadClick">
           <iron-icon icon="image:photo"></iron-icon>
           <h3 style="text-align: center">Tap to upload QR<h3>
           <input id="imageInput" type="file" accept="image/*" capture="camera" on-change="_handleFile" hidden></input>
@@ -201,10 +201,7 @@
         }.bind(this));
 
         if(/(android)/i.test(navigator.userAgent)) {
-          this.videoError = ' ';
-        }
-        if(/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
-          this.videoError = ' ';
+          this.videoError = ' '
         }
       },
       open: function() {
@@ -214,33 +211,32 @@
         // Wait until dialog is added to the DOM (required for Safari)
         setTimeout(function() {
           this.$.dialog.open();
-          if (this.videoError !== ' ') {
-            setTimeout(function() {
-              $(this.$.reader).html5_qrcode(function(data) {
-                // do something when code is read
-                if (data === 'error decoding QR Code') {
-                  this.set('loading', false);
-                  return this.set('error', 'Can\'t find matched QR Code');
-                }
-                this.$.ajax.params = {
-                  user: data,
-                };
-                this.$.ajax.generateRequest();
-                this.set('loading', true);
-              }.bind(this),
-              function(error) {
-                //show read errors
-                if (this.videoError) {
-                  this.set('loading', false); 
-                  this.error = error;
-                }
-                console.log(error)
-              }.bind(this), function(videoError) {
-                //the video stream could be opened
-                this.set('videoError', videoError.name || videoError.message);
-              }.bind(this));
-            }.bind(this), 100);
-          }
+
+          setTimeout(function() {
+            $(this.$.reader).html5_qrcode(function(data) {
+              // do something when code is read
+              if (data === 'error decoding QR Code') {
+                this.set('loading', false);
+                return this.set('error', 'Can\'t find matched QR Code');
+              }
+              this.$.ajax.params = {
+                user: data,
+              };
+              this.$.ajax.generateRequest();
+              this.set('loading', true);
+            }.bind(this),
+            function(error) {
+              //show read errors
+              if (this.videoError) {
+                this.set('loading', false); 
+                this.error = error;
+              }
+              console.log(error)
+            }.bind(this), function(videoError) {
+              //the video stream could be opened
+              this.set('videoError', videoError.name || videoError.message);
+            }.bind(this));
+          }.bind(this), 100);
         }.bind(this), 1);
       },
       _onClosed: function(e, detail) {

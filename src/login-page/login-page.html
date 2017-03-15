@@ -93,8 +93,7 @@
           }
         },
         page: {
-          type: String,
-          observer: '_pageChanged',
+          type: String
         },
         isAuthenticate: {
           type: Boolean,
@@ -149,11 +148,7 @@
           this.$$('#loginButton').disabled = !email || !password;
         }
       },
-      _pageChanged: function(page) {
-        console.log(page);
-      },
       _computeHide: function(page, isAuthenticate) {
-        console.log(page);
         if (isAuthenticate || page === 'signup') {
           this.playAnimation('exit');
         }

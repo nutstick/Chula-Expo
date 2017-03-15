@@ -247,6 +247,10 @@
         _loading: {
           type: Boolean,
           value: true
+        },
+        route: {
+          type: Object,
+          observer: '_viewRoute'
         }
       },
 
@@ -254,6 +258,13 @@
         '_routePageChanged(routeData.page, token)',
       ],
 
+      _viewRoute: function(route) {
+        if (route.path === '/signup') {
+          this.page = 'signup';
+        } else if (route.path === '/') {
+          this.page = 'home';
+        }
+      },
       _updateToken: function(token) {
         window.token = token;
         this.fire('token', { token: token });
