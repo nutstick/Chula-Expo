@@ -47,9 +47,17 @@ router.get('/', isAuthenticatedByToken, (req, res) => {
 
 
 router.get('/where', deserializeToken, (req, res) => {
+  const qs = {};
+  qs.lat = req.query.latitude;
+  qs.lng = req.query.longitude;
+  if (req.user) {
+    qs.u = req.user;
+  }
+
   request.get({
-    uri: 'http://104.199.143.190/area?lat=' + req.query.latitude + '&lng=' + req.query.longitude + (req.user?('&u=' + req.user):''),
-    timeout: 1200
+    uri: 'http://104.199.143.190/area',
+    qs,
+    timeout: 1000
   },
   (err, r, ans) => {
     if (err) {
