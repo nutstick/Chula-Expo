@@ -93,7 +93,7 @@
       page="[[page]]"
       page-size="[[pageSize]]"
       search="[[_search]]"
-      totalPages="{{totalPages}}"
+      total-pages="{{totalPages}}"
       users="{{users}}"
       loading="{{_loading}}"
       error="{{error}}"
@@ -146,8 +146,14 @@
           value: false,
           observer: '_activatedChanged'
         },
-        page: Number,
-        pageSize: Number,
+        page: {
+          type: Number,
+          value: 1
+        },
+        pageSize: {
+          type: Number,
+          value: 10
+        },
         totalPages: Number,
         error: Object,
         users: {

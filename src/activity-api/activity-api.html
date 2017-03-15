@@ -11,6 +11,7 @@
       headers="{{headers}}"
       params="{{params}}"
       on-response="_handleResponse"
+      on-error="_handleError"
       handle-as="json"
     ></iron-ajax>
   </template>
@@ -82,7 +83,8 @@
         },
         loading: {
           type: Boolean,
-          notify: false,
+          value: false,
+          notify: true
         },
         error: {
           type: Object,
@@ -146,6 +148,7 @@
 
         this.set('params.zone', this.zone);
 
+        this.set('loading', true);
         return this.$.activityResource.generateRequest();
       },
       _handleResponse: function(event) {
@@ -163,6 +166,17 @@
             this.error = event.detail.response.errors;
           }
 
+        }
+      },
+      _handleError: function(event) {
+        this.set('loading', false);
+        try {
+          var response = event.detail.request.xhr.response;
+          if (!response.success) {
+            this.error = response.errors;
+          }
+        } catch(err) {
+          this.error = err;
         }
       },
       _idChanged: function(id) {
