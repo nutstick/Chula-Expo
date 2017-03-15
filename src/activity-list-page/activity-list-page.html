@@ -120,6 +120,18 @@
       [hiden] {
         display: none;
       }
+      .loading {
+        text-align: center;
+        height: 300px;
+        @apply(--layout-horizontal);
+        @apply(--layout-justified);
+        @apply(--layout-center-justified);
+      }
+      .loading > paper-spinner {
+        @apply(--layout-self-center);
+        width: 48px;
+        height: 48px;
+      }
     </style>
     <div class="container">
       <activity-api
@@ -131,7 +143,7 @@
         end="{{end}}"
         page="[[page]]"
         me="[[me]]"
-        loading="{{loading}}"
+        loading="{{_loading}}"
         page-size="[[pageSize]]"
         total-pages="{{totalPages}}"
       ></activity-api>
@@ -166,8 +178,13 @@
         </div>
       </paper-card-item>
       <!-- List -->
-      <template is="dom-if" if="{{_computeNoActivities(activities)}}">
+      <template is="dom-if" if="{{_computeNoActivities(_loading, activities)}}">
         <div class="empty-list"></div>
+      </template>
+      <template is="dom-if" if="[[_loading]]">
+        <div class="loading">
+          <paper-spinner id="spinner" active></paper-spinner>
+        </div>
       </template>
       <template is="dom-repeat" items="{{activities}}">
         <paper-card-item class="activity-item" action image="[[_computeImage(item.thumbnail)]]">
@@ -223,9 +240,9 @@
         error: {
           type: Object,
         },
-        loading: {
+        _loading: {
           type: Boolean,
-          value: false,
+          value: true,
         },
         activities: {
           type: Array,
@@ -247,6 +264,7 @@
       observers: [
         '_changeAcitvityParams(page, pageSize, zone)'
       ],
+
       _changeAcitvityParams: function(page, pageSize, zone) {
         this.set('activities', []);
         this.$.activityAPI.generateRequest();
@@ -299,8 +317,8 @@
           }.bind(this), 300);
         }
       },
-      _computeNoActivities: function(activities) {
-        return !activities.length;
+      _computeNoActivities: function(_loading, activities) {
+        return !_loading && !activities.length;
       },
       _computeAdmin: function(me) {
         this.set('zone', (me && me.staff.staffType !== 'Admin') ? me.staff.zone : null);
