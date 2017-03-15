@@ -1,12 +1,12 @@
 const express = require('express');
 const User = require('../../../models/User');
-const { isAuthenticatedByToken, isStaff } = require('../../../config/authenticate');
+const { isAuthenticatedByToken, isStaff, isScanner } = require('../../../config/authenticate');
 
 const router = express.Router();
 // const avaliableFields = ['_i', 'name', 'email', 'age', 'gender', 'profile', 'type',
 // 'academic', 'worker', 'staff', 'tags', 'facebbok'];
 
-router.use(isAuthenticatedByToken, isStaff);
+router.use(isAuthenticatedByToken, isScanner);
 
 router.get('/', (req, res) => {
   const filters = {};
@@ -42,6 +42,8 @@ router.get('/', (req, res) => {
       filters.$or.push({ _id: req.query.search });
     }
   }
+  filters.type = { $ne: 'Staff' };
+
 
   let fields = [];
   // Fields selecting query
@@ -84,6 +86,7 @@ router.get('/', (req, res) => {
       skip = Number.parseInt(req.query.skip, 0);
       query = query.skip(skip);
     }
+
     User.find(filters).count((err, total) => {
       if (err) {
         return res.sendError(5, err);
