@@ -49,6 +49,7 @@
     "express-session": "^1.14.2",
     "express-validator": "^3.1.2",
     "extend": "^3.0.0",
+    "file-stream-rotator": "^0.1.0",
     "helmet": "^3.1.0",
     "instascan": "^1.0.0",
     "json-web-token": "^2.1.3",

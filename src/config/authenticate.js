@@ -33,14 +33,14 @@ module.exports = {
       extractHeader = req.headers.Authorization.split(' ');
     }
     if (extractHeader !== null && extractHeader[0] === 'JWT') {
-      jwt.decode(process.env.JWT_SECRET, extractHeader[1], (err, decodedPayload, decodedHeader) => {
+      jwt.decode(process.env.JWT_SECRET, extractHeader[1], (err, decodedPayload) => {
         if (err) {
           next(err);
         } else {
           req.user = decodedPayload.sub;
           next();
         }
-      })
+      });
     } else {
       next();
     }

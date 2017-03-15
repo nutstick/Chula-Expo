@@ -47,40 +47,44 @@ router.get('/', isAuthenticatedByToken, (req, res) => {
 
 
 router.get('/where', deserializeToken, (req, res) => {
-  const qs = {};
-  qs.lat = req.query.latitude;
-  qs.lng = req.query.longitude;
-  if (req.user) {
-    qs.u = req.user.id;
-  }
+  // const qs = {};
+  // qs.lat = req.query.latitude;
+  // qs.lng = req.query.longitude;
+  // if (req.user) {
+  //   qs.u = req.user.id;
+  // }
 
   request.get({
-    uri: 'http://104.199.143.190/area',
-    qs
+    uri: req.user && req.user.id ? `http://104.199.143.190/area?lat=${req.query.latitude}&lng=${req.query.longitude}&u=${req.user.id}`
+      : `http://104.199.143.190/area?lat=${req.query.latitude}&lng=${req.query.longitude}`,
   },
   (err, r, ans) => {
     if (err) {
       return res.sendError(5, err);
     }
 
-    const answer = JSON.parse(ans);
-    if (!answer.area) {
-      answer.area = {};
-    }
-    if (!answer.area.nameEn || !answer.area.nameTh) {
-      answer.area.nameEn = 'no information';
-      answer.area.nameTh = 'ไม่มีข้อมูลของสถานที่นี้';
-    }
-
-    return res.json({
-      success: true,
-      results: {
-        text: {
-          en: answer.area.nameEn,
-          th: answer.area.nameTh
-        }
+    try {
+      const answer = JSON.parse(ans);
+      if (!answer.area) {
+        answer.area = {};
       }
-    });
+      if (!answer.area.nameEn || !answer.area.nameTh) {
+        answer.area.nameEn = 'no information';
+        answer.area.nameTh = 'ไม่มีข้อมูลของสถานที่นี้';
+      }
+
+      return res.json({
+        success: true,
+        results: {
+          text: {
+            en: answer.area.nameEn,
+            th: answer.area.nameTh
+          }
+        }
+      });
+    } catch (err) {
+      return res.sendError(5, err);
+    }
   });
 });
 
