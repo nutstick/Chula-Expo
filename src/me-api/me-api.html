@@ -13,7 +13,7 @@
       on-error="_handleError"
       headers="{{headers}}"
       handle-as="json"
-      debounce-duration="300"
+      timeout="5000"
     ></iron-ajax>
   </template>
   <script>
@@ -83,19 +83,26 @@
         }
       },
       _handleError: function(event) {
-        var response = event.detail.request.xhr.response;
-        if (!response.success) {
-          if (response.errors.code === "4") {
-            // Logout
-            // console.log(document.querySelector('chulaexpo-staff-app').token)
-            document.querySelector('chulaexpo-staff-app').token = null;
-            // document.getElementById('storage').save();
+        try {
+          var response = event.detail.request.xhr.response;
+          if (!response.success) {
+            if (response.errors.code === "4") {
+              // Logout
+              // console.log(document.querySelector('chulaexpo-staff-app').token)
+              document.querySelector('chulaexpo-staff-app').token = null;
+              // document.getElementById('storage').save();
 
-            // window.history.pushState({}, null, '/');
-            document.querySelector('chulaexpo-staff-app').set('route.path', '/');
-            window.dispatchEvent(new CustomEvent('location-changed'));
+              // window.history.pushState({}, null, '/');
+              document.querySelector('chulaexpo-staff-app').set('route.path', '/');
+              window.dispatchEvent(new CustomEvent('location-changed'));
+            }
+            this.error = response.errors;
           }
-          this.error = response.errors;
+        } catch (err) {
+          this.debounce('me', function() {
+            this.generateRequest();
+          }.bind(this), 5000);
+          // console.error(err);
         }
       }
     });
