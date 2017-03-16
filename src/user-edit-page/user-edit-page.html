@@ -330,10 +330,11 @@
         },
         academicLevels: {
           type: Array,
-          value: ["มัธยมต้น", "มัธยมปลาย", "ปริญญาตรี", "ปริญญาโท", "ปริญญาเอก", "อื่น ๆ"]
+          value: ["มัธยมต้น", "มัธยมปลาย", "ปริญญาตรี", "ปริญญาโท", "ปริญญาเอก", "อื่น ๆ"],
         },
         academicLevel: {
           type: String,
+          observer: '_onAcademicLevelChanged'
         },
         academicYears: {
           type: Array,
@@ -370,7 +371,7 @@
         } else if (level === 'ปริญญาเอก') {
           this.set('academicYears', ["ปี 1", "ปี 2", "ปี 3", "ปี 4"]);
         } else if (level === 'อื่น ๆ') {
-          this.set('academicYears', ["ปี 1", "ปี 2", "ปี 3", "ปี 4", "ปี 5", "ปี6"]);
+          this.set('academicYears', ["ปี 1", "ปี 2", "ปี 3", "ปี 4", "ปี 5", "ปี6", "อื่นๆ"]);
         } else {
           this.academicYears = [];
         }
