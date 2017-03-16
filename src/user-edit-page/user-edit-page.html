@@ -139,7 +139,7 @@
         <!-- Polymer Iron form -->
         <div class="card-content">
             <!-- Name -->
-            <paper-input name="name" label="ชื่อ" value="{{user.name}}" required always-float-label></paper-input>
+            <paper-input name="name" label="ชื่อ - นามสกุล" value="{{user.name}}" required always-float-label></paper-input>
             <!-- E-mail -->
             <paper-input name="email" label="อีเมลล์" value="{{user.email}}" required always-float-label></paper-input>
             <!-- Password -->
@@ -178,7 +178,6 @@
               </paper-button-group>
               <!-- Student -->
               <fieldset class="field" hidden$="{{!student}}">
-<<<<<<< HEAD
                 <paper-dropdown-menu name="academicLevel" label="การศึกษาปัจจุบัน" required="{{student}}">
                   <paper-listbox class="dropdown-content" selected="{{academicLevel}}">
                     <template is="dom-repeat" items="{{academicLevels}}">
@@ -186,7 +185,7 @@
                     </template>
                   </paper-listbox>
                 </paper-dropdown-menu>
-                
+
                 <paper-dropdown-menu name="academicYear" label="ชั้นปี" required="{{student}}">
                   <paper-listbox class="dropdown-content" selected="{{academicYear}}">
                     <template is="dom-repeat" items="{{academicYears}}">
@@ -263,7 +262,6 @@
         activated: {
           type: Boolean,
           value: false,
-          observer: '_activatedChanged'
         },
         _url: {
           type: String,
@@ -331,7 +329,7 @@
         },
         academicLevels: {
           type: Array,
-          value: ["มัธยมต้น", "มัธยมปลาย", "ปริญญาตรี", "ปริญญาโท", "ปริญญาเอก", "อื่น ๆ"]
+          value: ["มัธยมต้น", "มัธยมปลาย", "ปริญญาตรี", "ปริญญาโท", "ปริญญาเอก", "อื่น ๆ"],
         },
         academicLevel: {
           type: String,
@@ -339,21 +337,18 @@
         },
         academicYears: {
           type: Array,
-          value: []
+          value: [],
+          notify: true
         },
         route: {
           type: String,
-        },
-        activated: {
-          type: Boolean,
-          value: false,
-          observer: '_onActivatedChanged'
-        },
+        }
       },
       _firstLevelChange: false,
       _toBeAcademicYear: null,
       observers: [
-        '_onUserChanged(user)'
+        '_onUserChanged(user)',
+        '_onActivatedChanged(userId, activated)',
       ],
       _computeUrl: function(userId) {
         return window.api + '/api/users/' + userId;
@@ -376,7 +371,7 @@
         } else if (level === 'ปริญญาเอก') {
           this.set('academicYears', ["ปี 1", "ปี 2", "ปี 3", "ปี 4"]);
         } else if (level === 'อื่น ๆ') {
-          this.set('academicYears', ["ปี 1", "ปี 2", "ปี 3", "ปี 4", "ปี 5", "ปี6"]);
+          this.set('academicYears', ["ปี 1", "ปี 2", "ปี 3", "ปี 4", "ปี 5", "ปี6", "อื่นๆ"]);
         } else {
           this.academicYears = [];
         }
@@ -386,7 +381,8 @@
           this._toBeAcademicYear = null;
         }
       },
-      _onActivatedChanged: function(activated) {
+      _onActivatedChanged: function(userId, activated) {
+        console.log(activated)
 				if (activated) {
           this._firstLevelChange = true;
 					this.$.userAPI.generateRequest();

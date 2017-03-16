@@ -4,7 +4,7 @@
 
 <dom-module id="user-page">
   <template>
-    <app-route 
+    <app-route
       route="{{route}}"
       pattern="/:page"
       data="{{routeData}}"
@@ -41,6 +41,7 @@
       ],
 
       _routePageChanged: function(page) {
+        console.log(page)
         if (page && page !== 'add') {
           this.userId = page;
           this.page = 'id';

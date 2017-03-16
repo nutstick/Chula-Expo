@@ -209,7 +209,6 @@
         activated: {
           type: Boolean,
           value: false,
-          observer: '_activatedChanged'
         },
         _url: {
           type: String,
@@ -269,10 +268,12 @@
         },
         activated: {
           type: Boolean,
-          value: false,
-          observer: '_activatedChanged'
+          value: false
         },
       },
+      observers: [
+        '_onActivatedChanged(userId, activated)'
+      ],
       _computeUserProfile: function(profile) {
         console.log(profile || '/images/thumbnail-default.jpg');
         return profile || '/images/thumbnail-default.jpg';
@@ -280,7 +281,7 @@
       _computeUrl: function(userId) {
         return window.api + '/api/users/' + userId;
       },
-      _activatedChanged: function(activated) {
+      _onActivatedChanged: function(userId, activated) {
 				if (activated) {
 					this.$.userAPI.generateRequest();
 				}
