@@ -442,7 +442,7 @@ router.post('/:rid/checkin', isAuthenticatedByToken, isScanner, (req, res) => {
       // })));
       ticket.checkIn()
         .then(() => (
-          res.status(201).json({
+          res.status(200).json({
             success: true,
             message: `Successfully check in ticket ${ticket._id} in round ${req.params.rid}.`,
           })
