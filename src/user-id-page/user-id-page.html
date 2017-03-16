@@ -26,11 +26,6 @@
       is: 'user-id-page',
       properties: {
         route: String,
-        activated: {
-          type: Boolean,
-          value: false,
-          observer: '_activatedChanged'
-        },
         subpage: {
           type: String,
           observer: '_pageChanged',
