@@ -125,7 +125,7 @@
           </div>
         </paper-card-item>
       </template>
-			<paper-card-item-pagination page="{{page}}" page-size="{{pageSize}}" totalPages="[[totalPages]]"></paper-card-item-pagination>
+			<paper-card-item-pagination page="{{page}}" page-size="{{pageSize}}" total-pages="[[totalPages]]"></paper-card-item-pagination>
     </div>
   </template>
   <script>
@@ -145,7 +145,10 @@
           type: Number,
           value: 10
         },
-        totalPages: Number,
+        totalPages: {
+          type: Number,
+          value: 0,
+        },
         error: Object,
         users: {
           type: Array,

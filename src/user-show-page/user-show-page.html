@@ -13,11 +13,11 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-button-group/paper-button-group.html">
 <link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
 
 <link rel="import" href="../shared-styles/shared-styles.html">
 <link rel="import" href="../user-api/user-api.html">
 <link rel="import" href="../zone-api/zone-api.html">
-<link rel="import" href="../profile-image-uploadable/profile-image-uploadable.html">
 <dom-module id="user-show-page">
   <template>
     <style is="custom-style" include="shared-styles">
@@ -43,6 +43,10 @@
       .header * {
         overflow: inherit;
       }
+      iron-image#profile {
+        width: 150px;
+        height: 150px;
+      }
       .center {
         @apply(--layout-center-justified);
         @apply(--layout-horizontal);
@@ -66,7 +70,7 @@
         margin-right: 20px;
       }
       .input-label {
-        width: 55px;
+        min-width: 55px;
         display: inline-block;
         margin-right: 16px;
         line-height: 46px;
@@ -126,7 +130,7 @@
       <div class="header style-scope paper-card">
         <!-- Profile Image with uploadility -->
         <div class="center offset">
-          <profile-image-uploadable image="{{user.profile}}" alt="User profile" name="profile"></profile-image-uploadable>
+          <iron-image id="profile" src="[[_computeUserProfile(user.profile)]]" sizing="cover" alt="User profile"></iron-image>
         </div>
       </div>
       <!-- Polymer Iron form -->
@@ -268,6 +272,10 @@
           value: false,
           observer: '_activatedChanged'
         },
+      },
+      _computeUserProfile: function(profile) {
+        console.log(profile || '/images/thumbnail-default.jpg');
+        return profile || '/images/thumbnail-default.jpg';
       },
       _computeUrl: function(userId) {
         return window.api + '/api/users/' + userId;
