@@ -13,6 +13,10 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-button-group/paper-button-group.html">
 <link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html">
 
 <link rel="import" href="../shared-styles/shared-styles.html">
 <link rel="import" href="../user-api/user-api.html">
@@ -66,6 +70,9 @@
         line-height: 46px;
         color: #888;
       }
+      paper-dropdown-menu {
+        width: 100%;
+      }
       paper-button[toggles] {
         transition: background-color 0.3s;
       }
@@ -117,11 +124,12 @@
       action="{{_url}}"
       on-iron-form-presubmit="_presubmit"
       on-iron-form-response="_response"
-      on-iron-form-response="_response"
       on-iron-form-reset="_reset"
       on-iron-form-error="_error"
+      on-iron-form-invalid="_error"
       headers="[[headers]]">
       <paper-card class="container">
+        <iron-a11y-keys id="a11y" target="[[_target]]" keys="enter" on-keys-pressed="onEnter"></iron-a11y-keys>
         <div class="header style-scope paper-card">
           <!-- Profile Image with uploadility -->
           <div class="center offset">
@@ -136,9 +144,10 @@
             <paper-input name="email" label="อีเมลล์" value="{{user.email}}" required always-float-label></paper-input>
             <!-- Password -->
             <paper-input id="password" name="password" label="พาสเวิร์ด" type="password" hidden$={{user.facebook}} required={{!user.facebook}} always-float-label></paper-input>
-            <paper-input-container always-float-label attr-for-value="value" id="confirmPassword"  hidden$={{user.facebook}}>
+            <paper-input-container always-float-label attr-for-value="value"  hidden$={{user.facebook}}>
               <label>คอนเฟิร์มพาสเวิร์ด</label>
               <input
+                id="confirmPassword"
                 is="iron-input"
                 class="paper-input-input"
                 name="confirmPassword"
@@ -169,20 +178,21 @@
               </paper-button-group>
               <!-- Student -->
               <fieldset class="field" hidden$="{{!student}}">
-                <vaadin-combo-box
-                  name="academicLevel"
-                  label="การศึกษาปัจจุบัน"
-                  items="[[academicLevels]]"
-                  value="{{academicLevel}}"
-                  require="{{student}}"
-                  always-float-label></vaadin-combo-box>
-                <vaadin-combo-box
-                  name="academicYear"
-                  label="ชั้นปี"
-                  items="[[academicYears]]"
-                  value="{{user.academic.year}}"
-                  require="{{student}}"
-                  always-float-label></vaadin-combo-box>
+                <paper-dropdown-menu name="academicLevel" label="การศึกษาปัจจุบัน" required="{{student}}">
+                  <paper-listbox class="dropdown-content" selected="{{academicLevel}}">
+                    <template is="dom-repeat" items="{{academicLevels}}">
+                      <paper-item value="{{item}}">{{item}}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+                
+                <paper-dropdown-menu name="academicYear" label="ชั้นปี" required="{{student}}">
+                  <paper-listbox class="dropdown-content" selected="{{academicYear}}">
+                    <template is="dom-repeat" items="{{academicYears}}">
+                      <paper-item value="{{item}}">{{item}}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
                 <paper-input name="academicSchool" label="สถาบันการศึกษา" value="{{user.academic.school}}" required="{{student}}" always-float-label></paper-input>
               </fieldset>
               <!-- Worker -->
@@ -266,9 +276,16 @@
             };
           }
         },
+        _target: {
+          type: Object,
+          value: function() {
+            return this.$.form;
+          }
+        },
         user: {
           type: Object,
           value: {},
+          notify: true
         },
         userId: {
           type: String,
@@ -332,6 +349,8 @@
           observer: '_onActivatedChanged'
         },
       },
+      _firstLevelChange: false,
+      _toBeAcademicYear: null,
       observers: [
         '_onUserChanged(user)'
       ],
@@ -339,33 +358,49 @@
         return window.api + '/api/users/' + userId;
       },
       _onAcademicLevelChanged: function(level) {
+        if (!this._firstLevelChange) {
+          this.academicYear = -1;
+        } else {
+          this._firstLevelChange = false;
+        }
+        level = this.academicLevels[level];
         if (level === 'มัธยมต้น') {
-          this.academicYears = ["ม.1", "ม.2", "ม.3"];
+          this.set('academicYears', ["ม.1", "ม.2", "ม.3"]);
         } else if (level === 'มัธยมปลาย') {
-          this.academicYears = ["ม.4", "ม.5", "ม.6"];
+          this.set('academicYears', ["ม.4", "ม.5", "ม.6"]);
         } else if (level === 'ปริญญาตรี') {
-          this.academicYears = ["ปี 1", "ปี 2", "ปี 3", "ปี 4", "ปี 5", "ปี 6", "ปี 7", "ปี 8"];
+          this.set('academicYears', ["ปี 1", "ปี 2", "ปี 3", "ปี 4", "ปี 5", "ปี 6", "ปี 7", "ปี 8"]);
         } else if (level === 'ปริญญาโท') {
-          this.academicYears = ["ปี 1", "ปี 2", "ปี 3", "ปี 4"];
+          this.set('academicYears', ["ปี 1", "ปี 2", "ปี 3", "ปี 4"]);
         } else if (level === 'ปริญญาเอก') {
-          this.academicYears = ["ปี 1", "ปี 2", "ปี 3", "ปี 4"];
+          this.set('academicYears', ["ปี 1", "ปี 2", "ปี 3", "ปี 4"]);
         } else if (level === 'อื่น ๆ') {
-          this.academicYears = ["ปี 1", "ปี 2", "ปี 3", "ปี 4", "ปี 5", "ปี6"];
+          this.set('academicYears', ["ปี 1", "ปี 2", "ปี 3", "ปี 4", "ปี 5", "ปี6"]);
         } else {
           this.academicYears = [];
+        }
+
+        if (this._toBeAcademicYear) {
+          this.academicYear = this.academicYears.indexOf(this._toBeAcademicYear);
+          this._toBeAcademicYear = null;
         }
       },
       _onActivatedChanged: function(activated) {
 				if (activated) {
+          this._firstLevelChange = true;
 					this.$.userAPI.generateRequest();
 				}
       },
+      onEnter: function() {
+        this.$.form.submit();
+      },
       _onUserChanged: function(user) {
-        if (user.worker) {
+        if (!user) return;
+        if (user.type === 'Worker') {
           this.workerJob = user.worker.job;
-        } else if (user.academic) {
-          this.academicLevel = user.academic.level;
-          this.academicYear = user.academic.year;
+        } else if (user.type === 'Academic') {
+          this._toBeAcademicYear = user.academic.year;
+          this.academicLevel = this.academicLevels.indexOf(user.academic.level);
         }
       },
       _typeChanged: function(event) {
@@ -398,6 +433,9 @@
         if (this.$.form.request.body.password !== this.$.form.request.body.confirmPassword) {
           this.$.password.invalid = true;
           this.$.confirmPassword.invalid = true;
+
+          this.$.spinner.active = false;
+          this.$.spinner.hidden = true;
           return event.preventDefault();
         }
         this.$.form.request.body.gender = this.male ? 'Male' : (this.female ? 'Female': 'Other');
@@ -409,14 +447,20 @@
         }
       },
       _response: function(e) {
+        this.set('user', null);
         if (e.detail.response.success) {
-          this.$.form.reset();
+          this.$.password.value = null;
+          this.$.confirmPassword.value = null;
+          this.$.spinner.active = false;
+          this.$.spinner.hidden = true;
 
 					window.history.pushState({}, null, '/user/' + this.userId + '/show/');
           window.dispatchEvent(new CustomEvent('location-changed'));
         }
       },
       _error: function(e) {
+        this.$.spinner.active = false;
+        this.$.spinner.hidden = true;
       }
     });
   </script>
