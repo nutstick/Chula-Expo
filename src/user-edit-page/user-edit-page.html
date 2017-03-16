@@ -324,12 +324,7 @@
         },
         route: {
           type: String,
-        },
-        activated: {
-          type: Boolean,
-          value: false,
-          observer: '_onActivatedChanged'
-        },
+        }
       },
       observers: [
         '_onUserChanged(user)'
@@ -354,7 +349,7 @@
           this.academicYears = [];
         }
       },
-      _onActivatedChanged: function(activated) {
+      _activatedChanged: function(activated) {
 				if (activated) {
           var userRequest = this.$.userAPI.generateRequest();
 					userRequest.completes.then(function() {
