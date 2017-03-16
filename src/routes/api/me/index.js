@@ -33,10 +33,7 @@ router.get('/', isAuthenticatedByToken, (req, res) => {
     .select(fields.join(' '))
     .exec((err, me) => {
       if (err) {
-        return res.json({
-          success: false,
-          errors: retrieveError(5, err)
-        });
+        return res.sendError(5, err);
       }
       res.json({
         success: true,
@@ -163,10 +160,7 @@ router.put('/', isAuthenticatedByToken, (req, res) => {
   req.user.save((err, _user) => {
     // Handle error from save
     if (err) {
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
 
     return res.status(202).json({

@@ -50,10 +50,7 @@ router.post('/', isAuthenticatedByToken, (req, res) => {
   comment.save((err, _Comment) => {
     if (err) {
       // Handle error from save
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
     return res.status(201).json({
       success: true,

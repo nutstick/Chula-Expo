@@ -252,7 +252,7 @@ router.put('/:id', (req, res) => {
     }
 
     if (req.body.email) {
-      user.email = req.body.email;
+      user.email = req.body.email.toLowerCase();
     }
     if (req.body.password) {
       user.password = req.body.password;
