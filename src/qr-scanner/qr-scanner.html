@@ -237,10 +237,9 @@
               function(error) {
                 //show read errors
                 if (this.videoError) {
-                  this.set('loading', false); 
+                  this.set('loading', false);
                   this.error = error;
                 }
-                console.log(error)
               }.bind(this), function(videoError) {
                 //the video stream could be opened
                 this.set('videoError', videoError.name || videoError.message);
@@ -248,7 +247,6 @@
             }.bind(this), 100);
           } else {
             qrcode.callback = function(data) {
-              console.log('data', data);
               if (data === 'error decoding QR Code') {
                 this.set('loading', false);
                 return this.set('error', 'Can\'t find matched QR Code');

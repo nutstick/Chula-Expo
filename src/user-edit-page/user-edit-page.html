@@ -356,7 +356,10 @@
       },
       _onActivatedChanged: function(activated) {
 				if (activated) {
-					this.$.userAPI.generateRequest();
+          var userRequest = this.$.userAPI.generateRequest();
+					userRequest.completes.then(function() {
+            this._onAcademicLevelChanged(this.user.academic.level);
+					}.bind(this));
 				}
       },
       _onUserChanged: function(user) {
