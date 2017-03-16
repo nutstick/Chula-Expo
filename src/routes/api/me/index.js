@@ -42,6 +42,41 @@ router.get('/', isAuthenticatedByToken, (req, res) => {
 
 
 router.get('/where', deserializeToken, (req, res) => {
+  /*
+  const qs = {};
+  qs.lat = req.query.latitude;
+  qs.lng = req.query.longitude;
+  if (req.user) {
+    qs.u = req.user;
+  }
+
+  request.get({
+    uri: 'http://104.199.143.190/area',
+    qs,
+    timeout: 1000
+  },
+  (err, r, ans) => {
+    if (err) {
+      return res.json({
+        success: true,
+        results: {
+          text: {
+            en: 'no information',
+            th: 'ไม่มีข้อมูลของสถานที่นี้'
+          }
+        }
+      });
+    }
+
+    try {
+      const answer = JSON.parse(ans);
+      if (!answer.area) {
+        answer.area = {};
+      }
+      if (!answer.area.nameEn || !answer.area.nameTh) {
+        answer.area.nameEn = 'no information';
+        answer.area.nameTh = 'ไม่มีข้อมูลของสถานที่นี้';
+        */
   return res.json({
     success: true,
     results: {
@@ -51,46 +86,6 @@ router.get('/where', deserializeToken, (req, res) => {
       }
     }
   });
-  // request.get({
-  //   uri: 'http://104.199.143.190/area?lat=' + req.query.latitude + '&lng=' + req.query.longitude + (req.user ? ('&u=' + req.user) : ''),
-  //   timeout: 1200
-  // },
-  // (err, r, ans) => {
-  //   if (err) {
-  //     return res.json({
-  //       success: true,
-  //       results: {
-  //         text: {
-  //           en: 'no information',
-  //           th: 'ไม่มีข้อมูลของสถานที่นี้'
-  //         }
-  //       }
-  //     });
-  //   }
-
-  //   try {
-  //     const answer = JSON.parse(ans);
-  //     if (!answer.area) {
-  //       answer.area = {};
-  //     }
-  //     if (!answer.area.nameEn || !answer.area.nameTh) {
-  //       answer.area.nameEn = 'no information';
-  //       answer.area.nameTh = 'ไม่มีข้อมูลของสถานที่นี้';
-  //     }
-
-  //     return res.json({
-  //       success: true,
-  //       results: {
-  //         text: {
-  //           en: answer.area.nameEn,
-  //           th: answer.area.nameTh
-  //         }
-  //       }
-  //     });
-  //   } catch (err) {
-  //     return res.sendError(5, err);
-  //   }
-  // });
 });
 
 /**

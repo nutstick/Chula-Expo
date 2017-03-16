@@ -226,8 +226,17 @@ router.get('/recommend', isAuthenticatedByToken, (req, res) => {
 
 // nearby from aj.nuttawut
 router.get('/nearby', deserializeToken, (req, res) => {
+  const qs = {};
+  qs.lng = req.query.longitude;
+  qs.lat = req.query.latitude;
+  if (req.user) {
+    qs.u = req.user;
+  }
+  qs.cutoff = 100;
+
   request.get({
-    uri: 'http://104.199.143.190/search?lat=' + req.query.latitude + '&lng=' + req.query.longitude + '&cutoff=100' + (req.user?('&u=' + req.user):''),
+    uri: 'http://104.199.143.190/search',
+    qs,
     timeout: 800
   },
   (err, r, ans) => {
@@ -266,8 +275,20 @@ router.get('/nearby', deserializeToken, (req, res) => {
 
 // search from aj.nuttawut
 router.get('/search', deserializeToken, (req, res) => {
+  const qs = {};
+  qs.q = req.query.text;
+  if (req.query.latitude) {
+    qs.lat = req.query.latitude;
+  }
+  if (req.query.longitude) {
+    qs.lng = req.query.longitude;
+  }
+  if (req.user) {
+    qs.u = req.user;
+  }
   request.get({
-    uri: 'http://104.199.143.190/search?q=' + req.query.text + (req.user?('&u=' + req.user):'') + (req.latitude?('&lat=' + req.latitude):'') + (req.longitude?('&lng=' + req.longitude):''),
+    uri: 'http://104.199.143.190/search',
+    qs,
     timeout: 800
   },
   (err, r, ans) => {

@@ -130,10 +130,7 @@ router.get('/:id', (req, res) => {
   Place.findById(req.params.id).select(fields).exec((err, place) => {
     if (err) {
        // Handle error from User.findById
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err)
-      });
+       return res.sendError(5, err);
     }
 
     if (!place) {
@@ -145,10 +142,7 @@ router.get('/:id', (req, res) => {
 /*    Zone.findById(place.zone).exec((err, zone) => {
       if (err) {
          // Handle error from User.findById
-        return res.status(500).json({
-          success: false,
-          errors: retrieveError(5, err)
-        });
+         return res.sendError(5, err);
       }
 
        place.zone = zone;
@@ -193,10 +187,7 @@ router.post('/', (req, res) => {
   place.save((err, _place) => {
     if (err) {
       // Handle error from save
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
     return res.status(201).json({
       success: true,
@@ -226,17 +217,11 @@ router.put('/:id', (req, res) => {
   Place.findById(req.params.id, (err, place) => {
     // check error first
     if (err) {
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err)
-      });
+      return res.sendError(5, err);
     }
     // check place
     if (!place) {
-      return res.status(403).json({
-        success: false,
-        errors: retrieveError(33)
-      });
+      return res.sendError(5, err);
     }
 
 
@@ -263,10 +248,7 @@ router.put('/:id', (req, res) => {
 
     place.save((err, _place) => {
       if (err) {
-        return res.status(500).json({
-          success: false,
-          errors: retrieveError(5, err)
-        });
+        return res.sendError(5, err);
       }
       res.status(202).json({
         success: true,
@@ -283,10 +265,7 @@ router.delete('/:id', (req, res) => {
   Place.findByIdAndRemove(req.params.id).exec((err, place) => {
     if (err) {
        // Handle error from User.findById
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err)
-      });
+       return res.sendError(5, err);
     }
 
     if (!place) {
@@ -311,10 +290,7 @@ router.delete('/:id', (req, res) => {
         // do something smart
       if (err) {
          // Handle error from User.findById
-        return res.status(500).json({
-          success: false,
-          errors: retrieveError(5, err)
-        });
+         return res.sendError(5, err);
       }
     });
 

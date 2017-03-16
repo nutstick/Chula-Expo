@@ -90,10 +90,7 @@ router.get('/', (req, res) => {
     .exec(
     (err, rooms) => {
       if (err) {
-        return res.status(500).send({
-          success: false,
-          errors: retrieveError(5, err)
-        });
+        return res.sendError(5, err);
       }
 
       return res.status(200).json({
@@ -119,10 +116,7 @@ router.get('/:id', (req, res) => {
   Room.findById(req.params.id).select(fields).exec((err, room) => {
     if (err) {
        // Handle error from User.findById
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err)
-      });
+      return res.sendError(5, err);
     }
 
     if (!room) {
@@ -135,10 +129,7 @@ router.get('/:id', (req, res) => {
    Place.findById(place.zone).exec((err, place) => {
       if (err) {
          // Handle error from User.findById
-        return res.status(500).json({
-          success: false,
-          errors: retrieveError(5, err)
-        });
+         return res.sendError(5, err);
       }
 
        room.place = place;
@@ -179,10 +170,7 @@ router.post('/', (req, res) => {
   room.save((err, _room) => {
     if (err) {
       // Handle error from save
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
     return res.status(201).json({
       success: true,
@@ -198,10 +186,7 @@ router.put('/:id', (req, res) => {
   Room.findById(req.params.id, (err, room) => {
     // check error first
     if (err) {
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err)
-      });
+      return res.sendError(5, err);
     }
     // check room
     if (!room) {
@@ -229,10 +214,7 @@ router.put('/:id', (req, res) => {
 
     room.save((err, _room) => {
       if (err) {
-        return res.status(500).json({
-          success: false,
-          errors: retrieveError(5, err)
-        });
+        return res.sendError(5, err);
       }
       return res.status(202).json({
         success: true,
@@ -249,10 +231,7 @@ router.delete('/:id', (req, res) => {
   Room.findByIdAndRemove(req.params.id).exec((err, room) => {
     if (err) {
        // Handle error from User.findById
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err)
-      });
+       return res.sendError(5, err);
     }
 
     if (!room) {
@@ -273,10 +252,7 @@ router.delete('/:id', (req, res) => {
           // do something smart
           if (err) {
              // Handle error from User.findById
-            return res.status(500).json({
-              success: false,
-              errors: retrieveError(5, err)
-            });
+             return res.sendError(5, err);
           }
         }
      );
