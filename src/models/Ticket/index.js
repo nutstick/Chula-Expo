@@ -1,3 +1,4 @@
+/* eslint-disable func-names,space-before-function-paren */
 const mongoose = require('mongoose');
 const { User, Round } = require('../');
 
@@ -36,61 +37,66 @@ const TicketSchema = new mongoose.Schema({
 
 TicketSchema.index({ user: 1, round: 1 }, { unique: true });
 
-TicketSchema.statics.cancelReserved = ticketId => new Promise((resolve, reject) => {
-  TicketSchema.findbyId(ticketId, (err, ticket) => {
-    if (err) {
-      return reject(err);
-    }
-    // Ticket isn't exist
-    if (!ticket) {
-      return reject({ code: 27 });
-    }
-    User.findById(ticket.user, (err, user) => {
+TicketSchema.statics.cancelReserved = function(ticketId) {
+  return new Promise((resolve, reject) => {
+    TicketSchema.findbyId(ticketId, (err, ticket) => {
       if (err) {
         return reject(err);
       }
-      Round.findById(ticket.round, (err, round) => {
+      // Ticket isn't exist
+      if (!ticket) {
+        return reject({ code: 27 });
+      }
+      User.findById(ticket.user, (err, user) => {
         if (err) {
           return reject(err);
         }
-        // Decease reseaved seats by 1 and bound by zero
-        round.seats.reserved = Math.max(round.seats.reserved - ticket.size, 0);
-        // Filter out User's reseved activity
-        user.reservedActivity.filter(activity => activity.ticket !== ticket.id);
+        Round.findById(ticket.round, (err, round) => {
+          if (err) {
+            return reject(err);
+          }
+          // Decease reseaved seats by 1 and bound by zero
+          round.seats.reserved = Math.max(round.seats.reserved - ticket.size, 0);
+          // Filter out User's reseved activity
+          user.reservedActivity.filter(activity => activity.ticket !== ticket.id);
 
-        Promise.all([
-          round.save(),
-          user.save(),
-          ticket.remove(),
-        ]).then(() => resolve())
-          .catch(reject);
+          Promise.all([
+            round.save(),
+            user.save(),
+            ticket.remove(),
+          ]).then(() => resolve())
+            .catch(reject);
+        });
       });
     });
   });
-});
+};
 
-TicketSchema.statics.checkIn = ticketId => new Promise((resolve, reject) => {
-  TicketSchema.findById(ticketId, (err, ticket) => {
-    if (ticket.checked) {
-      return reject(35);
+TicketSchema.methods.checkIn = function() {
+  return new Promise((resolve, reject) => {
+    if (this.checked) {
+      return reject({ code: 35 });
     }
-    ticket.checked = true;
-    ticket.save((err) => {
-      return err ? resolve() : reject(err);
-    });
+    this.checked = true;
+    this.save()
+      .then(resolve)
+      .catch(err => reject(err));
   });
-});
+};
 
-TicketSchema.statics.toggle = ticketId => new Promise((resolve, reject) => {
-  TicketSchema.findById(ticketId).exec()
-    .then((ticket) => {
-      ticket.checked = !ticket.checked;
-      ticket.save()
-        .then(() => resolve(ticket))
-        .catch(err => reject(err));
-    })
-    .catch(err => reject(err));
-});
+
+TicketSchema.statics.toggle = function(ticketId) {
+  return new Promise((resolve, reject) => {
+    this.findById(ticketId).exec()
+      .then((ticket) => {
+        ticket.checked = !ticket.checked;
+        ticket.save()
+          .then(resolve)
+          .catch(err => reject(err));
+      })
+      .catch(err => reject(err));
+  });
+};
 
 const Ticket = mongoose.model('Ticket', TicketSchema);
 

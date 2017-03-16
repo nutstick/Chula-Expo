@@ -59,10 +59,11 @@ router.delete('/:tid', (req, res) => {
 
 router.post('/:tid/toggle', (req, res) => {
   Ticket.toggle(req.params.tid)
-    .then(() => {
+    .then((ticket) => {
       res.json({
         success: true,
         message: `Successfully toggle ticket ${req.params.tid}.`,
+        results: ticket
       });
     })
     .catch((err) => {
