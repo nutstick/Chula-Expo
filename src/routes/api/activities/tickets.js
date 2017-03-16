@@ -44,9 +44,26 @@ router.get('/:tid', (req, res) => {
 router.delete('/:tid', (req, res) => {
   Ticket.cancelReserved(req.params.tid)
     .then(() => {
-      res.json({
+      return res.status(202).json({
         success: true,
         message: `Successfully removed ticket ${req.params.tid}.`,
+      });
+    })
+    .catch((err) => {
+      if (err.code) {
+        return res.sendError(err.code);
+      }
+      return res.sendError(5, err);
+    });
+});
+
+router.post('/:tid/toggle', (req, res) => {
+  Ticket.toggle(req.params.tid)
+    .then((ticket) => {
+      return res.status(200).json({
+        success: true,
+        message: `Successfully toggle ticket ${req.params.tid}.`,
+        results: ticket
       });
     })
     .catch((err) => {

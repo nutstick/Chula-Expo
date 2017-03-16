@@ -29,7 +29,8 @@ const jwt = require('json-web-token');
 // Load envirountment variables from .env file
 dotenv.load({ path: '.env' });
 // Set up MongoDB
-mongoose.Promise = global.Promise;
+mongoose.Promise = require('bluebird');
+
 mongoose.connect(process.env.MONGODB_URI || process.env.MONGOLAB_URI);
 mongoose.connection.on('error', () => {
   console.log('%s MongoDB connection error. Please make sure MongoDB is running.', chalk.red('✗')); // eslint-disable-line no-console
@@ -192,6 +193,10 @@ app.get('/auth/facebook/callback', (req, res, next) => {
  * Route
  */
 app.use('/', require('./routes'));
+
+app.use('*', (req, res) => {
+  return res.sendError(7);
+});
 
 /**
  * Server run on localhost:3000

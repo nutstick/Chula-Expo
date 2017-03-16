@@ -28,7 +28,7 @@ router.get('/', (req, res) => {
     filters.worker = req.query.worker;
   }
   if (req.query.email) {
-    filters.email = req.query.email;
+    filters.email = req.query.email.toLowerCase();
   }
   if (req.query.id) {
     filters.id = req.query.id;
@@ -171,7 +171,7 @@ router.post('/', (req, res) => {
   // Create a new instance of the User model
   const user = new User();
 
-  user.email = req.body.email;
+  user.email = req.body.email.toLowerCase();
   user.password = req.body.password;
   user.facebook = req.body.facebook;
   user.google = req.body.google;

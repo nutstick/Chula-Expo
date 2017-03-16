@@ -245,8 +245,8 @@ router.post('/', (req, res) => {
       }
       round.seats.avaliable = req.body.seatsAvaliable;
 
-      room.createAt = new Date();
-      room.updateAt = new Date();
+      round.createAt = new Date();
+      round.updateAt = new Date();
 
       // Save Round and check for error
       round.save((err, _round) => {

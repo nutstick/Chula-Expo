@@ -414,6 +414,9 @@ router.delete('/:rid/reserve', isAuthenticatedByToken, (req, res) => {
 router.post('/:rid/checkin', isAuthenticatedByToken, isScanner, (req, res) => {
   const rid = req.params.rid;
   const userId = req.body.user || req.query.user;
+  if (!userId) {
+    return res.sendError(24);
+  }
   Activity.findById(req.params.id, (err, activity) => {
     if (err) {
       return res.sendError(5, err);
@@ -429,25 +432,22 @@ router.post('/:rid/checkin', isAuthenticatedByToken, isScanner, (req, res) => {
       if (!ticket) {
         return res.sendError(27);
       }
-      if (ticket.checked) {
-        return res.sendError(35);
-      }
-      ticket.checked = true;
-      ticket.save(err => (err ? res.sendError(5, err) : res.status(201).json({
-        success: true,
-        message: `Successfully check in ticket ${ticket._id} to ${req.params.rid}.`,
-      })));
-      // Ticket.checkIn(ticket._id)
-      // .then(() => (
-      //   res.status(201).json({
-      //     success: true,
-      //     message: `Successfully check in ticket ${ticket._id} to ${req.params.rid}.`,
-      //   })
-      // ))
-      // .catch(err => {
-      //   console.log(err);
-      //   return err.code ? res.sendError(err.code) : res.sendError(5, err);
-      // });
+      // if (ticket.checked) {
+      //   return res.sendError(35);
+      // }
+      // ticket.checked = true;
+      // ticket.save(err => (err ? res.sendError(5, err) : res.status(201).json({
+      //   success: true,
+      //   message: `Successfully check in ticket ${ticket._id} to ${req.params.rid}.`,
+      // })));
+      ticket.checkIn()
+        .then(() => (
+          res.status(200).json({
+            success: true,
+            message: `Successfully check in ticket ${ticket._id} in round ${req.params.rid}.`,
+          })
+        ))
+        .catch(err => (err.code ? res.sendError(err.code) : res.sendError(5, err)));
     });
   });
 });

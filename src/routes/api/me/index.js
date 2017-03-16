@@ -1,6 +1,5 @@
 const express = require('express');
 const { User } = require('../../../models');
-const { retrieveError } = require('../../../tools/retrieveError');
 const { isAuthenticatedByToken, deserializeToken } = require('../../../config/authenticate');
 const request = require('request');
 
@@ -18,7 +17,6 @@ const avaliableFields = ['_id', 'name', 'email', 'age', 'gender', 'profile', 'ty
  * @return {User} results - Token owner results.
  */
 router.get('/', isAuthenticatedByToken, (req, res) => {
-
   let fields = [];
   // Fields selecting query
   if (req.query.fields) {
@@ -44,6 +42,7 @@ router.get('/', isAuthenticatedByToken, (req, res) => {
 
 
 router.get('/where', deserializeToken, (req, res) => {
+  /*
   const qs = {};
   qs.lat = req.query.latitude;
   qs.lng = req.query.longitude;
@@ -77,19 +76,14 @@ router.get('/where', deserializeToken, (req, res) => {
       if (!answer.area.nameEn || !answer.area.nameTh) {
         answer.area.nameEn = 'no information';
         answer.area.nameTh = 'ไม่มีข้อมูลของสถานที่นี้';
+        */
+  return res.json({
+    success: true,
+    results: {
+      text: {
+        en: 'no information',
+        th: 'ไม่มีข้อมูลของสถานที่นี้'
       }
-
-      return res.json({
-        success: true,
-        results: {
-          text: {
-            en: answer.area.nameEn,
-            th: answer.area.nameTh
-          }
-        }
-      });
-    } catch (err) {
-      return res.sendError(5, err);
     }
   });
 });
@@ -211,7 +205,7 @@ router.get('/games', isAuthenticatedByToken, (req, res) => {
  * Get all bookmark activities
  * Access at GET http://localhost:8080/api/me/bookmark_activities
  */
-router.get('/bookmark_activities', isAuthenticatedByToken, (req, res) => {});
+router.get('/bookmark_activities', isAuthenticatedByToken, (req, res) => { res.sendError(5); });
 
 router.use('/reserved_rounds', require('./reserved_rounds'));
 
