@@ -26,20 +26,20 @@
       </data-table-column>
       <data-table-column name="" width="52px">
         <template>
-          <paper-icon-button icon="icons:autorenew" target-id$="[[item._id]]" on-tap="_onCheckClick"></paper-icon-button>
+          <paper-icon-button icon="icons:autorenew" target-id$="[[item._id]]" on-tap="_onToggleClick"></paper-icon-button>
           <paper-icon-button icon="icons:delete" target-id$="[[item._id]]" on-tap="_onRemoveTicket"></paper-icon-button>
         </template>
       </data-table-column>
     </iron-data-table>
-    <paper-dialog id="checkInDialog" on-iron-overlay-closed="_onCheck">
-      <h2>Are you sure?</h2>
+    <paper-dialog id="toggleDialog" on-iron-overlay-closed="_onToggle">
+      <h2>Are you sure to toggle this ticket?</h2>
       <div class="buttons">
         <paper-button dialog-dismiss>No</paper-button>
         <paper-button dialog-confirm autofocus>Yes</paper-button>
       </div>
     </paper-dialog>
     <paper-dialog id="deleteDialog" on-iron-overlay-closed="_onRemove">
-      <h2>Are you sure?</h2>
+      <h2>Are you sure to delete this ticket?</h2>
       <div class="buttons">
         <paper-button dialog-dismiss>No</paper-button>
         <paper-button dialog-confirm autofocus>Yes</paper-button>
@@ -70,28 +70,28 @@
         },
       },
       _removeId: null,
-      _checkInId: null,
+      _toggleId: null,
       generateRequest: function() {
         return this.$.api.generateRequest();
       },
       _computeCreateAtDate: function(createAt) {
         return moment.utc(createAt).local().format('D MMM, HH:mm');
       },
-      _onCheckClick: function(e) {
-        this._checkInId = e.target.getAttribute('target-id');
-        this.$.checkInDialog.open();
+      _onToggleClick: function(e) {
+        this._toggleId = e.target.getAttribute('target-id');
+        this.$.toggleDialog.open();
       },
-      _onCheck: function(e) {
+      _onToggle: function(e) {
         if(event.detail.confirmed) {
-          var url = window.api + '/api/tickets/' + this._checkInId + '/check';
-          this._checkInId = null;
+          var url = window.api + '/api/activities/' + this.activityId + '/rounds/' + this.roundId + '/tickets/' + this._toggleId + '/toggle';
+          this._toggleId = null;
 
           setTimeout(function () {
             var req = new XMLHttpRequest();
             req.open('POST', encodeURI(url));
             req.setRequestHeader('Authorization', 'JWT ' + window.token);
             req.onload = function() {
-              if (req.status === 202) {
+              if (req.status === 200) {
                 this.$.api.generateRequest();
               }
             }.bind(this);
