@@ -75,7 +75,7 @@
         return this.$.api.generateRequest();
       },
       _computeCreateAtDate: function(createAt) {
-        return moment.utc(createAt).format('D MMM, HH:mm');
+        return moment.utc(createAt).local().format('D MMM, HH:mm');
       },
       _onCheckClick: function(e) {
         this._checkInId = e.target.getAttribute('target-id');

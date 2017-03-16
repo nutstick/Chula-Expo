@@ -273,7 +273,10 @@
           value: ''
         }
       },
-      _activatedChanged: function(activated) {
+      observers: [
+        '_activatedChanged(activated, zoneId)',
+      ],
+      _activatedChanged: function(activated, zoneId) {
 				if (activated) {
           this.$.zoneAPI.generateRequest();
         }

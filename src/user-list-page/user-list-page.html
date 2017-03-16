@@ -51,7 +51,7 @@
       paper-card-item {
         --paper-card-item-image-height: 100%;
       }
-      
+
       .search-box {
         background-color: #fff;
         border: 1px solid #eee;
@@ -64,7 +64,7 @@
         fill: var(--google-grey-700);
         margin: 0 8px;
       }
-      
+
       .search-box input {
         font-size: 20px;
         outline: 0;
@@ -121,21 +121,12 @@
             <paper-tabs scrollable no-bar hide-scroll-buttons>
               <paper-tab on-tap="_onShowClick">Show</paper-tab>
               <paper-tab on-tap="_onEditClick">Edit</paper-tab>
-              <paper-tab on-tap="_onDeleteClick">Delete</paper-tab>
             </paper-tabs>
           </div>
         </paper-card-item>
       </template>
 			<paper-card-item-pagination page="{{page}}" page-size="{{pageSize}}" total-pages="[[totalPages]]"></paper-card-item-pagination>
     </div>
-    <bottom-prefab reveals effects="waterfall" target-url="/user/add"></bottom-prefab>
-    <paper-dialog id="dialog" on-iron-overlay-closed="_delete">
-      <h2>Are you sure?</h2>
-      <div class="buttons">
-        <paper-button dialog-dismiss>No</paper-button>
-        <paper-button dialog-confirm autofocus>Yes</paper-button>
-      </div>
-    </paper-dialog>
   </template>
   <script>
     Polymer({
