@@ -316,11 +316,10 @@
         },
         academicLevel: {
           type: String,
-          observer: '_onAcademicLevelChanged'
         },
         academicYears: {
           type: Array,
-          value: [],
+          value: ["อ.1", "อ.2", "อ.3","ม.1", "ม.2", "ม.3", "ม.4", "ม.5", "ม.6", "ปี 1", "ปี 2", "ปี 3", "ปี 4", "ปี 5", "ปี 6", "ปี 7", "ปี 8", "อื่น ๆ"];
           notify: true
         },
         route: {
@@ -333,28 +332,11 @@
       _computeUrl: function(userId) {
         return window.api + '/api/users/' + userId;
       },
-      _onAcademicLevelChanged: function(level) {
-        if (level === 'มัธยมต้น') {
-          this.academicYears = ["ม.1", "ม.2", "ม.3"];
-        } else if (level === 'มัธยมปลาย') {
-          this.academicYears = ["ม.4", "ม.5", "ม.6"];
-        } else if (level === 'ปริญญาตรี') {
-          this.academicYears = ["ปี 1", "ปี 2", "ปี 3", "ปี 4", "ปี 5", "ปี 6", "ปี 7", "ปี 8"];
-        } else if (level === 'ปริญญาโท') {
-          this.academicYears = ["ปี 1", "ปี 2", "ปี 3", "ปี 4"];
-        } else if (level === 'ปริญญาเอก') {
-          this.academicYears = ["ปี 1", "ปี 2", "ปี 3", "ปี 4"];
-        } else if (level === 'อื่น ๆ') {
-          this.academicYears = ["ปี 1", "ปี 2", "ปี 3", "ปี 4", "ปี 5", "ปี6"];
-        } else {
-          this.academicYears = [];
-        }
-      },
+
       _activatedChanged: function(activated) {
 				if (activated) {
           var userRequest = this.$.userAPI.generateRequest();
 					userRequest.completes.then(function() {
-            this._onAcademicLevelChanged(this.user.academic.level);
 					}.bind(this));
 				}
       },
