@@ -1,9 +1,7 @@
 const express = require('express');
 const Comment = require('../../../models/Comment');
-const retrieveError = require('../../../tools/retrieveError');
-const ObjectId = require('mongoose').Types.ObjectId;
 const mongoose = require('mongoose');
-const { isAuthenticatedByToken, isStaff } = require('../../../config/authenticate');
+const { isAuthenticatedByToken } = require('../../../config/authenticate');
 
 const router = express.Router();
 
@@ -50,10 +48,7 @@ router.post('/', isAuthenticatedByToken, (req, res) => {
   comment.save((err, _Comment) => {
     if (err) {
       // Handle error from save
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
     return res.status(201).json({
       success: true,

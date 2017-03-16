@@ -1,6 +1,5 @@
 const express = require('express');
 const { User } = require('../../../models');
-const { retrieveError } = require('../../../tools/retrieveError');
 const { isAuthenticatedByToken, deserializeToken } = require('../../../config/authenticate');
 const request = require('request');
 
@@ -18,7 +17,6 @@ const avaliableFields = ['_id', 'name', 'email', 'age', 'gender', 'profile', 'ty
  * @return {User} results - Token owner results.
  */
 router.get('/', isAuthenticatedByToken, (req, res) => {
-
   let fields = [];
   // Fields selecting query
   if (req.query.fields) {
@@ -33,10 +31,7 @@ router.get('/', isAuthenticatedByToken, (req, res) => {
     .select(fields.join(' '))
     .exec((err, me) => {
       if (err) {
-        return res.json({
-          success: false,
-          errors: retrieveError(5, err)
-        });
+        return res.sendError(5, err);
       }
       res.json({
         success: true,
@@ -47,46 +42,55 @@ router.get('/', isAuthenticatedByToken, (req, res) => {
 
 
 router.get('/where', deserializeToken, (req, res) => {
-  request.get({
-    uri: 'http://104.199.143.190/area?lat=' + req.query.latitude + '&lng=' + req.query.longitude + (req.user?('&u=' + req.user):''),
-    timeout: 1200
-  },
-  (err, r, ans) => {
-    if (err) {
-      return res.json({
-        success: true,
-        results: {
-          text: {
-            en: 'no information',
-            th: 'ไม่มีข้อมูลของสถานที่นี้'
-          }
-        }
-      });
-    }
-
-    try {
-      const answer = JSON.parse(ans);
-      if (!answer.area) {
-        answer.area = {};
+  return res.json({
+    success: true,
+    results: {
+      text: {
+        en: 'no information',
+        th: 'ไม่มีข้อมูลของสถานที่นี้'
       }
-      if (!answer.area.nameEn || !answer.area.nameTh) {
-        answer.area.nameEn = 'no information';
-        answer.area.nameTh = 'ไม่มีข้อมูลของสถานที่นี้';
-      }
-
-      return res.json({
-        success: true,
-        results: {
-          text: {
-            en: answer.area.nameEn,
-            th: answer.area.nameTh
-          }
-        }
-      });
-    } catch (err) {
-      return res.sendError(5, err);
     }
   });
+  // request.get({
+  //   uri: 'http://104.199.143.190/area?lat=' + req.query.latitude + '&lng=' + req.query.longitude + (req.user ? ('&u=' + req.user) : ''),
+  //   timeout: 1200
+  // },
+  // (err, r, ans) => {
+  //   if (err) {
+  //     return res.json({
+  //       success: true,
+  //       results: {
+  //         text: {
+  //           en: 'no information',
+  //           th: 'ไม่มีข้อมูลของสถานที่นี้'
+  //         }
+  //       }
+  //     });
+  //   }
+
+  //   try {
+  //     const answer = JSON.parse(ans);
+  //     if (!answer.area) {
+  //       answer.area = {};
+  //     }
+  //     if (!answer.area.nameEn || !answer.area.nameTh) {
+  //       answer.area.nameEn = 'no information';
+  //       answer.area.nameTh = 'ไม่มีข้อมูลของสถานที่นี้';
+  //     }
+
+  //     return res.json({
+  //       success: true,
+  //       results: {
+  //         text: {
+  //           en: answer.area.nameEn,
+  //           th: answer.area.nameTh
+  //         }
+  //       }
+  //     });
+  //   } catch (err) {
+  //     return res.sendError(5, err);
+  //   }
+  // });
 });
 
 /**
@@ -155,10 +159,7 @@ router.put('/', isAuthenticatedByToken, (req, res) => {
   req.user.save((err, _user) => {
     // Handle error from save
     if (err) {
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
 
     return res.status(202).json({
@@ -209,7 +210,7 @@ router.get('/games', isAuthenticatedByToken, (req, res) => {
  * Get all bookmark activities
  * Access at GET http://localhost:8080/api/me/bookmark_activities
  */
-router.get('/bookmark_activities', isAuthenticatedByToken, (req, res) => {});
+router.get('/bookmark_activities', isAuthenticatedByToken, (req, res) => { res.sendError(5); });
 
 router.use('/reserved_rounds', require('./reserved_rounds'));
 
