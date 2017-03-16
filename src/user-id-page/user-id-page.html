@@ -44,6 +44,7 @@
         this.subpage = subpage || 'show';
       },
       _activatedChanged: function(activated) {
+        console.log(activated)
 				if (!activated) {
 					this.subpage = '';
 				}

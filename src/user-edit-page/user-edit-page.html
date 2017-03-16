@@ -262,7 +262,6 @@
         activated: {
           type: Boolean,
           value: false,
-          observer: '_onActivatedChanged'
         },
         _url: {
           type: String,
@@ -348,7 +347,8 @@
       _firstLevelChange: false,
       _toBeAcademicYear: null,
       observers: [
-        '_onUserChanged(user)'
+        '_onUserChanged(user)',
+        '_onActivatedChanged(userId, activated)',
       ],
       _computeUrl: function(userId) {
         return window.api + '/api/users/' + userId;
@@ -381,7 +381,8 @@
           this._toBeAcademicYear = null;
         }
       },
-      _onActivatedChanged: function(activated) {
+      _onActivatedChanged: function(userId, activated) {
+        console.log(activated)
 				if (activated) {
           this._firstLevelChange = true;
 					this.$.userAPI.generateRequest();
