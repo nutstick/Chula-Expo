@@ -57,4 +57,20 @@ router.delete('/:tid', (req, res) => {
     });
 });
 
+router.post('/:tid/toggle', (req, res) => {
+  Ticket.toggle(req.params.tid)
+    .then(() => {
+      res.json({
+        success: true,
+        message: `Successfully toggle ticket ${req.params.tid}.`,
+      });
+    })
+    .catch((err) => {
+      if (err.code) {
+        return res.sendError(err.code);
+      }
+      return res.sendError(5, err);
+    });
+});
+
 module.exports = router;

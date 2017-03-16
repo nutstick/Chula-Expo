@@ -70,7 +70,7 @@ TicketSchema.statics.cancelReserved = ticketId => new Promise((resolve, reject) 
 });
 
 TicketSchema.statics.checkIn = ticketId => new Promise((resolve, reject) => {
-  this.findById(ticketId, (err, ticket) => {
+  TicketSchema.findById(ticketId, (err, ticket) => {
     if (ticket.checked) {
       return reject(35);
     }
@@ -79,6 +79,17 @@ TicketSchema.statics.checkIn = ticketId => new Promise((resolve, reject) => {
       return err ? resolve() : reject(err);
     });
   });
+});
+
+TicketSchema.statics.toggle = ticketId => new Promise((resolve, reject) => {
+  TicketSchema.findById(ticketId).exec()
+    .then((ticket) => {
+      ticket.checked = !ticket.checked;
+      ticket.save()
+        .then(() => resolve(ticket))
+        .catch(err => reject(err));
+    })
+    .catch(err => reject(err));
 });
 
 const Ticket = mongoose.model('Ticket', TicketSchema);

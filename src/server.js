@@ -194,6 +194,10 @@ app.get('/auth/facebook/callback', (req, res, next) => {
  */
 app.use('/', require('./routes'));
 
+app.use('*', (req, res) => {
+  return res.sendError(7);
+});
+
 /**
  * Server run on localhost:3000
  */
