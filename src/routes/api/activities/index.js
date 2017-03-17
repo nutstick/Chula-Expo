@@ -188,7 +188,7 @@ const router = express.Router();
 // recommend from aj.nuttawut
 router.get('/recommend', isAuthenticatedByToken, (req, res) => {
   request.get({
-    uri: 'http://104.199.143.190/recommend/' + req.user.id,
+    uri: 'http://104.155.220.23/recommend/' + req.user.id,
     timeout: 800
   },
   (err, r, ans) => {
@@ -235,7 +235,7 @@ router.get('/nearby', deserializeToken, (req, res) => {
   qs.cutoff = 100;
 
   request.get({
-    uri: 'http://104.199.143.190/search',
+    uri: 'http://104.155.220.23/search',
     qs,
     timeout: 800
   },
@@ -287,7 +287,7 @@ router.get('/search', deserializeToken, (req, res) => {
     qs.u = req.user;
   }
   request.get({
-    uri: 'http://104.199.143.190/search',
+    uri: 'http://104.155.220.23/search',
     qs,
     timeout: 800
   },

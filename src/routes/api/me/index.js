@@ -51,7 +51,7 @@ router.get('/where', deserializeToken, (req, res) => {
   }
 
   request.get({
-    uri: 'http://104.199.143.190/area',
+    uri: 'http://104.155.220.23/area',
     qs,
     timeout: 1000
   },
