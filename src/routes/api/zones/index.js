@@ -351,4 +351,6 @@ router.delete('/:id', (req, res) => {
   });
 });
 
+router.use('/:id/summary', require('./summary'));
+
 module.exports = router;
