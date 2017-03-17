@@ -125,7 +125,7 @@
       on-response="_handleResponse"
       on-error="_handleError"
       handle-as="json"
-      debounce-duration="300"
+      debounce-duration="2000"
     ></iron-ajax>
 		<paper-dialog id="dialog" class="container size" modal on-iron-overlay-closed="_onClosed">
       <div id="overlay" opened$="[[opened]]">
@@ -295,13 +295,13 @@
           // Async fadeOut
           setTimeout(function() {
             this.set('error', null);
-          }.bind(this), 3000)
+          }.bind(this), 1500)
         }
         if (!!success) {
           // Async fadeOut
           setTimeout(function() {
             this.set('success', null);
-          }.bind(this), 3000)
+          }.bind(this), 1500)
         }
 
         return !!success || !!error || !!loading;
