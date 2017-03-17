@@ -118,20 +118,14 @@ router.get('/', (req, res) => {
   if (req.query.userId) {
     Ticket.find({ user: req.query.userId }).count().exec((err, count) => {
       if (err) {
-        return res.status(500).json({
-          success: false,
-          errors: retrieveError(5, err),
-        });
+        return res.sendError(5, err);
       }
 
       Ticket.find({ user: req.query.userId })
         .populate('round', fields, filter, { sort, skip, limit })
         .exec((err, results) => {
           if (err) {
-            return res.status(500).json({
-              success: false,
-              errors: retrieveError(5, err),
-            });
+            return res.sendError(5, err);
           }
 
           return res.status(200).json({
@@ -151,10 +145,7 @@ router.get('/', (req, res) => {
       .populate('round', fields, filter, { sort, skip, limit })
       .exec((err, result) => {
         if (err) {
-          return res.status(500).json({
-            success: false,
-            errors: retrieveError(5, err),
-          });
+          return res.sendError(5, err);
         } else if (!result) {
           return res.status(403).json({
             success: false,
@@ -179,10 +170,7 @@ router.get('/', (req, res) => {
     // Counting all results
     query.count().exec((err, count) => {
       if (err) {
-        return res.status(500).json({
-          success: false,
-          errors: retrieveError(5, err),
-        });
+        return res.sendError(5, err);
       }
 
       // Custom query by input filter, fields, sort, skip ,limit
@@ -194,10 +182,7 @@ router.get('/', (req, res) => {
       // Execute query
       query.exec((err, rounds) => {
         if (err) {
-          return res.status(500).json({
-            success: false,
-            errors: retrieveError(5, err),
-          });
+          return res.sendError(5, err);
         }
 
         return res.status(200).json({
@@ -237,10 +222,7 @@ router.post('/', (req, res) => {
     Activity.findById(req.body.activityId, (err, activitiy) => {
       // Handle error from Activity.findById
       if (err) {
-        return res.status(500).json({
-          success: false,
-          errors: retrieveError(5, err),
-        });
+        return res.sendError(5, err);
       }
       // Related activity not found
       if (!activitiy) {
@@ -270,10 +252,7 @@ router.post('/', (req, res) => {
       round.save((err, _round) => {
         // Handle error from save
         if (err) {
-          return res.status(500).json({
-            success: false,
-            errors: retrieveError(5, err),
-          });
+          return res.sendError(5, err);
         }
 
         return res.status(201).json({
@@ -321,10 +300,7 @@ router.get('/:id', (req, res) => {
   Round.findById(req.params.id, fields, (err, round) => {
     // Handle error from Round.findById
     if (err) {
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
     // Round isn't exist.
     if (!round) {
@@ -357,10 +333,7 @@ router.put('/:id', (req, res) => {
   Round.findById(req.params.id, (err, round) => {
     // Handle error from Round.findById
     if (err) {
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
     // Round isn't exist.
     if (!round) {
@@ -393,10 +366,7 @@ router.put('/:id', (req, res) => {
 
     round.save((err, _round) => {
       if (err) {
-        return res.status(500).json({
-          success: false,
-          errors: retrieveError(5, err),
-        });
+        return res.sendError(5, err);
       }
       return res.status(202).json({
         success: true,
@@ -417,10 +387,7 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
   Round.findByIdAndRemove(req.params.id, (err) => {
     if (err) {
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
     return res.status(202).json({
       success: true,

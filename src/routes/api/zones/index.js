@@ -177,10 +177,7 @@ router.get('/:id', (req, res) => {
   Zone.findById(req.params.id).select(fieldwant).exec((err, zone) => {
     if (err) {
       // Handle error from User.findById
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err)
-      });
+      return res.sendError(5, err);
     }
 
     if (!zone) {
@@ -236,10 +233,7 @@ router.post('/', (req, res) => {
   zone.save((err, _zone) => {
     if (err) {
      // Handle error from save
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+     return res.sendError(5, err);
     }
     return res.status(201).json({
       success: true,
@@ -257,10 +251,7 @@ router.put('/:id', (req, res) => {
   // check error first
 
     if (err) {
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err)
-      });
+      return res.sendError(5, err);
     }
   // check zone
     if (!zone) {
@@ -320,10 +311,7 @@ router.put('/:id', (req, res) => {
 
     zone.save((err, _zone) => {
       if (err) {
-        return res.status(500).json({
-          success: false,
-          errors: retrieveError(5, err)
-        });
+        return res.sendError(5, err);
       }
       return res.status(202).json({
         success: true,
@@ -339,10 +327,7 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
   Zone.findByIdAndRemove(req.params.id, (err) => {
     if (err) {
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err)
-      });
+      return res.sendError(5, err);
     }
     return res.status(202).json({
       success: true,

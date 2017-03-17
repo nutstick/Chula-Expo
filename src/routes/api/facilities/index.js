@@ -128,10 +128,7 @@ router.get('/:id', (req, res) => {
   Facility.findById(req.params.id).select(fields).exec((err, fac) => {
     if (err) {
       // Handle error from User.findById
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err)
-      });
+      return res.sendError(5, err);
     }
     // Facility isn't exist.
     if (!fac) {
@@ -226,10 +223,7 @@ router.put('/:id', (req, res) => {
     fac.save((err, updatedFac) => {
       if (err) {
       // Handle error from save
-        return res.status(500).json({
-          success: false,
-          errors: retrieveError(5, err)
-        });
+        return res.sendError(5, err);
       }
       return res.status(202).json({
         success: true,
@@ -244,10 +238,7 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
   Facility.findByIdAndRemove(req.params.id, (err) => {
     if (err) {
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
     return res.status(202).json({
       success: true,

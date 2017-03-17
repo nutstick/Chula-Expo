@@ -99,20 +99,14 @@ router.get('/', isAuthenticatedByToken, (req, res) => {
 
   Ticket.find({ user: req.user.id }).count().exec((err, count) => {
     if (err) {
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
 
     Ticket.find({ user: req.user.id }, roundFields)
       .populate('round', fields, filter, { sort, skip, limit })
       .exec((err, results) => {
         if (err) {
-          return res.json({
-            success: false,
-            errors: retrieveError(5, err),
-          });
+          return res.sendError(5, err);
         }
 
         res.json({
@@ -167,10 +161,7 @@ router.get('/:rid', isAuthenticatedByToken, (req, res) => {
     .exec((err, results) => {
       // Handle error from Ticket.findOne
       if (err) {
-        return res.status(500).json({
-          success: false,
-          errors: retrieveError(5, err),
-        });
+        return res.sendError(5, err);
       }
       // Ticket isn't exist
       if (!results) {
@@ -201,10 +192,7 @@ router.delete('/:rid', isAuthenticatedByToken, (req, res) => {
     // Handle error from Ticket.findOne
   Round.findById(req.params.rid, (err, round) => {
     if (err) {
-      return res.status(500).json({
-        success: false,
-        errors: retrieveError(5, err),
-      });
+      return res.sendError(5, err);
     }
     // Round isn't exist
     if (!round) {
