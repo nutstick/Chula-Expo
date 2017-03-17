@@ -13,6 +13,11 @@ router.use('/users', require('./users'));
 router.use('/signup', require('./signup'));
 
 /**
+ * ActivityChecks API
+ */
+router.use('/activitychecks', require('./activitychecks'));
+
+/**
  * Login API
  */
 router.use('/login', require('./login'));
