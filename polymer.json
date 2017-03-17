@@ -36,7 +36,8 @@
     "src/zone-id-page/zone-id-page.html",
     "src/zone-list-page/zone-list-page.html",
     "src/zone-page/zone-page.html",
-    "src/zone-show-page/zone-show-page.html"
+    "src/zone-show-page/zone-show-page.html",
+    "bower_components/paper-date-picker-item/paper-datetime-picker-item.html"
   ],
   "sources": [
     "src/**/*",
@@ -47,6 +48,7 @@
     "manifest.json",
     "bower_components/webcomponentsjs/webcomponents-lite.min.js",
     "bower_components/moment/min/moment-with-locales.min.js",
+    "bower_components/moment/min/moment.min.js",
     "bower_components/moment/locale/th.js",
     "lib/*"
   ]

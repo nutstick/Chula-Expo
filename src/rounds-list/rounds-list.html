@@ -6,8 +6,9 @@
 <link rel="import" href="../../bower_components/iron-icons/image-icons.html">
 <link rel="import" href="../../bower_components/paper-ripple/paper-ripple.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input-container.html">
-<link rel="import" href="../../bower_components/paper-date-picker-item/paper-datetime-picker-item.html">
+<!--<link rel="import" href="../../bower_components/paper-date-picker-item/paper-datetime-picker-item.html">-->
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
@@ -211,6 +212,7 @@
         _state: {
           type: String,
           value: 'list',
+          observer: '_onStateChanged'
         },
         activityId: {
           type: String,
@@ -369,6 +371,16 @@
       },
       _computeScannerHidden: function(staffType) {
         return staffType === 'Scanner'
+      },
+      _onStateChanged: function(_state) {
+          console.log(_state)
+        if (_state === 'create') {
+          var myImport = document.createElement('link');
+          myImport.rel = 'import';
+          myImport.href = '/bower_components/paper-date-picker-item/paper-datetime-picker-item.html';
+          document.head.appendChild(myImport);
+          // this.myImportHref('paper-date-picker-item', null, null, true);
+        }
       }
     });
   </script>
