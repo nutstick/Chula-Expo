@@ -147,4 +147,38 @@ router.delete('/:cid', isAuthenticatedByToken, isScanner, (req, res) => {
   });
 });
 
+// router.get('/summary', (req, res) => {
+//   let activities;
+//   const filter = {};
+//   if (req.query.createAt) {
+//     try {
+//       req.query.createAt = JSON.parse(req.query.createAt);
+//     } catch (err) {
+//       // return res.sendError(5, err);
+//     }
+//     filter.createAt = RangeQuery(req.query.createAt, 'Date');
+//   }
+//   const count = ActivityCheck.find(filter).count().exec();
+//   count
+//     .then((checks) => {
+//       // console.log(checks)
+//       res.json({
+//         success: true,
+//         results: {
+//           list: checks.reduce((result, check, index) => {
+//             result[activities[index].name.en] = check[0] && check[0].total ? check[0].total : 0;
+//             return result;
+//           }, {}),
+//           total: checks.reduce((result, check) => {
+//             return result + (check[0] && check[0].total ? check[0].total : 0);
+//           }, 0)
+//         }
+//       });
+//     })
+//     .catch((err) => {
+//       res.sendError(5, err);
+//     });
+// });
+
+
 module.exports = router;

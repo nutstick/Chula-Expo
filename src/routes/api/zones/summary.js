@@ -114,11 +114,11 @@ router.get('/users', (req, res) => {
       });
     })
     .catch((err) => {
-      res.sendError(5, err);
+      return res.sendError(5, err);
     });
 });
 
-// # show list
+// #TODO show list
 router.get('/users/list', (req, res) => {
   let activities;
   const filter = {};
@@ -169,7 +169,7 @@ router.get('/users/list', (req, res) => {
     });
 });
 
-// # todo
+// #TODO
 router.get('/gender', (req, res) => {
   let activities;
   const filter = {};
@@ -225,6 +225,5 @@ router.get('/gender', (req, res) => {
       res.sendError(5, err);
     });
 });
-
 
 module.exports = router;

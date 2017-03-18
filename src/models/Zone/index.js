@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const { Activity } = require('./');
 const _ = require('lodash');
+const { User, Activity, ActivityCheck } = require('./');
 
 const ObjectId = mongoose.Schema.Types.ObjectId;
 
@@ -78,55 +78,44 @@ const ZoneSchema = new mongoose.Schema({
 
 });
 
-/*
-
-ZoneSchema.statics.getActivityCheckEachActivity = function (zoneId, filter, mergeUser = false) {
+ZoneSchema.statics.getActivityCheckEachActivity = function (zoneId, filter,
+  fields, mergeUser = false) {
   let activities;
   Activity.find({ zone: zoneId })
-    .select('_id name.en').exec()
+    .select('_id name.en')
+    .exec()
     .then((_activities) => {
       activities = _activities;
+
       return Promise.all(
         activities.map((activity) => {
-          filter_.activityId = activity._id;
-
-          return ActivityCheck.aggregate([
+          const aggregateQuery = [
             {
-              $match: _.extends
-            },
-            {
+              $match: _.extend({ activityId: activity._id }, filter)
+            }
+          ];
+          if (mergeUser) {
+            aggregateQuery.push({
               $group: {
                 _id: '$user'
               }
-            },
-            {
-              $count: 'total'
-            }
-          ])
-            .exec();
+            });
+          }
+          return ActivityCheck.aggregate(aggregateQuery).exec();
         })
       );
     })
     .then((checks) => {
-      // console.log(checks)
-      res.json({
-        success: true,
-        results: {
-          list: checks.reduce((result, check, index) => {
-            result[activities[index].name.en] = check[0] && check[0].total ? check[0].total : 0;
-            return result;
-          }, {}),
-          total: checks.reduce((result, check) => {
-            return result + (check[0] && check[0].total ? check[0].total : 0);
-          }, 0)
-        }
-      });
+      const users = Object.keys(checks.reduce((user, check) => {
+        check.forEach((c) => { user[c.user] = true; });
+        return user;
+      }, {}));
+      return Promise.all(users.map((u) => {
+        return User.findOne({ _id: u }).select(fields).exec();
+      }));
     })
-    .catch((err) => {
-      res.sendError(5, err);
-    });
 }
-*/
+
 const Zone = mongoose.model('Zone', ZoneSchema);
 
 module.exports = Zone;
