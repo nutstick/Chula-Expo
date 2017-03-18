@@ -34,6 +34,11 @@ const router = express.Router();
  router.get('/', (req, res) => {
    // filtering tag with a tags query.
    // http://localhost:3000/?tags=prize,rewards
+//   if (!req.query.limit && !req.query.zone && !req.query.tags) {
+  //   console.log(req.query.ad);
+    // return res.sendError(5);
+  // }
+
    const filter = {};
    if (req.query.tags) {
      filter.tags = { $in: req.query.tags.split(',') };
@@ -349,26 +354,34 @@ router.get('/highlight', (req, res) => {
 
   const query = Activity.find(filter).select(fields);
 
-  Activity.find(filter).count((err, total) => {
-    if (err) {
-      return res.sendError(5, err);
-    }
+  Activity.findById('58c8162e4e9d0a4ac40c58ce').exec((err, rally) => {
 
-    let skip = Math.floor(Math.random() * total);
-    if (skip >= 10) {
-      skip -= 10;
-    }
-
-    query.skip(skip).limit(10).exec((err, _act) => {
+    Activity.find(filter).count((err, total) => {
       if (err) {
         return res.sendError(5, err);
       }
-      return res.status(200).json({
-        success: true,
-        results: _act,
-        queryInfo: {
-          total,
+
+      let skip = Math.floor(Math.random() * total);
+      if (skip >= 10) {
+        skip -= 10;
+      }
+
+      query.skip(skip).limit(15).exec((err, _act) => {
+        let index = Math.floor(Math.random() * 15);
+        index -= 1;
+        if (index < 0) {
+          index = 0;
         }
+
+        _act[index] = rally;
+
+        if (err) {
+          return res.sendError(5, err);
+        }
+        return res.status(200).json({
+          success: true,
+          results: _act,
+        });
       });
     });
   });
@@ -488,9 +501,13 @@ router.get('/:id/qrcode', (req, res) => {
     if (err) {
       return res.sendError(5, err);
     } else if (!act) {
-      return res.sendError(5, err);
+      return res.redirect('https://www.chulaexpo.com/app');
     } else if (!act.pdf) {
-      return res.sendError(5, err);
+      return res.redirect('https://www.chulaexpo.com/app');
+    }
+
+    if (!act.pdf.startsWith('http')) {
+      act.pdf = 'http://' + act.pdf;
     }
 
     res.writeHead(301, {
@@ -506,10 +523,15 @@ router.get('/:id/qrvideo', (req, res) => {
     if (err) {
       return res.sendError(5, err);
     } else if (!act) {
-      return res.sendError(5, err);
+      return res.redirect('https://www.chulaexpo.com/app');
     } else if (!act.video) {
-      return res.sendError(5, err);
+      return res.redirect('https://www.chulaexpo.com/app');
     }
+
+    if (!act.video.startsWith('http')) {
+      act.video = 'http://' + act.video;
+    }
+
     res.writeHead(301, {
       Location: encodeURI(act.video)
     });
