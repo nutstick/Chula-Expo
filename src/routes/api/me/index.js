@@ -88,6 +88,13 @@ router.get('/where', deserializeToken, (req, res) => {
   });
 });
 
+router.get('/wheretest', deserializeToken, (req, res) => {
+  res.writeHead(302, {
+    Location: 'http://104.155.220.23:8080/area?lat=' + req.query.latitude + '&lng=' + req.query.longitude + (req.user?('&u='+req.user):'')
+  });
+  res.end();
+});
+
 /**
  * Update token owner user infomation
  * Access at PUT http://localhost:8080/api/me

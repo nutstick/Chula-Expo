@@ -93,6 +93,7 @@ router.get('/users', (req, res) => {
       );
     })
     .then((checks) => {
+      console.log("asa");
       const users = Object.keys(checks.reduce((user, check) => {
         check.forEach((c) => { user[c.user] = true; });
         return user;
@@ -117,6 +118,113 @@ router.get('/users', (req, res) => {
     });
 });
 
-router.get('/users', (req, res) => {
+// # show list
+router.get('/users/list', (req, res) => {
+  let activities;
+  const filter = {};
+  if (req.query.createAt) {
+    try {
+      req.query.createAt = JSON.parse(req.query.createAt);
+    } catch (err) {
+      // return res.sendError(5, err);
+    }
+    filter.createAt = RangeQuery(req.query.createAt, 'Date');
+  }
+  Activity.find({ zone: req.params.id })
+    .select('_id name.en').exec()
+    .then((_activities) => {
+      activities = _activities;
+      return Promise.all(
+        activities.map((activity) => {
+          const filter_ = filter;
+          filter_.activityId = activity._id;
+
+          return ActivityCheck.aggregate([
+            {
+              $match: filter_
+            },
+          ])
+            .exec();
+        })
+      );
+    })
+    .then((checks) => {
+      const users = Object.keys(checks.reduce((user, check) => {
+        check.forEach((c) => { user[c.user] = true; });
+        return user;
+      }, {}));
+      return Promise.all(users.map((u) => {
+        return User.findOne({ _id: u , age: { $ne: 100}}).select('name type academic worker gender tags age').exec();
+      })).then((users) => {
+        return res.json({
+          success: true,
+          results: {
+            users
+          }
+        });
+      });
+    })
+    .catch((err) => {
+      res.sendError(5, err);
+    });
 });
+
+// # todo
+router.get('/gender', (req, res) => {
+  let activities;
+  const filter = {};
+  if (req.query.createAt) {
+    try {
+      req.query.createAt = JSON.parse(req.query.createAt);
+    } catch (err) {
+      // return res.sendError(5, err);
+    }
+    filter.createAt = RangeQuery(req.query.createAt, 'Date');
+  }
+
+  Activity.find({ zone: req.params.id })
+    .select('_id name.en').exec()
+    .then((_activities) => {
+      activities = _activities;
+      return Promise.all(
+        activities.map((activity) => {
+          const filter_ = filter;
+          filter_.activityId = activity._id;
+
+          return ActivityCheck
+          .populate('user')
+          .aggregate([
+            { $match: filter_ },
+            {
+              $group:
+                { _id: '$user' }
+            },
+            { $count: 'total' }
+          ])
+          .exec()
+        })
+      );
+    })
+    .then((checks) => {
+      console.log(checks);
+      // console.log(checks)
+      res.json({
+        success: true,
+        results: {
+          list: checks.reduce((result, check, index) => {
+            result[activities[index].name.en] = check[0] && check[0].total ? check[0].total : 0;
+            return result;
+          }, {}),
+          total: checks.reduce((result, check) => {
+            return result + (check[0] && check[0].total ? check[0].total : 0);
+          }, 0)
+        }
+      });
+    })
+    .catch((err) => {
+      res.sendError(5, err);
+    });
+});
+
+
 module.exports = router;
