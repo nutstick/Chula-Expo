@@ -1,10 +1,85 @@
 const express = require('express');
-const Zone = require('../../../models/Zone');
+const { Zone, ActivityCheck } = require('../../../models');
 const { RangeQuery } = require('../../../tools');
 const retrieveError = require('../../../tools/retrieveError');
 const { isAuthenticatedByToken, isStaff, deserializeToken } = require('../../../config/authenticate');
+const mongoose = require('mongoose');
+
+const ObjectId = mongoose.Types.ObjectId;
 
 const router = express.Router();
+
+router.get('/summary', (req, res) => {
+  // Zone.find().exec((err, zones) => {
+    // Promise.all(zones.map((z) => (
+  const filter = {};
+  if (req.query.createAt) {
+    try {
+      req.query.createAt = JSON.parse(req.query.createAt);
+    } catch (err) {
+      // return res.sendError(5, err);
+    }
+    filter.createAt = RangeQuery(req.query.createAt, 'Date');
+  }
+
+  ActivityCheck.aggregate([
+    {
+      $match: filter
+    },
+    {
+      $lookup: {
+        from: 'activities',
+        localField: 'activityId',
+        foreignField: '_id',
+        as: 'act'
+      }
+    }, {
+      $unwind: '$act'
+    }, {
+      $group: {
+        _id: '$user',
+        zone: {
+          $first: '$act.zone'
+        }
+        // count: {
+        //   $sum: 1
+        // }
+      }
+    }, {
+      $group: {
+        _id: '$zone',
+        count: {
+          $sum: 1
+        }
+      }
+    }, {
+      $lookup: {
+        from: 'zones',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'zone'
+      }
+    }, {
+      $unwind: '$zone'
+    }, {
+      $project: {
+        zone: '$zone.name.th',
+        count: 1
+      }
+    }
+  ]).exec((err, s) => {
+    return res.status(200).json({
+      success: true,
+      results: s
+    })
+  })
+    // )))
+    // .then((err, ans) => {
+    //   res.sendError(5)
+    // })
+  // });
+  // res.sendError(5)
+});
 
 /**
  * Get Zone list
@@ -244,7 +319,7 @@ router.post('/', (req, res) => {
 });
 
 // Update an existing zone via PUT(JSON format)
-// ex. { "name","EditName"}
+// ex. { "name","EditName'}
 // Access at PUT http://localhost:3000/api/en/zones/:id
 router.put('/:id', (req, res) => {
   Zone.findById(req.params.id, (err, zone) => {
