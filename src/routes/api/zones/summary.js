@@ -113,10 +113,8 @@ router.get('/users', (req, res) => {
       });
     })
     .catch((err) => {
-      res.sendError(5, err);
+      return res.sendError(5, err);
     });
 });
 
-router.get('/users', (req, res) => {
-});
 module.exports = router;

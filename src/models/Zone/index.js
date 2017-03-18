@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const _ = require('lodash');
+const { User, Activity, ActivityCheck } = require('./');
 
 const ObjectId = mongoose.Schema.Types.ObjectId;
 
@@ -75,6 +77,44 @@ const ZoneSchema = new mongoose.Schema({
   },
 
 });
+
+ZoneSchema.statics.getActivityCheckEachActivity = function (zoneId, filter,
+  fields, mergeUser = false) {
+  let activities;
+  Activity.find({ zone: zoneId })
+    .select('_id name.en')
+    .exec()
+    .then((_activities) => {
+      activities = _activities;
+
+      return Promise.all(
+        activities.map((activity) => {
+          const aggregateQuery = [
+            {
+              $match: _.extend({ activityId: activity._id }, filter)
+            }
+          ];
+          if (mergeUser) {
+            aggregateQuery.push({
+              $group: {
+                _id: '$user'
+              }
+            });
+          }
+          return ActivityCheck.aggregate(aggregateQuery).exec();
+        })
+      );
+    })
+    .then((checks) => {
+      const users = Object.keys(checks.reduce((user, check) => {
+        check.forEach((c) => { user[c.user] = true; });
+        return user;
+      }, {}));
+      return Promise.all(users.map((u) => {
+        return User.findOne({ _id: u }).select(fields).exec();
+      }));
+    })
+}
 
 const Zone = mongoose.model('Zone', ZoneSchema);
 
