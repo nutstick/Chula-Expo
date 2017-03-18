@@ -38,6 +38,9 @@ const router = express.Router();
   //   console.log(req.query.ad);
     // return res.sendError(5);
   // }
+   if (!req.query.limit && !req.query.zone && !req.query.tags) {
+     return res.sendError(5);
+   }
 
    const filter = {};
    if (req.query.tags) {
