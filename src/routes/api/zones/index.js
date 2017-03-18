@@ -22,9 +22,15 @@ router.get('/summary', (req, res) => {
     filter.createAt = RangeQuery(req.query.createAt, 'Date');
   }
 
+  let limit;
+  let skip;
+  if (req.query.limit) {
+    limit = Number.parseInt(req.query.limit, 10);
+  }
+  if (req.query.skip) {
+    skip = Number.parseInt(req.query.skip, 10);
+  }
 
-  const limit = req.query.limit;
-  const skip = req.query.skip;
   Zone.find().limit(limit).skip(skip).exec((err, zones) => {
     Promise.all(zones.map((zone) => {
       return ActivityCheck.aggregate([
