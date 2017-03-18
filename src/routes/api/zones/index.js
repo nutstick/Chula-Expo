@@ -22,63 +22,75 @@ router.get('/summary', (req, res) => {
     filter.createAt = RangeQuery(req.query.createAt, 'Date');
   }
 
-  ActivityCheck.aggregate([
-    {
-      $match: filter
-    },
-    {
-      $lookup: {
-        from: 'activities',
-        localField: 'activityId',
-        foreignField: '_id',
-        as: 'act'
-      }
-    }, {
-      $unwind: '$act'
-    }, {
-      $group: {
-        _id: '$user',
-        zone: {
-          $first: '$act.zone'
+
+  const limit = req.query.limit;
+  const skip = req.query.skip;
+  Zone.find().limit(limit).skip(skip).exec((err, zones) => {
+    Promise.all(zones.map((zone) => {
+      return ActivityCheck.aggregate([
+        {
+          $match: filter
+        },
+        {
+          $lookup: {
+            from: 'activities',
+            localField: 'activityId',
+            foreignField: '_id',
+            as: 'act'
+          }
+        }, {
+          $unwind: '$act'
+        }, {
+          $match: {
+            'act.zone': zone._id
+          }
+        }, {
+          $group: {
+            _id: '$user',
+            zone: {
+              $first: '$act.zone'
+            },
+            activity: {
+              $first: '$act.name.th'
+            },
+            count: {
+              $sum: 1
+            }
+          }
+        }, {
+          $lookup: {
+            from: 'zones',
+            localField: 'zone',
+            foreignField: '_id',
+            as: 'zone'
+          }
+        }, {
+          $unwind: '$zone'
+        }, {
+          $project: {
+            zone: '$zone.name.th',
+            activity: '$activity',
+            count: 1
+          }
+        }, {
+          $group: {
+            _id: '$zone',
+            total: {
+              $sum: 1
+            }
+          }
         }
-        // count: {
-        //   $sum: 1
-        // }
-      }
-    }, {
-      $group: {
-        _id: '$zone',
-        count: {
-          $sum: 1
-        }
-      }
-    }, {
-      $lookup: {
-        from: 'zones',
-        localField: '_id',
-        foreignField: '_id',
-        as: 'zone'
-      }
-    }, {
-      $unwind: '$zone'
-    }, {
-      $project: {
-        zone: '$zone.name.th',
-        count: 1
-      }
-    }
-  ]).exec((err, s) => {
-    return res.status(200).json({
-      success: true,
-      results: s
-    })
-  })
-    // )))
-    // .then((err, ans) => {
-    //   res.sendError(5)
-    // })
-  // });
-  // res.sendError(5)
+      ]).exec()
+    }))
+      .then((s) => {
+        return res.json({
+          s
+        });
+      })
+      .catch((err) => {
+        return res.sendError(5, err);
+      })
+  });
 });
 
 /**
