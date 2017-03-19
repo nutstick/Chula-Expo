@@ -14,7 +14,7 @@ const CommentSchema = new mongoose.Schema({
     ref: 'Activity'
   },
   createAt: { type: Date, default: new Date() },
-  createBxy: {
+  createBy: {
     type: ObjectId,
     ref: 'User'
   },
