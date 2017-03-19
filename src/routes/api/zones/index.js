@@ -64,21 +64,6 @@ router.get('/summary', (req, res) => {
             }
           }
         }, {
-          $lookup: {
-            from: 'zones',
-            localField: 'zone',
-            foreignField: '_id',
-            as: 'zone'
-          }
-        }, {
-          $unwind: '$zone'
-        }, {
-          $project: {
-            zone: '$zone.name.th',
-            activity: '$activity',
-            count: 1
-          }
-        }, {
           $group: {
             _id: '$zone',
             total: {
