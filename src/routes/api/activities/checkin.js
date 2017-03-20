@@ -1,8 +1,105 @@
 const express = require('express');
 const { Activity, ActivityCheck, User } = require('../../../models');
 const { isAuthenticatedByToken, isStaff, isScanner } = require('../../../config/authenticate');
+const RangeQuery = require('../../../tools/RangeQuery');
+const ObjectId = require('mongoose').Types.ObjectId;
 
 const router = express.Router({ mergeParams: true });
+
+router.get('/summary', (req, res) => {
+  const perminute = req.query.minute || 15;
+  const filter = {
+    activityId: ObjectId(req.params.id)
+  };
+  if (req.query.createAt) {
+    try {
+      req.query.createAt = JSON.parse(req.query.createAt);
+    } catch (err) {
+      // return res.sendError(5, err);
+    }
+    filter.createAt = RangeQuery(req.query.createAt, 'Date');
+  }
+  // ActivityCheck.find(filter).distinct('user').exec((err, s) => {
+  //   console.log(err,s.length)
+  // })
+  const checkAggregate = ActivityCheck.aggregate([
+    {
+      $match: filter
+    }, {
+      $group: {
+        _id: {
+          id: '$user',
+          year: {
+            $year: '$createAt'
+          },
+          dayOfYear: {
+            $dayOfYear: '$createAt'
+          },
+          minute: {
+            $minute: '$createAt'
+          },
+          hour: {
+            $hour: '$createAt'
+          },
+          second: {
+            $subtract: [
+              { $second: '$createAt' },
+              {
+                $mod: [{
+                  $second: '$createAt'
+                }, 15]
+              }
+            ]
+          }
+        },
+        // count: {
+        //   $sum: 1
+        // },
+        // createAt: {
+        //   $push: '$createAt'
+        // }
+      }
+    }, {
+      $group: {
+        _id: {
+          year: '$_id.year',
+          dayOfYear: '$_id.dayOfYear',
+          hour: '$_id.hour',
+          minute: {
+            $subtract: [
+              '$_id.minute',
+              {
+                $mod: ['$_id.minute', perminute]
+              }
+            ]
+          }
+        },
+        count: {
+          $sum: 1
+        },
+        // users: {
+        //   $push: '$_id.id'
+        // }
+      }
+    }
+  ]);
+
+  checkAggregate
+    .sort('_id.year _id.dayOfYear _id.hour _id.minute')
+    // .unwind('$activity')
+    // .unwind('$createAt')
+    .then((checks) => {
+      console.log(checks.length)
+      res.json({
+        success: true,
+        results: checks
+      });
+    })
+    .catch((err) => {
+      res.sendError(5, err);
+    });
+});
+
 router.get('/', (req, res) => {
   const filter = { activityId: req.params.id };
   let limit;
@@ -146,39 +243,5 @@ router.delete('/:cid', isAuthenticatedByToken, isScanner, (req, res) => {
     });
   });
 });
-
-// router.get('/summary', (req, res) => {
-//   let activities;
-//   const filter = {};
-//   if (req.query.createAt) {
-//     try {
-//       req.query.createAt = JSON.parse(req.query.createAt);
-//     } catch (err) {
-//       // return res.sendError(5, err);
-//     }
-//     filter.createAt = RangeQuery(req.query.createAt, 'Date');
-//   }
-//   const count = ActivityCheck.find(filter).count().exec();
-//   count
-//     .then((checks) => {
-//       // console.log(checks)
-//       res.json({
-//         success: true,
-//         results: {
-//           list: checks.reduce((result, check, index) => {
-//             result[activities[index].name.en] = check[0] && check[0].total ? check[0].total : 0;
-//             return result;
-//           }, {}),
-//           total: checks.reduce((result, check) => {
-//             return result + (check[0] && check[0].total ? check[0].total : 0);
-//           }, 0)
-//         }
-//       });
-//     })
-//     .catch((err) => {
-//       res.sendError(5, err);
-//     });
-// });
-
 
 module.exports = router;
