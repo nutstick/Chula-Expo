@@ -205,7 +205,7 @@ router.get('/recommend', isAuthenticatedByToken, (req, res) => {
   (err, r, ans) => {
     if (err) {
       const filter = {};
-      filter.end = { $gt: new Date(new Date().getTime() + (7 * 60000)).toUTCString() };
+      //filter.end = { $gt: new Date(new Date().getTime() + (7 * 60000)).toUTCString() };
       const query = Activity.find(filter);
       Activity.find(filter).count((err, total) => {
         if (err) {
@@ -340,7 +340,7 @@ router.get('/highlight', (req, res) => {
   const filter = {};
 
   //  http://localhost:3000/?sort=createAt,-startDate
-  filter.end = { $gt: new Date(new Date().getTime() + (7 * 60000)).toUTCString() };
+//  filter.end = { $gt: new Date(new Date().getTime() + (7 * 60000)).toUTCString() };
   filter.isHighlight = true;
   filter.banner = { $exists: true };
   // field selector
