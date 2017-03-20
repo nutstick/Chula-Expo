@@ -32,6 +32,9 @@ const router = express.Router();
  * @return {number} queryInfo.skip - Skip that was used.
  */
  router.get('/', (req, res) => {
+   if (!req.query.limit || !req.query.zone) {
+     return res.sendError(5);
+   }
    // filtering tag with a tags query.
    // http://localhost:3000/?tags=prize,rewards
 //   if (!req.query.limit && !req.query.zone && !req.query.tags) {

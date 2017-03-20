@@ -4,6 +4,7 @@ const { RangeQuery } = require('../../../tools');
 const retrieveError = require('../../../tools/retrieveError');
 const { isAuthenticatedByToken, isStaff, deserializeToken } = require('../../../config/authenticate');
 const mongoose = require('mongoose');
+const request = require('request');
 
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -33,6 +34,65 @@ router.get('/summary', (req, res) => {
 
   Zone.find().limit(limit).skip(skip).exec((err, zones) => {
     Promise.all(zones.map((zone) => {
+      let activities;
+      const filter = {};
+      if (req.query.createAt) {
+        try {
+          req.query.createAt = JSON.parse(req.query.createAt);
+        } catch (err) {
+          // return res.sendError(5, err);
+        }
+        filter.createAt = RangeQuery(req.query.createAt, 'Date');
+      }
+      Activity.find({ zone: req.params.id })
+        .select('_id name.en').exec()
+        .then((_activities) => {
+          activities = _activities;
+          return Promise.all(
+            activities.map((activity) => {
+              const filter_ = filter;
+              filter_.activityId = activity._id;
+
+              return ActivityCheck.aggregate([
+                {
+                  $match: filter_
+                },
+              ])
+                .exec();
+            })
+          );
+        })
+        .then((checks) => {
+          console.log("asa");
+          const users = Object.keys(checks.reduce((user, check) => {
+            check.forEach((c) => { user[c.user] = true; });
+            return user;
+          }, {}));
+          return Promise.all(users.map((u) => {
+            return User.findOne({ _id: u }).select('name').exec();
+          })).then((users) => {
+            const _u = users;
+            const qrcode = _u.reduce((c, u) => (u && u.name && u.name === 'qrcode' ? c + 1 : c), 0)
+            return res.json({
+              success: true,
+              results: {
+                total: _u.length,
+                qrcode,
+                mobile: _u.length - qrcode,
+              }
+            });
+          });
+        })
+    }))
+    .then((s) => {
+      return res.json({
+        s
+      });
+    });
+  })
+
+
+/*
       return ActivityCheck.aggregate([
         {
           $match: filter
@@ -81,7 +141,7 @@ router.get('/summary', (req, res) => {
       .catch((err) => {
         return res.sendError(5, err);
       })
-  });
+  });*/
 });
 
 /**
@@ -414,9 +474,7 @@ router.delete('/:id', (req, res) => {
   });
 });
 
-router.get('/summary', () => {
-
-})
+router.get('/summary', () => {});
 
 router.use('/:id/summary', require('./summary'));
 
