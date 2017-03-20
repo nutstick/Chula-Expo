@@ -194,42 +194,66 @@ const router = express.Router();
  });
 
 // recommend from aj.nuttawut
-router.get('/recommend', isAuthenticatedByToken, (req, res) => {
-  request.get({
-    uri: 'http://104.155.220.23/recommend/' + req.user.id,
-    timeout: 800
-  },
-  (err, r, ans) => {
-    if (err) {
-      const filter = {};
-      //filter.end = { $gt: new Date(new Date().getTime() + (7 * 60000)).toUTCString() };
-      const query = Activity.find(filter);
-      Activity.find(filter).count((err, total) => {
-        if (err) {
-          return res.sendError(5, err);
-        }
-
-        query.limit(20).exec((err, _act) => {
+router.get('/recommend', deserializeToken, (req, res) => {
+  if (req.user) {
+    request.get({
+      uri: 'http://104.155.220.23/recommend/' + req.user,
+      timeout: 800
+    },
+    (err, r, ans) => {
+      if (err) {
+        const filter = {};
+        //filter.end = { $gt: new Date(new Date().getTime() + (7 * 60000)).toUTCString() };
+        const query = Activity.find(filter);
+        Activity.find(filter).count((err, total) => {
           if (err) {
             return res.sendError(5, err);
           }
-          return res.status(200).json({
-            success: true,
-            results: _act,
-            queryInfo: {
-              total,
+
+          query.limit(20).exec((err, _act) => {
+            if (err) {
+              return res.sendError(5, err);
             }
+            return res.status(200).json({
+              success: true,
+              results: _act,
+              queryInfo: {
+                total,
+              }
+            });
           });
         });
+      } else {
+        const answer = JSON.parse(ans);
+        return res.json({
+          success: true,
+          results: answer.activities
+        });
+      }
+    });
+  } else {
+    const filter = {};
+    //filter.end = { $gt: new Date(new Date().getTime() + (7 * 60000)).toUTCString() };
+    const query = Activity.find(filter);
+    Activity.find(filter).count((err, total) => {
+      if (err) {
+        return res.sendError(5, err);
+      }
+
+      query.limit(20).exec((err, _act) => {
+        if (err) {
+          return res.sendError(5, err);
+        }
+        return res.status(200).json({
+          success: true,
+          results: _act,
+          queryInfo: {
+            total,
+          }
+        });
       });
-    } else {
-      const answer = JSON.parse(ans);
-      return res.json({
-        success: true,
-        results: answer.activities
-      });
-    }
-  });
+    });
+  }
 });
 
 // nearby from aj.nuttawut
