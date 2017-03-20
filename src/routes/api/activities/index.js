@@ -357,34 +357,23 @@ router.get('/highlight', (req, res) => {
 
   const query = Activity.find(filter).select(fields);
 
-  Activity.findById('58c8162e4e9d0a4ac40c58ce').exec((err, rally) => {
+  Activity.find(filter).count((err, total) => {
+    if (err) {
+      return res.sendError(5, err);
+    }
 
-    Activity.find(filter).count((err, total) => {
+    let skip = Math.floor(Math.random() * total);
+    if (skip >= 10) {
+      skip -= 10;
+    }
+
+    query.skip(skip).limit(10).exec((err, _act) => {
       if (err) {
         return res.sendError(5, err);
       }
-
-      let skip = Math.floor(Math.random() * total);
-      if (skip >= 10) {
-        skip -= 10;
-      }
-
-      query.skip(skip).limit(15).exec((err, _act) => {
-        let index = Math.floor(Math.random() * 15);
-        index -= 1;
-        if (index < 0) {
-          index = 0;
-        }
-
-        _act[index] = rally;
-
-        if (err) {
-          return res.sendError(5, err);
-        }
-        return res.status(200).json({
-          success: true,
-          results: _act,
-        });
+      return res.status(200).json({
+        success: true,
+        results: _act,
       });
     });
   });
