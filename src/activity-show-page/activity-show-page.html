@@ -16,6 +16,7 @@
 <link rel="import" href="../rounds-list/rounds-list.html">
 <link rel="import" href="../qr-scanner/qr-scanner.html">
 <link rel="import" href="../activity-check-list/activity-check-list.html">
+<link rel="import" href="../activity-checkin-summary/activity-checkin-summary.html">
 
 <dom-module id="activity-show-page">
   <template>
@@ -157,209 +158,216 @@
 			activity="{{activity}}"
     ></activity-api>
 		<div id="main" class="container">
-			<paper-card id="left">
-        <div class="card-content">
-          <!-- Thumbnail Upload -->
-					<div class="item">
-						<div class="flex-layout">
-							<label class="label upload">Thumbnail</label>
-							<div class="flex">
-                <iron-image style="width:140px; height:80px;" sizing="cover" preload fade src="{{_computeThumbnail(activity.thumbnail)}}"></iron-image>
+			<div id="left">
+				<paper-card>
+					<div class="card-content">
+						<activity-checkin-summary activity-id="{{activityId}}"></activity-checkin-summary>
+					</div>
+				</paper-card>
+				<paper-card style="margin-top: 12px;">
+					<div class="card-content">
+						<!-- Thumbnail Upload -->
+						<div class="item">
+							<div class="flex-layout">
+								<label class="label upload">Thumbnail</label>
+								<div class="flex">
+									<iron-image style="width:140px; height:80px;" sizing="cover" preload fade src="{{_computeThumbnail(activity.thumbnail)}}"></iron-image>
+								</div>
 							</div>
 						</div>
-					</div>
-					<!-- Banner Upload -->
-					<div class="item">
-						<div class="flex-layout">
-							<label class="label upload">Banner</label>
-							<div class="flex">
-                <iron-image style="width:200px; height:150px;" sizing="cover" preload fade src="{{_computeBanner(activity.banner)}}"></iron-image>
+						<!-- Banner Upload -->
+						<div class="item">
+							<div class="flex-layout">
+								<label class="label upload">Banner</label>
+								<div class="flex">
+									<iron-image style="width:200px; height:150px;" sizing="cover" preload fade src="{{_computeBanner(activity.banner)}}"></iron-image>
+								</div>
 							</div>
 						</div>
-					</div>
-					<!-- Time -->
-					<div class="item">
-						<div>
-							<label class="label --input">Start Time</label>
+						<!-- Time -->
+						<div class="item">
+							<div>
+								<label class="label --input">Start Time</label>
+								<div class="flex fitdiv">
+									{{_convertToDate(activity.start)}}
+								</div>
+							</div>
+							<div>
+								<label class="label --input">End Time</label>
+								<div class="flex fitdiv">
+									{{_convertToDate(activity.end)}}
+								</div>
+							</div>
+						</div>
+
+						<div class="item">
+							<div>
+								<label class="label --input">Contact</label>
+								<div class="flex fitdiv">
+									{{activity.contact}}
+								</div>
+							</div>
+						</div>
+
+						<div class="item">
+							<div>
+								<label class="label input">Video Url</label>
+								<div class="flex fitdiv">
+									{{activity.video}}
+									<div id="qrvideo" style="width:250px; height:250px; margin-bottom:15px; margin-top:4px;"></div>
+
+								</div>
+							</div>
+							<div>
+								<label class="label input">PDF Url</label>
+								<div class="flex fitdiv">
+									{{activity.pdf}}
+									<div id="qrcode" style="width:250px; height:250px; margin-bottom:15px; margin-top:4px;"></div>
+								</div>
+							</div>
+							<div>
+								<label class="label input">Link</label>
+								<div class="flex fitdiv">
+									{{activity.link}}
+								</div>
+							</div>
+						</div>
+
+						<!-- Zone -->
+						<div class="item">
+							<label class="label upload">Zone</label>
 							<div class="flex fitdiv">
-								{{_convertToDate(activity.start)}}
+								{{zone.name.th}}
 							</div>
+							<zone-api
+								id="zoneAPI"
+								zone-id="{{activity.zone}}"
+								fields="nameTH"
+								page="0"
+								page-size="0"
+								zone="{{zone}}"
+							></zone-api>
 						</div>
-						<div>
-							<label class="label --input">End Time</label>
+
+						<!-- Location -->
+						<div class="item">
+							<label class="label input">Place</label>
+							<div class="" style="display: inline; word-wrap: break-word;">
+								{{place.name.th}}
+							</div>
+							<place-api
+								id="placeAPI"
+								place-id="{{activity.location.place}}"
+								fields="nameTH"
+								page="0"
+								page-size="0"
+								place="{{place}}"
+							></zone-api>
+						</div>
+
+						<div class="item">
+							<label class="label input">Room</label>
 							<div class="flex fitdiv">
-								{{_convertToDate(activity.end)}}
+								{{room.name.th}}
+							</div>
+							<room-api
+								id="roomAPI"
+								room-id="{{activity.location.room}}"
+								fields="nameTH"
+								page="0"
+								page-size="0"
+								room="{{room}}"
+							></room-api>
+						</div>
+
+						<div class="item">
+							<div>
+								<label class="label input">HighLight</label>
+								<div class="flex fitdiv">
+									{{activity.isHighlight}}
+								</div>
 							</div>
 						</div>
-					</div>
 
-					<div class="item">
-						<div>
-							<label class="label --input">Contact</label>
+						<!-- Google Map -->
+						<div class="item google-map">
+							<google-map latitude="[[activity.location.latitude]]" longitude="[[activity.location.longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o" fit>
+								<google-map-marker latitude="{{activity.location.latitude}}" longitude="{{activity.location.longitude}}" draggable="false"
+									title="Activity Location!" ></google-map-marker>
+								</google-map>
+							</div>
+						</div>
+					<div class="card-content">
+						<!-- Thai Language -->
+						<div class="flex-layout center">
+							<div class="avatar" item-icon><img src="../../images/th.png" /></div>
+							<div class="flex company">ภาษาไทย</div>
+						</div>
+
+						<div class="item">
+							<label class="label input">ชื่อกิจกรรม</label>
 							<div class="flex fitdiv">
-								{{activity.contact}}
+								{{activity.name.th}}
 							</div>
 						</div>
-					</div>
-
-					<div class="item">
-						<div>
-							<label class="label input">Video Url</label>
+						<div class="item">
+							<label class="label input">รายละเอียดย่อ</label>
 							<div class="flex fitdiv">
-								{{activity.video}}
-                <div id="qrvideo" style="width:250px; height:250px; margin-bottom:15px; margin-top:4px;"></div>
-
+								{{activity.shortDescription.th}}
 							</div>
 						</div>
-						<div>
-							<label class="label input">PDF Url</label>
+						<div class="item">
+							<label class="label input">รายละเอียด</label>
 							<div class="flex fitdiv">
-								{{activity.pdf}}
-                <div id="qrcode" style="width:250px; height:250px; margin-bottom:15px; margin-top:4px;"></div>
+								{{activity.description.th}}
 							</div>
 						</div>
-						<div>
-							<label class="label input">Link</label>
+					</div>
+
+					<div class="card-content">
+						<!-- English Language -->
+						<div class="flex-layout center">
+							<div class="avatar" item-icon><img src="../../images/en.png" /></div>
+							<div class="flex company">English</div>
+						</div>
+
+						<div class="item">
+							<label class="label input">activity name</label>
 							<div class="flex fitdiv">
-								{{activity.link}}
+								{{activity.name.en}}
 							</div>
 						</div>
-					</div>
-
-					<!-- Zone -->
-					<div class="item">
-						<label class="label upload">Zone</label>
-						<div class="flex fitdiv">
-              {{zone.name.th}}
-						</div>
-            <zone-api
-              id="zoneAPI"
-              zone-id="{{activity.zone}}"
-              fields="nameTH"
-              page="0"
-              page-size="0"
-              zone="{{zone}}"
-            ></zone-api>
-					</div>
-
-					<!-- Location -->
-					<div class="item">
-						<label class="label input">Place</label>
-						<div class="" style="display: inline; word-wrap: break-word;">
-              {{place.name.th}}
-            </div>
-            <place-api
-              id="placeAPI"
-              place-id="{{activity.location.place}}"
-              fields="nameTH"
-              page="0"
-              page-size="0"
-              place="{{place}}"
-            ></zone-api>
-          </div>
-
-					<div class="item">
-						<label class="label input">Room</label>
-						<div class="flex fitdiv">
-							{{room.name.th}}
-						</div>
-            <room-api
-              id="roomAPI"
-              room-id="{{activity.location.room}}"
-              fields="nameTH"
-              page="0"
-              page-size="0"
-              room="{{room}}"
-            ></room-api>
-					</div>
-
-					<div class="item">
-						<div>
-							<label class="label input">HighLight</label>
+						<div class="item">
+							<label class="label input">short description</label>
 							<div class="flex fitdiv">
-                {{activity.isHighlight}}
+								{{activity.shortDescription.en}}
+							</div>
+						</div>
+						<div class="item">
+							<label class="label input">description</label>
+							<div class="flex fitdiv">
+								{{activity.description.en}}
 							</div>
 						</div>
 					</div>
 
-					<!-- Google Map -->
-					<div class="item google-map">
-						<google-map latitude="[[activity.location.latitude]]" longitude="[[activity.location.longitude]]" zoom="[[zoom]]" api-key="AIzaSyDqaDUBa0p8qYiWDwjYUlxkInJuwgTxD1o" fit>
-							<google-map-marker latitude="{{activity.location.latitude}}" longitude="{{activity.location.longitude}}" draggable="false"
-								title="Activity Location!" ></google-map-marker>
-							</google-map>
-						</div>
-					</div>
-				<div class="card-content">
-					<!-- Thai Language -->
-					<div class="flex-layout center">
-						<div class="avatar" item-icon><img src="../../images/th.png" /></div>
-						<div class="flex company">ภาษาไทย</div>
+					<div class="card-content">
+						<template is="dom-repeat" items="{{activity.pictures}}">
+							<iron-image style="width:100px; height:100px;" sizing="cover" preload fade src="{{_computePicture(item)}}"></iron-image>
+						</template>
 					</div>
 
-					<div class="item">
-						<label class="label input">ชื่อกิจกรรม</label>
-						<div class="flex fitdiv">
-							{{activity.name.th}}
+					<div class="card-content">
+						<!-- Tags -->
+						<div class="item">
+							<label class="label input">Tags</label>
+							<div class="flex fitdiv">
+								{{activity.tags}}
+							</div>
 						</div>
 					</div>
-					<div class="item">
-						<label class="label input">รายละเอียดย่อ</label>
-						<div class="flex fitdiv">
-							{{activity.shortDescription.th}}
-						</div>
-					</div>
-					<div class="item">
-						<label class="label input">รายละเอียด</label>
-						<div class="flex fitdiv">
-							{{activity.description.th}}
-						</div>
-					</div>
-				</div>
-
-				<div class="card-content">
-					<!-- English Language -->
-					<div class="flex-layout center">
-						<div class="avatar" item-icon><img src="../../images/en.png" /></div>
-						<div class="flex company">English</div>
-					</div>
-
-					<div class="item">
-						<label class="label input">activity name</label>
-						<div class="flex fitdiv">
-							{{activity.name.en}}
-						</div>
-					</div>
-					<div class="item">
-						<label class="label input">short description</label>
-						<div class="flex fitdiv">
-							{{activity.shortDescription.en}}
-						</div>
-					</div>
-					<div class="item">
-						<label class="label input">description</label>
-						<div class="flex fitdiv">
-							{{activity.description.en}}
-						</div>
-					</div>
-				</div>
-
-				<div class="card-content">
-          <template is="dom-repeat" items="{{activity.pictures}}">
-            <iron-image style="width:100px; height:100px;" sizing="cover" preload fade src="{{_computePicture(item)}}"></iron-image>
-          </template>
-				</div>
-
-        <div class="card-content">
-          <!-- Tags -->
-          <div class="item">
-            <label class="label input">Tags</label>
-            <div class="flex fitdiv">
-              {{activity.tags}}
-            </div>
-          </div>
-        </div>
-			</paper-card>
+				</paper-card>
+			</div>
 			<div id="right">
         <rounds-list activity-id="[[activityId]]"></rounds-list>
 			</div>

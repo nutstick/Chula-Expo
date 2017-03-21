@@ -1,0 +1,96 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/google-chart/google-chart.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="activity-checkin-summary">
+  <template>
+    <style>
+      google-chart {
+        width: 100%;
+      }
+    </style>
+    <iron-ajax
+      id="ajax"
+      url="{{url}}"
+      headers="{{headers}}"
+      params="{{params}}"
+      on-response="_handleResponse"
+      on-error="_handleError"
+      handle-as="json"
+    ></iron-ajax>
+    <google-chart
+      type="md-line"
+      options='{"title": "Days in a month"}'
+      cols='[{"label": "Time", "type": "string"}, {"label": "total", "type": "number"}]'
+      rows="{{rows}}">
+    ></google-chart>
+  </template>
+  <script>
+    Polymer({
+      is: 'activity-checkin-summary',
+      properties: {
+        activityId: {
+          type: String,
+          value: null,
+          observer: '_onIdChanged'
+        },
+        url: {
+          type: String,
+          // value: 'https://api.chulaexpo.com/api/activities/58c789e648e583320f2cbe28/checkin/summary'
+        },
+        headers: {
+          type: Object,
+          value: function() {
+            return {
+              Authorization: 'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ODlkMWU2N2E4YmJiYjFjNzE2NWQ0MTIiLCJpYXQiOjE0ODk1NjY0OTQsImV4cCI6MTQ5MDc3NjA5NH0.iNk-4PzdnoGgwbl3ZxiY8BuQ-QmSo8k2frCnQWuI6Os'
+            }
+          }
+        },
+        params: {
+          type: Object,
+          value: function() {
+            return {
+              createAt: JSON.stringify({
+                gt: '2017-03-19',
+                lt: '2017-03-20',
+              })
+            }
+          }
+        },
+        rows: Array,
+      },
+
+      observers: [
+      ],
+
+      attached: function() {
+        console.log('asda')
+        this.$.ajax.generateRequest();
+      },
+      _onIdChanged: function(id) {
+        if (id) {
+          this.url = window.api + '/api/activities/' + id + '/checkin/summary';
+          this.$.ajax.generateRequest();
+        }
+      },
+      _handleResponse: function(event) {
+        if(event.detail.response) {
+          if (event.detail.response.success) {
+            this.rows = event.detail.response.results.map(function(res) {
+              console.log(moment(res._id.hour + ':' + res._id.minute + ':00', 'HH:mm'))
+              return [
+                moment((res._id.hour + 7) + ':' + res._id.minute + ':00', 'HH:mm').format('HH:mm'),
+                res.count
+              ];
+            });
+          } else {
+            this.error = event.detail.response.errors;
+          }
+        }
+      }
+    });
+  </script>
+</dom-module>

@@ -23,6 +23,7 @@
       role="main">
       <zone-list-page name="list"></zone-list-page>
       <zone-add-page name="add"></zone-add-page>
+      <zone-summary-page name="summary"></zone-summary-page>
 			<zone-id-page zone-id="{{zoneId}}" route="{{subroute}}" name="id"></zone-show-page>
     </iron-pages>
   </template>
@@ -46,7 +47,7 @@
       ],
 
       _routePageChanged: function(page) {
-        if (page && page !== 'add') {
+        if (page && page !== 'add' && page !== 'summary') {
           this.zoneId = page;
           this.page = 'id';
         } else {

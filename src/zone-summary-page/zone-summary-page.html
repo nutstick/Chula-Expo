@@ -1,0 +1,85 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/google-chart/google-chart.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../zone-api/zone-api.html">
+
+<dom-module id="zone-summary-page">
+  <template>
+		<style is="custom-style" include="shared-styles">
+      :host {
+        @apply(--layout-vertical);
+        @apply(--layout-center-center);
+        padding-top: 20px;
+				position: relative;
+				margin-bottom: 40px;
+      }
+
+			paper-card {
+        width: 100%;
+				position: relative;
+      }
+			
+			.card-content {
+				position: relative;
+			}
+      
+      google-chart {
+        height: 300px;
+        width: 50em;
+      }
+    </style>
+    <zone-api
+      id="zoneAPI"
+      zones="{{zones}}"
+      error="{{error}}"
+      loading="{{zoneLoading}}"
+      fields="_id,nameTH"
+    ></zone-api>
+    <paper-card>
+      <div class="card-content">
+        <google-chart
+          type="bar"
+          options="{'title': 'Distribution of days in 2001Q1'}"
+          data="{{_computeZoneLabel(zones)}}"
+        >
+        </google-chart>
+      </div>
+    </paper-card>
+  </template>
+  <script>
+    Polymer({
+      is: 'zone-summary-page',
+      properties: {
+        activated: {
+          type: Boolean,
+          value: false,
+          observer: '_onActivatedChanged'
+        },
+        zones: {
+          type: Array,
+          value: [],
+          observer: '_onZoneChanged'
+        },
+        zoneLoading: {
+          type: Boolean,
+          value: false
+        },
+        error: {
+          type: Object,
+          value: {}
+        },
+      },
+      _onActivatedChanged: function() {
+        console.log('p')
+        this.$.zoneAPI.generateRequest();
+      },
+      _computeZoneLabel: function(zones) {
+        console.log(zones)
+        [["Faculty", "15-3", "16-3", "17-3"], [zones]]
+        return [["Month", "Days", "Sec"], ["Jan", 31, 12], ["Feb", 28, -1], ["Mar", 31, 10]];
+      },
+    });
+  </script>
+</dom-module>
