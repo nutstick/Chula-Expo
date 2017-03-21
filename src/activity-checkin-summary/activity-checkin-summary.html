@@ -13,18 +13,56 @@
       }
     </style>
     <iron-ajax
-      id="ajax"
+      id="ajax1"
       url="{{url}}"
       headers="{{headers}}"
-      params="{{params}}"
-      on-response="_handleResponse"
+      params="{{params1}}"
+      on-response="_handleResponse1"
       on-error="_handleError"
       handle-as="json"
     ></iron-ajax>
+    <iron-ajax
+      id="ajax2"
+      url="{{url}}"
+      headers="{{headers}}"
+      params="{{params2}}"
+      on-response="_handleResponse2"
+      on-error="_handleError"
+      handle-as="json"
+    ></iron-ajax>
+    <iron-ajax
+      id="ajax3"
+      url="{{url}}"
+      headers="{{headers}}"
+      params="{{params3}}"
+      on-response="_handleResponse3"
+      on-error="_handleError"
+      handle-as="json"
+    ></iron-ajax>
+    <iron-ajax
+      id="ajax4"
+      url="{{url}}"
+      headers="{{headers}}"
+      params="{{params4}}"
+      on-response="_handleResponse4"
+      on-error="_handleError"
+      handle-as="json"
+    ></iron-ajax>
+    <iron-ajax
+      id="ajax5"
+      url="{{url}}"
+      headers="{{headers}}"
+      params="{{params5}}"
+      on-response="_handleResponse5"
+      on-error="_handleError"
+      handle-as="json"
+    ></iron-ajax>
+
     <google-chart
       type="md-line"
       options='{"title": "Days in a month"}'
-      cols='[{"label": "Time", "type": "string"}, {"label": "total", "type": "number"}]'
+      cols='[{"label": "Time", "type": "string"}, {"label": "2017-03-15", "type": "number"}, {"label": "2017-03-16", "type": "number"},
+        {"label": "2017-03-17", "type": "number"}, {"label": "2017-03-18", "type": "number"}, {"label": "2017-03-19", "type": "number"}]'
       rows="{{rows}}">
     ></google-chart>
   </template>
@@ -49,7 +87,51 @@
             }
           }
         },
-        params: {
+        params1: {
+          type: Object,
+          value: function() {
+            return {
+              createAt: JSON.stringify({
+                gt: '2017-03-15',
+                lt: '2017-03-16',
+              })
+            }
+          }
+        },
+        params2: {
+          type: Object,
+          value: function() {
+            return {
+              createAt: JSON.stringify({
+                gt: '2017-03-16',
+                lt: '2017-03-17',
+              })
+            }
+          }
+        },
+        params3: {
+          type: Object,
+          value: function() {
+            return {
+              createAt: JSON.stringify({
+                gt: '2017-03-17',
+                lt: '2017-03-18',
+              })
+            }
+          }
+        },
+        params4: {
+          type: Object,
+          value: function() {
+            return {
+              createAt: JSON.stringify({
+                gt: '2017-03-18',
+                lt: '2017-03-19',
+              })
+            }
+          }
+        },
+        params5: {
           type: Object,
           value: function() {
             return {
@@ -60,37 +142,116 @@
             }
           }
         },
-        rows: Array,
+        rows1: {
+          type: Array,
+          value: []
+        },
+        rows2: {
+          type: Array,
+          value: []
+        },
+        rows3: {
+          type: Array,
+          value: []
+        },
+        rows4: {
+          type: Array,
+          value: []
+        },
+        rows5: {
+          type: Array,
+          value: []
+        },
+        rows: {
+          type: Array,
+          value: function() {
+            var rows = [];
+            for (var i = 7*4; i <= 18*4; i++) {
+              rows.push([
+                moment(parseInt(i / 4) + ':' + (i%4*15) + ':00', 'HH:mm').format('HH:mm')
+                , 0, 0, 0, 0, 0
+              ]);
+            }
+            return rows;
+          }
+        },
       },
 
       observers: [
       ],
 
       attached: function() {
-        console.log('asda')
-        this.$.ajax.generateRequest();
+        // this.$.ajax1.generateRequest();
+        // this.$.ajax2.generateRequest();
+        // this.$.ajax3.generateRequest();
+        // this.$.ajax4.generateRequest();
+        // this.$.ajax5.generateRequest();
       },
       _onIdChanged: function(id) {
         if (id) {
           this.url = window.api + '/api/activities/' + id + '/checkin/summary';
-          this.$.ajax.generateRequest();
+          this.$.ajax1.generateRequest();
+          this.$.ajax2.generateRequest();
+          this.$.ajax3.generateRequest();
+          this.$.ajax4.generateRequest();
+          this.$.ajax5.generateRequest();
         }
       },
-      _handleResponse: function(event) {
+      _handleResponse1: function(event) {
         if(event.detail.response) {
           if (event.detail.response.success) {
-            this.rows = event.detail.response.results.map(function(res) {
-              console.log(moment(res._id.hour + ':' + res._id.minute + ':00', 'HH:mm'))
-              return [
-                moment((res._id.hour + 7) + ':' + res._id.minute + ':00', 'HH:mm').format('HH:mm'),
-                res.count
-              ];
-            });
+            event.detail.response.results.map(function(res) {
+              return this.rows[(res._id.hour)*4 + res._id.minute/15][1] = res.count;
+            }.bind(this));
           } else {
             this.error = event.detail.response.errors;
           }
         }
-      }
+      },
+      _handleResponse2: function(event) {
+        if(event.detail.response) {
+          if (event.detail.response.success) {
+            event.detail.response.results.map(function(res) {
+              return this.rows[(res._id.hour)*4 + res._id.minute/15][2] = res.count;
+            }.bind(this));
+          } else {
+            this.error = event.detail.response.errors;
+          }
+        }
+      },
+      _handleResponse3: function(event) {
+        if(event.detail.response) {
+          if (event.detail.response.success) {
+            event.detail.response.results.map(function(res) {
+              return this.rows[(res._id.hour)*4 + res._id.minute/15][3] = res.count;
+            }.bind(this));
+          } else {
+            this.error = event.detail.response.errors;
+          }
+        }
+      },
+      _handleResponse4: function(event) {
+        if(event.detail.response) {
+          if (event.detail.response.success) {
+            event.detail.response.results.map(function(res) {
+              return this.rows[(res._id.hour)*4 + res._id.minute/15][4] = res.count;
+            }.bind(this));
+          } else {
+            this.error = event.detail.response.errors;
+          }
+        }
+      },
+      _handleResponse5: function(event) {
+        if(event.detail.response) {
+          if (event.detail.response.success) {
+              event.detail.response.results.map(function(res) {
+              return this.rows[(res._id.hour)*4 + res._id.minute/15][5] = res.count;
+            }.bind(this));
+          } else {
+            this.error = event.detail.response.errors;
+          }
+        }
+      },
     });
   </script>
 </dom-module>
