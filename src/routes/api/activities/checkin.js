@@ -143,6 +143,54 @@ router.get('/', (req, res) => {
   });
 });
 
+router.get('/csv', (req, res) => {
+  const filter = { activityId: req.params.id };
+
+  const query = ActivityCheck.distinct('user', filter);
+  // Execute query
+  query.exec((err, checkin) => {
+    if (err) {
+      return res.sendError(5, err);
+    }
+    const filterUser = {};
+    filterUser._id = { $in: checkin };
+    User.find(filterUser).select('name gender age email academic worker').exec((err, userCheck) => {
+      if (err) {
+        return res.sendError(5, err);
+      }
+
+      res.attachment('file.csv');
+      res.charset = 'UTF-8';
+      let excel = '\uFEFF' + ['name', 'gender', 'age', 'email', 'academic-level', 'academic-year', 'academic-school', 'job'].join(',') + '\n';
+      for (let i = 0; i < userCheck.length; i++) {
+        if (typeof userCheck[i].name === 'string') {
+          userCheck[i].name = userCheck[i].name.trim();
+        }
+        if (typeof userCheck[i].gender === 'string') {
+          userCheck[i].gender = userCheck[i].gender.trim();
+        }
+        if (typeof userCheck[i].email === 'string') {
+          userCheck[i].email = userCheck[i].email.trim();
+        }
+        if (typeof userCheck[i].academic.level === 'string') {
+          userCheck[i].academic.level = userCheck[i].academic.level.trim();
+        }
+        if (typeof userCheck[i].academic.year === 'string') {
+          userCheck[i].academic.year = userCheck[i].academic.year.trim();
+        }
+        if (typeof userCheck[i].academic.school === 'string') {
+          userCheck[i].academic.school = userCheck[i].academic.school.trim();
+        }
+        if (typeof userCheck[i].worker.job === 'string') {
+          userCheck[i].worker.job = userCheck[i].worker.job.trim();
+        }
+        excel += [userCheck[i].name, userCheck[i].gender, userCheck[i].age, userCheck[i].email, userCheck[i].academic.level, userCheck[i].academic.year, userCheck[i].academic.school, userCheck[i].worker.job].join(',')  + '\n';
+      }
+      return res.send(excel);
+    });
+  });
+});
+
 router.post('/', isAuthenticatedByToken, isScanner, (req, res) => {
   const userId = req.body.user || req.query.user;
   // Validate required field from body
