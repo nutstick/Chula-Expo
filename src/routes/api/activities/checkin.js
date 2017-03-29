@@ -149,7 +149,7 @@ router.get('/csv', (req, res) => {
   query.exec((err, checkins) => {
     var mySet = [];
     for (let i = 0; i < 5; i++) {
-      mySet[i] = new Set();
+      mySet[i] = new Map();
     }
     for(let i = 0; i < checkins.length; i++) {
 
@@ -166,12 +166,12 @@ router.get('/csv', (req, res) => {
 
 
       if(year==2017 && month==3 && dt>=15 && dt<=19){
-        mySet[dt - 15].add(checkins[i].user);
+        mySet[dt - 15].set(checkins[i].user, checkins[i].createAt);
       }
     }
     res.attachment('file.csv');
     res.charset = 'UTF-8';
-    let excel = '\uFEFF' + ['name', 'gender', 'age', 'email', 'academic-level', 'academic-year', 'academic-school', 'job', 'date'].join(',') + '\n';
+    let excel = '\uFEFF' + ['name', 'gender', 'age', 'email', 'academic-level', 'academic-year', 'academic-school', 'job', 'date', 'time'].join(',') + '\n';
 
     for (let i = 0; i < 5; i++) {
       for (let [key, value] of mySet[i].entries()) {
@@ -197,7 +197,7 @@ router.get('/csv', (req, res) => {
           if (typeof key.worker.job === 'string') {
             key.worker.job = key.worker.job.trim();
           }
-          excel += [key.name, key.gender, key.age, key.email, key.academic.level, key.academic.year, key.academic.school, key.worker.job, (15 + i) + '-03-2017'].join(',')  + '\n';
+          excel += [key.name, key.gender, key.age, key.email, key.academic.level, key.academic.year, key.academic.school, key.worker.job, (15 + i) + '-03-2017', value].join(',')  + '\n';
         }
       }
     }
