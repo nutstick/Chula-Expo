@@ -86,6 +86,8 @@ router.get('/summary', (req, res) => {
 
   checkAggregate
     .sort('_id.year _id.dayOfYear _id.hour _id.minute')
+    .cursor({batchSize: 1000})
+    .exec()
     // .unwind('$activity')
     // .unwind('$createAt')
     .then((checks) => {
