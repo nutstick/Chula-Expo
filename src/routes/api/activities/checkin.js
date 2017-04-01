@@ -86,6 +86,8 @@ router.get('/summary', (req, res) => {
 
   checkAggregate
     .sort('_id.year _id.dayOfYear _id.hour _id.minute')
+    .cursor({batchSize: 1000})
+    .exec()
     // .unwind('$activity')
     // .unwind('$createAt')
     .then((checks) => {
@@ -141,6 +143,86 @@ router.get('/', (req, res) => {
       });
     });
   });
+});
+
+router.get('/csv', (req, res) => {
+  const filter = { activityId: req.params.id };
+  const query = ActivityCheck.find(filter).populate('user', 'name gender age email academic worker _id');
+  query.exec((err, checkins) => {
+    var mySet = [];
+    for (let i = 0; i < 5; i++) {
+      mySet[i] = new Map();
+    }
+    for(let i = 0; i < checkins.length; i++) {
+
+      date = new Date(checkins[i].createAt);
+      year = date.getFullYear();
+      month = date.getMonth() + 1;
+      dt = date.getDate();
+      if (dt < 10) {
+        dt = '0' + dt;
+      }
+      if (month < 10) {
+        month = '0' + month;
+      }
+
+
+      if(year==2017 && month==3 && dt>=15 && dt<=19){
+        mySet[dt - 15].set(checkins[i].user, checkins[i].createAt);
+      }
+    }
+    res.attachment('file.csv');
+    res.charset = 'UTF-8';
+    let excel = '\uFEFF' + ['name', 'gender', 'age', 'email', 'academic-level', 'academic-year', 'academic-school', 'job', 'date', 'time'].join(',') + '\n';
+
+    for (let i = 0; i < 5; i++) {
+      for (let [key, value] of mySet[i].entries()) {
+        if(key) {
+          if (typeof key.name === 'string') {
+            key.name = key.name.trim();
+          }
+          if (typeof key.gender === 'string') {
+            key.gender = key.gender.trim();
+          }
+          if (typeof key.email === 'string') {
+            key.email = key.email.trim();
+          }
+          if (typeof key.academic.level === 'string') {
+            key.academic.level = key.academic.level.trim();
+          }
+          if (typeof key.academic.year === 'string') {
+            key.academic.year = key.academic.year.trim();
+          }
+          if (typeof key.academic.school === 'string') {
+            key.academic.school = key.academic.school.trim();
+          }
+          if (typeof key.worker.job === 'string') {
+            key.worker.job = key.worker.job.trim();
+          }
+          excel += [key.name, key.gender, key.age, key.email, key.academic.level, key.academic.year, key.academic.school, key.worker.job, (15 + i) + '-03-2017', value].join(',')  + '\n';
+        }
+      }
+    }
+    return res.send(excel);
+  });
+
+/*
+  const query = ActivityCheck.distinct('user', filter);
+  // Execute query
+  query.exec((err, checkin) => {
+    if (err) {
+      return res.sendError(5, err);
+    }
+    const filterUser = {};
+    filterUser._id = { $in: checkin };
+    User.find(filterUser).select('name gender age email academic worker').exec((err, userCheck) => {
+      if (err) {
+        return res.sendError(5, err);
+      }
+
+      for (let i = 0; i < userCheck.length; i++) {
+    });
+  });*/
 });
 
 router.post('/', isAuthenticatedByToken, isScanner, (req, res) => {

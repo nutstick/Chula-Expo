@@ -34,7 +34,7 @@ const router = express.Router();
  */
 router.post('/', (req, res) => {
   // Reject `admin` field if not correct registration code
-
+console.log(req.body);
   if (req.body.type === 'Staff' && req.body.staff === 'Admin' && req.body.registrationCode !== process.env.ADMIN_REGISTRATION_CODE) {
     return res.sendError(11);
   }
@@ -93,6 +93,7 @@ router.post('/', (req, res) => {
 
   user.save((err, user) => {
     if (err) {
+      console.log(err);
       return res.status(500).json({
         success: false,
         errors: retrieveError(5, err),

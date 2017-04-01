@@ -82,6 +82,8 @@ RoundSchema.methods.reserve = (userId, round, seats = 1) => new Promise((resolve
       const ticket = new Ticket({ user: userId, round: round.id, size: seats });
 
       round.seats.reserved += seats;
+      ticket.updateAt = new Date();
+      ticket.createAt = new Date();
 
       user.reservedActivity.push({
         roundId: round.id,

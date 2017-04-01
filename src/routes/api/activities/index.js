@@ -32,11 +32,16 @@ const router = express.Router();
  * @return {number} queryInfo.skip - Skip that was used.
  */
  router.get('/', (req, res) => {
-   if (!req.query.limit || !req.query.zone) {
-     return res.sendError(5);
-   }
    // filtering tag with a tags query.
    // http://localhost:3000/?tags=prize,rewards
+//   if (!req.query.limit && !req.query.zone && !req.query.tags) {
+  //   console.log(req.query.ad);
+    // return res.sendError(5);
+  // }
+   if (!req.query.limit && !req.query.zone && !req.query.tags) {
+     return res.sendError(5);
+   }
+
    const filter = {};
    if (req.query.tags) {
      filter.tags = { $in: req.query.tags.split(',') };
@@ -189,42 +194,66 @@ const router = express.Router();
  });
 
 // recommend from aj.nuttawut
-router.get('/recommend', isAuthenticatedByToken, (req, res) => {
-  request.get({
-    uri: 'http://104.199.143.190/recommend/' + req.user.id,
-    timeout: 800
-  },
-  (err, r, ans) => {
-    if (err) {
-      const filter = {};
-      filter.end = { $gt: new Date(new Date().getTime() + (7 * 60000)).toUTCString() };
-      const query = Activity.find(filter);
-      Activity.find(filter).count((err, total) => {
-        if (err) {
-          return res.sendError(5, err);
-        }
-
-        query.limit(20).exec((err, _act) => {
+router.get('/recommend', deserializeToken, (req, res) => {
+  if (req.user) {
+    request.get({
+      uri: 'http://104.155.220.23/recommend/' + req.user,
+      timeout: 800
+    },
+    (err, r, ans) => {
+      if (err) {
+        const filter = {};
+        //filter.end = { $gt: new Date(new Date().getTime() + (7 * 60000)).toUTCString() };
+        const query = Activity.find(filter);
+        Activity.find(filter).count((err, total) => {
           if (err) {
             return res.sendError(5, err);
           }
-          return res.status(200).json({
-            success: true,
-            results: _act,
-            queryInfo: {
-              total,
+
+          query.limit(20).exec((err, _act) => {
+            if (err) {
+              return res.sendError(5, err);
             }
+            return res.status(200).json({
+              success: true,
+              results: _act,
+              queryInfo: {
+                total,
+              }
+            });
           });
         });
+      } else {
+        const answer = JSON.parse(ans);
+        return res.json({
+          success: true,
+          results: answer.activities
+        });
+      }
+    });
+  } else {
+    const filter = {};
+    //filter.end = { $gt: new Date(new Date().getTime() + (7 * 60000)).toUTCString() };
+    const query = Activity.find(filter);
+    Activity.find(filter).count((err, total) => {
+      if (err) {
+        return res.sendError(5, err);
+      }
+
+      query.limit(20).exec((err, _act) => {
+        if (err) {
+          return res.sendError(5, err);
+        }
+        return res.status(200).json({
+          success: true,
+          results: _act,
+          queryInfo: {
+            total,
+          }
+        });
       });
-    } else {
-      const answer = JSON.parse(ans);
-      return res.json({
-        success: true,
-        results: answer.activities
-      });
-    }
-  });
+    });
+  }
 });
 
 // nearby from aj.nuttawut
@@ -238,14 +267,14 @@ router.get('/nearby', deserializeToken, (req, res) => {
   qs.cutoff = 100;
 
   request.get({
-    uri: 'http://104.199.143.190/search',
+    uri: 'http://104.155.220.23/search',
     qs,
     timeout: 800
   },
   (err, r, ans) => {
     if (err) {
       const filter = {};
-      filter.end = { $gt: new Date(new Date().getTime() + (7 * 60000)).toUTCString() };
+      //filter.end = { $gt: new Date(new Date().getTime() + (7 * 60000)).toUTCString() };
       const query = Activity.find(filter);
       Activity.find(filter).count((err, total) => {
         if (err) {
@@ -290,7 +319,7 @@ router.get('/search', deserializeToken, (req, res) => {
     qs.u = req.user;
   }
   request.get({
-    uri: 'http://104.199.143.190/search',
+    uri: 'http://104.155.220.23/search',
     qs,
     timeout: 800
   },
@@ -332,7 +361,7 @@ router.get('/highlight', (req, res) => {
   const filter = {};
 
   //  http://localhost:3000/?sort=createAt,-startDate
-  filter.end = { $gt: new Date(new Date().getTime() + (7 * 60000)).toUTCString() };
+//  filter.end = { $gt: new Date(new Date().getTime() + (7 * 60000)).toUTCString() };
   filter.isHighlight = true;
   filter.banner = { $exists: true };
   // field selector
@@ -369,9 +398,6 @@ router.get('/highlight', (req, res) => {
       return res.status(200).json({
         success: true,
         results: _act,
-        queryInfo: {
-          total,
-        }
       });
     });
   });
@@ -491,9 +517,13 @@ router.get('/:id/qrcode', (req, res) => {
     if (err) {
       return res.sendError(5, err);
     } else if (!act) {
-      return res.sendError(5, err);
+      return res.redirect('https://www.chulaexpo.com/app');
     } else if (!act.pdf) {
-      return res.sendError(5, err);
+      return res.redirect('https://www.chulaexpo.com/app');
+    }
+
+    if (!act.pdf.startsWith('http')) {
+      act.pdf = 'http://' + act.pdf;
     }
 
     res.writeHead(301, {
@@ -509,10 +539,15 @@ router.get('/:id/qrvideo', (req, res) => {
     if (err) {
       return res.sendError(5, err);
     } else if (!act) {
-      return res.sendError(5, err);
+      return res.redirect('https://www.chulaexpo.com/app');
     } else if (!act.video) {
-      return res.sendError(5, err);
+      return res.redirect('https://www.chulaexpo.com/app');
     }
+
+    if (!act.video.startsWith('http')) {
+      act.video = 'http://' + act.video;
+    }
+
     res.writeHead(301, {
       Location: encodeURI(act.video)
     });

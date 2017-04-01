@@ -1,9 +1,12 @@
 const express = require('express');
-const { Zone, Activity } = require('../../../models');
+const { Zone, ActivityCheck } = require('../../../models');
 const { RangeQuery } = require('../../../tools');
 const retrieveError = require('../../../tools/retrieveError');
 const { isAuthenticatedByToken, isStaff, deserializeToken } = require('../../../config/authenticate');
-const ObjectId = require('mongoose').Types.ObjectId;
+const mongoose = require('mongoose');
+const request = require('request');
+
+const ObjectId = mongoose.Types.ObjectId;
 
 const router = express.Router();
 
@@ -245,7 +248,7 @@ router.post('/', (req, res) => {
 });
 
 // Update an existing zone via PUT(JSON format)
-// ex. { "name","EditName"}
+// ex. { "name","EditName'}
 // Access at PUT http://localhost:3000/api/en/zones/:id
 router.put('/:id', (req, res) => {
   Zone.findById(req.params.id, (err, zone) => {
@@ -336,6 +339,8 @@ router.delete('/:id', (req, res) => {
     });
   });
 });
+
+router.get('/summary', () => {});
 
 router.use('/:id/summary', require('./summary'));
 
